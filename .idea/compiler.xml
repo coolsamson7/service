@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="service-client" />
+        <module name="service-registry-consul" />
+        <module name="service-channel-rest" />
+        <module name="service-demo-app1" />
+        <module name="service-demo-common" />
+        <module name="service-demo-app2" />
+        <module name="service-core" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="service-channel-rest" options="-parameters" />
+      <module name="service-client" options="-parameters" />
+      <module name="service-core" options="-parameters" />
+      <module name="service-demo-app1" options="-parameters" />
+      <module name="service-demo-app2" options="-parameters" />
+      <module name="service-demo-common" options="-parameters" />
+      <module name="service-registry-consul" options="-parameters" />
+    </option>
+  </component>
+</project>
