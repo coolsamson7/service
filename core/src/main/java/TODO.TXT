@@ -1,0 +1,85 @@
+=== TODO
+
+
+
+=== LATER
+
+- kotlin
+- mehrere channels? loadbalancer, etc.
+- layers
+
+- list bodyToFlo(class).toList()
+
+=== NOW
+
+- cluster-adresse?
+
+GITHUP Actins & PIpeline
+
+=== DONE
+
+- channel nicht im componentdescriptor
+- customize channel
+- watchdog...
+- http -> rest!!! URI reicht nicht
+- http != https???
+- mehrere module
+- lib
+- channel als meta!
+- requestmappig an der klasse...
+- consul properties??
+- GetMapping erzeugen?
+- wie geht jetzt local: initiale bean vs acquire?????
+- lifecycle aufschreiben!
+- ConsulAutoServiceRegistration
+- component registratur ( auto off )
+- component health
+- component auflösen
+- call component http...
+- wie geht der actuator??
+- component lifecylce
+- factor???
+- exceptions: build / runtime, local, remote, ..
+- DELETE, ...
+- methodanalyzer aufräumen
+- logging
+- injection?
+- report
+- neue annotation + supports={"http"}
+- LocalChannel singleton
+- parameter name
+- body
+- bod response
+- localhost?????
+- wo annotations
+- http channel anfangen & ausprobieren
+- add pom...
+- homebrew
+- consul
+- channel?? ( local )
+- invocation logic ( local )
+- basis injection???
+- proxy + factory?
+- component descriptor
+- service descriptir
+- manager registratur
+- Service interface + Abstract + Sample + annotation
+- Configuration
+- Sample REST service
+- Property ( application.properties )
+
+== TODO
+
+- injectservice ruft das auf! ( gecached )
+- zwei instanzen"
+
+== DENK NACH
+
+registerFactory4("http").?? um heder einzubauen???
+
+FRAGEN:
+
+- wie kennzeichne ich die möglichen channels?
+  -> cluster? -> einfach cluster-adresse!
+
+- was ist mit authorisierung??
