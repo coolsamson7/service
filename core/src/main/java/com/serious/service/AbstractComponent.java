@@ -23,7 +23,7 @@ public abstract class AbstractComponent implements Component {
     // static methods
 
     public static String getHost() {
-        return inet.findFirstNonLoopbackHostInfo().getIpAddress();
+        return inet.findFirstNonLoopbackHostInfo().getHostname();// TODO getIpAddress();
     }
 
     public static String getPort() {

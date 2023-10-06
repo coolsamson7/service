@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -39,21 +40,45 @@ public class ServiceInstanceRegistry {
         }
     }
 
+    //
+
+
+    private List<ServiceAddress> extractAddresses(String channels) {
+        return  Arrays.stream(channels.split(","))
+                .map(channel -> {
+                    int lparen = channel.indexOf("(");
+                    int rparen = channel.indexOf(")");
+
+                    String protocol = channel.substring(0, lparen);
+                    URI uri = URI.create(channel.substring(lparen + 1, rparen));
+
+                    return new ServiceAddress(protocol, uri);
+                })
+                .collect(Collectors.toList());
+    }
+    //
+
     List<ServiceAddress> getServiceAddresses(ComponentDescriptor<?> componentDescriptor, String... preferredChannels) {
         List<ServiceInstance> instances = this.serviceInstances.get(componentDescriptor.getName());
+        Map<ServiceInstance, List<ServiceAddress>> addresses = new HashMap<>();
+
+        // extract addresses
+
+        for ( ServiceInstance instance : instances)
+            addresses.put(instance, extractAddresses(instance.getMetadata().get("channels")));
+
+        // figure out a matching channel
 
         String channelName = null;
-
         if (instances != null && !instances.isEmpty()) {
-            if ( preferredChannels.length == 0) {
-                String channels[] = instances.get(0).getMetadata().get("channels").split(",");
-                channelName = channels[0];
+            if (preferredChannels.length == 0) {
+                channelName = addresses.get(instances.get(0)).get(0).getChannel();
             }
             else {
                 for (ServiceInstance instance : instances) {
-                    for ( String channel : instance.getMetadata().get("channels").split(","))
-                        if ( channelName == null && Arrays.asList(preferredChannels).contains(channel) ) {
-                            channelName = channel;
+                    for ( ServiceAddress address : addresses.get(instance))
+                        if ( channelName == null && Arrays.asList(preferredChannels).contains(address.getChannel()) ) {
+                            channelName = address.getChannel();
                             break;
                         }
 
@@ -66,7 +91,7 @@ public class ServiceInstanceRegistry {
         if ( instances != null && channelName != null) {
             String finalChannelName = channelName;
             return instances.stream()
-                    .filter(serviceInstance ->  Arrays.asList(serviceInstance.getMetadata().get("channels").split(",")).contains(finalChannelName))
+                    .filter(serviceInstance ->  addresses.get(serviceInstance).stream().anyMatch(address -> address.getChannel().equals(finalChannelName)))
                     .map(serviceInstance -> new ServiceAddress(finalChannelName, serviceInstance))
                     .collect(Collectors.toList());
         }

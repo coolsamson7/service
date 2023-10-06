@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Andreas Ernst
@@ -49,7 +51,7 @@ public class TestComponentImpl extends AbstractComponent implements TestComponen
 
     @GetMapping("/uri")
     @ResponseBody
-    public ServiceAddress getAddress() {
-        return new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort()));
+    public List<ServiceAddress> getAddresses() {
+        return Collections.singletonList(new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort())));
     }
 }

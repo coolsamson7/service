@@ -10,13 +10,38 @@ import lombok.Getter;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Andreas Ernst
  */
 @Getter
 public class ServiceAddress {
+    // static methods
+
+    private static List<ServiceAddress> extractAddresses(String channels) {
+        return  Arrays.stream(channels.split(","))
+                .map(channel -> {
+                    int lparen = channel.indexOf("(");
+                    int rparen = channel.indexOf(")");
+
+                    String protocol = channel.substring(0, lparen);
+                    URI uri = URI.create(channel.substring(lparen + 1, rparen));
+
+                    return new ServiceAddress(protocol, uri);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static ServiceAddress getAddress(String channel, ServiceInstance instance) {
+        List<ServiceAddress> addresses = extractAddresses(instance.getMetadata().get("channels"));
+
+        return addresses.stream().filter(address -> address.getChannel().equals(channel)).findFirst().orElse(null);
+    }
+
     // instance data
 
     private String channel;
@@ -36,7 +61,7 @@ public class ServiceAddress {
     public ServiceAddress(String channel, ServiceInstance instance) {
         this.channel = channel;
         this.serviceInstance = instance;
-        this.uri = instance.getUri();
+        this.uri = getAddress(channel, instance).getUri();//instance.getUri();
     }
 
     // override Object

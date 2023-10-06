@@ -8,7 +8,6 @@ package com.serious.service;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -103,8 +102,16 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
     public void report(StringBuilder builder) {
         builder
                 .append("component ")
-                .append(this.serviceInterface.getName()).append("\n")
-                //TODO .append("\taddress: ").append(channel != null ? channel.getAddress().toString() : "-").append("\n")
+                .append(this.serviceInterface.getName()).append("\n");
+
+        if (hasImplementation()) {
+            builder.append("\taddress: ");
+
+            for (ServiceAddress externalAddress : getExternalAddresses())
+                builder.append("\t\t").append(externalAddress.toString()).append("\n");
+        }
+
+        builder
                 .append("\tchannels:");
 
         for (String channel : channels)
@@ -118,5 +125,9 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
 
         for (ServiceDescriptor<?> serviceDescriptor : services)
             serviceDescriptor.report(builder);
+    }
+
+    public List<ServiceAddress> getExternalAddresses() {
+        return local != null ? local.getAddresses() : null;
     }
 }

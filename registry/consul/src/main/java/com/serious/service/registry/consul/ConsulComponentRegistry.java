@@ -74,6 +74,7 @@ public class ConsulComponentRegistry implements ComponentRegistry {
     private Environment environment;
     @Autowired
     DiscoveryClient discoveryClient;
+    ConsulDiscoveryProperties properties = new ConsulDiscoveryProperties(new InetUtils(new InetUtilsProperties()));
 
     Map<ComponentDescriptor, ConsulRegistration> registeredServices = new HashMap<>();
 
@@ -83,25 +84,25 @@ public class ConsulComponentRegistry implements ComponentRegistry {
 
     // private
 
+    private ServiceAddress getLocalAddress() {
+        return null;//TODO new ServiceAddress("rest", URI.create())
+    }
+
     private String getPort() {
         return AbstractComponent.getPort();
     }
 
     private String getId(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        ServiceAddress serviceAddress = descriptor.local.getAddress();
+        //ServiceAddress serviceAddress = descriptor.getExternalAddress();
 
-        String host = serviceAddress.getUri().getHost();
+        String host = properties.getIpAddress();//serviceAddress.getUri().getHost();
         String port = getPort();
 
         return host + ":" + port + ":" + descriptor.getName();
     }
 
     private ConsulDiscoveryProperties properties4(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        ConsulDiscoveryProperties properties = new ConsulDiscoveryProperties(new InetUtils(new InetUtilsProperties()));
-
-        ServiceAddress serviceAddress = descriptor.local.getAddress();
-
-        properties.setPort(serviceAddress.getUri().getPort());
+        properties.setPort(properties.getPort());//serviceAddress.getUri().getPort());
         properties.setInstanceId(getId(descriptor));
 
         properties.setHealthCheckPath(descriptor.health);
@@ -118,7 +119,28 @@ public class ConsulComponentRegistry implements ComponentRegistry {
 
         Map<String, String> meta = new HashMap<>();
 
-        meta.put("channels", String.join(",", descriptor.channels));
+        // build channels
+
+        StringBuilder channels = new StringBuilder();
+
+        // something like: rest(http://bla:90),http("https://hhh:90)
+        boolean first = true;
+        for ( ServiceAddress external : descriptor.getExternalAddresses()) {
+            if ( !first )
+                channels.append(",");
+
+            channels
+                    .append(external.getChannel())
+                    .append("(")
+                    .append(external.getUri().toString())
+                    .append(")");
+
+            first = false;
+        }
+
+        meta.put("channels", channels.toString());
+
+        //
 
         service.setPort(props.getPort());
         service.setId(props.getInstanceId());

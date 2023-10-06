@@ -5,6 +5,8 @@ package com.serious.service;
  * All rights reserved
  */
 
+import java.util.List;
+
 /**
  * @author Andreas Ernst
  */
@@ -13,7 +15,7 @@ public interface Component extends Service {
 
     void shutdown();
 
-    ServiceAddress getAddress();
+    List<ServiceAddress> getAddresses();
 
     ComponentStatus getStatus();
 
