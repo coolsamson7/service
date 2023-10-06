@@ -8,6 +8,7 @@ package com.serious.service.injections;
 import com.serious.injection.AbstractInjection;
 import com.serious.injection.InjectorFactory;
 import com.serious.lang.Keywords;
+import com.serious.service.BaseDescriptor;
 import com.serious.service.ComponentDescriptor;
 import com.serious.service.ComponentManager;
 import com.serious.service.Service;
@@ -53,9 +54,10 @@ public class ServiceInjection extends AbstractInjection<Service, InjectService, 
     @Override
     public Service computeValue(Object targetObject, Class accessibleObjectType, AccessibleObject accessibleObject, InjectService annotation, Keywords context) {
         @SuppressWarnings("unchecked") Class<? extends Service> serviceInterface = (Class<? extends Service>) ((Field) accessibleObject).getType();
+// TODO
+        BaseDescriptor s = BaseDescriptor.forService(serviceInterface);
 
-
-        if (annotation.preferLocal() && ComponentDescriptor.services.get(serviceInterface).local != null)
+        if (annotation.preferLocal() &&BaseDescriptor.forService(serviceInterface).local != null)
             return componentManager.acquireLocalService(serviceInterface);
         else {
             return componentManager.acquireService(serviceInterface, annotation.channels());
