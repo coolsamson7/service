@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Andreas Ernst
@@ -29,7 +26,8 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
 
     public String health;
     ComponentManager componentManager;
-    public static Map<String, ServiceDescriptor<?>> services = new HashMap<>();
+
+    List<ServiceDescriptor> services = new LinkedList<>();
 
     // constructor
 
@@ -83,7 +81,7 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
 
         // services
 
-        for (ServiceDescriptor<?> serviceDescriptor : services.values())
+        for (ServiceDescriptor<?> serviceDescriptor : services)
             serviceDescriptor.registerBeans(registry);
     }
 
@@ -97,7 +95,7 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
     }
 
     private <T extends Service> void registerService(Class<T> service) {
-        services.put(service.getName(), new ServiceDescriptor<T>((ComponentDescriptor<Component>) this, service));
+        services.add(new ServiceDescriptor<T>((ComponentDescriptor<Component>) this, service));
     }
 
     // public
@@ -118,7 +116,7 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
 
         builder.append("\tservices:").append("\n");
 
-        for (ServiceDescriptor<?> serviceDescriptor : services.values())
+        for (ServiceDescriptor<?> serviceDescriptor : services)
             serviceDescriptor.report(builder);
     }
 }

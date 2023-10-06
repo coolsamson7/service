@@ -54,10 +54,8 @@ public class ServiceInjection extends AbstractInjection<Service, InjectService, 
     @Override
     public Service computeValue(Object targetObject, Class accessibleObjectType, AccessibleObject accessibleObject, InjectService annotation, Keywords context) {
         @SuppressWarnings("unchecked") Class<? extends Service> serviceInterface = (Class<? extends Service>) ((Field) accessibleObject).getType();
-// TODO
-        BaseDescriptor s = BaseDescriptor.forService(serviceInterface);
 
-        if (annotation.preferLocal() &&BaseDescriptor.forService(serviceInterface).local != null)
+        if (annotation.preferLocal() && BaseDescriptor.forService(serviceInterface).local != null)
             return componentManager.acquireLocalService(serviceInterface);
         else {
             return componentManager.acquireService(serviceInterface, annotation.channels());
