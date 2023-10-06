@@ -65,7 +65,7 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
         // check for channels referencing a dead service instance
 
-        ServiceInstance instance = channel.getAddress().getServiceInstance();
+        ServiceInstance instance = channel.getAddress().getServiceInstance(); // TODO: what if it is a cluster address?
 
         if (!newMap.containsKey(componentDescriptor.getName()) || newMap.get(componentDescriptor.getName()).stream().noneMatch(serviceInstance -> serviceInstance.getInstanceId().equals(instance.getInstanceId()))) {
             log.info("channel {} for {} is dead", channel.getAddress(), componentDescriptor.getName());

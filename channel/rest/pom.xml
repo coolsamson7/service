@@ -48,6 +48,14 @@
         <!-- dependencies -->
 
         <dependency>
+            <groupId>com.serious</groupId>
+            <artifactId>service-channel-rest</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <!--  ${project.version}} -->
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>

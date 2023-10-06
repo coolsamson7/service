@@ -81,13 +81,13 @@ interface TestService extends Service {
 @ComponentHost(channels = {"test"})
 class TestComponentImpl extends AbstractComponent implements TestComponent {
     @Override
-    public ServiceAddress getAddress() {
-        return null;
+    public String hello(String world) {
+        return "hello " + world;
     }
 
     @Override
-    public String hello(String world) {
-        return "hello " + world;
+    public List<ServiceAddress> getAddresses() {
+        return null;
     }
 }
 

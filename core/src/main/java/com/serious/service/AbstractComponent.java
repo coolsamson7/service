@@ -16,7 +16,7 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 public abstract class AbstractComponent implements Component {
     // static data
 
-    static String port;
+    public static String port; // TODO
 
     static InetUtils inet = new InetUtils(new InetUtilsProperties());
 
