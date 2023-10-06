@@ -127,7 +127,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
+    <!--build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -142,5 +142,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build-->
 </project>

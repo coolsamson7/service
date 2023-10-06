@@ -1,9 +1,9 @@
 === TODO
 
 
-kd
 === LATER
 
+- publish ( guthub package )
 - kotlin
 - mehrere channels? loadbalancer, etc.
 - layers
@@ -12,12 +12,19 @@ kd
 
 === NOW
 
-- cluster-adresse?
+- mvn package
+- test für
+ - preferred channel
+ - mehrere channels da
+ - channel tot???
+ - rest channel?
 
-GITHUP Actins & PIpeline
+- cluster-adresse?
 
 === DONE
 
+- github action
+- initialer test
 - channel nicht im componentdescriptor
 - customize channel
 - watchdog...
