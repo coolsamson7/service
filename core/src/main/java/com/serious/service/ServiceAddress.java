@@ -84,8 +84,8 @@ public class ServiceAddress {
 
         if ( channel != null) {
             builder
-                    .append("[channel: ").append(this.channel)
-                    .append(" uri: ").append(this.uri.toString()).append("]");
+                    .append(this.channel).append("(")
+                    .append(this.uri.toString()).append(")");
         }
         else builder.append("-");
 

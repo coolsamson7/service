@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author Andreas Ernst
  */
-@ComponentHost(channels = {"rest"}, health = "/api/test-remote-component/test-health")
+@ComponentHost(health = "/api/test-remote-component/test-health")
 @RestController()
 @RequestMapping("/api/test-remote-component/")
 public class TestRemoteComponentImpl extends AbstractComponent implements TestRemoteComponent {

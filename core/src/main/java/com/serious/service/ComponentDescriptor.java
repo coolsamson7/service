@@ -21,8 +21,6 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
 
     // instance data
 
-    public String[] channels = {};
-
     public String health;
     ComponentManager componentManager;
 
@@ -53,10 +51,6 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
             Class componentClass = class4Name(implementingBeans.get(this).getBeanClassName());
 
             ComponentHost host = (ComponentHost) componentClass.getAnnotation(ComponentHost.class);
-
-            // channels
-
-            channels = host.channels();
 
             // health
 
@@ -110,14 +104,6 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
             for (ServiceAddress externalAddress : getExternalAddresses())
                 builder.append("\t\t").append(externalAddress.toString()).append("\n");
         }
-
-        builder
-                .append("\tchannels:");
-
-        for (String channel : channels)
-            builder.append(" ").append(channel);
-
-        builder.append("\n");
 
         // services
 

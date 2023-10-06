@@ -78,7 +78,7 @@ interface TestService extends Service {
     String hello(String world);
 }
 
-@ComponentHost(channels = {"test"})
+@ComponentHost()
 class TestComponentImpl extends AbstractComponent implements TestComponent {
     @Override
     public String hello(String world) {

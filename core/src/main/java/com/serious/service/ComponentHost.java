@@ -17,7 +17,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Component
 public @interface ComponentHost {
-    String[] channels() default {"local"};
-
     String health() default "/health";
 }

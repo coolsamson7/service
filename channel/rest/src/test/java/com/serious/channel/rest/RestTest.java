@@ -69,7 +69,7 @@ interface TestComponent extends com.serious.service.Component {
     String hello(String world);
 }
 
-@ComponentHost(channels = {"rest"}) // actually not needed TODO
+@ComponentHost()
 class TestComponentImpl extends AbstractComponent implements TestComponent {
     @Override
     public String hello(String world) {
