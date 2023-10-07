@@ -11,12 +11,12 @@
 
 === NOW
 
+- common serviuce impl
 - mvn package
 - test für
  - preferred channel
  - mehrere channels da
  - channel tot???
- - rest channel?
 
  - customize... nicht build!
 

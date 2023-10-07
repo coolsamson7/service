@@ -6,7 +6,8 @@ package com.serious.channel.rest;/*
 
 
 import com.serious.service.*;
-import com.serious.service.annotations.InjectService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,16 +19,21 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+class Foo {
+    public String id;
+
+
+}
 @Component
 class TestComponentComponentRegistry implements ComponentRegistry {
 
@@ -56,26 +62,92 @@ class TestComponentComponentRegistry implements ComponentRegistry {
 }
 
 @ServiceInterface()
-interface TestService extends Service {
-    @GetMapping("/hello/{world}")
+@RequestMapping("flux/")
+interface FluxMethods extends Service {
+    @RequestMapping(path = "get/{world}", method = RequestMethod.GET)
     @ResponseBody
-    String hello(@PathVariable("world") String world);
+    Mono<String> get(@PathVariable("world") String world);
+
+    @RequestMapping(path = "get-list/{world}/{count}", method = RequestMethod.GET)
+    @ResponseBody
+    Flux<String> getList(@PathVariable("world") String world, @RequestParam int count);
+}
+
+@ServiceInterface()
+@RequestMapping("request/")
+interface RequestMappingMethods extends Service {
+    @RequestMapping(path = "get-variable/{world}", method = RequestMethod.GET)
+    @ResponseBody
+    String getVariable(@PathVariable("world") String world);
+
+    @RequestMapping(path = "get-variables/{bar}/{foo}", method = RequestMethod.GET)
+    @ResponseBody
+    String getVariables(@PathVariable("foo") String foo, @PathVariable("bar") String bar);
+
+    @RequestMapping(path ="get-variable-no-name/{world}", method = RequestMethod.GET)
+    @ResponseBody
+    String getVariableNoName(@PathVariable String world);
+
+    @RequestMapping(path ="put-variable/{world}", method = RequestMethod.PUT)
+    @ResponseBody
+    String putVariable(@PathVariable("world") String world);
+
+    @RequestMapping(path ="delete/{world}", method = RequestMethod.DELETE)
+    @ResponseBody
+    String delete(@PathVariable("world") String world);
+
+    @RequestMapping(path ="post/{world}", method = RequestMethod.POST)
+    @ResponseBody
+    Foo post(@RequestBody Foo foo);
+
+    @RequestMapping(path = "request-param", method = RequestMethod.GET)
+    @ResponseBody
+    Foo postRequestParam(@RequestParam("foo") Foo foo, @RequestParam("bar") int bar);
+}
+
+@ServiceInterface()
+interface BasicMethods extends Service {
+    @GetMapping("/get-variable/{world}")
+    @ResponseBody
+    String getVariable(@PathVariable("world") String world);
+
+    @GetMapping("/get-variables/{bar}/{foo}")
+    @ResponseBody
+    String getVariables(@PathVariable("foo") String foo, @PathVariable("bar") String bar);
+
+    @GetMapping("/get-variable-no-name/{world}")
+    @ResponseBody
+    String getVariableNoName(@PathVariable String world);
+
+    @PutMapping("/put-variable/{world}")
+    @ResponseBody
+    String putVariable(@PathVariable("world") String world);
+
+    @DeleteMapping("/delete/{world}")
+    @ResponseBody
+    String delete(@PathVariable("world") String world);
+
+    @PostMapping("/post/{world}")
+    @ResponseBody
+    Foo post(@RequestBody Foo foo);
+
+    @GetMapping("/request-param")
+    @ResponseBody
+    Foo postRequestParam(@RequestParam("foo") Foo foo, @RequestParam("bar") int bar);
 }
 
 
 @ComponentInterface(
-        services = {TestService.class})
+        services = {
+                BasicMethods.class,
+                RequestMappingMethods.class,
+                FluxMethods.class
+        })
 interface TestComponent extends com.serious.service.Component {
-    String hello(String world);
 }
 
 @ComponentHost()
 class TestComponentImpl extends AbstractComponent implements TestComponent {
-    @Override
-    public String hello(String world) {
-        return "hello " + world;
-    }
-
     @Override
     public List<ServiceAddress> getAddresses() {
         return Collections.singletonList(new ServiceAddress("rest", URI.create("http://localhost:" + ":" + getPort())));
@@ -84,15 +156,107 @@ class TestComponentImpl extends AbstractComponent implements TestComponent {
 
 @Component
 @RestController
-class TestServiceImpl extends AbstractService implements TestService {
+class FluxMethodsImpl extends AbstractService implements FluxMethods {
     @Override
-    public String hello(String world) {
-        return "hello " + world;
+    public Mono<String> get(String world) {
+        return Mono.just(world);
+    }
+
+    @Override
+    public Flux<String> getList(String world, int count) {
+        List<String> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++)
+            result.add(world + String.valueOf(i));
+
+        return Flux.fromArray(result.toArray(new String[0]));
+    }
+}
+
+@Component
+@RestController
+class BasicMethodsImpl extends AbstractService implements BasicMethods {
+    @Override
+    public String getVariable(String world) {
+        return world;
+    }
+
+    @Override
+    public String getVariables(String foo, String bar) {
+        return foo + bar;
+    }
+
+    @Override
+    public String getVariableNoName(String world) {
+        return world;
+    }
+
+    @Override
+    public String putVariable(String world) {
+        return world;
+    }
+
+    @Override
+    public String delete(String world) {
+        return world;
+    }
+
+    @Override
+    public Foo post(Foo foo) {
+        return foo;
+    }
+
+    @Override
+    public Foo postRequestParam(Foo foo, int bar) {
+        foo.id = String.valueOf(bar);
+
+        return foo;
+    }
+}
+
+@Component
+@RestController
+class RequestMappingMethodsImpl extends AbstractService implements RequestMappingMethods {
+    @Override
+    public String getVariable(String world) {
+        return world;
+    }
+
+    @Override
+    public String getVariables(String foo, String bar) {
+        return foo + bar;
+    }
+
+    @Override
+    public String getVariableNoName(String world) {
+        return world;
+    }
+
+    @Override
+    public String putVariable(String world) {
+        return world;
+    }
+
+    @Override
+    public String delete(String world) {
+        return world;
+    }
+
+    @Override
+    public Foo post(Foo foo) {
+        return foo;
+    }
+
+    @Override
+    public Foo postRequestParam(Foo foo, int bar) {
+        foo.id = String.valueOf(bar);
+
+        return foo;
     }
 }
 
 
 // test classes
+
 @Configuration
 @ComponentScan
 @Import(ServiceConfiguration.class)
@@ -101,7 +265,6 @@ class TestConfig {
     }
 }
 @SpringBootTest(classes = {TestConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@Import(ServiceConfiguration.class)
 @EnableAutoConfiguration
 class RestTest {
     // instance data
@@ -114,15 +277,54 @@ class RestTest {
     @Autowired
     ServiceInstanceRegistry serviceInstanceRegistry;
 
+    // lifecycle
+
+    @BeforeEach
+    void before() {
+        if (AbstractComponent.port.equals("0")) {
+            AbstractComponent.port = String.valueOf(port);
+            serviceInstanceRegistry.startup();
+        }
+    }
+
     // test
 
     @Test
-    void testRemoteService() {
-        AbstractComponent.port = String.valueOf(port);
-        serviceInstanceRegistry.startup();
+    void testBasicMethods() {
+        BasicMethods service = componentManager.acquireService(BasicMethods.class);
 
-        TestService service = componentManager.acquireService(TestService.class);
+        Foo foo = new Foo();
+        foo.id = "id";
 
-        assertEquals("hello world", service.hello("world"));
+        //assertEquals("world", service.delete("world"));
+        assertEquals("world", service.getVariable("world"));
+        assertEquals("world", service.getVariableNoName("world"));
+        //assertEquals("id", service.post(foo).id);
+        //assertEquals("1", service.postRequestParam(foo, 1).id);
+        //assertEquals("foobar", service.getVariables("foo", "bar"));
+        //assertEquals("world", service.putVariable("world"));
+        assertEquals("world", service.getVariableNoName("world"));
+    }
+
+    @Test
+    void testRequestMappingMethods() {
+        RequestMappingMethods service = componentManager.acquireService(RequestMappingMethods.class);
+
+        Foo foo = new Foo();
+        foo.id = "id";
+
+        //assertEquals("world", service.delete("world"));
+        //assertEquals("world", service.getVariable("world"));
+        //assertEquals("world", service.getVariableNoName("world"));
+        //assertEquals("id", service.post(foo).id);
+        //assertEquals("1", service.postRequestParam(foo, 1).id);
+        //assertEquals("foobar", service.getVariables("foo", "bar"));
+        //assertEquals("world", service.putVariable("world"));
+        //assertEquals("world", service.getVariableNoName("world"));
+    }
+
+    @Test
+    void testFlux() {
+        // TODO
     }
 }
