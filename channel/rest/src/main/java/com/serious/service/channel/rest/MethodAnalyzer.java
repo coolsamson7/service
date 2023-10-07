@@ -155,7 +155,11 @@ public class MethodAnalyzer {
             while (matcher.find()) {
                 String match = matcher.group(1);
 
-                variables.add(pathVariables.get(match));
+                Integer argumentIndex = pathVariables.get(match);
+                if ( argumentIndex == null)
+                    throw new ServiceRegistryException("missing @PathVariable for " + match);
+
+                variables.add(argumentIndex);
             }
 
             this.variables = variables.toArray(new Integer[0]);
@@ -196,6 +200,7 @@ public class MethodAnalyzer {
         PostAnalyzer(WebClient webClient, Method method) {
             super(webClient, method);
         }
+
         // implement
 
         public RequestBuilder build() {
@@ -208,6 +213,10 @@ public class MethodAnalyzer {
             String path = getPath(postMapping.value()[0]);
 
             scanMethod(path);
+
+            if ( body == -1)
+                throw new ServiceRegistryException("missing @RequestBody");
+
             // done
 
             return getBuilder.uri(path, variables/* index */, requestParams).body(body);
@@ -235,7 +244,9 @@ public class MethodAnalyzer {
 
             // done
 
-            return getBuilder.uri(path, variables/* index */, requestParams).body(body);
+            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
+
+            return body >= 0 ? uri.body(body) : uri;
         }
     }
 
@@ -257,9 +268,11 @@ public class MethodAnalyzer {
             String path = getPath(deleteMapping.value()[0]);
 
             scanMethod(path);
+
             // done
 
-            return getBuilder.uri(path, variables/* index */, requestParams).body(body);
+            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
+            return body >= 0 ? uri.body(body) : uri;
         }
     }
 
@@ -294,13 +307,19 @@ public class MethodAnalyzer {
 
             // scan path
 
-            String path = requestMapping.value()[0];
+            String path = requestMapping.path()[0];
 
             scanMethod(path);
 
+            // checks
+
+            if (method == RequestMethod.POST && body == -1)
+                throw new ServiceRegistryException("missing @RequestBody");
+
             // done
 
-            return getBuilder.uri(path, variables/* index */, requestParams).body(body);
+            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
+            return body >= 0 ? uri.body(body)  :uri;
         }
     }
 

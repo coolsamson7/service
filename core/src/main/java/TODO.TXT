@@ -11,7 +11,8 @@
 
 === NOW
 
-- common serviuce impl
+${project.version}?
+
 - mvn package
 - test für
  - preferred channel
@@ -22,6 +23,7 @@
 
 === DONE
 
+- common serviuce impl
 - cluster vs. local
 - github action
 - initialer test

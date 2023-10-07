@@ -96,13 +96,13 @@ interface RequestMappingMethods extends Service {
     @ResponseBody
     String delete(@PathVariable("world") String world);
 
-    @RequestMapping(path ="post/{world}", method = RequestMethod.POST)
+    @RequestMapping(path ="post", method = RequestMethod.POST)
     @ResponseBody
     Foo post(@RequestBody Foo foo);
 
-    @RequestMapping(path = "request-param", method = RequestMethod.GET)
+    @RequestMapping(path = "request-param", method = RequestMethod.POST)
     @ResponseBody
-    Foo postRequestParam(@RequestParam("foo") Foo foo, @RequestParam("bar") int bar);
+    Foo postRequestParam(@RequestBody Foo foo, @RequestParam("bar") int bar);
 }
 
 @ServiceInterface()
@@ -127,13 +127,13 @@ interface BasicMethods extends Service {
     @ResponseBody
     String delete(@PathVariable("world") String world);
 
-    @PostMapping("/post/{world}")
+    @PostMapping("/post")
     @ResponseBody
     Foo post(@RequestBody Foo foo);
 
-    @GetMapping("/request-param")
+    @PostMapping("/request-param")
     @ResponseBody
-    Foo postRequestParam(@RequestParam("foo") Foo foo, @RequestParam("bar") int bar);
+    Foo postRequestParam(@RequestBody Foo foo, @RequestParam("bar") int bar);
 }
 
 
@@ -296,13 +296,13 @@ class RestTest {
         Foo foo = new Foo();
         foo.id = "id";
 
-        //assertEquals("world", service.delete("world"));
+        assertEquals("world", service.delete("world"));
         assertEquals("world", service.getVariable("world"));
         assertEquals("world", service.getVariableNoName("world"));
-        //assertEquals("id", service.post(foo).id);
-        //assertEquals("1", service.postRequestParam(foo, 1).id);
+        assertEquals("id", service.post(foo).id);
+        assertEquals("1", service.postRequestParam(foo, 1).id);
         //assertEquals("foobar", service.getVariables("foo", "bar"));
-        //assertEquals("world", service.putVariable("world"));
+        assertEquals("world", service.putVariable("world"));
         assertEquals("world", service.getVariableNoName("world"));
     }
 
@@ -313,14 +313,14 @@ class RestTest {
         Foo foo = new Foo();
         foo.id = "id";
 
-        //assertEquals("world", service.delete("world"));
-        //assertEquals("world", service.getVariable("world"));
-        //assertEquals("world", service.getVariableNoName("world"));
-        //assertEquals("id", service.post(foo).id);
-        //assertEquals("1", service.postRequestParam(foo, 1).id);
+        assertEquals("world", service.delete("world"));
+        assertEquals("world", service.getVariable("world"));
+        assertEquals("world", service.getVariableNoName("world"));
+        assertEquals("id", service.post(foo).id);
+        assertEquals("1", service.postRequestParam(foo, 1).id);
         //assertEquals("foobar", service.getVariables("foo", "bar"));
-        //assertEquals("world", service.putVariable("world"));
-        //assertEquals("world", service.getVariableNoName("world"));
+        assertEquals("world", service.putVariable("world"));
+        assertEquals("world", service.getVariableNoName("world"));
     }
 
     @Test
