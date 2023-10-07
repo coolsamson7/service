@@ -301,7 +301,7 @@ class RestTest {
         assertEquals("world", service.getVariableNoName("world"));
         assertEquals("id", service.post(foo).id);
         assertEquals("1", service.postRequestParam(foo, 1).id);
-        //assertEquals("foobar", service.getVariables("foo", "bar"));
+        assertEquals("foobar", service.getVariables("foo", "bar"));
         assertEquals("world", service.putVariable("world"));
         assertEquals("world", service.getVariableNoName("world"));
     }

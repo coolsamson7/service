@@ -125,7 +125,7 @@ public class RequestBuilder<S extends WebClient.RequestHeadersSpec<S>> {
 
                 // done
 
-                return p.build(args);
+                return p.build(ids);
             });
         }
     }

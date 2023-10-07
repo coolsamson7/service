@@ -11,6 +11,10 @@
 
 === NOW
 
+delta!
+
+foo.bar
+
 ${project.version}?
 
 - mvn package
