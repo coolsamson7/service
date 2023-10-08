@@ -11,9 +11,8 @@
 
 === NOW
 
-delta!
-
-foo.bar
+resolve -> im channelinvhandle sucks -> kein channel name!!!!
+delta einbauen!
 
 ${project.version}?
 
@@ -27,6 +26,9 @@ ${project.version}?
 
 === DONE
 
+- dispatch channel
+- delta
+- foo.bar
 - common serviuce impl
 - cluster vs. local
 - github action

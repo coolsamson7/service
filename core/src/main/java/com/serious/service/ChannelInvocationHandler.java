@@ -24,14 +24,15 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
     static Logger log = LoggerFactory.getLogger(ChannelInvocationHandler.class);
 
-    private static Map<ComponentDescriptor, ChannelInvocationHandler> handlers = new ConcurrentHashMap<>();
+    private static final Map<String, ChannelInvocationHandler> handlers = new ConcurrentHashMap<>();
 
     // static methods
 
-    public static ChannelInvocationHandler forComponent(ComponentDescriptor componentDescriptor) {
-        ChannelInvocationHandler handler = handlers.get(componentDescriptor);
+    public static ChannelInvocationHandler forComponent(ComponentDescriptor componentDescriptor, String channel) {
+        String key = componentDescriptor.getName() + ":" + channel;
+        ChannelInvocationHandler handler = handlers.get(key);
         if ( handler == null)
-            handlers.put(componentDescriptor, handler = new ChannelInvocationHandler(componentDescriptor));
+            handlers.put(key, handler = new ChannelInvocationHandler(componentDescriptor, channel));
 
         return handler;
     }
@@ -41,20 +42,20 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
         for (ChannelInvocationHandler invocationHandler : handlers.values())
             if (invocationHandler.needsUpdate(channelManager, newMap))
-                invocationHandler.resolve();
+                invocationHandler.resolve(null);
     }
 
     // instance data
 
-    private ComponentDescriptor componentDescriptor;
+    private final ComponentDescriptor componentDescriptor;
     private Channel channel;
 
     // constructor
 
-    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor) {
+    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channel) {
         this.componentDescriptor = componentDescriptor;
 
-        resolve();
+        resolve(channel);
     }
 
     // private
@@ -80,10 +81,13 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
     // public
 
-    public void resolve() {
+    public void resolve(String channelName) {
+        if ( channelName == null)
+            channelName = channel.getAddress().getChannel();
+
         ComponentManager componentManager = componentDescriptor.componentManager;
-        List<ServiceAddress> serviceAddresses = componentManager.getServiceAddresses(componentDescriptor);
-        String channelName = (serviceAddresses != null && !serviceAddresses.isEmpty()) ? serviceAddresses.get(0).getChannel() : null;
+        List<ServiceAddress> serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName);
+        //String channelName = (serviceAddresses != null && !serviceAddresses.isEmpty()) ? serviceAddresses.get(0).getChannel() : null;
         channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses);
 
         log.info("resolved channel {} for component {}", channelName, componentDescriptor);

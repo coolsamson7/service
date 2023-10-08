@@ -48,6 +48,9 @@ public class CommonComponentImpl extends AbstractComponent implements CommonComp
     @GetMapping("/uri")
     @ResponseBody
     public List<ServiceAddress> getAddresses() {
-        return Collections.singletonList(new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort())));
+        return List.of(
+                new ServiceAddress("dispatch", URI.create("http://" + getHost() + ":" + getPort())),
+                new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort()))
+        );
     }
 }

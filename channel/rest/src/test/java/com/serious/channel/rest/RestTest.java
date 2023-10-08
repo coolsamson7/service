@@ -49,7 +49,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
 
     @Override
     public List<String> getServices() {
-        return Arrays.asList("test");
+        return List.of("test");
     }
 
     @Override
@@ -57,7 +57,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
         Map<String, String> meta = new HashMap<>();
         meta.put("channels", "rest(http://localhost:" + AbstractComponent.port + ")");
 
-        return Arrays.asList(new DefaultServiceInstance("id", "test", "localhost",  Integer.valueOf(AbstractComponent.getPort()), false, meta));
+        return List.of(new DefaultServiceInstance("id", "test", "localhost", Integer.valueOf(AbstractComponent.getPort()), false, meta));
     }
 }
 
@@ -166,7 +166,7 @@ class FluxMethodsImpl extends AbstractService implements FluxMethods {
     public Flux<String> getList(String world, int count) {
         List<String> result = new ArrayList<>();
         for ( int i = 0; i < count; i++)
-            result.add(world + String.valueOf(i));
+            result.add(world + i);
 
         return Flux.fromArray(result.toArray(new String[0]));
     }

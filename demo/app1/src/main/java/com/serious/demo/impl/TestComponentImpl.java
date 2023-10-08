@@ -52,6 +52,9 @@ public class TestComponentImpl extends AbstractComponent implements TestComponen
     @GetMapping("/uri")
     @ResponseBody
     public List<ServiceAddress> getAddresses() {
-        return Collections.singletonList(new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort())));
+        return List.of(
+                new ServiceAddress("dispatch", URI.create("http://" + getHost() + ":" + getPort())),
+                new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort()))
+        );
     }
 }

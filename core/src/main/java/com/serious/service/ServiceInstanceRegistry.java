@@ -115,10 +115,52 @@ public class ServiceInstanceRegistry {
             } // for
         } // for
 
-        System.out.println(builder.toString());
+        System.out.println(builder);
+    }
+
+    private void computeDelta(Map<String, List<ServiceInstance>> oldMap, Map<String, List<ServiceInstance>> newMap) {
+        //oldMap.get("k").get(0).getInstanceId();
+
+        Set<String> oldKeys = oldMap.keySet();
+        for (String service : oldKeys) {
+            if (!newMap.containsKey(service))
+                System.out.println("deleted service " + service);
+            else {
+                // check instances
+
+                Map<String, ServiceInstance> oldInstances = new HashMap<>();
+                Map<String, ServiceInstance> newInstances = new HashMap<>();
+
+                for ( ServiceInstance serviceInstance : oldMap.get(service))
+                    oldInstances.put(serviceInstance.getInstanceId(), serviceInstance);
+
+                for ( ServiceInstance serviceInstance : newMap.get(service))
+                    newInstances.put(serviceInstance.getInstanceId(), serviceInstance);
+
+                //oldMap.get(service).stream().peek(serviceInstance -> oldInstances.put(serviceInstance.getInstanceId(), serviceInstance));
+                //newMap.get(service).stream().peek(serviceInstance -> newInstances.put(serviceInstance.getInstanceId(), serviceInstance));
+
+                // compare maps
+
+                Set<String> oldInstanceIds = oldInstances.keySet();
+                for (String instanceId : oldInstanceIds)
+                    if (!newInstances.containsKey(instanceId))
+                        System.out.println("deleted service instance " + instanceId);
+
+                for (String instanceId : newInstances.keySet())
+                    if (!oldInstanceIds.contains(instanceId))
+                        System.out.println("new service instance " + instanceId);
+            }
+        }
+
+        for (String service : newMap.keySet())
+            if (!oldMap.containsKey(service))
+                System.out.println("new service " + service);
     }
 
     public void update(Map<String, List<ServiceInstance>> newMap) {
+        computeDelta(this.serviceInstances , newMap);
+
         // recheck missing channels
 
         ChannelInvocationHandler.recheck(channelManager, newMap);

@@ -54,7 +54,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
 
     @Override
     public List<String> getServices() {
-        return Arrays.asList("test");
+        return List.of("test");
     }
 
     @Override
@@ -62,7 +62,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
         Map<String, String> meta = new HashMap<>();
         meta.put("channels", "test");
 
-        return Arrays.asList(new DefaultServiceInstance("id", "test", "localhost", 0, false, meta));
+        return List.of(new DefaultServiceInstance("id", "test", "localhost", 0, false, meta));
     }
 }
 

@@ -28,12 +28,10 @@ class TestRemoteRestServiceImpl implements TestRemoteRestService {
     }
 
     public Foo postBody(Foo foo) {
-        System.out.println("postBody");
         return foo;
     }
 
     public Mono<Foo> postBodyMono(Foo foo) {
-        System.out.println("postBodyMono");
         return Mono.just(foo);
     }
 

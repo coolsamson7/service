@@ -44,7 +44,7 @@ class ConsuleHeartbeatListener implements ApplicationListener<HeartbeatEvent> {
         if (state == null || !state.equals(event.getValue())) {
             log.info("process consul heartbeat");
 
-            List<String> services = discoveryClient.getServices().stream().filter(service ->  componentManager.componentDescriptors.keySet().contains(service)).toList();
+            List<String> services = discoveryClient.getServices().stream().filter(service ->  componentManager.componentDescriptors.containsKey(service)).toList();
 
             // create new map
 

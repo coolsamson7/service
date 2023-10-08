@@ -19,7 +19,7 @@ import java.net.URI;
 public class MissingChannel extends AbstractChannel {
     // private
 
-    private String componentName;
+    private final String componentName;
 
     // constructor
 

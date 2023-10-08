@@ -39,38 +39,51 @@ public class ServiceApplication1 {
 
         ComponentManager manager = context.getBean(ComponentManager.class);
 
-        TestRemoteRestService ts = manager.acquireService(TestRemoteRestService.class, "rest");
-
-        ts.hello();
-
-        ts = manager.acquireLocalService(TestRemoteRestService.class);
-
-        ts.hello();
-
-        TestRemoteRestService remote = manager.acquireService(TestRemoteRestService.class);
-        remote = manager.acquireService(TestRemoteRestService.class);
+        TestRemoteRestService remoteRest = manager.acquireService(TestRemoteRestService.class, "rest");
+        TestRemoteRestService remoteDispatch = manager.acquireService(TestRemoteRestService.class, "dispatch");
 
         TestRemoteRestService local = manager.acquireLocalService(TestRemoteRestService.class);
-        local = manager.acquireLocalService(TestRemoteRestService.class);
 
-        remote.hello();
+        local.hello();
+        remoteRest.hello();
+        remoteDispatch.hello();
+
+        // data
+
+        Foo foo = new Foo();
+
+        // local
 
         long loops = 10000;
         long ms = System.currentTimeMillis();
 
         for (int i = 0; i < loops; i++)
-            local.hello();
+            local.postBody(foo);
 
         long z1 = System.currentTimeMillis() - ms;
+
+        // rest
 
         ms = System.currentTimeMillis();
 
         for (int i = 0; i < loops; i++)
-            remote.hello();
+            remoteRest.postBody(foo);
 
         long z2 = System.currentTimeMillis() - ms;
 
+        // dispatch
+
+        ms = System.currentTimeMillis();
+
+        for (int i = 0; i < loops; i++)
+            remoteDispatch.postBody(foo);
+
+        long z3 = System.currentTimeMillis() - ms;
+
+        // print
+
         System.out.println(loops + " local loops in " + z1 + "ms = " + (((double) z1) / loops) + "ms/loop");
-        System.out.println(loops + " remote loops in " + z2 + "ms = " + (((double) z2) / loops) + "ms/loop");
+        System.out.println(loops + " remote rest loops in " + z2 + "ms = " + (((double) z2) / loops) + "ms/loop");
+        System.out.println(loops + " remote dispatch loops in " + z3 + "ms = " + (((double) z3) / loops) + "ms/loop");
     }
 }
