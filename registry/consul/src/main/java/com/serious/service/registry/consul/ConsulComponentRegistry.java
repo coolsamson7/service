@@ -26,7 +26,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-class ConsuleHeartbeatListener implements ApplicationListener<HeartbeatEvent> {
+class ConsulHeartbeatListener implements ApplicationListener<HeartbeatEvent> {
     // instance data
 
     @Autowired

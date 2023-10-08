@@ -13,8 +13,6 @@
 
 delta einbauen bzw. logik validieren! -> resolve???
 
-${project.version}?
-
 - mvn package
 - test für
  - preferred channel

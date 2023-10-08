@@ -99,7 +99,7 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
                 .append(this.serviceInterface.getName()).append("\n");
 
         if (hasImplementation()) {
-            builder.append("\taddress: ");
+            builder.append("\taddress:\n");
 
             for (ServiceAddress externalAddress : getExternalAddresses())
                 builder.append("\t\t").append(externalAddress.toString()).append("\n");

@@ -21,6 +21,63 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class ServiceInstanceRegistry {
+    // local classes
+
+    public static class Delta {
+        // instance data
+
+        Map<String,List<ServiceInstance>> deletedInstances = new HashMap<>();
+        Map<String,List<ServiceInstance>> addedInstances = new HashMap<>();
+
+        // private
+
+        List<ServiceInstance> getDeletedInstances(String service) {
+            return deletedInstances.computeIfAbsent(service, k -> new LinkedList<>());
+        }
+
+        List<ServiceInstance> getAddedInstances(String service) {
+            return addedInstances.computeIfAbsent(service, k -> new LinkedList<>());
+        }
+
+        // public
+
+        public boolean isDeleted(ServiceInstance instance) {
+            for (List<ServiceInstance> instances : deletedInstances.values())
+                if ( instances.contains(instance))
+                    return true;
+
+            return false;
+        }
+
+        public void deletedServices(String service, List<ServiceInstance> instances) {
+            getDeletedInstances(service).addAll(instances);
+        }
+        public void deletedService(String service, ServiceInstance instance) {
+            getDeletedInstances(service).add(instance);
+        }
+
+        public void addedService(String service, ServiceInstance instance) {
+            getAddedInstances(service).add(instance);
+        }
+        public void addedServices(String service, List<ServiceInstance> instances) {
+            getAddedInstances(service).addAll(instances);
+        }
+
+        public boolean isEmpty() {
+            return addedInstances.isEmpty() && deletedInstances.isEmpty();
+        }
+
+        public void report() {
+            for ( String service : deletedInstances.keySet())
+                for (ServiceInstance instance : deletedInstances.get(service))
+                    System.out.println("delete " + service + " instance " + instance.toString());
+
+            for ( String service : addedInstances.keySet())
+                for (ServiceInstance instance : addedInstances.get(service))
+                    System.out.println("added " + service + " instance " + instance.toString());
+        }
+    }
+
     // instance data
     @Autowired
     ChannelManager channelManager;
@@ -56,10 +113,16 @@ public class ServiceInstanceRegistry {
                 })
                 .collect(Collectors.toList());
     }
+
+    private List<ServiceInstance> getInstances(ComponentDescriptor<?> componentDescriptor) {
+        List<ServiceInstance> instances = this.serviceInstances.get(componentDescriptor.getName());
+
+        return instances != null ? instances : new ArrayList<>();
+    }
     //
 
     List<ServiceAddress> getServiceAddresses(ComponentDescriptor<?> componentDescriptor, String... preferredChannels) {
-        List<ServiceInstance> instances = this.serviceInstances.get(componentDescriptor.getName());
+        List<ServiceInstance> instances = getInstances(componentDescriptor);
         Map<ServiceInstance, List<ServiceAddress>> addresses = new HashMap<>();
 
         // extract addresses
@@ -70,7 +133,7 @@ public class ServiceInstanceRegistry {
         // figure out a matching channel
 
         String channelName = null;
-        if (instances != null && !instances.isEmpty()) {
+        if (!instances.isEmpty()) {
             if (preferredChannels.length == 0) {
                 channelName = addresses.get(instances.get(0)).get(0).getChannel();
             }
@@ -88,8 +151,9 @@ public class ServiceInstanceRegistry {
             }
         }
 
-        if ( instances != null && channelName != null) {
+        if (channelName != null) {
             String finalChannelName = channelName;
+
             return instances.stream()
                     .filter(serviceInstance ->  addresses.get(serviceInstance).stream().anyMatch(address -> address.getChannel().equals(finalChannelName)))
                     .map(serviceInstance -> new ServiceAddress(finalChannelName, serviceInstance))
@@ -118,13 +182,16 @@ public class ServiceInstanceRegistry {
         System.out.println(builder);
     }
 
-    private void computeDelta(Map<String, List<ServiceInstance>> oldMap, Map<String, List<ServiceInstance>> newMap) {
-        //oldMap.get("k").get(0).getInstanceId();
+
+
+    private Delta computeDelta(Map<String, List<ServiceInstance>> oldMap, Map<String, List<ServiceInstance>> newMap) {
+        Delta delta = new Delta();
 
         Set<String> oldKeys = oldMap.keySet();
         for (String service : oldKeys) {
             if (!newMap.containsKey(service))
-                System.out.println("deleted service " + service);
+                delta.deletedServices(service, oldMap.get(service));//System.out.println("deleted service " + service);
+
             else {
                 // check instances
 
@@ -145,25 +212,31 @@ public class ServiceInstanceRegistry {
                 Set<String> oldInstanceIds = oldInstances.keySet();
                 for (String instanceId : oldInstanceIds)
                     if (!newInstances.containsKey(instanceId))
-                        System.out.println("deleted service instance " + instanceId);
+                        delta.deletedService(service, oldInstances.get(instanceId));//System.out.println("deleted service instance " + instanceId);
 
                 for (String instanceId : newInstances.keySet())
                     if (!oldInstanceIds.contains(instanceId))
-                        System.out.println("new service instance " + instanceId);
+                        delta.addedService(service, newInstances.get(instanceId));//System.out.println("new service instance " + instanceId);
             }
         }
 
         for (String service : newMap.keySet())
             if (!oldMap.containsKey(service))
-                System.out.println("new service " + service);
+                delta.addedServices(service, newMap.get(service));//System.out.println("new service " + service);
+
+        return delta;
     }
 
     public void update(Map<String, List<ServiceInstance>> newMap) {
-        computeDelta(this.serviceInstances , newMap);
+        Delta delta = computeDelta(this.serviceInstances , newMap);
 
-        // recheck missing channels
+        if (!delta.isEmpty()) {
+            delta.report();
 
-        ChannelInvocationHandler.recheck(channelManager, newMap);
+            // recheck missing channels
+
+            ChannelInvocationHandler.recheck(channelManager, delta);
+        }
 
         // new map
 

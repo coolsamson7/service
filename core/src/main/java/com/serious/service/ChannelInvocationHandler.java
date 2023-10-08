@@ -8,7 +8,6 @@ package com.serious.service;
 import com.serious.service.channel.MissingChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -37,58 +36,57 @@ public class ChannelInvocationHandler implements InvocationHandler {
         return handler;
     }
 
-    public static void recheck(ChannelManager channelManager, Map<String, List<ServiceInstance>> newMap) {
+    public static void recheck(ChannelManager channelManager, ServiceInstanceRegistry.Delta delta) {
         // recheck missing channels
 
         for (ChannelInvocationHandler invocationHandler : handlers.values())
-            if (invocationHandler.needsUpdate(channelManager, newMap))
-                invocationHandler.resolve(null, null);
+            invocationHandler.checkUpdate(channelManager, delta);
     }
 
     // instance data
 
     private final ComponentDescriptor componentDescriptor;
+    private String channelName;
     private Channel channel;
 
     // constructor
 
-    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channel, List<ServiceAddress> addresses) {
+    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channelName, List<ServiceAddress> addresses) {
         this.componentDescriptor = componentDescriptor;
 
-        resolve(channel, addresses);
+        resolve(this.channelName = channelName, addresses);
     }
 
     // private
 
-    private boolean needsUpdate(ChannelManager channelManager, Map<String, List<ServiceInstance>> newMap) {
-        if ( channel instanceof MissingChannel)
-            return true;
+    private boolean checkUpdate(ChannelManager channelManager, ServiceInstanceRegistry.Delta delta) {
+        if ( channel instanceof MissingChannel) {
+            ComponentManager componentManager = componentDescriptor.componentManager;
+            List<ServiceAddress> serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName);
 
-        // check for channels referencing a dead service instance
+            channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses);
+        }
+        else {
+           if (channel.needsUpdate(delta)) {
+               // remove
 
-        ServiceInstance instance = channel.getAddress().getServiceInstance(); // TODO: what if it is a cluster address?
+               log.info("channel {} for {} is dead", channel.getPrimaryAddress(), componentDescriptor.getName());
 
-        if (!newMap.containsKey(componentDescriptor.getName()) || newMap.get(componentDescriptor.getName()).stream().noneMatch(serviceInstance -> serviceInstance.getInstanceId().equals(instance.getInstanceId()))) {
-            log.info("channel {} for {} is dead", channel.getAddress(), componentDescriptor.getName());
+               channelManager.removeChannel(channel);
 
-            channelManager.removeChannel(channel);
+               // resolve
 
-            return true;
+               resolve(channelName, componentDescriptor.componentManager.getServiceAddresses(componentDescriptor, channelName));
+           }
         }
 
-        return false;
+        return true;
     }
 
     // public
 
     public void resolve(String channelName, List<ServiceAddress> addresses) {
-        if ( channelName == null)
-            channelName = channel.getAddress().getChannel(); // In case of updates?? TODO
-
-        ComponentManager componentManager = componentDescriptor.componentManager;
-        List<ServiceAddress> serviceAddresses = addresses != null ? addresses : componentManager.getServiceAddresses(componentDescriptor, channelName);
-
-        channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses);
+        channel = componentDescriptor.componentManager.getChannel(componentDescriptor, channelName, addresses);
 
         log.info("resolved channel {} for component {}", channelName, componentDescriptor);
     }

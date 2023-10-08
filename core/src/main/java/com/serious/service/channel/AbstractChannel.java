@@ -8,6 +8,7 @@ package com.serious.service.channel;
 import com.serious.service.Channel;
 import com.serious.service.ChannelManager;
 import com.serious.service.ServiceAddress;
+import com.serious.service.ServiceInstanceRegistry;
 import org.springframework.security.util.SimpleMethodInvocation;
 
 import java.lang.reflect.InvocationHandler;
@@ -32,12 +33,16 @@ public abstract class AbstractChannel implements Channel, InvocationHandler {
 
     // implement Channel
 
-    public ServiceAddress getAddress() {
+    public ServiceAddress getPrimaryAddress() {
         return serviceAddress;
     }
 
-    public void setAddress(ServiceAddress serviceAddress) {
-        this.serviceAddress = serviceAddress;
+    public List<ServiceAddress> getAddresses() {
+        return serviceAddresses;
+    }
+
+    public boolean needsUpdate(ServiceInstanceRegistry.Delta delta) {
+        return delta.isDeleted(getPrimaryAddress().getServiceInstance()); // TODO cluster??
     }
 
     public void setup(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses) {

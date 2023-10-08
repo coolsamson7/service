@@ -6,7 +6,6 @@ package com.serious.service;
  */
 
 import org.aopalliance.intercept.MethodInterceptor;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
 import java.util.List;
@@ -15,9 +14,11 @@ import java.util.List;
  * @author Andreas Ernst
  */
 public interface Channel extends MethodInterceptor, InvocationHandler {
-    ServiceAddress getAddress();
+    ServiceAddress getPrimaryAddress();
 
-    void setAddress(ServiceAddress address);
+    List<ServiceAddress> getAddresses();
+
+    boolean needsUpdate(ServiceInstanceRegistry.Delta delta);
 
     void setup(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses);
 }

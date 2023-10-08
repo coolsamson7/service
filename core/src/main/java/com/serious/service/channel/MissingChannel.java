@@ -27,7 +27,7 @@ public class MissingChannel extends AbstractChannel {
         super(channelManager);
 
         this.componentName = componentName;
-        setAddress(new ServiceAddress());
+        this.serviceAddress = new ServiceAddress(); // Hmm?
     }
 
     // implement Channel

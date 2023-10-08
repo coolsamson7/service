@@ -5,7 +5,6 @@ package com.serious.service;
  * All rights reserved
  */
 
-import com.serious.service.channel.AbstractChannelBuilder;
 import com.serious.service.channel.ChannelBuilder;
 import com.serious.util.Exceptions;
 import jakarta.annotation.PostConstruct;
@@ -100,7 +99,7 @@ public class ChannelManager implements ApplicationContextAware {
     }
 
     public void removeChannel(Channel channel) {
-        this.channels.remove(channel.getAddress());
+        this.channels.remove(channel.getPrimaryAddress());
     }
 
     Channel make(Class<com.serious.service.Component> componentClass, String channelName, List<ServiceAddress> serviceAddresses) {
