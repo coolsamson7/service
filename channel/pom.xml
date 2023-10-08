@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>service-channel</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>service-channel</name>
     <description>channel</description>
     <packaging>pom</packaging>

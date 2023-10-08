@@ -4,6 +4,7 @@ import com.serious.service.annotations.InjectService;
 import com.serious.service.channel.AbstractChannel;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
@@ -39,6 +40,23 @@ class TestChannel extends AbstractChannel {
     }
 }
 
+@RegisterChannel(protocol = "test1")
+class Test1Channel extends AbstractChannel {
+
+    protected Test1Channel(ChannelManager channelManager) {
+        super(channelManager);
+    }
+
+    @Override
+    public Object invoke(MethodInvocation invocation) throws Throwable {
+        Object implementation = BaseDescriptor.forService((Class<Service>)invocation.getMethod().getDeclaringClass()).local;
+
+        Method method = implementation.getClass().getMethod(invocation.getMethod().getName(), invocation.getMethod().getParameterTypes());
+
+        return method.invoke(implementation, invocation.getArguments());
+    }
+}
+
 @Component
 class TestComponentComponentRegistry implements ComponentRegistry {
 
@@ -60,7 +78,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
     @Override
     public List<ServiceInstance> getInstances(String service) {
         Map<String, String> meta = new HashMap<>();
-        meta.put("channels", "test");
+        meta.put("channels", "test,test1");
 
         return List.of(new DefaultServiceInstance("id", "test", "localhost", 0, false, meta));
     }
@@ -113,6 +131,8 @@ class TestConfig {
 class ServiceTests {
     // instance data
 
+    @Autowired
+    ComponentManager componentManager;
     @InjectService
     TestService testService;
     @InjectService(preferLocal = true)

@@ -10,7 +10,6 @@
     </parent>
     <groupId>com.serious</groupId>
     <artifactId>service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>service</name>
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>

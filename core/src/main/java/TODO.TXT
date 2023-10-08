@@ -11,8 +11,7 @@
 
 === NOW
 
-resolve -> im channelinvhandle sucks -> kein channel name!!!!
-delta einbauen!
+delta einbauen bzw. logik validieren! -> resolve???
 
 ${project.version}?
 
@@ -21,11 +20,11 @@ ${project.version}?
  - preferred channel
  - mehrere channels da
  - channel tot???
-
  - customize... nicht build!
 
 === DONE
 
+- resolve -> im channelinvhandle sucks -> kein channel name!!!!
 - dispatch channel
 - delta
 - foo.bar

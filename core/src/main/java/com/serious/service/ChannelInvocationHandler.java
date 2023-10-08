@@ -28,11 +28,11 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
     // static methods
 
-    public static ChannelInvocationHandler forComponent(ComponentDescriptor componentDescriptor, String channel) {
+    public static ChannelInvocationHandler forComponent(ComponentDescriptor componentDescriptor, String channel, List<ServiceAddress> addresses) {
         String key = componentDescriptor.getName() + ":" + channel;
         ChannelInvocationHandler handler = handlers.get(key);
         if ( handler == null)
-            handlers.put(key, handler = new ChannelInvocationHandler(componentDescriptor, channel));
+            handlers.put(key, handler = new ChannelInvocationHandler(componentDescriptor, channel, addresses));
 
         return handler;
     }
@@ -42,7 +42,7 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
         for (ChannelInvocationHandler invocationHandler : handlers.values())
             if (invocationHandler.needsUpdate(channelManager, newMap))
-                invocationHandler.resolve(null);
+                invocationHandler.resolve(null, null);
     }
 
     // instance data
@@ -52,10 +52,10 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
     // constructor
 
-    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channel) {
+    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channel, List<ServiceAddress> addresses) {
         this.componentDescriptor = componentDescriptor;
 
-        resolve(channel);
+        resolve(channel, addresses);
     }
 
     // private
@@ -81,13 +81,13 @@ public class ChannelInvocationHandler implements InvocationHandler {
 
     // public
 
-    public void resolve(String channelName) {
+    public void resolve(String channelName, List<ServiceAddress> addresses) {
         if ( channelName == null)
-            channelName = channel.getAddress().getChannel();
+            channelName = channel.getAddress().getChannel(); // In case of updates?? TODO
 
         ComponentManager componentManager = componentDescriptor.componentManager;
-        List<ServiceAddress> serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName);
-        //String channelName = (serviceAddresses != null && !serviceAddresses.isEmpty()) ? serviceAddresses.get(0).getChannel() : null;
+        List<ServiceAddress> serviceAddresses = addresses != null ? addresses : componentManager.getServiceAddresses(componentDescriptor, channelName);
+
         channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses);
 
         log.info("resolved channel {} for component {}", channelName, componentDescriptor);

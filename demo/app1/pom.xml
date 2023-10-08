@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>service-demo-app1</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>service-demo-app1</name>
     <description>app1</description>
     <packaging>jar</packaging>
@@ -23,25 +22,25 @@
         <dependency>
             <groupId>com.serious</groupId>
             <artifactId>service-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.serious</groupId>
             <artifactId>service-channel-rest</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.serious</groupId>
             <artifactId>service-registry-consul</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.serious</groupId>
             <artifactId>service-demo-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- new -->

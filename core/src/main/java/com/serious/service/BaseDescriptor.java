@@ -5,6 +5,7 @@ package com.serious.service;
  * All rights reserved
  */
 
+import com.serious.service.exception.ServiceRuntimeException;
 import com.serious.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,11 @@ public class BaseDescriptor<T extends Service> {
     }
 
     public static <T extends Service> BaseDescriptor<T> forService(Class<T> serviceClass) {
-        return (BaseDescriptor<T>) descriptors.get(serviceClass);
+        BaseDescriptor<T> baseDescriptor = (BaseDescriptor<T>) descriptors.get(serviceClass);
+        if ( baseDescriptor == null)
+            throw new ServiceRuntimeException("unknown service " + serviceClass.getName());
+
+        return baseDescriptor;
     }
 
     // instance data

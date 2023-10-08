@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>service-registry-consul</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>service-registry-consul</name>
     <description>consul</description>
     <packaging>jar</packaging>

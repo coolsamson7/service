@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>service-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>service-core</name>
     <description>core</description>
     <packaging>jar</packaging>
