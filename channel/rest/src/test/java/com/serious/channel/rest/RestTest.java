@@ -108,6 +108,22 @@ interface RequestMappingMethods extends Service {
 
 @ServiceInterface()
 interface BasicMethods extends Service {
+    @RequestMapping(path = "get-list/{world}/{count}", method = RequestMethod.GET)
+    @ResponseBody
+    List<String> getList(@PathVariable("world") String world, @PathVariable int count);
+
+    @RequestMapping(path = "get-object-list/{world}/{count}", method = RequestMethod.GET)
+    @ResponseBody
+    List<Foo> getObjectList(@PathVariable("world") String world, @PathVariable int count);
+
+    @RequestMapping(path = "get-array/{world}/{count}", method = RequestMethod.GET)
+    @ResponseBody
+    String[] getArray(@PathVariable("world") String world, @PathVariable int count);
+
+    @RequestMapping(path = "get-object-array/{world}/{count}", method = RequestMethod.GET)
+    @ResponseBody
+    Foo[] getObjectArray(@PathVariable("world") String world, @PathVariable int count);
+
     @GetMapping("/get-variable/{world}")
     @ResponseBody
     String getVariable(@PathVariable("world") String world);
@@ -176,6 +192,47 @@ class FluxMethodsImpl extends AbstractService implements FluxMethods {
 @Component
 @RestController
 class BasicMethodsImpl extends AbstractService implements BasicMethods {
+    @Override
+    public List<String> getList(String world, int count) {
+        List<String> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++)
+            result.add(world + i);
+
+        return result;
+    }
+
+    @Override
+    public List<Foo> getObjectList(String world, int count) {
+        List<Foo> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++) {
+            Foo foo = new Foo();
+            foo.id = world + i;
+            result.add(foo);
+        }
+
+        return result;
+    }
+
+    public String[] getArray(String world, int count) {
+        List<String> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++) {
+            result.add(world + i);
+        }
+
+        return result.toArray(new String[0]);
+    }
+
+    public Foo[] getObjectArray(String world, int count) {
+        List<Foo> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++) {
+            Foo foo = new Foo();
+            foo.id = world + i;
+            result.add(foo);
+        }
+
+        return result.toArray(new Foo[0]);
+    }
+
     @Override
     public String getVariable(String world) {
         return world;
@@ -305,6 +362,10 @@ class RestTest {
         assertEquals("foobar", service.getVariables("foo", "bar"));
         assertEquals("world", service.putVariable("world"));
         assertEquals("world", service.getVariableNoName("world"));
+        assertEquals(2, service.getList("world", 2).size());
+        assertEquals(2, service.getObjectList("world", 2).size());
+        assertEquals(2, service.getArray("world", 2).length);
+        assertEquals(2, service.getObjectArray("world", 2).length);
     }
 
     @Test
@@ -319,7 +380,7 @@ class RestTest {
         assertEquals("world", service.getVariableNoName("world"));
         assertEquals("id", service.post(foo).id);
         assertEquals("1", service.postRequestParam(foo, 1).id);
-        //assertEquals("foobar", service.getVariables("foo", "bar"));
+        assertEquals("foobar", service.getVariables("foo", "bar"));
         assertEquals("world", service.putVariable("world"));
         assertEquals("world", service.getVariableNoName("world"));
     }
@@ -337,6 +398,8 @@ class RestTest {
                 .verifyComplete();
 
         // flux
+        List<String> list = service.getList("world", 10).collectList().block();
+
 
         StepVerifier.create(service.getList("world", 2))
                 .expectNext("world0")

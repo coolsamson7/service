@@ -19,9 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -350,6 +348,47 @@ public class MethodAnalyzer {
 
     // public
 
+    private <T extends Collection> T convertList2(List list, Type target) {
+        if (!target.getClass().isAssignableFrom(list.getClass())) {
+            // interfaces
+
+           if ( target == Collection.class ||  target == List.class)
+               return (T) new ArrayList<>(list);
+
+           // concrete
+
+            if ( target == ArrayList.class)
+                return (T) new ArrayList<>(list);
+
+            if ( target == LinkedList.class)
+                return (T) new LinkedList<>(list);
+
+            else throw new ServiceRuntimeException("collection type " + target.getTypeName() + " not supported");
+
+        }
+        else return (T) list;
+    }
+
+    private <T extends Collection> T convertArray2Collection(Object[] list, Type target) {
+            if ( target == Collection.class ||  target == List.class || target == ArrayList.class)
+                return (T)  Arrays.asList(list);
+
+            // concrete
+
+            if ( target == LinkedList.class) {
+                LinkedList result = new LinkedList();
+
+                for ( Object o : list)
+                    result.add(o);
+
+                return (T) result;
+            }
+
+            // darn
+
+            else throw new ServiceRuntimeException("collection type " + target.getTypeName() + " not supported");
+    }
+
     public Request request(WebClient webClient, Method method) {
         // specs
 
@@ -365,11 +404,27 @@ public class MethodAnalyzer {
             responseHandler = spec -> null;
         }
 
+        // array
+
+        else if (method.getReturnType().isArray()) {
+            responseHandler = spec -> spec
+                    .bodyToMono(method.getReturnType())
+                    .block();
+        }
+
         // list
 
-        else if (method.getReturnType() == List.class && method.getGenericReturnType() != null) { // TODO
+        else if (Collection.class.isAssignableFrom(method.getReturnType())) {
+            if (  method.getGenericReturnType() == null)
+                throw new ServiceRuntimeException("return type must be generic");
+
+            Type type = method.getReturnType();
             Class elementType = genericsType(method.getGenericReturnType());
-            responseHandler = spec -> spec.bodyToFlux(elementType).collectList().block();
+            Class arrayType = elementType.arrayType();
+
+            responseHandler = spec -> convertArray2Collection((Object[]) spec
+                    .bodyToMono(arrayType)
+                    .block(), type);
         }
 
         // mono

@@ -9,11 +9,10 @@
 - kotlin
 - layers
 
-- list bodyToFlo(class).toList()
-
 === NOW
 
-- test mono
+- FLUX WTF
+
 - mvn package
 - test für
  - preferred channel
@@ -22,6 +21,8 @@
 
 === DONE
 
+- list bodyToFlo(class).toList()
+- test mono
 - delta alte werte??
 - customize... nicht build!
 - delta einbauen bzw. logik validieren! -> resolve???

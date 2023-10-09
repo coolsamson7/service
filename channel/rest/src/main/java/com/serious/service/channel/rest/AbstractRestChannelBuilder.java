@@ -21,5 +21,5 @@ public abstract class AbstractRestChannelBuilder extends AbstractChannelBuilder<
 
     // protected
 
-    abstract protected WebClient.Builder build(WebClient.Builder builder); // TODO
+    abstract protected WebClient.Builder build(WebClient.Builder builder);
 }
