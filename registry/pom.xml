@@ -10,6 +10,7 @@
 
     <artifactId>service-registry</artifactId>
     <name>service-registry</name>
+    <version>0.0.1-SNAPSHOT</version>
     <description>registry</description>
     <packaging>pom</packaging>
 

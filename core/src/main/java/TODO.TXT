@@ -10,6 +10,7 @@
 
 === NOW
 
+- llg delta
 - mvn package
 
 === DONE

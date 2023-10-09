@@ -10,6 +10,7 @@
 
     <artifactId>service-channel</artifactId>
     <name>service-channel</name>
+    <version>0.0.1-SNAPSHOT</version>
     <description>channel</description>
     <packaging>pom</packaging>
 
