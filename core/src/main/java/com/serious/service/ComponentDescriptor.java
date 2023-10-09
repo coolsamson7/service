@@ -101,8 +101,9 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
         if (hasImplementation()) {
             builder.append("\taddress:\n");
 
-            for (ServiceAddress externalAddress : getExternalAddresses())
-                builder.append("\t\t").append(externalAddress.toString()).append("\n");
+            if (getExternalAddresses() != null)
+                for (ServiceAddress externalAddress : getExternalAddresses())
+                    builder.append("\t\t").append(externalAddress.toString()).append("\n");
         }
 
         // services

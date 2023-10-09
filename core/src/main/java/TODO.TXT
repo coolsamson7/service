@@ -1,17 +1,14 @@
 === TODO
 
-
 === LATER
 
 - open-api...
 
-- publish ( guthub package )
+- publish ( github package )
 - kotlin
 - layers
 
 === NOW
-
-- FLUX WTF
 
 - mvn package
 - test für

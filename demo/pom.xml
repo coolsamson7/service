@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>service-demo</artifactId>
-    <version>${project.version}</version>
     <name>service-demo</name>
     <description>demo</description>
     <packaging>pom</packaging>

@@ -78,7 +78,7 @@ class TestComponentComponentRegistry implements ComponentRegistry {
     @Override
     public List<ServiceInstance> getInstances(String service) {
         Map<String, String> meta = new HashMap<>();
-        meta.put("channels", "test,test1");
+        meta.put("channels", "test(http://localhost:0),test1(http://localhost:0)");
 
         return List.of(new DefaultServiceInstance("id", "test", "localhost", 0, false, meta));
     }
