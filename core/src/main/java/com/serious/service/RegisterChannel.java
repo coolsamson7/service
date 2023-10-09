@@ -1,4 +1,5 @@
-package com.serious.service;/*
+package com.serious.service;
+/*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved

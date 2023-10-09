@@ -146,7 +146,11 @@ public class ComponentManager implements ApplicationContextAware {
     public <T extends Service> T acquireService(Class<T> serviceClass, String... channels) {
         BaseDescriptor<T> descriptor = BaseDescriptor.forService(serviceClass);
 
-        return acquireService(descriptor, getServiceAddresses(descriptor.getComponentDescriptor(), channels));
+        List<ServiceAddress> serviceAddresses = getServiceAddresses(descriptor.getComponentDescriptor(), channels);
+        if ( serviceAddresses == null || serviceAddresses.isEmpty())
+            throw new ServiceRuntimeException("no service instances for " + descriptor.getComponentDescriptor().getName() + (channels.length > 0 ? " channels..." : ""));
+
+        return acquireService(descriptor, serviceAddresses);
     }
 
     public <T extends Service> T acquireService(BaseDescriptor<T> descriptor, List<ServiceAddress> addresses) {

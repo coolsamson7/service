@@ -2,6 +2,7 @@ package com.serious.service;
 
 import com.serious.service.annotations.InjectService;
 import com.serious.service.channel.AbstractChannel;
+import com.serious.service.exception.ServiceRuntimeException;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 // test classes
 
@@ -89,6 +91,10 @@ interface TestService extends Service {
     String hello(String world);
 }
 
+interface BadService extends Service {
+    String hello(String world);
+}
+
 
 @ComponentInterface(
         services = {TestService.class})
@@ -144,6 +150,27 @@ class ServiceTests {
     TestComponent localTestComponent;
 
     // test
+
+    @Test
+    void testUnknownService() {
+        try {
+            componentManager.acquireService(BadService.class);
+
+            fail("should throw");
+        }
+        catch(ServiceRuntimeException e) {}
+    }
+
+    @Test
+    void testMissingChannel() {
+        try {
+            componentManager.acquireService(TestService.class, "dunno");
+
+            fail("should throw");
+        }
+        catch(ServiceRuntimeException e) {}
+    }
+
 
     @Test
     void testLocalService() {

@@ -1,4 +1,5 @@
-package com.serious.demo;/*
+package com.serious.demo;
+/*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved

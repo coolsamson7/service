@@ -1,4 +1,5 @@
-package com.serious.channel.rest;/*
+package com.serious.channel.rest;
+/*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
  * All rights reserved

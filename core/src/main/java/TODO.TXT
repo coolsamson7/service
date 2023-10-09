@@ -11,14 +11,10 @@
 === NOW
 
 - mvn package
-- test für
- - preferred channel
- - mehrere channels da
- - channel tot???
 
 === DONE
 
-- list bodyToFlo(class).toList()
+- list bodyToFlux(class).toList()
 - test mono
 - delta alte werte??
 - customize... nicht build!
