@@ -8,6 +8,10 @@ logging:
 service:
   package: com.serious
 spring:
+  cloud:
+    service-registry:
+      auto-registration:
+        enabled: false
   application:
     name: demo
   autoconfigure:
