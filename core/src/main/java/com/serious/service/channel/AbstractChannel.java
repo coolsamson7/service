@@ -9,7 +9,6 @@ import com.serious.service.Channel;
 import com.serious.service.ChannelManager;
 import com.serious.service.ServiceAddress;
 import com.serious.service.ServiceInstanceRegistry;
-import org.springframework.security.util.SimpleMethodInvocation;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
