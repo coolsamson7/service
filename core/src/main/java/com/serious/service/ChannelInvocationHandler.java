@@ -46,7 +46,7 @@ public class ChannelInvocationHandler implements InvocationHandler {
     // instance data
 
     private final ComponentDescriptor componentDescriptor;
-    private String channelName;
+    private final String channelName;
     private Channel channel;
 
     // constructor

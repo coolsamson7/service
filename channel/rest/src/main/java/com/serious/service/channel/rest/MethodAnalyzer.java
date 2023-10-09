@@ -378,8 +378,7 @@ public class MethodAnalyzer {
             if ( target == LinkedList.class) {
                 LinkedList result = new LinkedList();
 
-                for ( Object o : list)
-                    result.add(o);
+                Collections.addAll(result, list);
 
                 return (T) result;
             }
