@@ -7,6 +7,7 @@ package com.serious.channel.rest;
 
 
 import com.serious.service.*;
+import com.serious.service.registry.LocalComponentRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,23 +39,7 @@ class Foo {
 
 }
 @Component
-class TestComponentComponentRegistry implements ComponentRegistry {
-
-    @Override
-    public void startup(ComponentDescriptor<com.serious.service.Component> descriptor) {
-
-    }
-
-    @Override
-    public void shutdown(ComponentDescriptor<com.serious.service.Component> descriptor) {
-
-    }
-
-    @Override
-    public List<String> getServices() {
-        return List.of("test");
-    }
-
+class TestComponentComponentRegistry extends LocalComponentRegistry {
     @Override
     public List<ServiceInstance> getInstances(String service) {
         Map<String, String> meta = new HashMap<>();

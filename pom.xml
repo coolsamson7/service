@@ -112,5 +112,6 @@
         <module>registry</module>
         <module>client</module>
         <module>demo</module>
+        <module>test</module>
     </modules>
 </project>
