@@ -140,7 +140,7 @@ public class ComponentManager implements ApplicationContextAware {
         if (descriptor.hasImplementation())
             return acquireService(descriptor, Collections.singletonList(new ServiceAddress("local", (URI) null)));
         else
-            throw new ServiceRuntimeException("cannot create local service, implementation missing");
+            throw new ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName());
     }
 
     public <T extends Service> T acquireService(Class<T> serviceClass, String... channels) {
@@ -148,7 +148,7 @@ public class ComponentManager implements ApplicationContextAware {
 
         List<ServiceAddress> serviceAddresses = getServiceAddresses(descriptor.getComponentDescriptor(), channels);
         if ( serviceAddresses == null || serviceAddresses.isEmpty())
-            throw new ServiceRuntimeException("no service instances for " + descriptor.getComponentDescriptor().getName() + (channels.length > 0 ? " channels..." : ""));
+            throw new ServiceRuntimeException("no service instances for %s", descriptor.getComponentDescriptor().getName() + (channels.length > 0 ? " channels..." : ""));
 
         return acquireService(descriptor, serviceAddresses);
     }

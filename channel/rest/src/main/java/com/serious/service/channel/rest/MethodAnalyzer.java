@@ -155,7 +155,7 @@ public class MethodAnalyzer {
 
                 Integer argumentIndex = pathVariables.get(match);
                 if ( argumentIndex == null)
-                    throw new ServiceRegistryException("missing @PathVariable for " + match);
+                    throw new ServiceRegistryException("missing @PathVariable for %s", match);
 
                 variables.add(argumentIndex);
             }
@@ -213,7 +213,7 @@ public class MethodAnalyzer {
             scanMethod(path);
 
             if ( body == -1)
-                throw new ServiceRegistryException("missing @RequestBody");
+                throw new ServiceRegistryException("missing @RequestBody for %s.%s", method.getDeclaringClass().getName(), method.getName());
 
             // done
 
@@ -288,7 +288,7 @@ public class MethodAnalyzer {
             RequestMethod method = requestMapping.method().length > 0 ? requestMapping.method()[0] : getDefaultMethod();
 
             if (method == null)
-                throw new ServiceRegistryException("missing http method");
+                throw new ServiceRegistryException("missing http method for %s.%s", method.getDeclaringClass().getName(), method.name());
 
             RequestBuilder getBuilder;
 
@@ -301,7 +301,7 @@ public class MethodAnalyzer {
             else if (method == RequestMethod.DELETE)
                 getBuilder = new RequestBuilder(webClient).delete();
             else
-                throw new ServiceRegistryException("unsupported request method ");
+                throw new ServiceRegistryException("unsupported request method %s", method);
 
             // scan path
 
@@ -312,7 +312,7 @@ public class MethodAnalyzer {
             // checks
 
             if (method == RequestMethod.POST && body == -1)
-                throw new ServiceRegistryException("missing @RequestBody");
+                throw new ServiceRegistryException("missing @RequestBody in method %s.%s", method.getDeclaringClass().getName(), method.name());
 
             // done
 
@@ -343,7 +343,7 @@ public class MethodAnalyzer {
                 return new RequestAnalyzer(webClient, method).build();
         }
 
-        throw new ServiceRuntimeException("http channel does not support the method " + method.getName() + " missing annotations");
+        throw new ServiceRuntimeException("http channel does not support the method %s missing annotation!", method.getName());
     }
 
     // public
@@ -385,7 +385,7 @@ public class MethodAnalyzer {
 
             // darn
 
-            else throw new ServiceRuntimeException("collection type " + target.getTypeName() + " not supported");
+            else throw new ServiceRuntimeException("collection type %s not supported", target.getTypeName());
     }
 
     public Request request(WebClient webClient, Method method) {
@@ -415,7 +415,7 @@ public class MethodAnalyzer {
 
         else if (Collection.class.isAssignableFrom(method.getReturnType())) {
             if (  method.getGenericReturnType() == null)
-                throw new ServiceRuntimeException("return type must be generic");
+                throw new ServiceRuntimeException("return type for method %s must be generic", method.getName());
 
             Type type = method.getReturnType();
             Class elementType = genericsType(method.getGenericReturnType());

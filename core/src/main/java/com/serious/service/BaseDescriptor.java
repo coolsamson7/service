@@ -63,7 +63,7 @@ public class BaseDescriptor<T extends Service> {
     public static <T extends Service> BaseDescriptor<T> forService(Class<T> serviceClass) {
         BaseDescriptor<T> baseDescriptor = (BaseDescriptor<T>) descriptors.get(serviceClass);
         if ( baseDescriptor == null)
-            throw new ServiceRuntimeException("unknown service " + serviceClass.getName());
+            throw new ServiceRuntimeException("unknown service %s", serviceClass.getName());
 
         return baseDescriptor;
     }

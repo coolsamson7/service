@@ -11,8 +11,8 @@ package com.serious.service.exception;
 public class ServiceRegistryException extends RuntimeException {
     // ServiceException
 
-    public ServiceRegistryException(String message) {
-        super(message);
+    public ServiceRegistryException(String message, Object... args) {
+        super(String.format(message, args));
     }
 
     ServiceRegistryException(String message, Throwable cause) {

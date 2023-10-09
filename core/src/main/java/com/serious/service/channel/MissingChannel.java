@@ -34,6 +34,6 @@ public class MissingChannel extends AbstractChannel {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        throw new ServiceRuntimeException("unresolved channel for component " + this.componentName);
+        throw new ServiceRuntimeException("unresolved channel for component %s", this.componentName);
     }
 }
