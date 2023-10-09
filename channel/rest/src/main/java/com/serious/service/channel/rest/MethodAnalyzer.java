@@ -307,7 +307,7 @@ public class MethodAnalyzer {
 
             // scan path
 
-            String path = requestMapping.path()[0];
+            String path = getPath(requestMapping.path()[0]);
 
             scanMethod(path);
 

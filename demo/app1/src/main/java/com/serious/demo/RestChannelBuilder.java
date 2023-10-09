@@ -26,6 +26,10 @@ public class RestChannelBuilder extends AbstractRestChannelBuilder {
     // implement AbstractRestChannelBuilder
 
     public WebClient.Builder build(WebClient.Builder builder) {
-        return builder;
+        return builder.filter((clientRequest, nextFilter) -> {
+            //System.out.println(clientRequest.url().toString());
+
+            return nextFilter.exchange(clientRequest);
+        });
     }
 }

@@ -96,6 +96,15 @@
             <artifactId>spring-cloud-commons</artifactId>
             <version>4.0.4</version>
         </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+            <version>3.2.3.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

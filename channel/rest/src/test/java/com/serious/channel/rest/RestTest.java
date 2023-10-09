@@ -23,6 +23,7 @@ import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.net.URI;
 import java.util.*;
@@ -70,7 +71,7 @@ interface FluxMethods extends Service {
 
     @RequestMapping(path = "get-list/{world}/{count}", method = RequestMethod.GET)
     @ResponseBody
-    Flux<String> getList(@PathVariable("world") String world, @RequestParam int count);
+    Flux<String> getList(@PathVariable("world") String world, @PathVariable int count);
 }
 
 @ServiceInterface()
@@ -168,7 +169,7 @@ class FluxMethodsImpl extends AbstractService implements FluxMethods {
         for ( int i = 0; i < count; i++)
             result.add(world + i);
 
-        return Flux.fromArray(result.toArray(new String[0]));
+        return Flux.fromIterable(result);
     }
 }
 
@@ -325,6 +326,26 @@ class RestTest {
 
     @Test
     void testFlux() {
-        // TODO
+        FluxMethods service = componentManager.acquireService(FluxMethods.class);
+
+        // mono
+
+        assertEquals("world", service.get("world").block());
+
+        StepVerifier.create(service.get("world"))
+                .expectNext("world")
+                .verifyComplete();
+
+        // flux
+
+        StepVerifier.create(service.getList("world", 2))
+                .expectNext("world0")
+                .expectNext("world1")
+                .verifyComplete();
+
+
+        //List<String> list = service.getList("world", 10).collectList().block();
+
+        //assertEquals(list.size(), 10);
     }
 }

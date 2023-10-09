@@ -93,7 +93,7 @@ public class RestChannel extends AbstractChannel {
         // custom stuff
 
         if ( channelBuilder != null && channelBuilder.isApplicable(componentClass))
-            builder = channelBuilder.build(builder); // TODO
+            builder = channelBuilder.build(builder);
 
         // done
 

@@ -3,6 +3,8 @@
 
 === LATER
 
+- open-api...
+
 - publish ( guthub package )
 - kotlin
 - layers
@@ -11,17 +13,18 @@
 
 === NOW
 
-delta einbauen bzw. logik validieren! -> resolve???
-
+- test mono
 - mvn package
 - test für
  - preferred channel
  - mehrere channels da
  - channel tot???
- - customize... nicht build!
 
 === DONE
 
+- delta alte werte??
+- customize... nicht build!
+- delta einbauen bzw. logik validieren! -> resolve???
 - resolve -> im channelinvhandle sucks -> kein channel name!!!!
 - dispatch channel
 - delta
