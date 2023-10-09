@@ -11,11 +11,11 @@ import com.serious.service.ChannelManager;
 import com.serious.service.RegisterChannel;
 import com.serious.service.ServiceAddress;
 import com.serious.service.channel.AbstractChannel;
+import com.serious.service.channel.SimpleMethodInvocation;
 import com.serious.service.channel.rest.RestChannel;
 import com.serious.util.Exceptions;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.util.SimpleMethodInvocation;
 
 import java.io.*;
 import java.util.Base64;
