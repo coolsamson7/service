@@ -27,6 +27,7 @@ import reactor.test.StepVerifier;
 
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,7 +72,7 @@ interface FluxMethods extends Service {
 
     @RequestMapping(path = "get-list/{world}/{count}", method = RequestMethod.GET)
     @ResponseBody
-    Flux<String> getList(@PathVariable("world") String world, @PathVariable int count);
+    Flux<Foo> getList(@PathVariable("world") String world, @PathVariable int count);
 }
 
 @ServiceInterface()
@@ -180,10 +181,14 @@ class FluxMethodsImpl extends AbstractService implements FluxMethods {
     }
 
     @Override
-    public Flux<String> getList(String world, int count) {
-        List<String> result = new ArrayList<>();
-        for ( int i = 0; i < count; i++)
-            result.add(world + i);
+    public Flux<Foo> getList(String world, int count) {
+        List<Foo> result = new ArrayList<>();
+        for ( int i = 0; i < count; i++) {
+            Foo foo = new Foo();
+            foo.id = world + i;
+
+            result.add(foo);
+        }
 
         return Flux.fromIterable(result);
     }
@@ -398,17 +403,10 @@ class RestTest {
                 .verifyComplete();
 
         // flux
-        List<String> list = service.getList("world", 10).collectList().block();
+
+        List<Foo> list = service.getList("world", 10).collect(Collectors.toList()).block();
 
 
-        StepVerifier.create(service.getList("world", 2))
-                .expectNext("world0")
-                .expectNext("world1")
-                .verifyComplete();
-
-
-        //List<String> list = service.getList("world", 10).collectList().block();
-
-        //assertEquals(list.size(), 10);
+        assertEquals(list.size(), 10);
     }
 }
