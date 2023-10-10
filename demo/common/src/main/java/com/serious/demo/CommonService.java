@@ -11,7 +11,7 @@ import com.serious.service.ServiceInterface;
 /**
  * @author Andreas Ernst
  */
-@ServiceInterface()
+@ServiceInterface(name = "CommonService")
 public interface CommonService extends Service {
     String hello();
 }

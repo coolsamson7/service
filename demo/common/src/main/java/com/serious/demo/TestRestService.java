@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @author Andreas Ernst
  */
-@ServiceInterface
+@ServiceInterface(name="TestRestService")
 public interface TestRestService extends Service {
     @GetMapping("/hello1")
     @ResponseBody

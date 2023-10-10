@@ -50,31 +50,27 @@ public class ServiceInstanceRegistry {
         }
 
         public void deletedServices(String service, List<ServiceInstance> instances) {
-            getDeletedInstances(service).addAll(instances);
+            for (ServiceInstance serviceInstance : instances)
+                deletedService(service, serviceInstance);
         }
         public void deletedService(String service, ServiceInstance instance) {
+            ServiceInstanceRegistry.log.info(" deleted {} instance {}", service, instance.getInstanceId());
+
             getDeletedInstances(service).add(instance);
         }
 
         public void addedService(String service, ServiceInstance instance) {
+            ServiceInstanceRegistry.log.info(" added {} instance {}", service, instance.getInstanceId());
+
             getAddedInstances(service).add(instance);
         }
         public void addedServices(String service, List<ServiceInstance> instances) {
-            getAddedInstances(service).addAll(instances);
+            for (ServiceInstance serviceInstance : instances)
+                addedService(service, serviceInstance);
         }
 
         public boolean isEmpty() {
             return addedInstances.isEmpty() && deletedInstances.isEmpty();
-        }
-
-        public void report() {
-            for ( String service : deletedInstances.keySet())
-                for (ServiceInstance instance : deletedInstances.get(service))
-                    System.out.println("delete " + service + " instance " + instance.toString());
-
-            for ( String service : addedInstances.keySet())
-                for (ServiceInstance instance : addedInstances.get(service))
-                    System.out.println("added " + service + " instance " + instance.toString());
         }
     }
 
@@ -231,8 +227,6 @@ public class ServiceInstanceRegistry {
         Delta delta = computeDelta(this.serviceInstances , newMap);
 
         if (!delta.isEmpty()) {
-            delta.report();
-
             // recheck missing channels
 
             ChannelInvocationHandler.recheck(channelManager, delta);

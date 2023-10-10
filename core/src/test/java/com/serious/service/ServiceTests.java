@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.DefaultServiceInstance;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 // test classes
 
-@RegisterChannel(protocol = "test")
+@RegisterChannel("test")
 class TestChannel extends LocalChannel {
 
     protected TestChannel(ChannelManager channelManager) {
@@ -31,7 +30,7 @@ class TestChannel extends LocalChannel {
     }
 }
 
-@RegisterChannel(protocol = "test1")
+@RegisterChannel("test1")
 class Test1Channel extends LocalChannel {
 
     protected Test1Channel(ChannelManager channelManager) {

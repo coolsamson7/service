@@ -12,7 +12,12 @@ import com.serious.service.ComponentInterface;
  * @author Andreas Ernst
  */
 @ComponentInterface(
-        services = {TestService.class, TestRestService.class})
+        name = "TestComponent",
+        description = "du funny stuff",
+        services = {
+                TestService.class,
+                TestRestService.class
+        })
 public interface TestComponent extends Component {
     String hello();
 }

@@ -6,11 +6,9 @@ package com.serious.service.channel.dispatch;
  */
 
 
-import com.serious.demo.TestService;
 import com.serious.service.ChannelManager;
 import com.serious.service.RegisterChannel;
 import com.serious.service.ServiceAddress;
-import com.serious.service.channel.AbstractChannel;
 import com.serious.service.channel.SimpleMethodInvocation;
 import com.serious.service.channel.rest.RestChannel;
 import com.serious.util.Exceptions;
@@ -21,7 +19,7 @@ import java.io.*;
 import java.util.Base64;
 import java.util.List;
 
-@RegisterChannel(protocol = "dispatch")
+@RegisterChannel("dispatch")
 public class DispatchChannel extends RestChannel {
     // static methods
 

@@ -14,5 +14,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ComponentInterface {
+    String name() default "";
+    String description() default "";
+
     Class<? extends Service>[] services();
 }

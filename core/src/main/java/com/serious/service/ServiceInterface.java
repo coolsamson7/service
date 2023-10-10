@@ -14,4 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ServiceInterface {
+    String name() default "";
+
+    String description() default "";
 }

@@ -11,6 +11,8 @@ import com.serious.service.ComponentInterface;
 /**
  * @author Andreas Ernst
  */
-@ComponentInterface(services = {CommonService.class})
+@ComponentInterface(
+        name = "CommonComponent",
+        services = {CommonService.class})
 public interface CommonComponent extends Component {
 }

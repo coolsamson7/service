@@ -72,10 +72,13 @@ public class BaseDescriptor<T extends Service> {
 
     public Class<T> serviceInterface;
     public T local;
+    protected String name;
+    protected String description = "";
 
     // constructor
 
     protected BaseDescriptor(Class<T> serviceInterface) {
+        this.name = serviceInterface.getName(); // that's the default
         this.serviceInterface = serviceInterface;
 
         descriptors.put(serviceInterface, this);
@@ -103,7 +106,7 @@ public class BaseDescriptor<T extends Service> {
     }
 
     public String getName() {
-        return serviceInterface.getName();
+        return name;
     }
 
     public boolean hasImplementation() {

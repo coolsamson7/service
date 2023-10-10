@@ -83,6 +83,14 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
     private void analyze() {
         ComponentInterface annotation = this.serviceInterface.getAnnotation(ComponentInterface.class);
 
+        if (!annotation.name().isBlank())
+            name = annotation.name();
+
+        if (!annotation.description().isBlank())
+            description = annotation.description();
+
+        // analyze services
+
         for (Class<? extends Service> service : annotation.services())
             registerService(service);
     }
@@ -96,7 +104,7 @@ public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> 
     public void report(StringBuilder builder) {
         builder
                 .append("component ")
-                .append(this.serviceInterface.getName()).append("\n");
+                .append(this.getName()).append("\n");
 
         if (hasImplementation()) {
             builder.append("\taddress:\n");

@@ -9,12 +9,10 @@ import com.serious.service.ChannelManager;
 import com.serious.service.RegisterChannel;
 import com.serious.service.ServiceAddress;
 import com.serious.service.channel.AbstractChannel;
-import com.serious.service.channel.ChannelBuilder;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -29,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Andreas Ernst
  */
-@RegisterChannel(protocol = "rest")
+@RegisterChannel("rest")
 public class RestChannel extends AbstractChannel {
     // instance data
 

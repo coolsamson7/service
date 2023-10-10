@@ -95,7 +95,7 @@ public class ChannelManager implements ApplicationContextAware {
 
         log.info("register channel {}", definition.getBeanClassName());
 
-        channelFactories.put(spec.protocol(), new SpringChannelFactory(applicationContext, definition));
+        channelFactories.put(spec.value(), new SpringChannelFactory(applicationContext, definition));
     }
 
     public void removeChannel(Channel channel) {

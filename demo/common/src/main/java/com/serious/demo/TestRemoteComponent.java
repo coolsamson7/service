@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Andreas Ernst
  */
 @ComponentInterface(
+        name="TestRemoteComponent",
         services = {
                 TestRemoteRestService.class
         })

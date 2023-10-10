@@ -15,8 +15,16 @@ public class ServiceDescriptor<T extends Service> extends BaseDescriptor<T> {
 
     // constructor
 
-    public ServiceDescriptor(ComponentDescriptor<Component> componentDescriptor, Class<T>... serviceInterfaces) {
-        super(serviceInterfaces[0]);
+    public ServiceDescriptor(ComponentDescriptor<Component> componentDescriptor, Class<T> serviceInterface) {
+        super(serviceInterface);
+
+        ServiceInterface annotation = this.serviceInterface.getAnnotation(ServiceInterface.class);
+
+        if (!annotation.name().isBlank())
+            name = annotation.name();
+
+        if (!annotation.description().isBlank())
+            description = annotation.description();
 
         this.componentDescriptor = componentDescriptor;
     }
@@ -36,7 +44,7 @@ public class ServiceDescriptor<T extends Service> extends BaseDescriptor<T> {
     public void report(StringBuilder builder) {
         builder
                 .append("\t\t")
-                .append(this.serviceInterface.getName());
+                .append(this.getName());
 
         if (local != null)
             builder.append("[local]");

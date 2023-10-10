@@ -11,7 +11,7 @@ import com.serious.service.ServiceInterface;
 /**
  * @author Andreas Ernst
  */
-@ServiceInterface()
+@ServiceInterface(name = "test service")
 public interface TestService extends Service {
     String hello();
 }

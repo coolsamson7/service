@@ -161,7 +161,7 @@ public class ComponentManager implements ApplicationContextAware {
         String key = serviceClass.getName() + ":" + channel;
         T service = (T) proxies.get(key);
         if (service == null) {
-            log.info("create proxy for {}.{}", serviceClass.getName(), channel);
+            log.info("create proxy for {}.{}", descriptor.getName(), channel);
 
             if (channel.equals("local"))
                 proxies.put(key, service = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, (proxy, method, args) -> method.invoke(descriptor.local, args)));
