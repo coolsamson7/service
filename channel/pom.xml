@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.serious</groupId>
         <artifactId>service</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>service-channel</artifactId>
     <name>service-channel</name>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <description>channel</description>
     <packaging>pom</packaging>
 

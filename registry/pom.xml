@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.serious</groupId>
         <artifactId>service</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>service-registry</artifactId>
     <name>service-registry</name>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <description>registry</description>
     <packaging>pom</packaging>
 

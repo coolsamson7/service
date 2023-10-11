@@ -10,7 +10,7 @@
 
     <groupId>com.serious</groupId>
     <artifactId>service</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>service</name>
     <description>Microservice framework</description>
     <packaging>pom</packaging>
@@ -47,7 +47,7 @@
 
         <!--connection>scm:git:git@github.com:coolsamson7/service</connection>
         <developerConnection>scm:git:git@github.com:coolsamson7/service</developerConnection-->
-        <tag>v0.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!-- dependencies -->
