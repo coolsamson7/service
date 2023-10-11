@@ -1,94 +1,79 @@
-package com.serious.spring;
+package com.serious.spring
+
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.BeanFactory
+import org.springframework.beans.factory.BeanFactoryAware
+import org.springframework.beans.factory.config.BeanPostProcessor
+import org.springframework.beans.factory.support.DefaultListableBeanFactory
+import org.springframework.context.ConfigurableApplicationContext
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.Collection;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public class ChildBeanFactory extends DefaultListableBeanFactory {
+class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :
+    DefaultListableBeanFactory(parentBeanFactory) {
     // local classes
-
-    static class ParentContextBeanPostProcessor implements BeanPostProcessor {
+    internal class ParentContextBeanPostProcessor(
+        parent: ConfigurableApplicationContext,
+        private val beanFactory: BeanFactory
+    ) : BeanPostProcessor {
         // instance data
-        private final Collection<BeanPostProcessor> parentProcessors;
-        private final BeanFactory beanFactory;
-        private final BeanFactory parentBeanFactory;
-
+        private val parentProcessors: Collection<BeanPostProcessor>
+        private val parentBeanFactory: BeanFactory
         // constructor
-
         /**
          * @param parent      the parent context
          * @param beanFactory the beanFactory associated with this post processor's context
          */
-        public ParentContextBeanPostProcessor(ConfigurableApplicationContext parent, BeanFactory beanFactory) {
-            this.parentProcessors = parent.getBeansOfType(BeanPostProcessor.class).values();
-            this.beanFactory = beanFactory;
-            this.parentBeanFactory = parent.getBeanFactory();
+        init {
+            parentProcessors = parent.getBeansOfType(BeanPostProcessor::class.java).values
+            parentBeanFactory = parent.beanFactory
         }
 
         /**
          * {@inheritDoc}
          */
-        @Override
-        public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-            for (BeanPostProcessor processor : parentProcessors) {
-                if (processor instanceof BeanFactoryAware)
-                    ((BeanFactoryAware) processor).setBeanFactory(beanFactory);
-
-                try {
-                    bean = processor.postProcessBeforeInitialization(bean, beanName);
-                }
-                finally {
-                    if (processor instanceof BeanFactoryAware)
-                        ((BeanFactoryAware) processor).setBeanFactory(parentBeanFactory);
+        @Throws(BeansException::class)
+        override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
+            var bean = bean
+            for (processor in parentProcessors) {
+                if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(beanFactory)
+                bean = try {
+                    processor.postProcessBeforeInitialization(bean, beanName)
+                } finally {
+                    if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
                 }
             }
-
-            return bean;
+            return bean
         }
 
         /**
          * {@inheritDoc}
          */
-        @Override
-        public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-            for (BeanPostProcessor processor : parentProcessors) {
-                if (processor instanceof BeanFactoryAware)
-                    ((BeanFactoryAware) processor).setBeanFactory(beanFactory);
-
-                try {
-                    bean = processor.postProcessAfterInitialization(bean, beanName);
-                }
-                finally {
-                    if (processor instanceof BeanFactoryAware)
-                        ((BeanFactoryAware) processor).setBeanFactory(parentBeanFactory);
+        @Throws(BeansException::class)
+        override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
+            var bean = bean
+            for (processor in parentProcessors) {
+                if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(beanFactory)
+                bean = try {
+                    processor.postProcessAfterInitialization(bean, beanName)
+                } finally {
+                    if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
                 }
             }
-
-            return bean;
+            return bean
         }
     }
 
     // constructor
-
-    public ChildBeanFactory(ConfigurableApplicationContext parentBeanFactory) {
-        super(parentBeanFactory);
-
-
-        for (BeanPostProcessor postProcessor : parentBeanFactory.getBeansOfType(BeanPostProcessor.class).values())
-            addBeanPostProcessor(postProcessor);
+    init {
+        for (postProcessor in parentBeanFactory.getBeansOfType(BeanPostProcessor::class.java).values) addBeanPostProcessor(
+            postProcessor
+        )
 
         //addBeanPostProcessor(new ParentContextBeanPostProcessor(parentBeanFactory, this));
     }

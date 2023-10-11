@@ -1,56 +1,43 @@
-package com.serious.lang;
+package com.serious.lang
+
+import java.lang.reflect.Field
+import java.lang.reflect.Proxy
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
-import java.util.Map;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  *
  */
-public class Annotations {
-    private Annotations() {
-    }
-
+object Annotations {
     // methods
-
     /**
      * Changes the annotation value for the given key of the given annotation to newValue and returns
      * the previous value.
      */
-    @SuppressWarnings("unchecked")
-    public static Object changeAnnotationValue(Annotation annotation, String key, Object newValue) {
-        Object handler = Proxy.getInvocationHandler(annotation);
-        Field field;
-        try {
-            field = handler.getClass().getDeclaredField("memberValues");
+    fun changeAnnotationValue(annotation: Annotation?, key: String, newValue: Any): Any {
+        val handler: Any = Proxy.getInvocationHandler(annotation)
+        val field: Field
+        field = try {
+            handler.javaClass.getDeclaredField("memberValues")
+        } catch (e: NoSuchFieldException) {
+            throw IllegalStateException(e)
+        } catch (e: SecurityException) {
+            throw IllegalStateException(e)
         }
-        catch (NoSuchFieldException | SecurityException e) {
-            throw new IllegalStateException(e);
+        field.setAccessible(true)
+        val memberValues: MutableMap<String, Any>
+        memberValues = try {
+            field[handler] as MutableMap<String, Any>
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
+        } catch (e: IllegalAccessException) {
+            throw IllegalStateException(e)
         }
-
-        field.setAccessible(true);
-
-        Map<String, Object> memberValues;
-        try {
-            memberValues = (Map<String, Object>) field.get(handler);
-        }
-        catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-
-        Object oldValue = memberValues.get(key);
-        if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
-            throw new IllegalArgumentException();
-        }
-
-        memberValues.put(key, newValue);
-
-        return oldValue;
+        val oldValue = memberValues[key]
+        require(!(oldValue == null || oldValue.javaClass != newValue.javaClass))
+        memberValues[key] = newValue
+        return oldValue
     }
 }
