@@ -1,22 +1,19 @@
-package com.serious.service.channel;
+package com.serious.service.channel
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.Channel;
-import org.springframework.stereotype.Component;
-
-import java.lang.annotation.*;
+import com.serious.service.Channel
+import org.springframework.stereotype.Component
+import kotlin.reflect.KClass
 
 /**
  * @author Andreas Ernst
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
 @Component
-public @interface RegisterChannelBuilder {
-    Class<? extends Channel> channel();
-}
+annotation class RegisterChannelBuilder(val channel: KClass<out Channel>)

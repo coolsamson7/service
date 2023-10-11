@@ -1,18 +1,12 @@
-package com.serious.service;
+package com.serious.service
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-import java.lang.annotation.*;
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface RegisterChannel {
-    String value();
-}
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class RegisterChannel(val value: String)

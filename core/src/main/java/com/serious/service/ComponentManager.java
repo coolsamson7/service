@@ -166,7 +166,7 @@ public class ComponentManager implements ApplicationContextAware {
             if (channel.equals("local"))
                 proxies.put(key, service = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, (proxy, method, args) -> method.invoke(descriptor.local, args)));
             else {
-                ChannelInvocationHandler channelInvocationHandler = ChannelInvocationHandler.forComponent(descriptor.getComponentDescriptor(), channel, addresses); // TODO: pass addresses
+                ChannelInvocationHandler channelInvocationHandler = ChannelInvocationHandler.Companion.forComponent(descriptor.getComponentDescriptor(), channel, addresses); // TODO: pass addresses
 
                 proxies.put(key, service = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, channelInvocationHandler));
             }

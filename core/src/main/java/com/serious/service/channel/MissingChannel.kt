@@ -1,39 +1,29 @@
-package com.serious.service.channel;
+package com.serious.service.channel
+
+import com.serious.service.ChannelManager
+import com.serious.service.ServiceAddress
+import com.serious.service.exception.ServiceRuntimeException
+import org.aopalliance.intercept.MethodInvocation
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.ChannelManager;
-import com.serious.service.ServiceAddress;
-import com.serious.service.exception.ServiceRegistryException;
-import com.serious.service.exception.ServiceRuntimeException;
-import org.aopalliance.intercept.MethodInvocation;
-
-import java.net.URI;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public class MissingChannel extends AbstractChannel {
-    // private
-
-    private final String componentName;
-
+class MissingChannel(
+    channelManager: ChannelManager, // private
+    private val componentName: String
+) : AbstractChannel(channelManager) {
     // constructor
-
-    public MissingChannel(ChannelManager channelManager, String componentName) {
-        super(channelManager);
-
-        this.componentName = componentName;
-        this.serviceAddress = new ServiceAddress(); // Hmm?
+    init {
+        // TODO KOTLIN serviceAddress = ServiceAddress() // Hmm?
     }
 
     // implement Channel
-
-    @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        throw new ServiceRuntimeException("unresolved channel for component %s", this.componentName);
+    @Throws(Throwable::class)
+    override fun invoke(invocation: MethodInvocation): Any? {
+        throw ServiceRuntimeException("unresolved channel for component %s", componentName)
     }
 }

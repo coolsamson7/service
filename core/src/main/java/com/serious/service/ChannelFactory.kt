@@ -1,26 +1,18 @@
-package com.serious.service;
+package com.serious.service
+
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-public interface ChannelFactory {
+interface ChannelFactory {
     /**
-     * create a new {@link Channel} based on the specified {@link ServiceAddress}.
+     * create a new [Channel] based on the specified [ServiceAddress].
      *
-     * @param serviceAddress a {@link ServiceAddress}
-     * @return the created {@link Channel}
+     * @param serviceAddress a [ServiceAddress]
+     * @return the created [Channel]
      */
-    Channel makeChannel(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses);
+    fun makeChannel(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?): Channel?
 }
-

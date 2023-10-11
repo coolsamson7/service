@@ -1,24 +1,18 @@
-package com.serious.service;
+package com.serious.service
+
+import org.aopalliance.intercept.MethodInterceptor
+import java.lang.reflect.InvocationHandler
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import org.aopalliance.intercept.MethodInterceptor;
-
-import java.lang.reflect.InvocationHandler;
-import java.util.List;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public interface Channel extends MethodInterceptor, InvocationHandler {
-    ServiceAddress getPrimaryAddress();
-
-    List<ServiceAddress> getAddresses();
-
-    boolean needsUpdate(ServiceInstanceRegistry.Delta delta);
-
-    void setup(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses);
+interface Channel : MethodInterceptor, InvocationHandler {
+    fun getPrimaryAddress(): ServiceAddress?
+    fun getAddresses(): List<ServiceAddress?>?
+    fun needsUpdate(delta: ServiceInstanceRegistry.Delta?): Boolean
+    fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?)
 }

@@ -1,57 +1,44 @@
-package com.serious.service.channel;
+package com.serious.service.channel
+
+import com.serious.service.*
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.Channel;
-import com.serious.service.ChannelManager;
-import com.serious.service.ServiceAddress;
-import com.serious.service.ServiceInstanceRegistry;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.List;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public abstract class AbstractChannel implements Channel, InvocationHandler {
+abstract class AbstractChannel // constructor
+protected constructor(protected var channelManager: ChannelManager) : Channel, InvocationHandler {
     // instance data
 
-    protected ServiceAddress serviceAddress;
-    protected List<ServiceAddress> serviceAddresses;
-    protected ChannelManager channelManager;
-
-    // constructor
-
-    protected AbstractChannel(ChannelManager channelManager) {
-        this.channelManager = channelManager;
-    }
+    protected @JvmField var primaryAddress: ServiceAddress? = null
+    protected @JvmField var addresses: List<ServiceAddress?>? = null
 
     // implement Channel
 
-    public ServiceAddress getPrimaryAddress() {
-        return serviceAddress;
+    override fun getPrimaryAddress(): ServiceAddress? {
+        return primaryAddress
+    }
+    override fun getAddresses(): List<ServiceAddress?>? {
+        return addresses
     }
 
-    public List<ServiceAddress> getAddresses() {
-        return serviceAddresses;
+    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta?): Boolean {
+        return delta!!.isDeleted(getPrimaryAddress()!!.serviceInstance) // TODO cluster??
     }
 
-    public boolean needsUpdate(ServiceInstanceRegistry.Delta delta) {
-        return delta.isDeleted(getPrimaryAddress().getServiceInstance()); // TODO cluster??
-    }
-
-    public void setup(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses) {
-        this.serviceAddresses = serviceAddresses;
-        this.serviceAddress = serviceAddresses.get(0); // ?
+    override fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?) {
+        addresses = serviceAddresses
+        primaryAddress = serviceAddresses!![0] // ?
     }
 
     // implement InvocationHandler
-
-    public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-        return this.invoke(new SimpleMethodInvocation(target, method, args));
+    @Throws(Throwable::class)
+    override fun invoke(target: Any, method: Method, args: Array<Any>): Any {
+        return this.invoke(SimpleMethodInvocation(target, method, *args))!!
     }
 }

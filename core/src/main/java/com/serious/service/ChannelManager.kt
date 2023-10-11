@@ -1,127 +1,110 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.service.channel.ChannelBuilder
+import com.serious.util.Exceptions
+import jakarta.annotation.PostConstruct
+import lombok.extern.slf4j.Slf4j
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
+import org.springframework.core.type.filter.AnnotationTypeFilter
+import java.util.concurrent.ConcurrentHashMap
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.channel.ChannelBuilder;
-import com.serious.util.Exceptions;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-@Component
+@org.springframework.stereotype.Component
 @Slf4j
-public class ChannelManager implements ApplicationContextAware {
+class ChannelManager : ApplicationContextAware {
     // local classes
-
-    static class ChannelProvider extends ClassPathScanningCandidateComponentProvider {
-
-        public ChannelProvider() {
-            super(false);
-
-            addIncludeFilter(new AnnotationTypeFilter(RegisterChannel.class, false));
+    internal class ChannelProvider : ClassPathScanningCandidateComponentProvider(false) {
+        init {
+            addIncludeFilter(AnnotationTypeFilter(RegisterChannel::class.java, false))
         }
     }
 
     // instance data
 
-    ApplicationContext applicationContext;
-    Map<String, ChannelFactory> channelFactories = new HashMap<>();
-    Map<ServiceAddress, Channel> channels = new ConcurrentHashMap<>();
+    @JvmField
+    var applicationContext: ApplicationContext? = null
+    @JvmField
+    var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
+    var channels: MutableMap<ServiceAddress?, Channel> = ConcurrentHashMap()
+    var channelBuilder: MutableMap<Class<out Channel?>, ChannelBuilder<*>> = HashMap()
 
-    Map<Class<? extends Channel>, ChannelBuilder> channelBuilder = new HashMap<>();
-
-    @Value("${service.root:com.serious}")
-    String rootPackage;
+    @Value("\${service.root:com.serious}")
+    var rootPackage: String? = null
 
     // public
-
-    public void registerChannelBuilder(ChannelBuilder channelBuilder) {
-        this.channelBuilder.put(channelBuilder.channelClass(), channelBuilder);
+    fun registerChannelBuilder(channelBuilder: ChannelBuilder<*>) {
+        this.channelBuilder[channelBuilder.channelClass()] = channelBuilder
     }
 
-    public <T extends Channel> ChannelBuilder<T> getChannelBuilder(Class<T> channel) {
-        return this.channelBuilder.get(channel);
+    fun <T : Channel?> getChannelBuilder(channel: Class<out T?>): ChannelBuilder<T> {
+        return channelBuilder[channel] as ChannelBuilder<T>
     }
 
     @PostConstruct
-    void scan() {
-        ChannelProvider provider = new ChannelProvider();
-
-        Set<BeanDefinition> beans = provider.findCandidateComponents(rootPackage);
-
-        for (BeanDefinition bean : beans) {
+    fun scan() {
+        val provider = ChannelProvider()
+        val beans = provider.findCandidateComponents(rootPackage)
+        for (bean in beans) {
             try {
-                this.register(bean);
-            }
-            catch (ClassNotFoundException e) {
-                Exceptions.throwException(e);
+                register(bean)
+            } catch (e: ClassNotFoundException) {
+                Exceptions.throwException(e)
             }
         }
 
         // done
-
-        report();
+        report()
     }
 
-    void report() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("channels:\n");
-        for (String protocol : channelFactories.keySet())
-            builder.append("\t").append(protocol).append("\n");
-
-        log.info(builder.toString());
+    fun report() {
+        val builder = StringBuilder()
+        builder.append("channels:\n")
+        for (protocol in channelFactories.keys) builder.append("\t").append(protocol).append("\n")
+        //TODO KOTLIN ChannelManager.log.info(builder.toString())
     }
 
-    void register(BeanDefinition definition) throws ClassNotFoundException {
-        Class clazz = Class.forName(definition.getBeanClassName());
-        RegisterChannel spec = (RegisterChannel) clazz.getAnnotation(RegisterChannel.class);
-
-        log.info("register channel {}", definition.getBeanClassName());
-
-        channelFactories.put(spec.value(), new SpringChannelFactory(applicationContext, definition));
+    @Throws(ClassNotFoundException::class)
+    fun register(definition: BeanDefinition) {
+        val clazz = Class.forName(definition.beanClassName)
+        val spec = clazz.getAnnotation(RegisterChannel::class.java) as RegisterChannel
+        //TODO KOTLIN ChannelManager.log.info("register channel {}", definition.beanClassName)
+        channelFactories[spec.value] = SpringChannelFactory(applicationContext!!, definition)
     }
 
-    public void removeChannel(Channel channel) {
-        this.channels.remove(channel.getPrimaryAddress());
+    fun removeChannel(channel: Channel) {
+        channels.remove(channel.getPrimaryAddress())
     }
 
-    Channel make(Class<com.serious.service.Component> componentClass, String channelName, List<ServiceAddress> serviceAddresses) {
-        ServiceAddress primaryServiceAddress = serviceAddresses.get(0);
-        Channel channel = channels.get(primaryServiceAddress);
+    fun make(
+        componentClass: Class<Component?>?,
+        channelName: String,
+        serviceAddresses: List<ServiceAddress?>
+    ): Channel? {
+        val primaryServiceAddress = serviceAddresses[0]
+        var channel = channels[primaryServiceAddress]
         if (channel == null) {
-            log.info("create channel for {}", primaryServiceAddress.toString());
-
-            ChannelFactory channelFactory = channelFactories.get(channelName);
-            channel = channelFactory != null ? channelFactory.makeChannel(componentClass, serviceAddresses) : null;
-
-            if (channel != null)
-                channels.put(primaryServiceAddress, channel);
+            //TODO KOTLIN ChannelManager.log.info("create channel for {}", primaryServiceAddress.toString())
+            val channelFactory = channelFactories[channelName]
+            channel = channelFactory?.makeChannel(componentClass, serviceAddresses)
+            if (channel != null) channels[primaryServiceAddress] = channel
         }
-
-        return channel;
+        return channel
     }
 
     // implement ApplicationContextAware
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    @Throws(BeansException::class)
+    override fun setApplicationContext(applicationContext: ApplicationContext) {
+        this.applicationContext = applicationContext
     }
 }

@@ -1,40 +1,35 @@
-package com.serious.service.channel;
+package com.serious.service.channel
+
+import com.serious.service.Channel
+import com.serious.service.ChannelManager
+import com.serious.service.Component
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.Channel;
-import com.serious.service.ChannelManager;
-import com.serious.service.Component;
-import com.serious.service.RegisterChannel;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public class AbstractChannelBuilder<T extends Channel> implements ChannelBuilder<T> {
+open class AbstractChannelBuilder<T : Channel?> protected constructor(channelManager: ChannelManager) :
+    ChannelBuilder<T> {
     // instance data
 
-    Class<? extends Channel> channelClass;
+    var channelClass: Class<out Channel?>
 
     // constructor
+    init {
+        channelClass = javaClass.getAnnotation(RegisterChannelBuilder::class.java).channel.java
 
-    protected AbstractChannelBuilder(ChannelManager channelManager) {
-        channelClass = getClass().getAnnotation(RegisterChannelBuilder.class).channel();
-
-        channelManager.registerChannelBuilder(this);
-
+        channelManager.registerChannelBuilder(this)
     }
 
     // implement ChannelBuilder
-
-    public Class<? extends Channel> channelClass() {
-        return channelClass;
+    override fun channelClass(): Class<out Channel?> {
+        return channelClass
     }
 
-    @Override
-    public boolean isApplicable(Class<Component> component) {
-        return true;
+    override fun isApplicable(component: Class<Component?>?): Boolean {
+        return true
     }
 }

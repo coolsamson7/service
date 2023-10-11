@@ -44,9 +44,9 @@ public class ServiceAddress {
 
     // instance data
 
-    private String channel;
+    public String channel;
     private URI uri;
-    private ServiceInstance serviceInstance;
+    public ServiceInstance serviceInstance;
 
     // constructor
 

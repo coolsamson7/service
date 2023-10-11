@@ -1,100 +1,90 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.service.channel.MissingChannel
+import org.slf4j.LoggerFactory
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentHashMap
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.channel.MissingChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public class ChannelInvocationHandler implements InvocationHandler {
-    // static data
-
-    static Logger log = LoggerFactory.getLogger(ChannelInvocationHandler.class);
-
-    private static final Map<String, ChannelInvocationHandler> handlers = new ConcurrentHashMap<>();
-
-    // static methods
-
-    public static ChannelInvocationHandler forComponent(ComponentDescriptor componentDescriptor, String channel, List<ServiceAddress> addresses) {
-        String key = componentDescriptor.getName() + ":" + channel;
-        ChannelInvocationHandler handler = handlers.get(key);
-        if ( handler == null)
-            handlers.put(key, handler = new ChannelInvocationHandler(componentDescriptor, channel, addresses));
-
-        return handler;
-    }
-
-    public static void recheck(ChannelManager channelManager, ServiceInstanceRegistry.Delta delta) {
-        // recheck missing channels
-
-        for (ChannelInvocationHandler invocationHandler : handlers.values())
-            invocationHandler.checkUpdate(channelManager, delta);
-    }
-
-    // instance data
-
-    private final ComponentDescriptor componentDescriptor;
-    private final String channelName;
-    private Channel channel;
+class ChannelInvocationHandler private constructor(// instance data
+    private val componentDescriptor: ComponentDescriptor<*>, channelName: String, addresses: List<ServiceAddress?>
+) : InvocationHandler {
+    private var channelName: String? = null
+    private var channel: Channel? = null
 
     // constructor
-
-    private ChannelInvocationHandler(ComponentDescriptor componentDescriptor, String channelName, List<ServiceAddress> addresses) {
-        this.componentDescriptor = componentDescriptor;
-
-        resolve(this.channelName = channelName, addresses);
+    init {
+        resolve(channelName.also { this.channelName = it }, addresses)
     }
 
     // private
+    private fun checkUpdate(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta): Boolean {
+        if (channel is MissingChannel) {
+            val componentManager = componentDescriptor.componentManager
+            val serviceAddresses = componentManager.getServiceAddresses(
+                componentDescriptor, channelName
+            )
+            channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses)
+        } else {
+            if (channel!!.needsUpdate(delta)) {
+                // remove
+                log.info("channel {} for {} is dead", channel!!.getPrimaryAddress(), componentDescriptor.getName())
+                channelManager.removeChannel(channel!!)
 
-    private boolean checkUpdate(ChannelManager channelManager, ServiceInstanceRegistry.Delta delta) {
-        if ( channel instanceof MissingChannel) {
-            ComponentManager componentManager = componentDescriptor.componentManager;
-            List<ServiceAddress> serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName);
-
-            channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses);
+                // resolve
+                resolve(
+                    channelName,
+                    componentDescriptor.componentManager.getServiceAddresses(componentDescriptor, channelName)
+                )
+            }
         }
-        else {
-           if (channel.needsUpdate(delta)) {
-               // remove
-
-               log.info("channel {} for {} is dead", channel.getPrimaryAddress(), componentDescriptor.getName());
-
-               channelManager.removeChannel(channel);
-
-               // resolve
-
-               resolve(channelName, componentDescriptor.componentManager.getServiceAddresses(componentDescriptor, channelName));
-           }
-        }
-
-        return true;
+        return true
     }
 
     // public
-
-    public void resolve(String channelName, List<ServiceAddress> addresses) {
-        channel = componentDescriptor.componentManager.getChannel(componentDescriptor, channelName, addresses);
-
-        log.info("resolved channel {} for component {}", channelName, componentDescriptor);
+    fun resolve(channelName: String?, addresses: List<ServiceAddress?>?) {
+        channel = componentDescriptor.componentManager.getChannel(componentDescriptor, channelName, addresses)
+        log.info("resolved channel {} for component {}", channelName, componentDescriptor)
     }
 
     // implement InvocationHandler
+    @Throws(Throwable::class)
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
+       var b = arrayOf< Any>();
+        if ( args != null)
+            b = args as Array<Any>; // TODO KOTLIN
+        return channel!!.invoke(proxy, method, b)
+    }
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return channel.invoke(proxy, method, args);
+    companion object {
+        // static data
+        var log = LoggerFactory.getLogger(ChannelInvocationHandler::class.java)
+        private val handlers: MutableMap<String, ChannelInvocationHandler> = ConcurrentHashMap()
+
+        // static methods
+        fun forComponent(
+            componentDescriptor: ComponentDescriptor<*>,
+            channel: String,
+            addresses: List<ServiceAddress?>
+        ): ChannelInvocationHandler? {
+            val key = componentDescriptor.getName() + ":" + channel
+            var handler = handlers[key]
+            if (handler == null) handlers[key] =
+                ChannelInvocationHandler(componentDescriptor, channel, addresses).also { handler = it }
+            return handler
+        }
+
+        @JvmStatic
+        fun recheck(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta) {
+            // recheck missing channels
+            for (invocationHandler in handlers.values) invocationHandler.checkUpdate(channelManager, delta)
+        }
     }
 }

@@ -1,100 +1,87 @@
-package com.serious.service.channel.rest;
+package com.serious.service.channel.rest
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.ChannelManager;
-import com.serious.service.RegisterChannel;
-import com.serious.service.ServiceAddress;
-import com.serious.service.channel.AbstractChannel;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.serious.service.ChannelManager
+import com.serious.service.Component
+import com.serious.service.RegisterChannel
+import com.serious.service.ServiceAddress
+import com.serious.service.channel.AbstractChannel
+import org.aopalliance.intercept.MethodInvocation
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
+import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Consumer
 
 /**
- * A <code>HttpChannel</code> covers the technical protocol for http rest calls via <code>WebClient</code>
+ * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
  *
  * @author Andreas Ernst
  */
 @RegisterChannel("rest")
-public class RestChannel extends AbstractChannel {
+open class RestChannel  // constructor
+@Autowired constructor(channelManager: ChannelManager?) : AbstractChannel(channelManager!!) {
     // instance data
-
-    private WebClient webClient;
-    private final Map<Method, Request> requests = new ConcurrentHashMap<>();
-
-    // constructor
-
-    @Autowired
-    public RestChannel(ChannelManager channelManager) {
-        super(channelManager);
-    }
+    private var webClient: WebClient? = null
+    private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
 
     // private
-
-    private Request getRequest(Method method) {
-        Request request = requests.get(method);
+    private fun getRequest(method: Method): Request? {
+        var request = requests[method]
         if (request == null) {
-            requests.put(method, request = computeRequest(method));
+            requests[method] = computeRequest(method).also { request = it }
         }
-
-        return request;
+        return request
     }
 
-    private Request computeRequest(Method method) {
-        return new MethodAnalyzer().request(webClient, method);
+    private fun computeRequest(method: Method): Request {
+        return MethodAnalyzer().request(webClient, method)
     }
 
     // implement Channel
-
-    @Override
-    public Object invoke(MethodInvocation invocation) {
-        return getRequest(invocation.getMethod()).execute(invocation.getArguments());
+    override fun invoke(invocation: MethodInvocation): Any? {
+        return getRequest(invocation.method)!!.execute(*invocation.arguments)
     }
 
-    // This method returns filter function which will log request data
-    private static ExchangeFilterFunction logRequest() {
-        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            System.out.println(clientRequest.method() + " " + clientRequest.url());
-            clientRequest.headers().forEach((name, values) -> values.forEach(value -> System.out.println("\t" + name + "=" + value)));
-
-            return Mono.just(clientRequest);
-        });
-    }
-
-    @Override
-    public void setup(Class<com.serious.service.Component> componentClass, List<ServiceAddress> serviceAddresses) {
-        super.setup(componentClass, serviceAddresses);
-
-        AbstractRestChannelBuilder channelBuilder = (AbstractRestChannelBuilder) channelManager.getChannelBuilder(RestChannel.class);
-
-        WebClient.Builder builder = WebClient.builder();
+    override fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?) {
+        super.setup(componentClass, serviceAddresses)
+        val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder
+        var builder = WebClient.builder()
 
         // add some defaults
-
         builder
-                .baseUrl(serviceAddress.getUri().toString())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            .baseUrl(getPrimaryAddress()!!.uri.toString())
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 
         // custom stuff
-
-        if ( channelBuilder != null && channelBuilder.isApplicable(componentClass))
-            builder = channelBuilder.build(builder);
+        if (channelBuilder != null && channelBuilder.isApplicable(componentClass)) builder =
+            channelBuilder.build(builder)
 
         // done
+        webClient = builder.build()
+    }
 
-        webClient = builder.build();
+    companion object {
+        // This method returns filter function which will log request data
+        private fun logRequest(): ExchangeFilterFunction {
+            return ExchangeFilterFunction.ofRequestProcessor { clientRequest: ClientRequest ->
+                println(clientRequest.method().toString() + " " + clientRequest.url())
+                clientRequest.headers().forEach { name: String, values: List<String> ->
+                    values.forEach(
+                        Consumer { value: String -> println("\t$name=$value") })
+                }
+                Mono.just(clientRequest)
+            }
+        }
     }
 }
