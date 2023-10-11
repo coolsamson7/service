@@ -18,6 +18,8 @@
     <properties>
         <java.version>17</java.version>
 
+        <additionalJOption>-Xdoclint:none</additionalJOption>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.source.encoding>UTF-8</project.source.encoding>
 
