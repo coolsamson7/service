@@ -2,10 +2,6 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: "The branch to checkout when cutting the release."
-        required: true
-        default: "master"
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
@@ -40,7 +36,6 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name:  Release
-        run: mvn release:prepare release:perform -B -s $GITHUB_WORKSPACE/settings.xml -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+        run: mvn release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ github.token }}
