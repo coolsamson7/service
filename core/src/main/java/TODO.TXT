@@ -2,10 +2,10 @@
 
 === LATER
 
+- github workflow
 - load balancer
 - open-api...
 
-- publish ( github package )
 - kotlin
 
 === NOW
@@ -17,6 +17,7 @@
 
 === DONE
 
+- publish ( github package )
 - log delta
 - list bodyToFlux(class).toList()
 - test mono
