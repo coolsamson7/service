@@ -87,9 +87,9 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun make(
-        componentClass: Class<Component?>?,
+        componentClass: Class<out Component>,
         channelName: String,
-        serviceAddresses: List<ServiceAddress?>
+        serviceAddresses: List<ServiceAddress>
     ): Channel? {
         val primaryServiceAddress = serviceAddresses[0]
         var channel = channels[primaryServiceAddress]

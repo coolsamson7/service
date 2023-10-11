@@ -1,54 +1,44 @@
-package com.serious.service;
+package com.serious.service
+
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-public class ServiceDescriptor<T extends Service> extends BaseDescriptor<T> {
+class ServiceDescriptor<T : Service>(
+    componentDescriptor: ComponentDescriptor<Component>,
+    serviceInterface: Class<T>?
+) : BaseDescriptor<T>(
+    serviceInterface!!
+) {
     // instance data
-
-    public final ComponentDescriptor<? extends Component> componentDescriptor;
+    @JvmField
+    val componentDescriptor: ComponentDescriptor<out Component>
 
     // constructor
-
-    public ServiceDescriptor(ComponentDescriptor<Component> componentDescriptor, Class<T> serviceInterface) {
-        super(serviceInterface);
-
-        ServiceInterface annotation = this.serviceInterface.getAnnotation(ServiceInterface.class);
-
-        if (!annotation.name().isBlank())
-            name = annotation.name();
-
-        if (!annotation.description().isBlank())
-            description = annotation.description();
-
-        this.componentDescriptor = componentDescriptor;
+    init {
+        val annotation = this.serviceInterface.getAnnotation(ServiceInterface::class.java)
+        if (!annotation.name.isBlank()) name = annotation.name
+        if (!annotation.description.isBlank()) description = annotation.description
+        this.componentDescriptor = componentDescriptor
     }
 
-    // override
+    override val isService: Boolean
+        // override
+        get() = true
 
-    public boolean isService() {
-        return true;
-    }
-
-    public <T extends Component> ComponentDescriptor getComponentDescriptor() {
-        return componentDescriptor;
+    override fun getComponentDescriptor(): ComponentDescriptor<out Component> {
+        return componentDescriptor
     }
 
     // public
-
-    public void report(StringBuilder builder) {
+    fun report(builder: StringBuilder) {
         builder
-                .append("\t\t")
-                .append(this.getName());
-
-        if (local != null)
-            builder.append("[local]");
-
-        builder.append("\n");
+            .append("\t\t")
+            .append(name)
+        if (local != null) builder.append("[local]")
+        builder.append("\n")
     }
 }

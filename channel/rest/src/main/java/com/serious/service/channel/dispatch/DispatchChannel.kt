@@ -47,7 +47,7 @@ class DispatchChannel  // constructor
         }
     }
 
-    override fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?) {
+    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
         super.setup(componentClass, serviceAddresses)
     }
 

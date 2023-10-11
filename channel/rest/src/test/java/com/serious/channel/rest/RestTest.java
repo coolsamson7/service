@@ -45,7 +45,7 @@ class TestComponentComponentRegistry extends LocalComponentRegistry {
         Map<String, String> meta = new HashMap<>();
         meta.put("channels", "rest(http://localhost:" + AbstractComponent.port + ")");
 
-        return List.of(new DefaultServiceInstance("id", "test", "localhost", Integer.valueOf(AbstractComponent.getPort()), false, meta));
+        return List.of(new DefaultServiceInstance("id", "test", "localhost", Integer.valueOf(AbstractComponent.port), false, meta));
     }
 }
 
@@ -154,7 +154,7 @@ interface TestComponent extends com.serious.service.Component {
 class TestComponentImpl extends AbstractComponent implements TestComponent {
     @Override
     public List<ServiceAddress> getAddresses() {
-        return Collections.singletonList(new ServiceAddress("rest", URI.create("http://localhost:" + ":" + getPort())));
+        return Collections.singletonList(new ServiceAddress("rest", URI.create("http://localhost:" + ":" + port)));
     }
 }
 

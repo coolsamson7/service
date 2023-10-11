@@ -1,23 +1,16 @@
-package com.serious.service;
+package com.serious.service
+
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-import java.util.List;
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-public interface Component extends Service {
-    void startup();
-
-    void shutdown();
-
-    List<ServiceAddress> getAddresses();
-
-    ComponentStatus getStatus();
-
-    ComponentHealth getHealth();
+interface Component : Service {
+    fun startup()
+    fun shutdown()
+    val addresses: List<ServiceAddress>?
+    val status: ComponentStatus?
+    val health: ComponentHealth?
 }

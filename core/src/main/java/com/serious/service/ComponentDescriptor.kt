@@ -1,128 +1,103 @@
-package com.serious.service;
+package com.serious.service
+
+import org.springframework.beans.factory.support.DefaultListableBeanFactory
+import org.springframework.web.bind.annotation.GetMapping
+import java.util.*
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.lang.reflect.Method;
-import java.util.*;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-public class ComponentDescriptor<T extends Component> extends BaseDescriptor<T> {
-    // static data
-
-    public static List<ComponentDescriptor<?>> descriptors = new ArrayList<>();
-
+class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDescriptor<T>(
+    componentInterface!!
+) {
     // instance data
-
-    public String health;
-    ComponentManager componentManager;
-
-    List<ServiceDescriptor> services = new LinkedList<>();
+    @JvmField
+    var health: String? = null
+    @JvmField
+    var componentManager: ComponentManager? = null
+    var services: MutableList<ServiceDescriptor<*>> = LinkedList()
 
     // constructor
-
-    public ComponentDescriptor(Class<T> componentInterface) {
-        super(componentInterface);
-
-        descriptors.add(this);
-
-        analyze();
+    init {
+        descriptors.add(this)
+        analyze()
     }
 
     // public
-
-    public <T extends Component> ComponentDescriptor getComponentDescriptor() {
-        return this;
+    override fun getComponentDescriptor(): ComponentDescriptor<T> {
+        return this
     }
 
-    public void registerBeans(DefaultListableBeanFactory registry) {
-        super.registerBeans(registry);
+    override fun registerBeans(registry: DefaultListableBeanFactory) {
+        super.registerBeans(registry)
 
         // fetch channels
-
-        if (implementingBeans.get(this) != null) {
-            Class componentClass = class4Name(implementingBeans.get(this).getBeanClassName());
-
-            ComponentHost host = (ComponentHost) componentClass.getAnnotation(ComponentHost.class);
+        if (implementingBeans.get(this as BaseDescriptor<Service>) != null) {
+            val componentClass = class4Name(
+                implementingBeans.get(this)!!.beanClassName
+            )
+            val host = componentClass!!.getAnnotation(ComponentHost::class.java) as ComponentHost
 
             // health
-
-            health = host.health();
+            health = host.health
 
             // patch the request mapping for the getHealth()
-
             try {
-                Method getHealth = componentClass.getMethod("getHealth");
-
-                if (getHealth.getAnnotation(GetMapping.class) != null) {
-                    GetMapping getMapping = getHealth.getAnnotation(GetMapping.class);
+                val getHealth = componentClass.getMethod("getHealth")
+                if (getHealth.getAnnotation(GetMapping::class.java) != null) {
+                    val getMapping = getHealth.getAnnotation(GetMapping::class.java)
 
                     //Annotations.changeAnnotationValue(getMapping, "value", new String[]{health});
                 }
-            }
-            catch (NoSuchMethodException e) {
+            } catch (e: NoSuchMethodException) {
                 // ignore
             }
         }
 
         // services
-
-        for (ServiceDescriptor<?> serviceDescriptor : services)
-            serviceDescriptor.registerBeans(registry);
+        for (serviceDescriptor in services) serviceDescriptor.registerBeans(registry)
     }
 
     // private
-
-    private void analyze() {
-        ComponentInterface annotation = this.serviceInterface.getAnnotation(ComponentInterface.class);
-
-        if (!annotation.name().isBlank())
-            name = annotation.name();
-
-        if (!annotation.description().isBlank())
-            description = annotation.description();
+    private fun analyze() {
+        val annotation = serviceInterface.getAnnotation(ComponentInterface::class.java)
+        if (!annotation.name.isBlank()) name = annotation.name
+        if (!annotation.description.isBlank()) description = annotation.description
 
         // analyze services
-
-        for (Class<? extends Service> service : annotation.services())
-            registerService(service);
+        for (service in annotation.services) registerService(service.java)
     }
 
-    private <T extends Service> void registerService(Class<T> service) {
-        services.add(new ServiceDescriptor<T>((ComponentDescriptor<Component>) this, service));
+    private fun <T : Service> registerService(service: Class<T>) {
+        services.add(ServiceDescriptor(this as ComponentDescriptor<Component>, service))
     }
 
     // public
-
-    public void report(StringBuilder builder) {
+    fun report(builder: StringBuilder) {
         builder
-                .append("component ")
-                .append(this.getName()).append("\n");
-
+            .append("component ")
+            .append(name).append("\n")
         if (hasImplementation()) {
-            builder.append("\taddress:\n");
-
-            if (getExternalAddresses() != null)
-                for (ServiceAddress externalAddress : getExternalAddresses())
-                    builder.append("\t\t").append(externalAddress.toString()).append("\n");
+            builder.append("\taddress:\n")
+            if (externalAddresses != null) for (externalAddress in externalAddresses!!) builder.append("\t\t")
+                .append(externalAddress.toString()).append("\n")
         }
 
         // services
-
-        builder.append("\tservices:").append("\n");
-
-        for (ServiceDescriptor<?> serviceDescriptor : services)
-            serviceDescriptor.report(builder);
+        builder.append("\tservices:").append("\n")
+        for (serviceDescriptor in services) serviceDescriptor.report(builder)
     }
 
-    public List<ServiceAddress> getExternalAddresses() {
-        return local != null ? local.getAddresses() : null;
+    val externalAddresses: List<ServiceAddress>?
+        get() = if (local != null) (local!! as Component).addresses else null
+
+    companion object {
+        // static data
+        @JvmField
+        var descriptors: MutableList<ComponentDescriptor<*>> = ArrayList()
     }
 }

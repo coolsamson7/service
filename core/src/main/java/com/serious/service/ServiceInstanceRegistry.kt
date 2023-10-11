@@ -1,239 +1,206 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.service.ChannelInvocationHandler.Companion.recheck
+import lombok.extern.slf4j.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.ServiceInstance
+import org.springframework.stereotype.Component
+import java.net.URI
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.stream.Collectors
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
 @Component
 @Slf4j
-public class ServiceInstanceRegistry {
+class ServiceInstanceRegistry {
     // local classes
-
-    public static class Delta {
+    class Delta {
         // instance data
-
-        Map<String,List<ServiceInstance>> deletedInstances = new HashMap<>();
-        Map<String,List<ServiceInstance>> addedInstances = new HashMap<>();
+        var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
+        var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
 
         // private
-
-        List<ServiceInstance> getDeletedInstances(String service) {
-            return deletedInstances.computeIfAbsent(service, k -> new LinkedList<>());
+        fun getDeletedInstances(service: String): MutableList<ServiceInstance?> {
+            return deletedInstances.computeIfAbsent(service) { k: String? -> LinkedList() }
         }
 
-        List<ServiceInstance> getAddedInstances(String service) {
-            return addedInstances.computeIfAbsent(service, k -> new LinkedList<>());
+        fun getAddedInstances(service: String): MutableList<ServiceInstance?> {
+            return addedInstances.computeIfAbsent(service) { k: String? -> LinkedList() }
         }
 
         // public
-
-        public boolean isDeleted(ServiceInstance instance) {
-            for (List<ServiceInstance> instances : deletedInstances.values())
-                if ( instances.contains(instance))
-                    return true;
-
-            return false;
+        fun isDeleted(instance: ServiceInstance?): Boolean {
+            for (instances in deletedInstances.values) if (instances.contains(instance)) return true
+            return false
         }
 
-        public void deletedServices(String service, List<ServiceInstance> instances) {
-            for (ServiceInstance serviceInstance : instances)
-                deletedService(service, serviceInstance);
-        }
-        public void deletedService(String service, ServiceInstance instance) {
-            ServiceInstanceRegistry.log.info(" deleted {} instance {}", service, instance.getInstanceId());
-
-            getDeletedInstances(service).add(instance);
+        fun deletedServices(service: String, instances: List<ServiceInstance>) {
+            for (serviceInstance in instances) deletedService(service, serviceInstance)
         }
 
-        public void addedService(String service, ServiceInstance instance) {
-            ServiceInstanceRegistry.log.info(" added {} instance {}", service, instance.getInstanceId());
-
-            getAddedInstances(service).add(instance);
-        }
-        public void addedServices(String service, List<ServiceInstance> instances) {
-            for (ServiceInstance serviceInstance : instances)
-                addedService(service, serviceInstance);
+        fun deletedService(service: String, instance: ServiceInstance?) {
+            //TODO KOTLIN ServiceInstanceRegistry.log.info(" deleted {} instance {}", service, instance!!.instanceId)
+            getDeletedInstances(service).add(instance)
         }
 
-        public boolean isEmpty() {
-            return addedInstances.isEmpty() && deletedInstances.isEmpty();
+        fun addedService(service: String, instance: ServiceInstance?) {
+            //TODO KOTLIN ServiceInstanceRegistry.log.info(" added {} instance {}", service, instance!!.instanceId)
+            getAddedInstances(service).add(instance)
         }
+
+        fun addedServices(service: String, instances: List<ServiceInstance>) {
+            for (serviceInstance in instances) addedService(service, serviceInstance)
+        }
+
+        val isEmpty: Boolean
+            get() = addedInstances.isEmpty() && deletedInstances.isEmpty()
     }
 
     // instance data
     @Autowired
-    ChannelManager channelManager;
+    var channelManager: ChannelManager? = null
+
     @Autowired
-    ComponentRegistry componentRegistry;
-    private Map<String, List<ServiceInstance>> serviceInstances = new ConcurrentHashMap<>();
+    var componentRegistry: ComponentRegistry? = null
+    private var serviceInstances: MutableMap<String, List<ServiceInstance>> = ConcurrentHashMap()
 
     // public
-
-    public void startup() {
+    fun startup() {
         // fill initial services
-
-        for (ComponentDescriptor componentDescriptor : ComponentDescriptor.descriptors) {
-            List<ServiceInstance> instances = componentRegistry.getInstances(componentDescriptor.getName());
-
-            serviceInstances.put(componentDescriptor.getName(), instances);
+        for (componentDescriptor in ComponentDescriptor.descriptors) {
+            val instances = componentRegistry!!.getInstances(componentDescriptor.name)
+            serviceInstances[componentDescriptor.name] = instances
         }
     }
 
     //
-
-
-    private List<ServiceAddress> extractAddresses(String channels) {
-        return  Arrays.stream(channels.split(","))
-                .map(channel -> {
-                    int lparen = channel.indexOf("(");
-                    int rparen = channel.indexOf(")");
-
-                    String protocol = channel.substring(0, lparen);
-                    URI uri = URI.create(channel.substring(lparen + 1, rparen));
-
-                    return new ServiceAddress(protocol, uri);
-                })
-                .collect(Collectors.toList());
+    private fun extractAddresses(channels: String?): List<ServiceAddress> {
+        return Arrays.stream(channels!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            .map { channel: String ->
+                val lparen = channel.indexOf("(")
+                val rparen = channel.indexOf(")")
+                val protocol = channel.substring(0, lparen)
+                val uri = URI.create(channel.substring(lparen + 1, rparen))
+                ServiceAddress(protocol, uri)
+            }
+            .collect(Collectors.toList())
     }
 
-    private List<ServiceInstance> getInstances(ComponentDescriptor<?> componentDescriptor) {
-        List<ServiceInstance> instances = this.serviceInstances.get(componentDescriptor.getName());
-
-        return instances != null ? instances : new ArrayList<>();
+    private fun getInstances(componentDescriptor: ComponentDescriptor<*>): List<ServiceInstance> {
+        val instances = serviceInstances[componentDescriptor.name]
+        return instances ?: ArrayList()
     }
+
     //
-
-    List<ServiceAddress> getServiceAddresses(ComponentDescriptor<?> componentDescriptor, String... preferredChannels) {
-        List<ServiceInstance> instances = getInstances(componentDescriptor);
-        Map<ServiceInstance, List<ServiceAddress>> addresses = new HashMap<>();
+    fun getServiceAddresses(
+        componentDescriptor: ComponentDescriptor<*>,
+        vararg preferredChannels: String?
+    ): List<ServiceAddress>? {
+        val instances = getInstances(componentDescriptor)
+        val addresses: MutableMap<ServiceInstance, List<ServiceAddress>> = HashMap()
 
         // extract addresses
-
-        for ( ServiceInstance instance : instances)
-            addresses.put(instance, extractAddresses(instance.getMetadata().get("channels")));
+        for (instance in instances) addresses[instance] = extractAddresses(instance.metadata["channels"])
 
         // figure out a matching channel
-
-        String channelName = null;
+        var channelName: String? = null
         if (!instances.isEmpty()) {
-            if (preferredChannels.length == 0) {
-                channelName = addresses.get(instances.get(0)).get(0).getChannel();
-            }
-            else {
-                for (ServiceInstance instance : instances) {
-                    for ( ServiceAddress address : addresses.get(instance))
-                        if ( channelName == null && Arrays.asList(preferredChannels).contains(address.getChannel()) ) {
-                            channelName = address.getChannel();
-                            break;
-                        }
-
-                    if  (channelName != null)
-                        break;
+            if (preferredChannels.size == 0) {
+                channelName = addresses[instances[0]]!![0].channel
+            } else {
+                for (instance in instances) {
+                    for (address in addresses[instance]!!) if (channelName == null && Arrays.asList(*preferredChannels)
+                            .contains(address.channel)
+                    ) {
+                        channelName = address.channel
+                        break
+                    }
+                    if (channelName != null) break
                 } // for
             }
         }
-
-        if (channelName != null) {
-            String finalChannelName = channelName;
-
-            return instances.stream()
-                    .filter(serviceInstance ->  addresses.get(serviceInstance).stream().anyMatch(address -> address.getChannel().equals(finalChannelName)))
-                    .map(serviceInstance -> new ServiceAddress(finalChannelName, serviceInstance))
-                    .collect(Collectors.toList());
-        }
-        else return null;
+        return if (channelName != null) {
+            val finalChannelName: String = channelName
+            instances.stream()
+                .filter { serviceInstance: ServiceInstance ->
+                    addresses[serviceInstance]!!
+                        .stream().anyMatch { address: ServiceAddress -> address.channel == finalChannelName }
+                }
+                .map { serviceInstance: ServiceInstance? -> ServiceAddress(finalChannelName, serviceInstance!!) }
+                .collect(Collectors.toList())
+        } else null
     }
 
-    public void report() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("Service Instances").append("\n");
-
-        for (String service : serviceInstances.keySet()) {
-            List<ServiceInstance> instances = serviceInstances.get(service);
-
-            builder.append("Service ").append(service).append("\n");
-
-            for (ServiceInstance instance : instances) {
+    fun report() {
+        val builder = StringBuilder()
+        builder.append("Service Instances").append("\n")
+        for (service in serviceInstances.keys) {
+            val instances = serviceInstances[service]!!
+            builder.append("Service ").append(service).append("\n")
+            for (instance in instances) {
                 builder
-                        .append("\t").append(instance.getUri())
-                        .append("\n");
+                    .append("\t").append(instance.uri)
+                    .append("\n")
             } // for
         } // for
-
-        System.out.println(builder);
+        println(builder)
     }
 
-
-
-    private Delta computeDelta(Map<String, List<ServiceInstance>> oldMap, Map<String, List<ServiceInstance>> newMap) {
-        Delta delta = new Delta();
-
-        Set<String> oldKeys = oldMap.keySet();
-        for (String service : oldKeys) {
-            if (!newMap.containsKey(service))
-                delta.deletedServices(service, oldMap.get(service));//System.out.println("deleted service " + service);
-
+    private fun computeDelta(
+        oldMap: Map<String, List<ServiceInstance>>,
+        newMap: Map<String, List<ServiceInstance>>
+    ): Delta {
+        val delta = Delta()
+        val oldKeys = oldMap.keys
+        for (service in oldKeys) {
+            if (!newMap.containsKey(service)) delta.deletedServices(
+                service,
+                oldMap[service]!!
+            ) //System.out.println("deleted service " + service);
             else {
                 // check instances
-
-                Map<String, ServiceInstance> oldInstances = new HashMap<>();
-                Map<String, ServiceInstance> newInstances = new HashMap<>();
-
-                for ( ServiceInstance serviceInstance : oldMap.get(service))
-                    oldInstances.put(serviceInstance.getInstanceId(), serviceInstance);
-
-                for ( ServiceInstance serviceInstance : newMap.get(service))
-                    newInstances.put(serviceInstance.getInstanceId(), serviceInstance);
+                val oldInstances: MutableMap<String, ServiceInstance> = HashMap()
+                val newInstances: MutableMap<String, ServiceInstance> = HashMap()
+                for (serviceInstance in oldMap[service]!!) oldInstances[serviceInstance.instanceId] = serviceInstance
+                for (serviceInstance in newMap[service]!!) newInstances[serviceInstance.instanceId] = serviceInstance
 
                 //oldMap.get(service).stream().peek(serviceInstance -> oldInstances.put(serviceInstance.getInstanceId(), serviceInstance));
                 //newMap.get(service).stream().peek(serviceInstance -> newInstances.put(serviceInstance.getInstanceId(), serviceInstance));
 
                 // compare maps
-
-                Set<String> oldInstanceIds = oldInstances.keySet();
-                for (String instanceId : oldInstanceIds)
-                    if (!newInstances.containsKey(instanceId))
-                        delta.deletedService(service, oldInstances.get(instanceId));//System.out.println("deleted service instance " + instanceId);
-
-                for (String instanceId : newInstances.keySet())
-                    if (!oldInstanceIds.contains(instanceId))
-                        delta.addedService(service, newInstances.get(instanceId));//System.out.println("new service instance " + instanceId);
+                val oldInstanceIds: Set<String> = oldInstances.keys
+                for (instanceId in oldInstanceIds) if (!newInstances.containsKey(instanceId)) delta.deletedService(
+                    service,
+                    oldInstances[instanceId]
+                ) //System.out.println("deleted service instance " + instanceId);
+                for (instanceId in newInstances.keys) if (!oldInstanceIds.contains(instanceId)) delta.addedService(
+                    service,
+                    newInstances[instanceId]
+                ) //System.out.println("new service instance " + instanceId);
             }
         }
-
-        for (String service : newMap.keySet())
-            if (!oldMap.containsKey(service))
-                delta.addedServices(service, newMap.get(service));//System.out.println("new service " + service);
-
-        return delta;
+        for (service in newMap.keys) if (!oldMap.containsKey(service)) delta.addedServices(
+            service,
+            newMap[service]!!
+        ) //System.out.println("new service " + service);
+        return delta
     }
 
-    public void update(Map<String, List<ServiceInstance>> newMap) {
-        Delta delta = computeDelta(this.serviceInstances , newMap);
-
-        if (!delta.isEmpty()) {
+    fun update(newMap: MutableMap<String, List<ServiceInstance>>) {
+        val delta = computeDelta(serviceInstances, newMap)
+        if (!delta.isEmpty) {
             // recheck missing channels
-
-            ChannelInvocationHandler.recheck(channelManager, delta);
+            recheck(channelManager!!, delta)
         }
 
         // new map
-
-        this.serviceInstances = newMap;
+        serviceInstances = newMap
     }
 }

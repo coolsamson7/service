@@ -1,158 +1,130 @@
-package com.serious.service;
+package com.serious.service
 
-import com.serious.channel.LocalChannel;
-import com.serious.registry.LocalComponentRegistry;
-import com.serious.service.annotations.InjectService;
-import com.serious.service.exception.ServiceRuntimeException;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.client.DefaultServiceInstance;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import com.serious.channel.LocalChannel
+import com.serious.registry.LocalComponentRegistry
+import com.serious.service.annotations.InjectService
+import com.serious.service.exception.ServiceRuntimeException
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.client.DefaultServiceInstance
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 
 // test classes
-
 @RegisterChannel("test")
-class TestChannel extends LocalChannel {
-
-    protected TestChannel(ChannelManager channelManager) {
-        super(channelManager);
-    }
-}
+internal class TestChannel protected constructor(channelManager: ChannelManager?) : LocalChannel(channelManager)
 
 @RegisterChannel("test1")
-class Test1Channel extends LocalChannel {
+internal class Test1Channel protected constructor(channelManager: ChannelManager?) : LocalChannel(channelManager)
 
-    protected Test1Channel(ChannelManager channelManager) {
-        super(channelManager);
-    }
+@org.springframework.stereotype.Component
+internal class TestComponentComponentRegistry : LocalComponentRegistry()
+
+@ServiceInterface
+internal interface TestService : Service {
+    fun hello(world: String): String
 }
 
-@Component
-class TestComponentComponentRegistry extends LocalComponentRegistry {
+internal interface BadService : Service {
+    fun hello(world: String?): String?
 }
 
-@ServiceInterface()
-interface TestService extends Service {
-    String hello(String world);
+@ComponentInterface(services = [TestService::class])
+internal interface TestComponent : Component {
+    fun hello(world: String): String
 }
 
-interface BadService extends Service {
-    String hello(String world);
-}
-
-
-@ComponentInterface(
-        services = {TestService.class})
-interface TestComponent extends com.serious.service.Component {
-    String hello(String world);
-}
-
-@ComponentHost()
-class TestComponentImpl extends AbstractComponent implements TestComponent {
-    @Override
-    public String hello(String world) {
-        return "hello " + world;
+@ComponentHost
+internal class TestComponentImpl : AbstractComponent(), TestComponent {
+    override fun hello(world: String): String {
+        return "hello $world"
     }
 
-    @Override
-    public List<ServiceAddress> getAddresses() {
-        Map<String, String> meta = new HashMap<>();
-        meta.put("channels", "test(http://localhost:0),test1(http://localhost:0)");
-
-        return List.of(
-                new ServiceAddress("test", new DefaultServiceInstance("id", "test", "localhost", 0, false, meta))
-        );
-    }
+    override val addresses: List<ServiceAddress>
+        get() {
+            val meta: MutableMap<String, String> = HashMap()
+            meta["channels"] = "test(http://localhost:0),test1(http://localhost:0)"
+            return java.util.List.of(
+                ServiceAddress("test", DefaultServiceInstance("id", "test", "localhost", 0, false, meta))
+            )
+        }
 }
 
-@Component
-class TestServiceImpl extends AbstractService implements TestService {
-    @Override
-    public String hello(String world) {
-        return "hello " + world;
+@org.springframework.stereotype.Component
+internal class TestServiceImpl : AbstractService(), TestService {
+    override fun hello(world: String): String {
+        return "hello $world"
     }
 }
-
 
 // test classes
 @Configuration
 @ComponentScan
-@Import(ServiceConfiguration.class)
-class TestConfig {
-    TestConfig() {
-    }
-}
+@Import(
+    ServiceConfiguration::class
+)
+internal class TestConfig
 
-@SpringBootTest(classes = {ServiceConfiguration.class})
-@Import(ServiceConfiguration.class)
-class ServiceTests {
+@SpringBootTest(classes = [ServiceConfiguration::class])
+@Import(
+    ServiceConfiguration::class
+)
+internal class ServiceTests {
     // instance data
-
     @Autowired
-    ComponentManager componentManager;
-    @InjectService
-    TestService testService;
-    @InjectService(preferLocal = true)
-    TestService localTestService;
+    var componentManager: ComponentManager? = null
 
     @InjectService
-    TestComponent testComponent;
+    var testService: TestService? = null
+
     @InjectService(preferLocal = true)
-    TestComponent localTestComponent;
+    var localTestService: TestService? = null
+
+    @InjectService
+    var testComponent: TestComponent? = null
+
+    @InjectService(preferLocal = true)
+    var localTestComponent: TestComponent? = null
 
     // test
-
     @Test
-    void testUnknownService() {
+    fun testUnknownService() {
         try {
-            componentManager.acquireService(BadService.class);
-
-            fail("should throw");
-        }
-        catch (ServiceRuntimeException e) {
+            componentManager!!.acquireService(BadService::class.java)
+            Assertions.fail<Any>("should throw")
+        } catch (e: ServiceRuntimeException) {
         }
     }
 
     @Test
-    void testMissingChannel() {
+    fun testMissingChannel() {
         try {
-            componentManager.acquireService(TestService.class, "dunno");
-
-            fail("should throw");
-        }
-        catch (ServiceRuntimeException e) {
+            componentManager!!.acquireService(TestService::class.java, "dunno")
+            Assertions.fail<Any>("should throw")
+        } catch (e: ServiceRuntimeException) {
         }
     }
 
-
     @Test
-    void testLocalService() {
-        assertEquals("hello world", localTestService.hello("world"));
+    fun testLocalService() {
+        Assertions.assertEquals("hello world", localTestService!!.hello("world"))
     }
 
     //@Test
-    void testRemoteService() {
-        assertEquals("hello world", testService.hello("world"));
+    fun testRemoteService() {
+        Assertions.assertEquals("hello world", testService!!.hello("world"))
     }
 
     @Test
-    void testLocalComponent() {
-        assertEquals("hello world", localTestComponent.hello("world"));
+    fun testLocalComponent() {
+        Assertions.assertEquals("hello world", localTestComponent!!.hello("world"))
     }
 
     //@Test
-    void testRemoteComponent() {
-        assertEquals("hello world", testComponent.hello("world"));
+    fun testRemoteComponent() {
+        Assertions.assertEquals("hello world", testComponent!!.hello("world"))
     }
 }

@@ -1,21 +1,19 @@
-package com.serious.service;
+package com.serious.service
+
+import kotlin.reflect.KClass
+
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-import java.lang.annotation.*;
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ComponentInterface {
-    String name() default "";
-    String description() default "";
-
-    Class<? extends Service>[] services();
-}
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class ComponentInterface(
+    val name: String = "",
+    val description: String = "",
+    val services: Array<KClass<out Service>>
+) 

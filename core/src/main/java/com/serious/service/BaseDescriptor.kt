@@ -1,130 +1,111 @@
-package com.serious.service;
+package com.serious.service
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.exception.ServiceRuntimeException;
-import com.serious.util.Exceptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.serious.service.exception.ServiceRuntimeException
+import com.serious.util.Exceptions
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.beans.factory.support.DefaultListableBeanFactory
+import org.springframework.context.ApplicationContext
+import java.net.URI
+import java.util.*
 
 /**
  * @author Andreas Ernst
  */
-public class BaseDescriptor<T extends Service> {
-    // static data
-
-    static Logger logger = LoggerFactory.getLogger(BaseDescriptor.class);
-
-    static Map<Class<? extends Service>, BaseDescriptor<?>> descriptors = new HashMap<>();
-
-    static Map<BaseDescriptor<Service>, BeanDefinition> implementingBeans = new HashMap<>();
-
-    // static methods
-
-    static Class class4Name(String className) {
-        try {
-            return Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
-            Exceptions.throwException(e);
-            return null;
-        }
-    }
-
-    public static void rememberImplementation(BaseDescriptor<Service> descriptor, BeanDefinition bean) {
-        implementingBeans.put(descriptor, bean);
-    }
-
-    public static void createImplementations(ApplicationContext applicationContext) {
-        // fetch instances
-
-        for (Map.Entry<BaseDescriptor<Service>, BeanDefinition> entry : implementingBeans.entrySet()) {
-            BaseDescriptor<Service> descriptor = entry.getKey();
-
-            logger.info("create implementation for {}", descriptor.getName());
-
-            descriptor.local = applicationContext.getBean(descriptor.serviceInterface);
-        }
-
-        implementingBeans.clear();
-    }
-
-    public static <T extends Service> BaseDescriptor<T> forService(Class<T> serviceClass) {
-        BaseDescriptor<T> baseDescriptor = (BaseDescriptor<T>) descriptors.get(serviceClass);
-        if ( baseDescriptor == null)
-            throw new ServiceRuntimeException("unknown service %s", serviceClass.getName());
-
-        return baseDescriptor;
-    }
-
-    // instance data
-
-    public Class<T> serviceInterface;
-    public T local;
-    protected String name;
-    protected String description = "";
+open class BaseDescriptor<T : Service> protected constructor(// instance data
+    @JvmField var serviceInterface: Class<out T>
+) {
+    @JvmField
+    var local: Service? = null
+    var name: String
+        protected set
+    @JvmField
+    protected var description = ""
 
     // constructor
-
-    protected BaseDescriptor(Class<T> serviceInterface) {
-        this.name = serviceInterface.getName(); // that's the default
-        this.serviceInterface = serviceInterface;
-
-        descriptors.put(serviceInterface, this);
+    init {
+        name = serviceInterface.getName() // that's the default
+        descriptors[serviceInterface] = this
     }
 
     // public
-
-    public void registerBeans(DefaultListableBeanFactory registry) {
+    open fun registerBeans(registry: DefaultListableBeanFactory) {
         // let's look for local implementations
-
-        for (String name : registry.getBeanNamesForType(serviceInterface))
-            rememberImplementation((BaseDescriptor<Service>) this, registry.getBeanDefinition(name));
+        for (name in registry.getBeanNamesForType(serviceInterface)) rememberImplementation(
+            this as BaseDescriptor<Service>,
+            registry.getBeanDefinition(name)
+        )
     }
 
-    public boolean isService() {
-        return false;
+    open val isService: Boolean
+        get() = false
+
+    open fun getComponentDescriptor(): ComponentDescriptor<out Component> {
+        throw RuntimeException("ocuh") // TODO KOTLIN
     }
 
-    public <T extends Component> ComponentDescriptor<T> getComponentDescriptor() {
-        return null;
-    }
+    val uri: URI?
+        get() = null
 
-    public URI getUri() {
-        return null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean hasImplementation() {
-        return local != null || implementingBeans.get(this) != null;
+    fun hasImplementation(): Boolean {
+        return local != null || implementingBeans.get<BaseDescriptor<out Service>, BeanDefinition>(this) != null
     }
 
     // override Object
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BaseDescriptor<?> that = (BaseDescriptor<?>) o;
-        return Objects.equals(serviceInterface, that.serviceInterface);
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+        val that = o as BaseDescriptor<*>
+        return serviceInterface == that.serviceInterface
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(serviceInterface);
+    override fun hashCode(): Int {
+        return Objects.hash(serviceInterface)
+    }
+
+    companion object {
+        // static data
+        var logger = LoggerFactory.getLogger(BaseDescriptor::class.java)
+        var descriptors: MutableMap<Class<out Service>, BaseDescriptor<*>> = HashMap()
+        @JvmField
+        var implementingBeans: MutableMap<BaseDescriptor<out Service>, BeanDefinition> = HashMap()
+
+        // static methods
+        @JvmStatic
+        fun class4Name(className: String?): Class<*>? {
+            return try {
+                Class.forName(className)
+            } catch (e: ClassNotFoundException) {
+                Exceptions.throwException(e)
+                null
+            }
+        }
+
+        fun rememberImplementation(descriptor: BaseDescriptor<Service>, bean: BeanDefinition) {
+            implementingBeans[descriptor] = bean
+        }
+
+        @JvmStatic
+        fun createImplementations(applicationContext: ApplicationContext) {
+            // fetch instances
+            for ((descriptor) in implementingBeans) {
+                logger.info("create implementation for {}", descriptor.name)
+
+                var s : Service? =  applicationContext.getBean(descriptor.serviceInterface)
+                descriptor.local = s
+            }
+            implementingBeans.clear()
+        }
+
+        @JvmStatic
+        fun <T : Service> forService(serviceClass: Class<T>): BaseDescriptor<T> {
+            return descriptors[serviceClass] as BaseDescriptor<T>?
+                ?: throw ServiceRuntimeException("unknown service %s", serviceClass.getName())
+        }
     }
 }

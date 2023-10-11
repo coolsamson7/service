@@ -89,7 +89,7 @@ public class ConsulComponentRegistry implements ComponentRegistry {
     }
 
     private String getPort() {
-        return AbstractComponent.getPort();
+        return AbstractComponent.port;
     }
 
     private String getId(ComponentDescriptor<com.serious.service.Component> descriptor) {

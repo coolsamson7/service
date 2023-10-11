@@ -1,21 +1,14 @@
-package com.serious.service.exception;
+package com.serious.service.exception
+
 /*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
  * All rights reserved
- */
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-public class ServiceRegistryException extends RuntimeException {
+class ServiceRegistryException : RuntimeException {
     // ServiceException
-
-    public ServiceRegistryException(String message, Object... args) {
-        super(String.format(message, args));
-    }
-
-    ServiceRegistryException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    constructor(message: String?, vararg args: Any?) : super(String.format(message!!, *args))
+    internal constructor(message: String?, cause: Throwable?) : super(message, cause)
 }

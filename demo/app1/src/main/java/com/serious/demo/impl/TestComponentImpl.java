@@ -53,8 +53,8 @@ public class TestComponentImpl extends AbstractComponent implements TestComponen
     @ResponseBody
     public List<ServiceAddress> getAddresses() {
         return List.of(
-                new ServiceAddress("dispatch", URI.create("http://" + getHost() + ":" + getPort())),
-                new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + getPort()))
+                new ServiceAddress("dispatch", URI.create("http://" + getHost() + ":" + port)),
+                new ServiceAddress("rest", URI.create("http://" + getHost() + ":" + port))
         );
     }
 }

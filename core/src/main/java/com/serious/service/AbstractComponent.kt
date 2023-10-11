@@ -1,57 +1,44 @@
-package com.serious.service;
+package com.serious.service
+
+import lombok.extern.slf4j.Slf4j
+import org.springframework.cloud.commons.util.InetUtils
+import org.springframework.cloud.commons.util.InetUtilsProperties
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.commons.util.InetUtils;
-import org.springframework.cloud.commons.util.InetUtilsProperties;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
 @Slf4j
-public abstract class AbstractComponent implements Component {
-    // static data
-
-    public static String port; // TODO
-
-    static InetUtils inet = new InetUtils(new InetUtilsProperties());
-
-    // static methods
-
-    public static String getHost() {
-        return inet.findFirstNonLoopbackHostInfo().getHostname();// TODO getIpAddress();
-    }
-
-    public static String getPort() {
-        return port;
-    }
-
+abstract class AbstractComponent : Component {
     // instance data
-
-    private ComponentStatus status = ComponentStatus.VIRGIN;
+    override var status = ComponentStatus.VIRGIN
+    //TODO KOTLIN private set
 
     // implement Component
-    public void startup() {
-        log.info("starting up {}", getClass().getName());
-
-        status = ComponentStatus.RUNNING;
+    override fun startup() {
+        //TODO KOTLIN AbstractComponent.log.info("starting up {}", javaClass.getName())
+        status = ComponentStatus.RUNNING
     }
 
-    public void shutdown() {
-        log.info("shutdown {}", getClass().getName());
-
-        status = ComponentStatus.STOPPED;
+    override fun shutdown() {
+        //TODO KOTLIN AbstractComponent.log.info("shutdown {}", javaClass.getName())
+        status = ComponentStatus.STOPPED
     }
 
-    public ComponentStatus getStatus() {
-        return status;
-    }
+    override val health: ComponentHealth
+        get() = if (status == ComponentStatus.RUNNING) ComponentHealth.UP else ComponentHealth.DOWN
 
-    public ComponentHealth getHealth() {
-        return getStatus() == ComponentStatus.RUNNING ? ComponentHealth.UP : ComponentHealth.DOWN;
+    companion object {
+        // static data
+        @JvmField
+        var port: String? = null // TODO
+        var inet = InetUtils(InetUtilsProperties())
+        @JvmStatic
+        val host: String
+            // static methods
+            get() = inet.findFirstNonLoopbackHostInfo().hostname // TODO getIpAddress();
     }
 }

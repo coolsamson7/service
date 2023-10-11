@@ -12,5 +12,5 @@ import com.serious.service.Component
  */
 interface ChannelBuilder<T : Channel?> {
     fun channelClass(): Class<out Channel?>
-    fun isApplicable(component: Class<Component?>?): Boolean
+    fun isApplicable(component: Class<out Component>): Boolean
 }

@@ -52,8 +52,9 @@ open class RestChannel  // constructor
         return getRequest(invocation.method)!!.execute(*invocation.arguments)
     }
 
-    override fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?) {
+    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
         super.setup(componentClass, serviceAddresses)
+
         val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder
         var builder = WebClient.builder()
 

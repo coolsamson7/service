@@ -1,21 +1,16 @@
-package com.serious.service;
+package com.serious.service
+
+import org.springframework.stereotype.Component
+
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */
-
-import org.springframework.stereotype.Component;
-
-import java.lang.annotation.*;
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
 @Component
-public @interface ComponentHost {
-    String health() default "/health";
-}
+annotation class ComponentHost(val health: String = "/health") 

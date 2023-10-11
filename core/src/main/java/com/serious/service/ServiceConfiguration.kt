@@ -1,25 +1,22 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.injection.InjectorFactory
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.injection.InjectorFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-/**
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
 @Configuration
 @ComponentScan
-public class ServiceConfiguration {
-    @Bean()
-    public InjectorFactory injectorFactory() {
-        InjectorFactory factory = new InjectorFactory();
-
-        return factory;
+class ServiceConfiguration {
+    @Bean
+    fun injectorFactory(): InjectorFactory {
+        return InjectorFactory()
     }
 }

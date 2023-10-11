@@ -1,14 +1,12 @@
-package com.serious.service;
+package com.serious.service
 /*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
  * All rights reserved
- */
-
-/**
+ */ /**
  * @author Andreas Ernst
  */
-public enum ComponentStatus {
+enum class ComponentStatus {
     VIRGIN,
     RUNNING,
     STOPPED

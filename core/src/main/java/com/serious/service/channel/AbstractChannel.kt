@@ -31,7 +31,7 @@ protected constructor(protected var channelManager: ChannelManager) : Channel, I
         return delta!!.isDeleted(getPrimaryAddress()!!.serviceInstance) // TODO cluster??
     }
 
-    override fun setup(componentClass: Class<Component?>?, serviceAddresses: List<ServiceAddress?>?) {
+    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
         addresses = serviceAddresses
         primaryAddress = serviceAddresses!![0] // ?
     }

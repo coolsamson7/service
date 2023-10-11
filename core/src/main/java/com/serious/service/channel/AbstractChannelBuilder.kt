@@ -29,7 +29,7 @@ open class AbstractChannelBuilder<T : Channel?> protected constructor(channelMan
         return channelClass
     }
 
-    override fun isApplicable(component: Class<Component?>?): Boolean {
+    override fun isApplicable(component: Class<out Component>): Boolean {
         return true
     }
 }

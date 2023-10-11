@@ -1,198 +1,192 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.service.BaseDescriptor.Companion.createImplementations
+import com.serious.service.BaseDescriptor.Companion.forService
+import com.serious.service.ChannelInvocationHandler.Companion.forComponent
+import com.serious.service.channel.MissingChannel
+import com.serious.service.exception.ServiceRuntimeException
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
+import org.slf4j.LoggerFactory
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
+import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.channel.MissingChannel;
-import com.serious.service.exception.ServiceRuntimeException;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
- * The {@link ComponentLocator} has already scanned and registered the corresponding descriptor and beans.
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
+ * The [ComponentLocator] has already scanned and registered the corresponding descriptor and beans.
  * In a postConstruct phase the following logic is executed
  *
- * <ul>
- *     <li>component descriptors are copied fom the locator </li>
- *     <li>local implementations are instantiated </li>
- *     <li>local components are published to the registry </li>
- *     <li>local components start up</li>
- * </ul>
+ *
+ *  * component descriptors are copied fom the locator
+ *  * local implementations are instantiated
+ *  * local components are published to the registry
+ *  * local components start up
+ *
  */
-@Component
-public class ComponentManager implements ApplicationContextAware {
-    // static data
-
-    public static Logger log = LoggerFactory.getLogger(ComponentManager.class);
-
+@org.springframework.stereotype.Component
+class ComponentManager // constructor
+@Autowired internal constructor(
+    var componentRegistry: ComponentRegistry,
+    var channelManager: ChannelManager,
+    var serviceInstanceRegistry: ServiceInstanceRegistry
+) : ApplicationContextAware {
     // instance data
+    @JvmField
+    var applicationContext: ApplicationContext? = null
+    @JvmField
+    var componentDescriptors: MutableMap<String, ComponentDescriptor<Component>> = HashMap()
+    var proxies: MutableMap<String, Service> = ConcurrentHashMap()
 
-    ApplicationContext applicationContext;
-    ComponentRegistry componentRegistry;
-    ChannelManager channelManager;
-    ServiceInstanceRegistry serviceInstanceRegistry;
-    public Map<String, ComponentDescriptor<com.serious.service.Component>> componentDescriptors = new HashMap<>();
-    Map<String, Service> proxies = new ConcurrentHashMap<>();
-    @Value("${server.port}")
-    String port;
-
-    // constructor
-    @Autowired
-    ComponentManager(ComponentRegistry componentRegistry, ChannelManager channelManager, ServiceInstanceRegistry serviceInstanceRegistry) {
-        this.componentRegistry = componentRegistry;
-        this.channelManager = channelManager;
-        this.serviceInstanceRegistry = serviceInstanceRegistry;
-    }
+    @Value("\${server.port}")
+    var port: String? = null
 
     // lifecycle
-
     @PostConstruct
-    void startup() {
-        AbstractComponent.port = port;
+    fun startup() {
+        AbstractComponent.port = port
 
         // register components
-
-        for (ComponentDescriptor<com.serious.service.Component> componentDescriptor : ComponentLocator.components)
-            addComponentDescriptor(componentDescriptor);
-
-        ComponentLocator.components.clear();
+        for (componentDescriptor in ComponentLocator.components) addComponentDescriptor(componentDescriptor)
+        ComponentLocator.components.clear()
 
         // create local component and service implementations
-
-        BaseDescriptor.createImplementations(applicationContext);
+        createImplementations(applicationContext!!)
 
         // publish local components
-
-        for (ComponentDescriptor<com.serious.service.Component> componentDescriptor : componentDescriptors.values())
-            if (componentDescriptor.hasImplementation())
-                componentRegistry.startup(componentDescriptor);
+        for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) componentRegistry.startup(
+            componentDescriptor
+        )
 
         // force update of the service instance registry
-
-        serviceInstanceRegistry.startup();
+        serviceInstanceRegistry.startup()
 
         // startup
-
-        for (ComponentDescriptor<?> componentDescriptor : componentDescriptors.values())
-            if (componentDescriptor.hasImplementation()) {
-                log.info("startup {}", componentDescriptor.getName());
-
-                componentDescriptor.local.startup();
-            }
+        for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) {
+            log.info("startup {}", componentDescriptor.name)
+            (componentDescriptor.local!! as Component).startup()
+        }
 
         // report
-
-        report();
+        report()
     }
 
     @PreDestroy
-    void shutdown() {
-        for (ComponentDescriptor<com.serious.service.Component> componentDescriptor : componentDescriptors.values())
-            if (componentDescriptor.hasImplementation()) {
-                log.info("shutdown {}", componentDescriptor.getName());
-
-                componentDescriptor.local.shutdown();
-
-                componentRegistry.shutdown(componentDescriptor);
-            }
+    fun shutdown() {
+        for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) {
+            log.info("shutdown {}", componentDescriptor.name)
+            (componentDescriptor.local!! as Component).shutdown()
+            componentRegistry.shutdown(componentDescriptor)
+        }
     }
 
     // private
-
-    void addComponentDescriptor(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        componentDescriptors.put(descriptor.getName(), descriptor);
-
-        descriptor.componentManager = this;
+    fun addComponentDescriptor(descriptor: ComponentDescriptor<Component>) {
+        componentDescriptors[descriptor.name] = descriptor
+        descriptor.componentManager = this
     }
 
-    void report() {
-        StringBuilder builder = new StringBuilder();
-
-        for (ComponentDescriptor<?> componentDescriptor : componentDescriptors.values())
-            componentDescriptor.report(builder);
-
-        System.out.println(builder);
+    fun report() {
+        val builder = StringBuilder()
+        for (componentDescriptor in componentDescriptors.values) componentDescriptor.report(builder)
+        println(builder)
     }
 
     // public
-
-    public <T extends Service> T acquireLocalService(Class<T> serviceClass) {
-        BaseDescriptor<T> descriptor = BaseDescriptor.forService(serviceClass);
-
-        if (descriptor.hasImplementation())
-            return acquireService(descriptor, Collections.singletonList(new ServiceAddress("local", (URI) null)));
-        else
-            throw new ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName());
+    fun <T : Service> acquireLocalService(serviceClass: Class<T>): T {
+        val descriptor = forService<T>(serviceClass)
+        return if (descriptor.hasImplementation()) acquireService(
+            descriptor,
+            listOf(ServiceAddress("local", null as URI?))
+        ) else throw ServiceRuntimeException(
+            "cannot create local service for %s, implementation missing",
+            descriptor.serviceInterface.getName()
+        )
     }
 
-    public <T extends Service> T acquireService(Class<T> serviceClass, String... channels) {
-        BaseDescriptor<T> descriptor = BaseDescriptor.forService(serviceClass);
-
-        List<ServiceAddress> serviceAddresses = getServiceAddresses(descriptor.getComponentDescriptor(), channels);
-        if ( serviceAddresses == null || serviceAddresses.isEmpty())
-            throw new ServiceRuntimeException("no service instances for %s", descriptor.getComponentDescriptor().getName() + (channels.length > 0 ? " channels..." : ""));
-
-        return acquireService(descriptor, serviceAddresses);
+    fun <T : Service> acquireService(serviceClass: Class<T>, vararg channels: String?): T {
+        val descriptor = forService<T>(serviceClass)
+        val serviceAddresses = getServiceAddresses(descriptor.getComponentDescriptor(), *channels)
+        if (serviceAddresses == null || serviceAddresses.isEmpty()) throw ServiceRuntimeException(
+            "no service instances for %s",
+            descriptor.getComponentDescriptor().name + if (channels.size > 0) " channels..." else ""
+        )
+        return acquireService(descriptor, serviceAddresses)
     }
 
-    public <T extends Service> T acquireService(BaseDescriptor<T> descriptor, List<ServiceAddress> addresses) {
-        Class<T> serviceClass = descriptor.serviceInterface;
-
-        String channel = addresses != null && !addresses.isEmpty() ? addresses.get(0).getChannel() : "-";
-
-        String key = serviceClass.getName() + ":" + channel;
-        T service = (T) proxies.get(key);
+    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, addresses: List<ServiceAddress>?): T {
+        val serviceClass: Class<out T> = descriptor.serviceInterface
+        val channel = if (addresses != null && !addresses.isEmpty()) addresses[0]!!.channel!! else "-"
+        val key = serviceClass.getName() + ":" + channel
+        var service = proxies[key] as T?
         if (service == null) {
-            log.info("create proxy for {}.{}", descriptor.getName(), channel);
-
-            if (channel.equals("local"))
-                proxies.put(key, service = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, (proxy, method, args) -> method.invoke(descriptor.local, args)));
-            else {
-                ChannelInvocationHandler channelInvocationHandler = ChannelInvocationHandler.Companion.forComponent(descriptor.getComponentDescriptor(), channel, addresses); // TODO: pass addresses
-
-                proxies.put(key, service = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, channelInvocationHandler));
+            log.info("create proxy for {}.{}", descriptor.name, channel)
+            if (channel == "local") proxies[key] = (Proxy.newProxyInstance(
+                serviceClass.getClassLoader(),
+                arrayOf<Class<*>>(serviceClass)
+            ) { proxy: Any?, method: Method, args: Array<Any?> ->
+                method.invoke(
+                    descriptor.local,
+                    *args
+                )
+            } as T).also { service = it } else {
+                val channelInvocationHandler =
+                    forComponent(descriptor.getComponentDescriptor(), channel, addresses) // TODO: pass addresses
+                proxies[key] = (Proxy.newProxyInstance(
+                    serviceClass.getClassLoader(),
+                    arrayOf<Class<*>>(serviceClass),
+                    channelInvocationHandler
+                ) as T).also { service = it }
             }
         } // if
-
-        return service;
+        return service!!
     }
 
-    public List<ServiceAddress> getServiceAddresses(ComponentDescriptor<?> componentDescriptor, String... channels) {
-        return serviceInstanceRegistry.getServiceAddresses(componentDescriptor, channels);
+    fun getServiceAddresses(
+        componentDescriptor: ComponentDescriptor<*>,
+        vararg channels: String?
+    ): List<ServiceAddress>? {
+        return serviceInstanceRegistry.getServiceAddresses(componentDescriptor, *channels)
     }
 
-    public Channel getChannel(BaseDescriptor<?> descriptor, String channelName, List<ServiceAddress> serviceAddresses) {
-        Channel channel = (serviceAddresses != null && !serviceAddresses.isEmpty()) ? makeChannel(descriptor.getComponentDescriptor().serviceInterface, channelName, serviceAddresses) : null;
-
-        return channel != null ? channel : new MissingChannel(channelManager, descriptor.getComponentDescriptor().getName());
+    fun getChannel(
+        descriptor: BaseDescriptor<*>,
+        channelName: String,
+        serviceAddresses: List<ServiceAddress>?
+    ): Channel {
+        val channel = if (serviceAddresses != null && !serviceAddresses.isEmpty()) makeChannel(
+            descriptor.getComponentDescriptor().serviceInterface,
+            channelName,
+            serviceAddresses
+        ) else null
+        return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor().name)
     }
 
-    public Channel makeChannel(Class<com.serious.service.Component> componentClass, String channel, List<ServiceAddress> serviceAddresses) {
-        return channelManager.make(componentClass, channel, serviceAddresses);
+    fun makeChannel(
+        componentClass: Class<out Component>,
+        channel: String,
+        serviceAddresses: List<ServiceAddress>?
+    ): Channel? {
+        return channelManager.make(componentClass, channel, serviceAddresses!!)
     }
 
     // implement ApplicationContextAware
+    @Throws(BeansException::class)
+    override fun setApplicationContext(applicationContext: ApplicationContext) {
+        this.applicationContext = applicationContext
+    }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    companion object {
+        // static data
+        var log = LoggerFactory.getLogger(ComponentManager::class.java)
     }
 }
