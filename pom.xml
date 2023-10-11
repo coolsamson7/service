@@ -41,7 +41,8 @@
     <!-- scm -->
 
     <scm>
-        <developerConnection>scm:git:https://github.com/coolsamson7/service.git</developerConnection>
+        <connection>scm:git:git@github.com:coolsamson7/service</connection>
+        <developerConnection>scm:git:git@github.com:coolsamson7/service</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
