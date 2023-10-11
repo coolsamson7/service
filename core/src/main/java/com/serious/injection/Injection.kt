@@ -1,17 +1,15 @@
-package com.serious.injection;
+package com.serious.injection
+
+import java.lang.reflect.AccessibleObject
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-
-/**
- * An <code>Injection</code> is responsible for the injection of a single resource into a target
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
+ * An `Injection` is responsible for the injection of a single resource into a target
  * object using a property of the target
- * object which is marked by a Java5 annotation. The property is an <code>AccessibleObject</code> in
+ * object which is marked by a Java5 annotation. The property is an `AccessibleObject` in
  * the sense of Java reflection. To be
  * more precise: a field or a method; constructors are not supported. Any visibility of the
  * field/method (private, public, ...) is
@@ -20,8 +18,8 @@ import java.lang.reflect.AccessibleObject;
  * @author Andreas Ernst
  * @version 1.0
  */
-public interface Injection {
-    Class<? extends Annotation> getAnnotationClass();
+interface Injection<AnnotationType : Annotation?, InjectionContext>  {
+    var annotationClass: Class<out Annotation>
 
     /**
      * Fetches the specified resource and injects it into the given target object using the given
@@ -31,8 +29,8 @@ public interface Injection {
      * @param accessibleObject the target object's property which shall be used for the injection
      * @param annotation       the annotation of the accessible object
      * @param context          the context in which th injection shall take place; specialized
-     *                         <code>Injector</code> implementations define what
-     *                         context they need
+     * `Injector` implementations define what
+     * context they need
      */
-    void inject(Object targetObject, AccessibleObject accessibleObject, Annotation annotation, Object context);
+    fun inject(targetObject: Any, accessibleObject: AccessibleObject, annotation: AnnotationType, context: InjectionContext)
 }

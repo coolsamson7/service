@@ -1,4 +1,4 @@
-package com.serious.injection;
+package com.serious.injection
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
@@ -8,19 +8,9 @@ package com.serious.injection;
 /**
  * @author Andreas Ernst
  */
-public class InjectionException extends RuntimeException {
-    public InjectionException() {
-    }
-
-    public InjectionException(Throwable cause) {
-        super(cause);
-    }
-
-    public InjectionException(String message) {
-        super(message);
-    }
-
-    public InjectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+class InjectionException : RuntimeException {
+    constructor()
+    constructor(cause: Throwable?) : super(cause)
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
 }

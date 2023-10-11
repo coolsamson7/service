@@ -1,65 +1,57 @@
-package com.serious.injection;
+package com.serious.injection
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.lang.Keywords;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import com.serious.lang.Keywords
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.FactoryBean
+import org.springframework.beans.factory.config.BeanPostProcessor
 
-/**
+ /**
  * @author Andreas Ernst
  */
-//@Component
-public class InjectorFactory implements FactoryBean, BeanPostProcessor {
-    // static data
-
-    private static final Injector INSTANCE = new Injector();
-
+class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBean<Any?>, BeanPostProcessor {
     // constructor
-
-    public InjectorFactory(Injection... injections) {
-        for (Injection injection : injections)
-            INSTANCE.registerInjection(injection);
+    init {
+        for (injection in injections) INSTANCE.registerInjection(injection)
     }
 
     // public
-
-    public void registerInjection(Injection injection) {
-        INSTANCE.registerInjection(injection);
+    fun registerInjection(injection: Injection<Annotation, Any>) {
+        INSTANCE.registerInjection(injection)
     }
 
     // implement FactoryBean
-
-    @Override
-    public Object getObject() throws Exception {
-        return INSTANCE;
+    @Throws(Exception::class)
+    override fun getObject(): Any? {
+        return INSTANCE
     }
 
-    @Override
-    public Class getObjectType() {
-        return Injector.class;
+    override fun getObjectType(): Class<*> {
+        return Injector::class.java
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
+    override fun isSingleton(): Boolean {
+        return true
     }
 
     // implement BeanPostProcessor
-
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        INSTANCE.inject(bean, Keywords.NONE);
-
-        return bean;
+    @Throws(BeansException::class)
+    override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
+        INSTANCE.inject(bean, Keywords.NONE)
+        return bean
     }
 
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
+    @Throws(BeansException::class)
+    override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
+        return bean
+    }
+
+    companion object {
+        // static data
+        private val INSTANCE = Injector()
     }
 }
