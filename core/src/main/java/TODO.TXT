@@ -10,11 +10,14 @@
 
 === NOW
 
-- llg delta
+- channel builder doof
+- primaryAdreess doof
+
 - mvn package
 
 === DONE
 
+- log delta
 - list bodyToFlux(class).toList()
 - test mono
 - delta alte werte??
@@ -93,3 +96,13 @@ FRAGEN:
   -> cluster? -> einfach cluster-adresse!
 
 - was ist mit authorisierung??
+
+
+Hallo Herr Rink,
+
+wäre es möglich, dass wir uns nochmal kurz zu dem weiteren Vorgehen telefonisch austauschen?
+Ich bin momentan auf Grund der immer noch für mich relativ vagen Aussichten etwas verunsichert, wie ich weiter planen soll und kann.
+
+Danke und viele Grüße,
+
+Andreas Ernst
