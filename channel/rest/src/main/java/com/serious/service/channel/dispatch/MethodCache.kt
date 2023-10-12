@@ -1,117 +1,95 @@
-package com.serious.service.channel.dispatch;
+package com.serious.service.channel.dispatch
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component
+import java.lang.reflect.Method
+import java.util.*
 
-import java.lang.reflect.Method;
-import java.util.*;
-
-/**
- * @author Andreas Ernst
+ /**
+ * A <code>MethodCache</code> is used to compute and cache method indices of classes.
+  * Methods will be sorted by comparing their signature in order to be stable.
  */
 @Component
-public class MethodCache {
-    // static methods
-
-    private static String getSignature(Method method) {
-        StringBuilder sb = new StringBuilder(32);
-
-        sb.append(method.getName());
-
-        sb.append('(');
-
-        Class[] params = method.getParameterTypes();
-        for (int i = 0; i < params.length; i++) {
-            sb.append(getParamSignature(params[i]));
-
-            if (i < (params.length - 1))
-                sb.append(',');
-        } // for
-
-        sb.append(')');
-
-        return sb.toString();
-    }
-
-    private static String getParamSignature(Class clazz) {
-        StringBuilder sb = new StringBuilder(32);
-        if (clazz.isArray()) {
-            int dimensions = 0;
-            while (clazz.isArray()) {
-                dimensions++;
-                clazz = clazz.getComponentType();
-            }
-
-            sb.append(clazz.getName());
-            for (int i = 0; i < dimensions; i++)
-                sb.append("[]");
-        } // if
-        else
-            sb.append(clazz.getName());
-
-        return sb.toString();
-    }
-
+class MethodCache {
     // local classes
-
-    static class ClassMethods {
-        Class clazz;
-        Map<Method, Integer> method2Index = new HashMap<>();
-        Map<Integer, Method> index2Method = new HashMap<>();
+    private class ClassMethods(var clazz: Class<*>) {
+        var method2Index: MutableMap<Method, Int> = HashMap()
+        var index2Method: MutableMap<Int, Method> = HashMap()
 
         // constructor
-
-        public ClassMethods(Class clazz) {
-            this.clazz = clazz;
-
-            analyze();
+        init {
+            analyze()
         }
 
         // private
-
-        void analyze() {
-            List<Method> methods = Arrays.asList(clazz.getMethods()); // TODO ? ?getDeclared...
-
-            methods.sort(Comparator.comparing(MethodCache::getSignature));
-
-            int index = 0;
-            for ( Method method : methods) {
-                method2Index.put(method, index);
-                index2Method.put(index, method);
-
-                index++;
+        fun analyze() {
+            val methods = Arrays.asList(*clazz.getMethods()) // TODO ? ?getDeclared...
+            methods.sortWith(Comparator.comparing { method: Method -> getSignature(method) })
+            var index = 0
+            for (method in methods) {
+                method2Index[method] = index
+                index2Method[index] = method
+                index++
             }
         }
-
     }
+
     // instance data
 
-    Map<Class, ClassMethods> class2Methods = new HashMap();
-
-    // constructor
+    private var class2Methods: MutableMap<Class<*>, ClassMethods> = HashMap()
 
     // public
-
-    public int getIndex(Class clazz, Method method) {
-        return getClassMethods(clazz).method2Index.get(method);
+    fun getIndex(clazz: Class<*>, method: Method): Int {
+        return getClassMethods(clazz).method2Index[method]!!
     }
 
-    public Method getMethod(Class clazz, int index) {
-        return getClassMethods(clazz).index2Method.get(index);
+    fun getMethod(clazz: Class<*>, index: Int): Method {
+        return getClassMethods(clazz).index2Method[index]!!
     }
 
     // private
-
-    private ClassMethods getClassMethods(Class clazz) {
-        ClassMethods classMethods = class2Methods.get(clazz);
+    private fun getClassMethods(clazz: Class<*>): ClassMethods {
+        var classMethods = class2Methods[clazz]
         if (classMethods == null)
-            class2Methods.put(clazz, classMethods = new ClassMethods(clazz));
+            class2Methods[clazz] = ClassMethods(clazz).also { classMethods = it }
 
-        return classMethods;
+        return classMethods!!
+    }
+
+    companion object {
+        // static methods
+        private fun getSignature(method: Method): String {
+            val sb = StringBuilder(32)
+            sb.append(method.name)
+            sb.append('(')
+            val params = method.parameterTypes
+            for (i in params.indices) {
+                sb.append(getParamSignature(params[i]))
+                if (i < params.size - 1) sb.append(',')
+            } // for
+            sb.append(')')
+            return sb.toString()
+        }
+
+        private fun getParamSignature(clazz: Class<*>): String {
+            var clazz = clazz
+            val sb = StringBuilder(32)
+            if (clazz.isArray) {
+                var dimensions = 0
+                while (clazz.isArray) {
+                    dimensions++
+                    clazz = clazz.componentType
+                }
+                sb.append(clazz.getName())
+                for (i in 0 until dimensions) sb.append("[]")
+            } // if
+            else sb.append(clazz.getName())
+
+            return sb.toString()
+        }
     }
 }
-

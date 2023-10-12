@@ -1,4 +1,9 @@
 package com.serious.service
+/*
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.ChannelInvocationHandler.Companion.recheck
 import lombok.extern.slf4j.Slf4j
@@ -10,29 +15,27 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * @author Andreas Ernst
  */
 @Component
 @Slf4j
 class ServiceInstanceRegistry {
     // local classes
+
     class Delta {
         // instance data
+
         var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
         var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
 
         // private
         fun getDeletedInstances(service: String): MutableList<ServiceInstance?> {
-            return deletedInstances.computeIfAbsent(service) { k: String? -> LinkedList() }
+            return deletedInstances.computeIfAbsent(service) { _: String? -> LinkedList() }
         }
 
         fun getAddedInstances(service: String): MutableList<ServiceInstance?> {
-            return addedInstances.computeIfAbsent(service) { k: String? -> LinkedList() }
+            return addedInstances.computeIfAbsent(service) { _: String? -> LinkedList() }
         }
 
         // public
@@ -64,25 +67,26 @@ class ServiceInstanceRegistry {
     }
 
     // instance data
-    @Autowired
-    var channelManager: ChannelManager? = null
 
     @Autowired
-    var componentRegistry: ComponentRegistry? = null
+    lateinit var channelManager: ChannelManager
+
+    @Autowired
+    lateinit var componentRegistry: ComponentRegistry
     private var serviceInstances: MutableMap<String, List<ServiceInstance>> = ConcurrentHashMap()
 
     // public
     fun startup() {
         // fill initial services
         for (componentDescriptor in ComponentDescriptor.descriptors) {
-            val instances = componentRegistry!!.getInstances(componentDescriptor.name)
+            val instances = componentRegistry.getInstances(componentDescriptor.name)
             serviceInstances[componentDescriptor.name] = instances
         }
     }
 
     //
-    private fun extractAddresses(channels: String?): List<ServiceAddress> {
-        return Arrays.stream(channels!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+    private fun extractAddresses(channels: String): List<ServiceAddress> {
+        return Arrays.stream(channels.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
             .map { channel: String ->
                 val lparen = channel.indexOf("(")
                 val rparen = channel.indexOf(")")
@@ -95,6 +99,7 @@ class ServiceInstanceRegistry {
 
     private fun getInstances(componentDescriptor: ComponentDescriptor<*>): List<ServiceInstance> {
         val instances = serviceInstances[componentDescriptor.name]
+
         return instances ?: ArrayList()
     }
 
@@ -107,14 +112,18 @@ class ServiceInstanceRegistry {
         val addresses: MutableMap<ServiceInstance, List<ServiceAddress>> = HashMap()
 
         // extract addresses
-        for (instance in instances) addresses[instance] = extractAddresses(instance.metadata["channels"])
+
+        for (instance in instances)
+            addresses[instance] = extractAddresses(instance.metadata["channels"]!!)
 
         // figure out a matching channel
+
         var channelName: String? = null
         if (!instances.isEmpty()) {
             if (preferredChannels.size == 0) {
                 channelName = addresses[instances[0]]!![0].channel
-            } else {
+            }
+            else {
                 for (instance in instances) {
                     for (address in addresses[instance]!!) if (channelName == null && Arrays.asList(*preferredChannels)
                             .contains(address.channel)
@@ -197,7 +206,7 @@ class ServiceInstanceRegistry {
         val delta = computeDelta(serviceInstances, newMap)
         if (!delta.isEmpty) {
             // recheck missing channels
-            recheck(channelManager!!, delta)
+            recheck(channelManager, delta)
         }
 
         // new map

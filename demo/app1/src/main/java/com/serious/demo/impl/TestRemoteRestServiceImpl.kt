@@ -1,41 +1,40 @@
-package com.serious.demo.impl;
+package com.serious.demo.impl
+
+import com.serious.demo.Foo
+import com.serious.demo.TestRemoteRestService
+import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.demo.Foo;
-import com.serious.demo.TestRemoteRestService;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
 @RestController
-class TestRemoteRestServiceImpl implements TestRemoteRestService {
-    public String hello() {
-        return "foo";
+internal class TestRemoteRestServiceImpl : TestRemoteRestService {
+    override fun hello(): String {
+        return "foo"
     }
 
-    public String passId(String id) {
-        return id;
+    override fun passId(id: String): String {
+        return id
     }
 
-    public Foo passIdReturnBody(String id) {
-        return new Foo();
+    override fun passIdReturnBody(id: String): Foo {
+        return Foo()
     }
 
-    public Foo postBody(Foo foo) {
-        return foo;
+    override fun postBody(foo: Foo): Foo {
+        return foo
     }
 
-    public Mono<Foo> postBodyMono(Foo foo) {
-        return Mono.just(foo);
+    override fun postBodyMono(foo: Foo): Mono<Foo> {
+        return Mono.just(foo)
     }
 
-    public String passParam(String id) {
-        return id;
+    override fun passParam(id: String): String {
+        return id
     }
 }

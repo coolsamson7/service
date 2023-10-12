@@ -1,56 +1,45 @@
-package com.serious.registry;
+package com.serious.registry
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
+
+import com.serious.service.Component
+import com.serious.service.ComponentDescriptor
+import com.serious.service.ComponentRegistry
+import com.serious.service.ServiceAddress
+import org.springframework.cloud.client.ServiceInstance
+import java.util.stream.Collectors
+
+ /**
+ * A local [ComponentRegistry] implementation used for test pruposes
  */
-
-import com.serious.service.Component;
-import com.serious.service.ComponentDescriptor;
-import com.serious.service.ComponentRegistry;
-import com.serious.service.ServiceAddress;
-import org.springframework.cloud.client.ServiceInstance;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-/**
- * @author Andreas Ernst
- */
-public class LocalComponentRegistry  implements ComponentRegistry {
+open class LocalComponentRegistry : ComponentRegistry {
     // instance data
 
-    Map<String, List<ServiceAddress>> services = new HashMap<>();
+    private var services: MutableMap<String, MutableList<ServiceAddress>> = HashMap()
 
     // implement ComponentRegistry
+    override fun startup(descriptor: ComponentDescriptor<Component>) {
+        val addresses = services.computeIfAbsent(
+            descriptor.name
+        ) { _: String? -> ArrayList() }
 
-    @Override
-    public void startup(ComponentDescriptor<Component> descriptor) {
-        List<ServiceAddress> addresses = services.computeIfAbsent(descriptor.getName(), k ->
-                new ArrayList<>()
-        );
-
-        addresses.addAll(descriptor.getExternalAddresses());
+        addresses.addAll(descriptor.externalAddresses!!)
     }
 
-    @Override
-    public void shutdown(ComponentDescriptor<Component> descriptor) {
+    override fun shutdown(descriptor: ComponentDescriptor<Component>) {
         // noop
     }
 
-    @Override
-    public List<String> getServices() {
-        return services.keySet().stream().toList();
+    override fun getServices(): List<String> {
+        return services.keys.stream().toList()
     }
 
-    @Override
-    public List<ServiceInstance> getInstances(String service) {
-        return services.get(service).stream()
-                .map(address -> address.getServiceInstance())
-                .collect(Collectors.toList());
+    override fun getInstances(service: String): List<ServiceInstance> {
+        return services[service]!!.stream()
+            .map { address: ServiceAddress -> address.serviceInstance!! }
+            .collect(Collectors.toList())
     }
 }
-

@@ -1,15 +1,16 @@
 package com.serious.service.channel
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.ChannelManager
 import com.serious.service.ServiceAddress
 import com.serious.service.exception.ServiceRuntimeException
 import org.aopalliance.intercept.MethodInvocation
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+/**
  * @author Andreas Ernst
  */
 class MissingChannel(

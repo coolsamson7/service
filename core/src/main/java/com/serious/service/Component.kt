@@ -4,13 +4,18 @@ package com.serious.service
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */ /**
- * @author Andreas Ernst
+ */
+
+/**
+ * A <code>Component</code> is a container for [Service]s
  */
 interface Component : Service {
     fun startup()
     fun shutdown()
-    val addresses: List<ServiceAddress>?
-    val status: ComponentStatus?
-    val health: ComponentHealth?
+
+    val addresses: List<ServiceAddress>
+
+    val status: ComponentStatus
+
+    val health: ComponentHealth
 }

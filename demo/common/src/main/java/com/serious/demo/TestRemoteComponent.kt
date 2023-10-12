@@ -1,22 +1,14 @@
-package com.serious.demo;
+package com.serious.demo
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.Component;
-import com.serious.service.ComponentInterface;
-import org.springframework.web.bind.annotation.RestController;
+import com.serious.service.Component
+import com.serious.service.ComponentInterface
+import org.springframework.web.bind.annotation.RestController
 
-/**
- * @author Andreas Ernst
- */
-@ComponentInterface(
-        name="TestRemoteComponent",
-        services = {
-                TestRemoteRestService.class
-        })
+@ComponentInterface(name = "TestRemoteComponent", services = [TestRemoteRestService::class])
 @RestController
-public interface TestRemoteComponent extends Component {
-}
+interface TestRemoteComponent : Component

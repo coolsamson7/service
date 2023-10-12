@@ -1,191 +1,136 @@
-package com.serious.service.channel.rest;
+package com.serious.service.channel.rest
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.util.UriBuilder
 
-import java.util.ArrayList;
-import java.util.Map;
+typealias RHS = WebClient.RequestHeadersSpec<*>
 
-/**
+ /**
  * @author Andreas Ernst
  */
-public class RequestBuilder<S extends WebClient.RequestHeadersSpec<S>> {
+class RequestBuilder<S : RHS> internal constructor(var client: WebClient) {
     // inner classes
 
     interface SpecOperation<S> {
-        WebClient.RequestHeadersSpec build(S spec, Object... args);
+        fun build(spec: S?, vararg args: Any?): RHS
     }
 
     // general stuff
-
-    class Accept implements SpecOperation<S> {
+    internal inner class Accept(vararg acceptableMediaTypes: MediaType) : SpecOperation<S> {
         // instance data
-        MediaType[] acceptableMediaTypes;
+
+        var acceptableMediaTypes: Array<out MediaType>
 
         // constructor
-        Accept(MediaType... acceptableMediaTypes) {
-            this.acceptableMediaTypes = acceptableMediaTypes;
+        init {
+            this.acceptableMediaTypes = acceptableMediaTypes
         }
 
         // implement
-
-        @Override
-        public WebClient.RequestHeadersSpec build(S spec, Object... args) {
-            return spec.accept(acceptableMediaTypes);
+        override fun build(spec: S?, vararg args: Any?): RHS {
+            return spec!!.accept(*acceptableMediaTypes)
         }
     }
 
-    // Methods
-
-    class Get implements SpecOperation<S> {
-        @Override
-        public WebClient.RequestHeadersSpec build(S spec, Object... args) {
-            return client.get();
+    // http methods
+    internal inner class Get : SpecOperation<S> {
+        override fun build(spec: S?, vararg args: Any?): RHS {
+            return client.get()
         }
     }
 
-    class Put implements SpecOperation<S> {
-        @Override
-        public WebClient.RequestHeadersSpec build(S spec, Object... args) {
-            return client.put();
+    internal inner class Put : SpecOperation<S> {
+        override fun build(spec: S?, vararg args: Any?): WebClient.RequestHeadersSpec<*> {
+            return client.put()
         }
     }
 
-    class Delete implements SpecOperation<S> {
-        @Override
-        public WebClient.RequestHeadersSpec build(S spec, Object... args) {
-            return client.delete();
+    internal inner class Delete : SpecOperation<S> {
+        override fun build(spec: S?, vararg args: Any?): RHS {
+            return client.delete()
         }
     }
 
-    class Post implements SpecOperation<S> {
-        @Override
-        public WebClient.RequestHeadersSpec build(S spec, Object... args) {
-            return client.post();
+    internal inner class Post : SpecOperation<S> {
+        override fun build(spec: S?, vararg args: Any?): RHS {
+            return client.post()
         }
     }
 
-    class Body implements SpecOperation<WebClient.RequestBodySpec> {
-        // instance data
-
-        private final int index;
-
-        // constructor
-
-        Body(int index) {
-            this.index = index;
-        }
-
+    internal inner class Body(private val index: Int) : SpecOperation<WebClient.RequestBodySpec> {
         // implement
-
-        public WebClient.RequestHeadersSpec build(WebClient.RequestBodySpec spec, Object... args) {
-            return spec.bodyValue(args[index]);
+        override fun build(spec: WebClient.RequestBodySpec?, vararg args: Any?): RHS {
+            return spec!!.bodyValue(args!![index])
         }
     }
 
-    class URI implements SpecOperation<WebClient.RequestHeadersUriSpec<?>> {
-        // instance data
-
-        private final String uri;
-        private final Integer[] indizes;
-        private final Map<String, Integer> requestParams;
-
-        // constructor
-
-        URI(String uri, Integer[] indizes, Map<String, Integer> requestParams) {
-            this.uri = uri;
-            this.indizes = indizes;
-            this.requestParams = requestParams;
-        }
-
+    internal inner class URI(private val uri: String, private val indizes: Array<Int>, private val requestParams: Map<String, Int>
+    ) : SpecOperation<WebClient.RequestHeadersUriSpec<*>> {
         // override
-
-        @Override
-        public WebClient.RequestHeadersSpec build(WebClient.RequestHeadersUriSpec<?> spec, Object... args) {
+        override fun build(spec: WebClient.RequestHeadersUriSpec<*>?, vararg args: Any?): WebClient.RequestHeadersSpec<*> {
             // extract args
 
-            Object[] ids = new Object[indizes.length];
+            val ids = arrayOfNulls<Any>(indizes.size)
+            for (i in ids.indices)
+                ids[i] = args[indizes[i]]
 
-            for (int i = 0; i < ids.length; i++)
-                ids[i] = args[indizes[i]];
-
-            return spec.uri(uriBuilder -> {
-                UriBuilder p = uriBuilder.path(uri);
+            return spec!!.uri { uriBuilder: UriBuilder ->
+                val p = uriBuilder.path(uri)
 
                 // add request params
 
-                for (Map.Entry<String, Integer> entry : requestParams.entrySet())
-                    p.queryParam(entry.getKey(), args[entry.getValue()]);
+                for ((key, value) in requestParams)
+                    p.queryParam(key, args[value])
 
-                // done
-
-                return p.build(ids);
-            });
+                p.build(*ids)
+            }
         }
     }
 
     // instance data
 
-    ArrayList<SpecOperation<S>> operations = new ArrayList<>();
-    WebClient client;
-
-    // constructor
-
-    RequestBuilder(WebClient client) {
-        this.client = client;
-    }
+    var operations = ArrayList<SpecOperation<S>>()
 
     // builder
-
-    RequestBuilder<S> accept(MediaType... acceptableMediaTypes) {
-        this.operations.add(new Accept(acceptableMediaTypes));
-
-        return this;
+    fun accept(vararg acceptableMediaTypes: MediaType): RequestBuilder<S> {
+        operations.add(Accept(*acceptableMediaTypes))
+        return this
     }
 
     // operations
-
-    RequestBuilder<S> get() {
-        this.operations.add(new Get());
-
-        return this;
+    fun get(): RequestBuilder<S> {
+        operations.add(Get())
+        return this
     }
 
-    RequestBuilder<S> put() {
-        this.operations.add(new Put());
-
-        return this;
+    fun put(): RequestBuilder<S> {
+        operations.add(Put())
+        return this
     }
 
-    RequestBuilder<S> delete() {
-        this.operations.add(new Delete());
-
-        return this;
+    fun delete(): RequestBuilder<S> {
+        operations.add(Delete())
+        return this
     }
 
-    RequestBuilder<S> uri(String uri, Integer[] args, Map<String, Integer> requestParams) {
-        this.operations.add((SpecOperation<S>) new URI(uri, args, requestParams));
-
-        return this;
+    fun uri(uri: String, args: Array<Int>, requestParams: Map<String, Int>): RequestBuilder<S> {
+        operations.add(URI(uri, args, requestParams) as SpecOperation<S>)
+        return this
     }
 
-    // post
-
-    RequestBuilder<S> post() {
-        this.operations.add(new Post());
-
-        return this;
+    fun post(): RequestBuilder<S> {
+        operations.add(Post())
+        return this
     }
 
-    RequestBuilder<S> body(int index) {
-        this.operations.add((SpecOperation<S>) new Body(index));
-
-        return this;
+    fun body(index: Int): RequestBuilder<S> {
+        operations.add(Body(index) as SpecOperation<S>)
+        return this
     }
 }

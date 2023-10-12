@@ -1,18 +1,18 @@
 package com.serious.service.channel
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.*
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+/**
  * @author Andreas Ernst
  */
-abstract class AbstractChannel // constructor
-protected constructor(protected var channelManager: ChannelManager) : Channel, InvocationHandler {
+abstract class AbstractChannel protected constructor(protected var channelManager: ChannelManager) : Channel, InvocationHandler {
     // instance data
 
     protected @JvmField var primaryAddress: ServiceAddress? = null

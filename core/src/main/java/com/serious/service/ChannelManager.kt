@@ -1,4 +1,8 @@
 package com.serious.service
+/** @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.channel.ChannelBuilder
 import com.serious.util.Exceptions
@@ -13,12 +17,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import java.util.concurrent.ConcurrentHashMap
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
- * @author Andreas Ernst
+/**
+ * A <code>ChannelManager</code> is repsonsible for the lifecycle of [Channel]s.
  */
 @org.springframework.stereotype.Component
 @Slf4j
@@ -36,19 +36,19 @@ class ChannelManager : ApplicationContextAware {
     var applicationContext: ApplicationContext? = null
     @JvmField
     var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
-    var channels: MutableMap<ServiceAddress?, Channel> = ConcurrentHashMap()
-    var channelBuilder: MutableMap<Class<out Channel?>, ChannelBuilder<*>> = HashMap()
+    var channels: MutableMap<ServiceAddress, Channel> = ConcurrentHashMap()
+    var channelBuilder: MutableMap<Class<out Channel>, ChannelBuilder<out Channel>> = HashMap()
 
     @Value("\${service.root:com.serious}")
-    var rootPackage: String? = null
+    lateinit var rootPackage: String
 
     // public
     fun registerChannelBuilder(channelBuilder: ChannelBuilder<*>) {
         this.channelBuilder[channelBuilder.channelClass()] = channelBuilder
     }
 
-    fun <T : Channel?> getChannelBuilder(channel: Class<out T?>): ChannelBuilder<T> {
-        return channelBuilder[channel] as ChannelBuilder<T>
+    fun <T : Channel> getChannelBuilder(channel: Class<out T>): ChannelBuilder<T>? {
+        return channelBuilder[channel] as ChannelBuilder<T>?
     }
 
     @PostConstruct
@@ -58,7 +58,8 @@ class ChannelManager : ApplicationContextAware {
         for (bean in beans) {
             try {
                 register(bean)
-            } catch (e: ClassNotFoundException) {
+            }
+            catch (e: ClassNotFoundException) {
                 Exceptions.throwException(e)
             }
         }
@@ -69,8 +70,10 @@ class ChannelManager : ApplicationContextAware {
 
     fun report() {
         val builder = StringBuilder()
+
         builder.append("channels:\n")
-        for (protocol in channelFactories.keys) builder.append("\t").append(protocol).append("\n")
+        for (protocol in channelFactories.keys)
+            builder.append("\t").append(protocol).append("\n")
         //TODO KOTLIN ChannelManager.log.info(builder.toString())
     }
 
@@ -79,6 +82,7 @@ class ChannelManager : ApplicationContextAware {
         val clazz = Class.forName(definition.beanClassName)
         val spec = clazz.getAnnotation(RegisterChannel::class.java) as RegisterChannel
         //TODO KOTLIN ChannelManager.log.info("register channel {}", definition.beanClassName)
+
         channelFactories[spec.value] = SpringChannelFactory(applicationContext!!, definition)
     }
 
@@ -90,16 +94,18 @@ class ChannelManager : ApplicationContextAware {
         componentClass: Class<out Component>,
         channelName: String,
         serviceAddresses: List<ServiceAddress>
-    ): Channel? {
+    ): Channel {
         val primaryServiceAddress = serviceAddresses[0]
         var channel = channels[primaryServiceAddress]
         if (channel == null) {
             //TODO KOTLIN ChannelManager.log.info("create channel for {}", primaryServiceAddress.toString())
             val channelFactory = channelFactories[channelName]
             channel = channelFactory?.makeChannel(componentClass, serviceAddresses)
-            if (channel != null) channels[primaryServiceAddress] = channel
+            if (channel != null)
+                channels[primaryServiceAddress] = channel
         }
-        return channel
+
+        return channel!!
     }
 
     // implement ApplicationContextAware

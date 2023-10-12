@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Import
 
 // test classes
 @RegisterChannel("test")
-internal class TestChannel protected constructor(channelManager: ChannelManager?) : LocalChannel(channelManager)
+internal class TestChannel protected constructor(channelManager: ChannelManager) : LocalChannel(channelManager)
 
 @RegisterChannel("test1")
-internal class Test1Channel protected constructor(channelManager: ChannelManager?) : LocalChannel(channelManager)
+internal class Test1Channel protected constructor(channelManager: ChannelManager) : LocalChannel(channelManager)
 
 @org.springframework.stereotype.Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()
@@ -75,25 +75,25 @@ internal class TestConfig
 internal class ServiceTests {
     // instance data
     @Autowired
-    var componentManager: ComponentManager? = null
+    lateinit var componentManager: ComponentManager
 
     @InjectService
-    var testService: TestService? = null
+    lateinit var testService: TestService
 
     @InjectService(preferLocal = true)
-    var localTestService: TestService? = null
+    lateinit var localTestService: TestService
 
     @InjectService
-    var testComponent: TestComponent? = null
+    lateinit var testComponent: TestComponent
 
     @InjectService(preferLocal = true)
-    var localTestComponent: TestComponent? = null
+    lateinit var localTestComponent: TestComponent
 
     // test
     @Test
     fun testUnknownService() {
         try {
-            componentManager!!.acquireService(BadService::class.java)
+            componentManager.acquireService(BadService::class.java)
             Assertions.fail<Any>("should throw")
         } catch (e: ServiceRuntimeException) {
         }
@@ -102,7 +102,7 @@ internal class ServiceTests {
     @Test
     fun testMissingChannel() {
         try {
-            componentManager!!.acquireService(TestService::class.java, "dunno")
+            componentManager.acquireService(TestService::class.java, "dunno")
             Assertions.fail<Any>("should throw")
         } catch (e: ServiceRuntimeException) {
         }
@@ -110,21 +110,21 @@ internal class ServiceTests {
 
     @Test
     fun testLocalService() {
-        Assertions.assertEquals("hello world", localTestService!!.hello("world"))
+        Assertions.assertEquals("hello world", localTestService.hello("world"))
     }
 
     //@Test
     fun testRemoteService() {
-        Assertions.assertEquals("hello world", testService!!.hello("world"))
+        Assertions.assertEquals("hello world", testService.hello("world"))
     }
 
     @Test
     fun testLocalComponent() {
-        Assertions.assertEquals("hello world", localTestComponent!!.hello("world"))
+        Assertions.assertEquals("hello world", localTestComponent.hello("world"))
     }
 
     //@Test
     fun testRemoteComponent() {
-        Assertions.assertEquals("hello world", testComponent!!.hello("world"))
+        Assertions.assertEquals("hello world", testComponent.hello("world"))
     }
 }

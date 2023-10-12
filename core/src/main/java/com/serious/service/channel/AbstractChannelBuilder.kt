@@ -1,21 +1,21 @@
 package com.serious.service.channel
+/*
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.Channel
 import com.serious.service.ChannelManager
 import com.serious.service.Component
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
- * @author Andreas Ernst
+/**
+ * abstract base class for [ChannelBuilder]s
  */
-open class AbstractChannelBuilder<T : Channel?> protected constructor(channelManager: ChannelManager) :
-    ChannelBuilder<T> {
+open class AbstractChannelBuilder<T : Channel> protected constructor(channelManager: ChannelManager) : ChannelBuilder<T> {
     // instance data
 
-    var channelClass: Class<out Channel?>
+    var channelClass: Class<out Channel>
 
     // constructor
     init {
@@ -25,7 +25,7 @@ open class AbstractChannelBuilder<T : Channel?> protected constructor(channelMan
     }
 
     // implement ChannelBuilder
-    override fun channelClass(): Class<out Channel?> {
+    override fun channelClass(): Class<out Channel> {
         return channelClass
     }
 

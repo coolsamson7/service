@@ -1,89 +1,68 @@
-package com.serious.demo;
+package com.serious.demo
 
-import com.serious.service.ComponentManager;
-import com.serious.service.ServiceConfiguration;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import com.serious.service.ComponentManager
+import com.serious.service.ServiceConfiguration
+import lombok.extern.slf4j.Slf4j
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 
 // a configuration
-
 @Configuration
 @ComponentScan
-@Import(ServiceConfiguration.class)
-class RootConfig {
-    RootConfig() {
-    }
-}
+@Import(
+    ServiceConfiguration::class
+)
+internal class RootConfig
 
 // main application
-
 @SpringBootApplication
 @EnableDiscoveryClient
 @Slf4j
-public class ServiceApplication1 {
-    public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(ServiceApplication1.class, args);
+object ServiceApplication1 {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val context = SpringApplication.run(ServiceApplication1::class.java, *args)
 
         // give the registry some time to startup
-
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000)
         }
-        catch (InterruptedException e) { }
-
-        ComponentManager manager = context.getBean(ComponentManager.class);
-
-        TestRemoteRestService remoteRest = manager.acquireService(TestRemoteRestService.class, "rest");
-        TestRemoteRestService remoteDispatch = manager.acquireService(TestRemoteRestService.class, "dispatch");
-
-        TestRemoteRestService local = manager.acquireLocalService(TestRemoteRestService.class);
-
-        local.hello();
-        remoteRest.hello();
-        remoteDispatch.hello();
+        catch (e: InterruptedException) {
+        }
+        val manager = context.getBean(ComponentManager::class.java)
+        val remoteRest = manager.acquireService(TestRemoteRestService::class.java, "rest")
+        val remoteDispatch = manager.acquireService(TestRemoteRestService::class.java, "dispatch")
+        val local = manager.acquireLocalService(TestRemoteRestService::class.java)
+        local.hello()
+        remoteRest.hello()
+        remoteDispatch.hello()
 
         // data
-
-        Foo foo = new Foo();
+        val foo = Foo()
 
         // local
-
-        long loops = 10000;
-        long ms = System.currentTimeMillis();
-
-        for (int i = 0; i < loops; i++)
-            local.postBody(foo);
-
-        long z1 = System.currentTimeMillis() - ms;
+        val loops: Long = 10000
+        var ms = System.currentTimeMillis()
+        for (i in 0 until loops) local.postBody(foo)
+        val z1 = System.currentTimeMillis() - ms
 
         // rest
-
-        ms = System.currentTimeMillis();
-
-        for (int i = 0; i < loops; i++)
-            remoteRest.postBody(foo);
-
-        long z2 = System.currentTimeMillis() - ms;
+        ms = System.currentTimeMillis()
+        for (i in 0 until loops) remoteRest.postBody(foo)
+        val z2 = System.currentTimeMillis() - ms
 
         // dispatch
-
-        ms = System.currentTimeMillis();
-
-        for (int i = 0; i < loops; i++)
-            remoteDispatch.postBody(foo);
-
-        long z3 = System.currentTimeMillis() - ms;
+        ms = System.currentTimeMillis()
+        for (i in 0 until loops) remoteDispatch.postBody(foo)
+        val z3 = System.currentTimeMillis() - ms
 
         // print
-
-        System.out.println(loops + " local loops in " + z1 + "ms = " + (((double) z1) / loops) + "ms/loop");
-        System.out.println(loops + " remote rest loops in " + z2 + "ms = " + (((double) z2) / loops) + "ms/loop");
-        System.out.println(loops + " remote dispatch loops in " + z3 + "ms = " + (((double) z3) / loops) + "ms/loop");
+        println(loops.toString() + " local loops in " + z1 + "ms = " + z1.toDouble() / loops + "ms/loop")
+        println(loops.toString() + " remote rest loops in " + z2 + "ms = " + z2.toDouble() / loops + "ms/loop")
+        println(loops.toString() + " remote dispatch loops in " + z3 + "ms = " + z3.toDouble() / loops + "ms/loop")
     }
 }

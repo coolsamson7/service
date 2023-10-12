@@ -1,455 +1,364 @@
-package com.serious.service.channel.rest;
+package com.serious.service.channel.rest
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
+
+import com.serious.service.channel.rest.RequestBuilder.SpecOperation
+import com.serious.service.exception.ServiceRegistryException
+import com.serious.service.exception.ServiceRuntimeException
+import org.apache.logging.log4j.util.Strings
+import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.core.ParameterNameDiscoverer
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import java.lang.reflect.Method
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.util.*
+import java.util.regex.Pattern
+
+ /**
+ * A <code>MethodAnalyzer</code> analyzes methods for spring mvc annotations and calls the appropriate webclient
+  * builder methods on the fly.
  */
-
-import com.serious.service.exception.ServiceRegistryException;
-import com.serious.service.exception.ServiceRuntimeException;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-/**
- * @author Andreas Ernst
- */
-public class MethodAnalyzer {
-    // static methods
-
-    private static Class genericsType(Type clazz) {
-        Type type = clazz;
-        if (type instanceof ParameterizedType parameterizedType) {
-            Type[] typeArguments = parameterizedType.getActualTypeArguments();
-            return (Class) typeArguments[0];
-        }
-
-        return null;
-    }
-
+class MethodAnalyzer {
     // local classes
-
-    interface Analyzer {
-        RequestBuilder build();
+    internal interface Analyzer {
+        fun build(): RequestBuilder<*>
     }
 
-    abstract class RestAnalyzer implements Analyzer {
-        // static
-        static Pattern pattern = Pattern.compile("\\{([^{}]*)}");
-
-        // instance data
-
-        protected WebClient webClient;
-        protected Method method;
-        protected HashMap<String, Integer> requestParams = new HashMap<>();
-        protected Integer[] variables;
-        protected int body = -1;
-
-        // constructor
-        protected RestAnalyzer(WebClient webClient, Method method) {
-            this.webClient = webClient;
-            this.method = method;
-        }
+    internal abstract inner class RestAnalyzer protected constructor(
+        protected var webClient: WebClient, protected var method: Method
+    ) : Analyzer {
+        protected var requestParams = HashMap<String, Int>()
+        protected var body = -1
 
         // protected
-
-        protected String getPath(String path) {
-            String result = getDefaultPath();
-            if (result != null)
-                return result + path;
-            else
-                return path;
+        protected fun getPath(path: String): String {
+            val result = defaultPath
+            return if (result != null) result + path else path
         }
 
-        protected String getDefaultPath() {
-            Class clazz = method.getDeclaringClass();
+        protected val defaultPath: String?
+            get() {
+                val clazz = method.declaringClass
 
-            if (clazz.getAnnotation(RequestMapping.class) != null)
-                return ((RequestMapping) clazz.getAnnotation(RequestMapping.class)).value()[0];
+                if (clazz.getAnnotation(RequestMapping::class.java) != null)
+                    return (clazz.getAnnotation(RequestMapping::class.java) as RequestMapping).value[0]
 
-            if (clazz.getAnnotation(GetMapping.class) != null)
-                return ((GetMapping) clazz.getAnnotation(GetMapping.class)).value()[0];
+                if (clazz.getAnnotation(GetMapping::class.java) != null)
+                    return (clazz.getAnnotation(GetMapping::class.java) as GetMapping).value[0]
 
-            if (clazz.getAnnotation(PostMapping.class) != null)
-                return ((PostMapping) clazz.getAnnotation(PostMapping.class)).value()[0];
+                if (clazz.getAnnotation(PostMapping::class.java) != null)
+                    return (clazz.getAnnotation(PostMapping::class.java) as PostMapping).value[0]
 
-            if (clazz.getAnnotation(DeleteMapping.class) != null)
-                return ((DeleteMapping) clazz.getAnnotation(DeleteMapping.class)).value()[0];
+                return if (clazz.getAnnotation(DeleteMapping::class.java) != null) (clazz.getAnnotation(DeleteMapping::class.java) as DeleteMapping).value[0] else null
+            }
+        protected val defaultMethod: RequestMethod?
+            get() {
+                val clazz = method.declaringClass
 
-            return null;
-        }
+                if (clazz.getAnnotation(RequestMapping::class.java) != null)
+                    return (clazz.getAnnotation(RequestMapping::class.java) as RequestMapping).method[0]
 
-        protected RequestMethod getDefaultMethod() {
-            Class clazz = method.getDeclaringClass();
+                if (clazz.getAnnotation(GetMapping::class.java) != null)
+                    return RequestMethod.GET
 
-            if (clazz.getAnnotation(RequestMapping.class) != null)
-                return ((RequestMapping) clazz.getAnnotation(RequestMapping.class)).method()[0];
+                if (clazz.getAnnotation(PostMapping::class.java) != null)
+                    return RequestMethod.POST
 
-            if (clazz.getAnnotation(GetMapping.class) != null)
-                return RequestMethod.GET;
+                return if (clazz.getAnnotation(DeleteMapping::class.java) != null) RequestMethod.DELETE else null
+            }
 
-            if (clazz.getAnnotation(PostMapping.class) != null)
-                return RequestMethod.POST;
-
-            if (clazz.getAnnotation(DeleteMapping.class) != null)
-                return RequestMethod.DELETE;
-
-            return null;
-        }
-
-
-        protected void scanMethod(String path) {
+        protected fun scanMethod(path: String) : Array<Int> {
             // scan request params & path variables
 
-            HashMap<String, Integer> pathVariables = new HashMap<>();
+            val pathVariables = HashMap<String, Int>()
+            val parameterNames = getParameterNames(method)
 
-            String[] parameterNames = getParameterNames(method);
+            for ((index, annotations) in method.parameterAnnotations.withIndex()) {
+                for (paramAnnotation in annotations) {
+                    when (paramAnnotation) {
+                        is PathVariable -> {
+                            var name = paramAnnotation.value
+                            if (Strings.isEmpty(name))
+                                name = parameterNames[index]
 
-            int index = 0;
-            for (Annotation[] annotations : method.getParameterAnnotations()) {
-                for (Annotation paramAnnotation : annotations) {
-                    if (paramAnnotation instanceof PathVariable) {
-                        String name = ((PathVariable) paramAnnotation).value();
-                        if (Strings.isEmpty(name))
-                            name = parameterNames[index];
+                            pathVariables[name] = index
+                        }
 
-                        pathVariables.put(name, index);
+                        is RequestParam -> {
+                            var name = paramAnnotation.name
+                            if (Strings.isEmpty(name))
+                                name = parameterNames[index]
+
+                            requestParams[name] = index
+                        }
+
+                        is RequestBody -> body = index
                     }
-                    else if (paramAnnotation instanceof RequestParam) {
-                        String name = ((RequestParam) paramAnnotation).name();
-                        if (Strings.isEmpty(name))
-                            name = parameterNames[index];
-
-                        requestParams.put(name, index);
-                    }
-
-                    else if (paramAnnotation instanceof RequestBody)
-                        body = index;
                 }
-
-
-                index++;
             } // for
 
             // scan path
 
-            List<Integer> variables = new ArrayList<>();
-
-            Pattern pattern = Pattern.compile("\\{([^{}]*)}");
-            Matcher matcher = pattern.matcher(path);
-
+            val variables: MutableList<Int> = ArrayList()
+            val pattern = Pattern.compile("\\{([^{}]*)}")
+            val matcher = pattern.matcher(path)
             while (matcher.find()) {
-                String match = matcher.group(1);
+                val match = matcher.group(1)
+                val argumentIndex =
+                    pathVariables[match] ?: throw ServiceRegistryException("missing @PathVariable for %s", match)
 
-                Integer argumentIndex = pathVariables.get(match);
-                if ( argumentIndex == null)
-                    throw new ServiceRegistryException("missing @PathVariable for %s", match);
-
-                variables.add(argumentIndex);
+                variables.add(argumentIndex)
             }
 
-            this.variables = variables.toArray(new Integer[0]);
+            return variables.toTypedArray<Int>()
         }
 
-        protected String[] getParameterNames(Method method) {
-            return parameterNameDiscoverer.getParameterNames(method);
+        protected fun getParameterNames(method: Method): Array<String> {
+            return parameterNameDiscoverer.getParameterNames(method)
         }
     }
 
-    class GetAnalyzer extends RestAnalyzer {
-        // constructor
-
-        GetAnalyzer(WebClient webClient, Method method) {
-            super(webClient, method);
-        }
-
+    internal inner class GetAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
+        override fun build(): RequestBuilder<*> {
+            val getMapping = method.getAnnotation(GetMapping::class.java)
+            val getBuilder = RequestBuilder<RHS>(webClient).get()
 
-        public RequestBuilder build() {
-            GetMapping getMapping = method.getAnnotation(GetMapping.class);
-
-            RequestBuilder getBuilder = new RequestBuilder(webClient).get();
-
-            String path = getPath(getMapping.value()[0]);
-
-            scanMethod(path);
+            val path = getPath(getMapping.value[0])
 
             // done
 
-            return getBuilder.uri(path, variables, requestParams);
+            return getBuilder.uri(path, scanMethod(path), requestParams)
         }
     }
 
-    class PostAnalyzer extends RestAnalyzer {
-        // constructor
-
-        PostAnalyzer(WebClient webClient, Method method) {
-            super(webClient, method);
-        }
-
+    internal inner class PostAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-
-        public RequestBuilder build() {
-            PostMapping postMapping = method.getAnnotation(PostMapping.class);
-
-            RequestBuilder getBuilder = new RequestBuilder(webClient).post();
+        override fun build(): RequestBuilder<*> {
+            val postMapping = method.getAnnotation(PostMapping::class.java)
+            val getBuilder: RequestBuilder<*> = RequestBuilder<RHS>(webClient).post()
 
             // scan path
 
-            String path = getPath(postMapping.value()[0]);
+            val path = getPath(postMapping.value[0])
 
-            scanMethod(path);
-
-            if ( body == -1)
-                throw new ServiceRegistryException("missing @RequestBody for %s.%s", method.getDeclaringClass().getName(), method.getName());
+            if (body == -1) throw ServiceRegistryException(
+                "missing @RequestBody for %s.%s",
+                method.declaringClass.getName(),
+                method.name
+            )
 
             // done
 
-            return getBuilder.uri(path, variables/* index */, requestParams).body(body);
+            return getBuilder.uri(path, scanMethod(path) /* index */, requestParams).body(body)
         }
     }
 
-    class PutAnalyzer extends RestAnalyzer {
-        // constructor
-
-        PutAnalyzer(WebClient webClient, Method method) {
-            super(webClient, method);
-        }
+    internal inner class PutAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-
-        public RequestBuilder build() {
-            PutMapping postMapping = method.getAnnotation(PutMapping.class);
-
-            RequestBuilder getBuilder = new RequestBuilder(webClient).put();
+        override fun build(): RequestBuilder<*> {
+            val postMapping = method.getAnnotation(PutMapping::class.java)
+            val getBuilder: RequestBuilder<*> = RequestBuilder(webClient).put()
 
             // scan path
 
-            String path = getPath(postMapping.value()[0]);
-
-            scanMethod(path);
+            val path = getPath(postMapping.value[0])
 
             // done
 
-            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
+            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
 
-            return body >= 0 ? uri.body(body) : uri;
+            return if (body >= 0) uri.body(body) else uri
         }
     }
 
-    class DeleteAnalyzer extends RestAnalyzer {
-        // constructor
-
-        DeleteAnalyzer(WebClient webClient, Method method) {
-            super(webClient, method);
-        }
+    internal inner class DeleteAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-
-        public RequestBuilder build() {
-            DeleteMapping deleteMapping = method.getAnnotation(DeleteMapping.class);
-
-            RequestBuilder getBuilder = new RequestBuilder(webClient).delete();
+        override fun build(): RequestBuilder<*> {
+            val deleteMapping = method.getAnnotation(DeleteMapping::class.java)
+            val getBuilder: RequestBuilder<*> = RequestBuilder(webClient).delete()
 
             // scan path
 
-            String path = getPath(deleteMapping.value()[0]);
-
-            scanMethod(path);
+            val path = getPath(deleteMapping.value[0])
 
             // done
 
-            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
-            return body >= 0 ? uri.body(body) : uri;
+            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
+
+            return if (body >= 0) uri.body(body) else uri
         }
     }
 
-    class RequestAnalyzer extends RestAnalyzer {
-        // constructor
-
-        RequestAnalyzer(WebClient webClient, Method method) {
-            super(webClient, method);
-        }
+    internal inner class RequestAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
+        override fun build(): RequestBuilder<*> {
+            val requestMapping = method.getAnnotation(RequestMapping::class.java)
+            val httpMethod = if (requestMapping.method.size > 0) requestMapping.method[0] else defaultMethod
 
-        public RequestBuilder build() {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (httpMethod == null) throw ServiceRegistryException(
+                "missing http method for %s.%s",
+                this.method.declaringClass.getName(),
+                httpMethod?.name
+            )
 
-            RequestMethod method = requestMapping.method().length > 0 ? requestMapping.method()[0] : getDefaultMethod();
+            val getBuilder: RequestBuilder<*>?
 
-            if (method == null)
-                throw new ServiceRegistryException("missing http method for %s.%s", method.getDeclaringClass().getName(), method.name());
+            getBuilder = when (httpMethod) {
+                RequestMethod.GET -> RequestBuilder(webClient).get()
 
-            RequestBuilder getBuilder;
+                RequestMethod.PUT -> RequestBuilder(webClient).put()
 
-            if (method == RequestMethod.GET)
-                getBuilder = new RequestBuilder(webClient).get();
-            else if (method == RequestMethod.PUT)
-                getBuilder = new RequestBuilder(webClient).put();
-            else if (method == RequestMethod.POST)
-                getBuilder = new RequestBuilder(webClient).post();
-            else if (method == RequestMethod.DELETE)
-                getBuilder = new RequestBuilder(webClient).delete();
-            else
-                throw new ServiceRegistryException("unsupported request method %s", method);
+                RequestMethod.POST -> RequestBuilder(webClient).post()
+
+                RequestMethod.DELETE -> RequestBuilder(webClient).delete()
+
+                else -> throw ServiceRegistryException("unsupported request method %s", httpMethod)
+            }
 
             // scan path
 
-            String path = getPath(requestMapping.path()[0]);
-
-            scanMethod(path);
+            val path = getPath(requestMapping.path[0])
 
             // checks
 
-            if (method == RequestMethod.POST && body == -1)
-                throw new ServiceRegistryException("missing @RequestBody in method %s.%s", method.getDeclaringClass().getName(), method.name());
+            if (httpMethod == RequestMethod.POST && body == -1) throw ServiceRegistryException(
+                "missing @RequestBody in method %s.%s",
+                this.method.declaringClass.getName(),
+                httpMethod.name
+            )
 
             // done
 
-            RequestBuilder uri = getBuilder.uri(path, variables/* index */, requestParams);
-            return body >= 0 ? uri.body(body)  :uri;
+            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
+
+            return if (body >= 0) uri.body(body) else uri
         }
     }
 
     // instance data
-    private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+
+    private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 
     // private
-    RequestBuilder build(WebClient webClient, Method method) {
-        for (Annotation annotation : method.getDeclaredAnnotations()) {
-            if (annotation instanceof GetMapping)
-                return new GetAnalyzer(webClient, method).build();
-
-            else if (annotation instanceof PostMapping)
-                return new PostAnalyzer(webClient, method).build();
-
-            else if (annotation instanceof DeleteMapping)
-                return new DeleteAnalyzer(webClient, method).build();
-
-            else if (annotation instanceof PutMapping)
-                return new PutAnalyzer(webClient, method).build();
-
-            else if (annotation instanceof RequestMapping)
-                return new RequestAnalyzer(webClient, method).build();
+    fun build(webClient: WebClient, method: Method): RequestBuilder<*> {
+        for (annotation in method.declaredAnnotations) {
+            when (annotation) {
+                is GetMapping -> return GetAnalyzer(webClient, method).build()
+                is PostMapping -> return PostAnalyzer(webClient, method).build()
+                is DeleteMapping -> return DeleteAnalyzer(webClient, method).build()
+                is PutMapping -> return PutAnalyzer(webClient, method).build()
+                is RequestMapping -> return RequestAnalyzer(webClient, method).build()
+            }
         }
-
-        throw new ServiceRuntimeException("http channel does not support the method %s missing annotation!", method.getName());
+        throw ServiceRuntimeException("http channel does not support the method %s missing annotation!", method.name)
     }
 
     // public
-
-    private <T extends Collection> T convertList2(List list, Type target) {
-        if (!target.getClass().isAssignableFrom(list.getClass())) {
+    private fun <T : Collection<*>?> convertList2(list: List<*>, target: Type): T {
+        return if (!target.javaClass.isAssignableFrom(list.javaClass)) {
             // interfaces
-
-           if ( target == Collection.class ||  target == List.class)
-               return (T) new ArrayList<>(list);
-
-           // concrete
-
-            if ( target == ArrayList.class)
-                return (T) new ArrayList<>(list);
-
-            if ( target == LinkedList.class)
-                return (T) new LinkedList<>(list);
-
-            else throw new ServiceRuntimeException("collection type " + target.getTypeName() + " not supported");
-
-        }
-        else return (T) list;
-    }
-
-    private <T extends Collection> T convertArray2Collection(Object[] list, Type target) {
-            if ( target == Collection.class ||  target == List.class || target == ArrayList.class)
-                return (T)  Arrays.asList(list);
+            if (target === MutableCollection::class.java || target === MutableList::class.java) return ArrayList(
+                list
+            ) as T
 
             // concrete
-
-            if ( target == LinkedList.class) {
-                LinkedList result = new LinkedList();
-
-                Collections.addAll(result, list);
-
-                return (T) result;
-            }
-
-            // darn
-
-            else throw new ServiceRuntimeException("collection type %s not supported", target.getTypeName());
+            if (target === ArrayList::class.java) return ArrayList(list) as T
+            if (target === LinkedList::class.java) LinkedList(list) as T else throw ServiceRuntimeException(
+                "collection type " + target.typeName + " not supported"
+            )
+        } else list as T
     }
 
-    public Request request(WebClient webClient, Method method) {
+    private fun <T : Collection<Any>> convertArray2Collection(list: Array<Any>, target: Type): T {
+        if (target === MutableCollection::class.java || target === MutableList::class.java || target === ArrayList::class.java) return Arrays.asList(
+            *list
+        ) as T
+
+        // concrete
+        return if (target === LinkedList::class.java) {
+            val result: LinkedList<Any> = LinkedList<Any>()
+
+            Collections.addAll(result, list)
+
+            result as T
+        } else throw ServiceRuntimeException("collection type %s not supported", target.typeName)
+    }
+
+     fun createCollectionResponseHandler( method: Method) : ResponseHandler {
+         if (method.genericReturnType == null) throw ServiceRuntimeException(
+             "return type for method %s must be generic",
+             method.name
+         )
+         val type: Type = method.returnType
+         val elementType = genericsType(method.genericReturnType)
+         val arrayType = elementType.arrayType() as Class<Any>
+
+         return { spec: WebClient.ResponseSpec ->
+             convertArray2Collection(
+                 spec
+                     .bodyToMono(arrayType)
+                     .block() as Array<Any>, type
+             )
+         }
+     }
+
+    fun request(webClient: WebClient, method: Method): Request {
         // specs
 
-        RequestBuilder builder = build(webClient, method);
+        val builder = build(webClient, method)
 
         // response
 
-        Request.ResponseHandler responseHandler = null;
-
-        // void
-
-        if (method.getReturnType() == void.class) {
-            responseHandler = spec -> null;
+        val responseHandler: ResponseHandler = if (method.returnType == Void.TYPE) {
+            { spec: WebClient.ResponseSpec -> Void.TYPE } // TODO???
         }
 
-        // array
-
-        else if (method.getReturnType().isArray()) {
-            responseHandler = spec -> spec
-                    .bodyToMono(method.getReturnType())
-                    .block();
+        else if (method.returnType.isArray) {
+            { spec: WebClient.ResponseSpec ->
+                spec
+                    .bodyToMono(method.returnType)
+                    .block()
+            }
+        }
+        else if (MutableCollection::class.java.isAssignableFrom(method.returnType)) {
+            createCollectionResponseHandler(method)
         }
 
-        // list
-
-        else if (Collection.class.isAssignableFrom(method.getReturnType())) {
-            if (  method.getGenericReturnType() == null)
-                throw new ServiceRuntimeException("return type for method %s must be generic", method.getName());
-
-            Type type = method.getReturnType();
-            Class elementType = genericsType(method.getGenericReturnType());
-            Class arrayType = elementType.arrayType();
-
-            responseHandler = spec -> convertArray2Collection((Object[]) spec
-                    .bodyToMono(arrayType)
-                    .block(), type);
+        else if (method.returnType == Mono::class.java) {
+            { spec: WebClient.ResponseSpec -> spec.bodyToMono<Any>(genericsType(method.genericReturnType)) }
         }
 
-        // mono
-
-        else if (method.getReturnType() == Mono.class) {
-            Class elementType = genericsType(method.getGenericReturnType());
-
-            responseHandler = spec -> spec.bodyToMono(elementType);
+        else if (method.returnType == Flux::class.java) {
+            { spec: WebClient.ResponseSpec -> spec.bodyToFlux<Any>(genericsType(method.genericReturnType)) }
         }
-
-        // flux
-
-        else if (method.getReturnType() == Flux.class) {
-            Class elementType = genericsType(method.getGenericReturnType());
-
-            responseHandler = spec -> spec.bodyToFlux(elementType);
-        }
-
-        // object
 
         else {
-            responseHandler = spec -> spec.bodyToMono(method.getReturnType()).block();
+            { spec: WebClient.ResponseSpec -> spec.bodyToMono(method.returnType).block() }
         }
 
         // done
 
-        return new Request((RequestBuilder.SpecOperation[]) builder.operations.toArray(new RequestBuilder.SpecOperation[0]), responseHandler);
+        return Request(builder.operations.toTypedArray() as Array<SpecOperation<*>>, responseHandler)
+    }
+
+    companion object {
+        // static methods
+        private fun genericsType(clazz: Type): Class<Any> {
+            if (clazz is ParameterizedType) {
+                val typeArguments: Array<Type> = clazz.actualTypeArguments
+
+                return typeArguments[0] as Class<Any>
+            }
+
+            else throw RuntimeException("expected generics type")
+        }
     }
 }

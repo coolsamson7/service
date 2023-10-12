@@ -1,4 +1,9 @@
 package com.serious.service
+/*
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import lombok.Getter
 import org.springframework.cloud.client.ServiceInstance
@@ -6,23 +11,23 @@ import java.net.URI
 import java.util.*
 import java.util.stream.Collectors
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
- * @author Andreas Ernst
+/**
+ * A <<code>ServiceAddress</code> is used to identify a specific service by the following attributes
+ * * the channel name
+ * * the [URI]
+ * * optionally a [ServiceInstance] for addresses that have already been resolved
  */
 @Getter
 class ServiceAddress {
     // instance data
+
     var channel: String? = null
     var uri: URI? = null
     var serviceInstance: ServiceInstance? = null
 
     // constructor
     constructor()
-    constructor(channel: String?, uri: URI?) {
+    constructor(channel: String, uri: URI?) {
         this.channel = channel
         this.uri = uri
     }
@@ -49,7 +54,9 @@ class ServiceAddress {
             builder
                 .append(channel).append("(")
                 .append(uri.toString()).append(")")
-        } else builder.append("-")
+        }
+        else builder.append("-")
+
         return builder.toString()
     }
 

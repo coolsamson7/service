@@ -6,8 +6,10 @@ import org.springframework.stereotype.Component
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */ /**
- * @author Andreas Ernst
+ */
+
+/**
+ * Marks [Component] implementations
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)

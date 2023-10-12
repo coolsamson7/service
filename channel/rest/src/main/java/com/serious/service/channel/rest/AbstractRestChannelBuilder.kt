@@ -1,25 +1,19 @@
-package com.serious.service.channel.rest;
+package com.serious.service.channel.rest
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.ChannelManager;
-import com.serious.service.channel.AbstractChannelBuilder;
-import org.springframework.web.reactive.function.client.WebClient;
+import com.serious.service.ChannelManager
+import com.serious.service.channel.AbstractChannelBuilder
+import org.springframework.web.reactive.function.client.WebClient
 
 /**
- * @author Andreas Ernst
+ * abstract base class for [ChannelBuilder] based on a [WebClient]
  */
-public abstract class AbstractRestChannelBuilder extends AbstractChannelBuilder<RestChannel> {
-    // constructor
-
-    protected AbstractRestChannelBuilder(ChannelManager channelManager) {
-        super(channelManager);
-    }
-
+abstract class AbstractRestChannelBuilder  // constructor
+protected constructor(channelManager: ChannelManager) : AbstractChannelBuilder<RestChannel>(channelManager) {
     // protected
-
-    abstract protected WebClient.Builder build(WebClient.Builder builder);
+    abstract fun build(builder: WebClient.Builder): WebClient.Builder
 }

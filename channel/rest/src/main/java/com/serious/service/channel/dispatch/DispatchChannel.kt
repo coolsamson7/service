@@ -1,4 +1,9 @@
 package com.serious.service.channel.dispatch
+/*
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.ChannelManager
 import com.serious.service.Component
@@ -12,39 +17,32 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.io.*
 import java.util.*
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/
+
+/**
+ * A specific [Channel] used to dispatch [ServiceRequest]s using a [RestChannel]
+ */
 @RegisterChannel("dispatch")
-class DispatchChannel  // constructor
-@Autowired constructor(channelManager: ChannelManager?) : RestChannel(channelManager) {
+class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : RestChannel(channelManager) {
     // instance data
+
     @Autowired
     var methodCache: MethodCache? = null
+    val dispatchMethod = DispatchService::class.java.getDeclaredMethod("dispatch", String::class.java)
 
-    // private
     // implement Channel
-    override fun invoke(invocation: MethodInvocation): Any? {
+    override fun invoke(invocation: MethodInvocation): Any {
         val clazz = invocation.method.declaringClass
         val request = ServiceRequest(
             clazz.getName(),
             methodCache!!.getIndex(clazz, invocation.method),
             invocation.arguments
         )
-        return try {
-            val result = super.invoke(
-                SimpleMethodInvocation(
-                    "null", // TODO KOTLIN
-                    DispatchService::class.java.getDeclaredMethod("dispatch", String::class.java),
-                    encodeAsString(encodeObject(request))
-                )
-            ) as String?
-            decodeObject(decodeFromString(result))
-        } catch (e: NoSuchMethodException) {
-            throw RuntimeException(e)
-        }
+
+        val result = super.invoke(
+            SimpleMethodInvocation(null, dispatchMethod, encodeAsString(encodeObject(request)))
+        ) as String
+
+        return decodeObject(decodeFromString(result))
     }
 
     override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
@@ -54,55 +52,64 @@ class DispatchChannel  // constructor
     companion object {
         // static methods
         @JvmStatic
-        fun encodeAsString(data: ByteArray?): String {
+        fun encodeAsString(data: ByteArray): String {
             return Base64.getEncoder().encodeToString(data)
         }
 
         @JvmStatic
-        fun decodeFromString(data: String?): ByteArray {
+        fun decodeFromString(data: String): ByteArray {
             return Base64.getDecoder().decode(data)
         }
 
         @JvmStatic
-        fun encodeObject(o: Any?): ByteArray? {
+        fun encodeObject(o: Any): ByteArray {
             val bos = ByteArrayOutputStream()
-            var out: ObjectOutputStream? = null
+            var out: ObjectOutputStream?
+
             return try {
                 out = ObjectOutputStream(bos)
+
                 out.writeObject(o)
                 out.flush()
+
                 bos.toByteArray()
-            } catch (e: IOException) {
+            }
+            catch (e: IOException) {
                 Exceptions.throwException(e)
-                null
-            } finally {
+                return bos.toByteArray() // make the compiler happy
+            }
+            finally {
                 try {
                     bos.close()
-                } catch (ex: IOException) {
+                }
+                catch (ex: IOException) {
                     // ignore close exception
                 }
             }
         }
 
         @JvmStatic
-        fun decodeObject(bytes: ByteArray?): Any? {
+        fun decodeObject(bytes: ByteArray): Any {
             val bis = ByteArrayInputStream(bytes)
-            var `in`: ObjectInput? = null
+            var objectInput: ObjectInput? = null
             try {
-                `in` = ObjectInputStream(bis)
-                return `in`.readObject()
-            } catch (e: IOException) {
+                objectInput = ObjectInputStream(bis)
+
+                return objectInput.readObject()
+            }
+            catch (e: Exception) {
                 Exceptions.throwException(e)
-            } catch (e: ClassNotFoundException) {
-                Exceptions.throwException(e)
-            } finally {
+            }
+            finally {
                 try {
-                    `in`?.close()
-                } catch (ex: IOException) {
+                    objectInput?.close()
+                }
+                catch (ex: IOException) {
                     // ignore close exception
                 }
             }
-            return null
+
+            return objectInput!!.readObject() // make the compiler happy
         }
     }
 }

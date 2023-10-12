@@ -1,4 +1,9 @@
 package com.serious.service
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.BaseDescriptor.Companion.createImplementations
 import com.serious.service.BaseDescriptor.Companion.forService
@@ -18,11 +23,7 @@ import java.lang.reflect.Proxy
 import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * The [ComponentLocator] has already scanned and registered the corresponding descriptor and beans.
  * In a postConstruct phase the following logic is executed
  *
@@ -125,7 +126,7 @@ class ComponentManager // constructor
 
     fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, addresses: List<ServiceAddress>?): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
-        val channel = if (addresses != null && !addresses.isEmpty()) addresses[0]!!.channel!! else "-"
+        val channel = if (addresses != null && !addresses.isEmpty()) addresses[0].channel!! else "-"
         val key = serviceClass.getName() + ":" + channel
         var service = proxies[key] as T?
         if (service == null) {
@@ -148,6 +149,7 @@ class ComponentManager // constructor
                 ) as T).also { service = it }
             }
         } // if
+
         return service!!
     }
 

@@ -1,10 +1,11 @@
 package com.serious.service.exception
-
 /*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
  * All rights reserved
- */ /**
+ */
+
+/**
  * @author Andreas Ernst
  */
 class ServiceRegistryException : RuntimeException {

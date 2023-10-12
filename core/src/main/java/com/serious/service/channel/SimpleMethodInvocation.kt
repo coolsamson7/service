@@ -13,16 +13,21 @@ import java.lang.reflect.Method
  * @author Andreas Ernst
  */
 class SimpleMethodInvocation : MethodInvocation {
+    // instance data
+
     private var method: Method
     private var arguments: Array<Any>
-    private var targetObject: Any
+    private var targetObject: Any?
 
-    constructor(targetObject: Any, method: Method, vararg args: Any) {
+    // constructor
+
+    constructor(targetObject: Any?, method: Method, vararg args: Any) {
         this.targetObject = targetObject
         this.method = method
         this.arguments = args as Array<Any>
     }
 
+    // implement
     override fun getArguments(): Array<Any> {
         return arguments
     }
@@ -35,7 +40,7 @@ class SimpleMethodInvocation : MethodInvocation {
         throw UnsupportedOperationException("mock method not implemented")
     }
 
-    override fun getThis(): Any {
+    override fun getThis(): Any? {
         return targetObject
     }
 

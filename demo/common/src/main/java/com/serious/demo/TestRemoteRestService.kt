@@ -1,40 +1,38 @@
-package com.serious.demo;
+package com.serious.demo
+
+import com.serious.service.Service
+import com.serious.service.ServiceInterface
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.service.Service;
-import com.serious.service.ServiceInterface;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * @author Andreas Ernst
  */
-@ServiceInterface()
+@ServiceInterface
 @RestController
-public interface TestRemoteRestService extends Service {
+interface TestRemoteRestService : Service {
     @GetMapping("/hello")
-    String hello();
+    fun hello(): String
 
     @GetMapping("/passId/{id}")
-    String passId(@PathVariable("id") String id);
+    fun passId(@PathVariable("id") id: String): String
 
     @GetMapping("/passIdReturnBody/{id}")
     @ResponseBody
-    Foo passIdReturnBody(@PathVariable("id") String id);
+    fun passIdReturnBody(@PathVariable("id") id: String): Foo
 
     @PostMapping("/postBody")
     @ResponseBody
-    Foo postBody(@RequestBody Foo foo);
+    fun postBody(@RequestBody foo: Foo): Foo
 
     @GetMapping("/passParam")
-    String passParam(@RequestParam("id") String id);
+    fun passParam(@RequestParam("id") id: String): String
 
     @PostMapping("/postBodyMono")
     @ResponseBody
-    Mono<Foo> postBodyMono(@RequestBody Foo foo);
+    fun postBodyMono(@RequestBody foo: Foo): Mono<Foo>
 }

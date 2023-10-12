@@ -4,16 +4,17 @@ package com.serious.service
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */ /**
- * @author Andreas Ernst
+ */
+
+/**
+ * A <code>ServiceDescriptor</code> is a [BaseDescriptor] that takes care of [Service]s
  */
 class ServiceDescriptor<T : Service>(
     componentDescriptor: ComponentDescriptor<Component>,
-    serviceInterface: Class<T>?
-) : BaseDescriptor<T>(
-    serviceInterface!!
-) {
+    serviceInterface: Class<T>
+) : BaseDescriptor<T>(serviceInterface) {
     // instance data
+
     @JvmField
     val componentDescriptor: ComponentDescriptor<out Component>
 

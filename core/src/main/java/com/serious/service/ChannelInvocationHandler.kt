@@ -31,7 +31,7 @@ class ChannelInvocationHandler private constructor(// instance data
             val serviceAddresses = componentManager!!.getServiceAddresses(
                 componentDescriptor, channelName
             )
-            channel = componentManager!!.getChannel(componentDescriptor, channelName!!, serviceAddresses)
+            channel = componentManager.getChannel(componentDescriptor, channelName!!, serviceAddresses)
         } else {
             if (channel!!.needsUpdate(delta)) {
                 // remove

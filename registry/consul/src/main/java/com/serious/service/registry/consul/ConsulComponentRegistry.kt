@@ -1,198 +1,168 @@
-package com.serious.service.registry.consul;
+package com.serious.service.registry.consul
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
+
+import com.ecwid.consul.v1.agent.model.NewService
+import com.serious.service.*
+import lombok.extern.slf4j.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.ServiceInstance
+import org.springframework.cloud.client.discovery.DiscoveryClient
+import org.springframework.cloud.client.discovery.event.HeartbeatEvent
+import org.springframework.cloud.commons.util.InetUtils
+import org.springframework.cloud.commons.util.InetUtilsProperties
+import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties
+import org.springframework.cloud.consul.serviceregistry.ConsulRegistration
+import org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistry
+import org.springframework.context.ApplicationListener
+import org.springframework.core.env.Environment
+import org.springframework.stereotype.Component
+import java.util.*
+
+
+/**
+ * Listens to changes in consul and informs the registry.
  */
-
-import com.ecwid.consul.v1.agent.model.NewService;
-import com.serious.service.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
-import org.springframework.cloud.commons.util.InetUtils;
-import org.springframework.cloud.commons.util.InetUtilsProperties;
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
-import org.springframework.cloud.consul.serviceregistry.ConsulRegistration;
-import org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistry;
-import org.springframework.context.ApplicationListener;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
-
-
 @Component
 @Slf4j
-class ConsulHeartbeatListener implements ApplicationListener<HeartbeatEvent> {
+internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     // instance data
+    @Autowired
+    var discoveryClient: DiscoveryClient? = null
 
     @Autowired
-    DiscoveryClient discoveryClient;
+    var serviceInstanceRegistry: ServiceInstanceRegistry? = null
+
     @Autowired
-    ServiceInstanceRegistry serviceInstanceRegistry;
-    @Autowired
-    ComponentManager componentManager;
-    private Object state;
+    var componentManager: ComponentManager? = null
+    private var state: Any? = null
 
     // override ApplicationListener
-
-    @Override
-    public void onApplicationEvent(HeartbeatEvent event) {
-        if (state == null || !state.equals(event.getValue())) {
-            log.info("process consul heartbeat");
-
-            List<String> services = discoveryClient.getServices().stream().filter(service ->  componentManager.componentDescriptors.containsKey(service)).toList();
+    override fun onApplicationEvent(event: HeartbeatEvent) {
+        if (state == null || state != event.value) {
+            // TODO KOTLIN ConsulHeartbeatListener.log.info("process consul heartbeat")
+            val services = discoveryClient!!.services.stream()
+                .filter { service: String? -> componentManager!!.componentDescriptors.containsKey(service) }
+                .toList()
 
             // create new map
-
-            Map<String, List<ServiceInstance>> newMap = new HashMap<>();
-            for ( String service : services)
-                newMap.put(service, discoveryClient.getInstances(service));
+            val newMap: MutableMap<String, List<ServiceInstance>> = HashMap()
+            for (service in services) newMap[service] = discoveryClient!!.getInstances(service)
 
             // set
-
-            serviceInstanceRegistry.update(newMap);
+            serviceInstanceRegistry!!.update(newMap)
 
             // done
-
-            state = event.getValue();
+            state = event.value
         }
     }
 }
+
 /**
- * @author Andreas Ernst
+ * A [ComponentRegistry] based on consul
  */
 @Component
-public class ConsulComponentRegistry implements ComponentRegistry {
+class ConsulComponentRegistry : ComponentRegistry {
     // instance data
     @Autowired
-    ConsulServiceRegistry consulServiceRegistry;
+    lateinit var consulServiceRegistry: ConsulServiceRegistry
+
     @Autowired
-    private Environment environment;
+    lateinit private var environment: Environment
+
     @Autowired
-    DiscoveryClient discoveryClient;
-    ConsulDiscoveryProperties properties = new ConsulDiscoveryProperties(new InetUtils(new InetUtilsProperties()));
+    lateinit var discoveryClient: DiscoveryClient
+    var properties = ConsulDiscoveryProperties(InetUtils(InetUtilsProperties()))
+    var registeredServices: MutableMap<ComponentDescriptor<*>, ConsulRegistration> = HashMap()
+    private val localAddress: ServiceAddress?
+        // constructor
+        get() = null //TODO new ServiceAddress("rest", URI.create())
+    private val port: String?
+        get() = AbstractComponent.port
 
-    Map<ComponentDescriptor, ConsulRegistration> registeredServices = new HashMap<>();
-
-    // constructor
-
-    // lifecycle
-
-    // private
-
-    private ServiceAddress getLocalAddress() {
-        return null;//TODO new ServiceAddress("rest", URI.create())
-    }
-
-    private String getPort() {
-        return AbstractComponent.port;
-    }
-
-    private String getId(ComponentDescriptor<com.serious.service.Component> descriptor) {
+    private fun getId(descriptor: ComponentDescriptor<com.serious.service.Component>): String {
         //ServiceAddress serviceAddress = descriptor.getExternalAddress();
-
-        String host = properties.getIpAddress();//serviceAddress.getUri().getHost();
-        String port = getPort();
-
-        return host + ":" + port + ":" + descriptor.getName();
+        val host = properties.ipAddress //serviceAddress.getUri().getHost();
+        val port = port
+        return host + ":" + port + ":" + descriptor.name
     }
 
-    private ConsulDiscoveryProperties properties4(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        properties.setPort(properties.getPort());//serviceAddress.getUri().getPort());
-        properties.setInstanceId(getId(descriptor));
-
-        properties.setHealthCheckPath(descriptor.health);
-
-        return properties;
+    private fun properties4(descriptor: ComponentDescriptor<com.serious.service.Component>): ConsulDiscoveryProperties {
+        properties.port = properties.port //serviceAddress.getUri().getPort());
+        properties.instanceId = getId(descriptor)
+        properties.healthCheckPath = descriptor.health
+        return properties
     }
 
-    private NewService service4(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        ConsulDiscoveryProperties props = properties4(descriptor);
+    private fun service4(descriptor: ComponentDescriptor<com.serious.service.Component>): NewService {
+        val props = properties4(descriptor)
 
         // service
-
-        NewService service = new NewService();
-
-        Map<String, String> meta = new HashMap<>();
+        val service = NewService()
+        val meta: MutableMap<String, String> = HashMap()
 
         // build channels
-
-        StringBuilder channels = new StringBuilder();
+        val channels = StringBuilder()
 
         // something like: rest(http://bla:90),http("https://hhh:90)
-        boolean first = true;
-        for ( ServiceAddress external : descriptor.getExternalAddresses()) {
-            if ( !first )
-                channels.append(",");
-
+        var first = true
+        for (external in descriptor.externalAddresses!!) {
+            if (!first) channels.append(",")
             channels
-                    .append(external.getChannel())
-                    .append("(")
-                    .append(external.getUri().toString())
-                    .append(")");
-
-            first = false;
+                .append(external.channel)
+                .append("(")
+                .append(external.uri.toString())
+                .append(")")
+            first = false
         }
-
-        meta.put("channels", channels.toString());
+        meta["channels"] = channels.toString()
 
         //
-
-        service.setPort(props.getPort());
-        service.setId(props.getInstanceId());
-        service.setMeta(meta);
-        service.setAddress(props.getIpAddress());
-        service.setTags(Arrays.stream(new String[]{"component"}).toList());
+        service.port = props.port
+        service.id = props.instanceId
+        service.meta = meta
+        service.address = props.ipAddress
+        service.tags = Arrays.stream(arrayOf("component")).toList()
         //service.setEnableTagOverride(serviceTemplate.getEnableTagOverride());
 
         // check
-
-        NewService.Check check = new NewService.Check();
-
-        check.setInterval(environment.getProperty("spring.cloud.consul.discovery.health-check-interval", "15s"));
-        check.setHttp("http://" + props.getIpAddress() + ":" + getPort() + descriptor.health);
-        check.setTimeout(environment.getProperty("spring.cloud.consul.discovery.health-check-timeout", "90s"));
-        check.setDeregisterCriticalServiceAfter(environment.getProperty("health-check-critical-timeout", "3m"));
-
-        service.setCheck(check);
+        val check = NewService.Check()
+        check.interval = environment.getProperty("spring.cloud.consul.discovery.health-check-interval", "15s")
+        check.http = "http://" + props.ipAddress + ":" + port + descriptor.health
+        check.timeout = environment.getProperty("spring.cloud.consul.discovery.health-check-timeout", "90s")
+        check.deregisterCriticalServiceAfter = environment.getProperty("health-check-critical-timeout", "3m")
+        service.check = check
 
         // add stuff
-
-        service.setName(descriptor.getName());
-        service.setId(getId(descriptor));
+        service.name = descriptor.name
+        service.id = getId(descriptor)
 
         // done
-
-        return service;
+        return service
     }
 
     // implement ComponentRegistry
-
-    public void startup(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        ConsulRegistration registration = new ConsulRegistration(
-                service4(descriptor),
-                properties4(descriptor)
-        );
-
-        registeredServices.put(descriptor, registration);
-
-        consulServiceRegistry.register(registration);
+    override fun startup(descriptor: ComponentDescriptor<com.serious.service.Component>) {
+        val registration = ConsulRegistration(
+            service4(descriptor),
+            properties4(descriptor)
+        )
+        registeredServices[descriptor] = registration
+        consulServiceRegistry.register(registration)
     }
 
-    public void shutdown(ComponentDescriptor<com.serious.service.Component> descriptor) {
-        consulServiceRegistry.deregister(registeredServices.get(descriptor));
+    override fun shutdown(descriptor: ComponentDescriptor<com.serious.service.Component>) {
+        consulServiceRegistry.deregister(registeredServices[descriptor])
     }
 
-    public List<ServiceInstance> getInstances(String service) {
-        return discoveryClient.getInstances(service);
+    override fun getInstances(service: String): List<ServiceInstance> {
+        return discoveryClient.getInstances(service)
     }
 
-    public List<String> getServices() {
-        return discoveryClient.getServices();
+    override fun getServices(): List<String> {
+        return discoveryClient.services
     }
 }
-

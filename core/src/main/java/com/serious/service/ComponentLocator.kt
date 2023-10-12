@@ -1,102 +1,85 @@
-package com.serious.service;
+package com.serious.service
+
+import com.serious.util.Exceptions
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition
+import org.springframework.beans.factory.config.BeanDefinition
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
+import org.springframework.beans.factory.support.DefaultListableBeanFactory
+import org.springframework.context.EnvironmentAware
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
+import org.springframework.core.env.Environment
+import org.springframework.core.type.filter.AnnotationTypeFilter
+
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
-
-import com.serious.util.Exceptions;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.env.Environment;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Set;
-
-
-/**
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/ /**
  * The lifecycle is:
- * * <ul>
- * *     <li>ComponentLocator as a BeanFactoryPostProcessor scans for annotated component interfaces </li>
- * *     <li>generates the corresponding descriptors ( service and component )</li>
- * *     <li>generates new bean definitions that reference a dynamic proxy that is handled by the descriptor</li>
- * *     <li>if implementations are found, the beans are removed from the context, since they would lead to ambiguities and
+ * *
+ * *      * ComponentLocator as a BeanFactoryPostProcessor scans for annotated component interfaces
+ * *      * generates the corresponding descriptors ( service and component )
+ * *      * generates new bean definitions that reference a dynamic proxy that is handled by the descriptor
+ * *      * if implementations are found, the beans are removed from the context, since they would lead to ambiguities and
  * *     remembered to be instantiated in a later phase setting the "local" attribute of the descriptor
- * *     </li>
- * * </ul>
+ * *
+ * *
  */
-@Component
-public class ComponentLocator implements BeanFactoryPostProcessor, EnvironmentAware {
-    // static data
-
-    static ArrayList<ComponentDescriptor<com.serious.service.Component>> components = new ArrayList<>();
-
+@org.springframework.stereotype.Component
+class ComponentLocator : BeanFactoryPostProcessor, EnvironmentAware {
     // local classes
-
-    static class ComponentInterfaceProvider extends ClassPathScanningCandidateComponentProvider {
-
-        public ComponentInterfaceProvider() {
-            super(false);
-
-            addIncludeFilter(new AnnotationTypeFilter(ComponentInterface.class, false));
+    internal class ComponentInterfaceProvider : ClassPathScanningCandidateComponentProvider(false) {
+        init {
+            addIncludeFilter(AnnotationTypeFilter(ComponentInterface::class.java, false))
         }
 
-        @Override
-        protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-            return beanDefinition.getMetadata().isInterface();
+        override fun isCandidateComponent(beanDefinition: AnnotatedBeanDefinition): Boolean {
+            return beanDefinition.metadata.isInterface
         }
     }
 
     // instance data
 
-    private Environment environment;
+    private var environment: Environment? = null
 
     // private
-
-    void scan() throws ClassNotFoundException {
-        ClassPathScanningCandidateComponentProvider provider = new ComponentInterfaceProvider();
-
-        Set<BeanDefinition> beans = provider.findCandidateComponents(environment.getProperty("service.package", "com"));
-
-        for (BeanDefinition bean : beans)
-            registerComponent(bean);
+    @Throws(ClassNotFoundException::class)
+    fun scan() {
+        val provider: ClassPathScanningCandidateComponentProvider = ComponentInterfaceProvider()
+        val beans = provider.findCandidateComponents(environment!!.getProperty("service.package", "com"))
+        for (bean in beans) registerComponent(bean)
     }
 
-    void registerComponent(BeanDefinition interfaceBean) throws ClassNotFoundException {
-        components.add(new ComponentDescriptor(Class.forName(interfaceBean.getBeanClassName())));
+    @Throws(ClassNotFoundException::class)
+    fun registerComponent(interfaceBean: BeanDefinition) {
+        components.add(ComponentDescriptor(Class.forName(interfaceBean.beanClassName) as Class<Component>))
     }
 
     // implement
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    @Throws(BeansException::class)
+    override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
         try {
-            this.scan();
+            this.scan()
         }
-        catch (ClassNotFoundException e) {
-            Exceptions.throwException(e);
+        catch (e: ClassNotFoundException) {
+            Exceptions.throwException(e)
         }
-
-        DefaultListableBeanFactory registry = (DefaultListableBeanFactory) beanFactory;
+        val registry = beanFactory as DefaultListableBeanFactory
 
         // create beans
-
-        for (ComponentDescriptor<?> componentDescriptor : components)
-            componentDescriptor.registerBeans(registry);
+        for (componentDescriptor in components)
+            componentDescriptor.registerBeans(registry)
     }
 
     // implement EnvironmentAware
+    override fun setEnvironment(environment: Environment) {
+        this.environment = environment
+    }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+    companion object {
+        // static data
+        var components = ArrayList<ComponentDescriptor<Component>>()
     }
 }

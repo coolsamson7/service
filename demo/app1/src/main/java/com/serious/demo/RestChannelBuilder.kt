@@ -19,10 +19,10 @@ import org.springframework.web.reactive.function.client.WebClient
  */
 @RegisterChannelBuilder(channel = RestChannel::class)
 class RestChannelBuilder  // constructor
-@Autowired constructor(channelManager: ChannelManager?) : AbstractRestChannelBuilder(channelManager) {
+@Autowired constructor(channelManager: ChannelManager) : AbstractRestChannelBuilder(channelManager) {
     // implement AbstractRestChannelBuilder
-    public override fun build(builder: WebClient.Builder): WebClient.Builder {
-        return builder.filter { clientRequest: ClientRequest?, nextFilter: ExchangeFunction ->
+    override fun build(builder: WebClient.Builder): WebClient.Builder {
+        return builder.filter { clientRequest: ClientRequest, nextFilter: ExchangeFunction ->
             nextFilter.exchange(
                 clientRequest
             )

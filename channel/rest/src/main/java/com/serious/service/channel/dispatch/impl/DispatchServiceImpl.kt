@@ -1,76 +1,67 @@
-package com.serious.service.channel.dispatch.impl;
+package com.serious.service.channel.dispatch.impl
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.ComponentManager;
-import com.serious.service.Service;
-import com.serious.service.channel.dispatch.DispatchChannel;
-import com.serious.service.channel.dispatch.DispatchService;
-import com.serious.service.channel.dispatch.MethodCache;
-import com.serious.service.channel.dispatch.ServiceRequest;
-import com.serious.util.Exceptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.serious.service.ComponentManager
+import com.serious.service.Service
+import com.serious.service.channel.dispatch.DispatchChannel.Companion.decodeFromString
+import com.serious.service.channel.dispatch.DispatchChannel.Companion.decodeObject
+import com.serious.service.channel.dispatch.DispatchChannel.Companion.encodeAsString
+import com.serious.service.channel.dispatch.DispatchChannel.Companion.encodeObject
+import com.serious.service.channel.dispatch.DispatchService
+import com.serious.service.channel.dispatch.MethodCache
+import com.serious.service.channel.dispatch.ServiceRequest
+import com.serious.util.Exceptions
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
+import java.lang.reflect.InvocationTargetException
 
 /**
- * @author Andreas Ernst
+ * The implementation of a [DispatchService]
  */
 @RestController
-public class DispatchServiceImpl implements DispatchService {
+class DispatchServiceImpl : DispatchService {
     // instance data
 
     @Autowired
-    ComponentManager componentManager;
+    lateinit var componentManager: ComponentManager
+
     @Autowired
-    MethodCache methodCache;
+    lateinit var methodCache: MethodCache
 
     // private
-
-    private Class<Service> class4Name(String className) {
-        try {
-            return (Class<Service>)Class.forName(className);
+    private fun class4Name(className: String): Class<Service> {
+        return try {
+            Class.forName(className) as Class<Service>
         }
-        catch (ClassNotFoundException e) {
-            Exceptions.throwException(e);
-            return null;
+        catch (e: ClassNotFoundException) {
+            Exceptions.throwException(e)
+            return Service::class.java // make the compiler happy
         }
     }
 
     // implement
-
     @PostMapping("/dispatch")
     @ResponseBody
-    public String dispatch(@RequestBody String request) {
-        byte[] bytes = DispatchChannel.decodeFromString(request);
-        ServiceRequest serviceRequest = (ServiceRequest) DispatchChannel.decodeObject(bytes);
+    override fun dispatch(@RequestBody request: String): String {
+        val serviceRequest = decodeObject(decodeFromString(request)) as ServiceRequest
+        val serviceClass = class4Name(serviceRequest.service)
+        val service = componentManager.acquireLocalService(serviceClass)
+        val method = methodCache.getMethod(serviceClass, serviceRequest.method)
 
-        Class<Service> serviceClass = class4Name(serviceRequest.service);
-        Service service = componentManager.acquireLocalService(serviceClass);
+        return try {
+            var result = method.invoke(service, *serviceRequest.arguments)
 
-        Method method = methodCache.getMethod(serviceClass, serviceRequest.method);
-
-        //System.out.println("dispatch " + serviceRequest.service + "." + method.getName());
-
-        Object result = null;
-        try {
-            result = method.invoke(service, serviceRequest.arguments);
-
-            return DispatchChannel.encodeAsString(DispatchChannel.encodeObject(result));
+            encodeAsString(encodeObject(result))
         }
-        catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        catch (e: Exception) {
+            throw RuntimeException(e)
         }
     }
 }

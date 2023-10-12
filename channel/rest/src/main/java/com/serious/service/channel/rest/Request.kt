@@ -1,52 +1,32 @@
-package com.serious.service.channel.rest;
+package com.serious.service.channel.rest
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import org.springframework.web.reactive.function.client.WebClient;
+import com.serious.service.channel.rest.RequestBuilder.SpecOperation
+import org.springframework.web.reactive.function.client.WebClient
 
-/**
- * A <code>Request</code> covers the technical protocol details for a single methoid call
- *
- * @author Andreas Ernst
- */
-public class Request {
-    // local classes
+typealias ResponseHandler = (spec: WebClient.ResponseSpec) -> Any
 
-    interface ResponseHandler {
-        Object handle(WebClient.ResponseSpec spec);
-    }
-
-    // instance data
-
-    private final RequestBuilder.SpecOperation[] specs;
-    private final ResponseHandler responseHandler;
-
-    // constructor
-
-
-    public Request(RequestBuilder.SpecOperation[] specs, ResponseHandler responseHandler) {
-        this.specs = specs;
-        this.responseHandler = responseHandler;
-    }
-
+ /**
+  * A `Request` covers the technical webclient details for a single method call
+  * by caching the steps needed for a webclient builder which will be executed while executing the method call.
+  */
+class Request(private val specs: Array<SpecOperation<*>>, private val responseHandler: ResponseHandler) {
     // private
-    private WebClient.RequestHeadersSpec spec(Object... params) {
-        WebClient.RequestHeadersSpec spec = null;
-        for (RequestBuilder.SpecOperation operation : specs)
-            spec = operation.build(spec, params);
+    private fun spec(vararg params: Any): RHS {
+        var spec: RHS? = null
 
-        return spec;
+        for (operation in specs)
+            spec = operation.build(spec as Nothing?, *params)
+
+        return spec!!
     }
 
     // public
-
-    Object execute(Object... args) {
-        WebClient.RequestHeadersSpec requestHeadersSpec = spec(args);
-        WebClient.ResponseSpec responseSpec = requestHeadersSpec.retrieve();
-
-        return responseHandler.handle(responseSpec);
+    fun execute(vararg args: Any): Any {
+        return responseHandler(spec(*args).retrieve())
     }
 }

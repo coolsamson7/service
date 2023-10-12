@@ -1,53 +1,51 @@
-package com.serious.service.registry;/*
- * @COPYRIGHT (C) 2016 Andreas Ernst
- *
- * All rights reserved
- */
+package com.serious.service.registry
+/*
+* @COPYRIGHT (C) 2016 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.service.Component;
-import com.serious.service.ComponentDescriptor;
-import com.serious.service.ComponentRegistry;
-import com.serious.service.ServiceAddress;
-import org.springframework.cloud.client.ServiceInstance;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.serious.service.Component
+import com.serious.service.ComponentDescriptor
+import com.serious.service.ComponentRegistry
+import com.serious.service.ServiceAddress
+import com.serious.service.exception.ServiceRuntimeException
+import org.springframework.cloud.client.ServiceInstance
+import java.util.stream.Collectors
 
 /**
- * @author Andreas Ernst
+ * A local [ComponentRegistry] implementation used for test pruposes
  */
 //@org.springframework.stereotype.Component
-public class LocalComponentRegistry  implements ComponentRegistry {
+open class LocalComponentRegistry : ComponentRegistry {
     // instance data
 
-    Map<String, List<ServiceAddress>> services = new HashMap<>();
+    private var services: MutableMap<String, MutableList<ServiceAddress>> = HashMap()
 
-    // implement ComponentRegistry
+    // private
 
-    @Override
-    public void startup(ComponentDescriptor<Component> descriptor) {
-        List<ServiceAddress> addresses = services.computeIfAbsent(descriptor.getName(), k -> new ArrayList<>());
-
-        addresses.addAll(descriptor.getExternalAddresses());
+    private fun getServiceAddresses(service : String) :List<ServiceAddress> {
+        return services[service] ?: throw ServiceRuntimeException("unknown service " + service)
     }
 
-    @Override
-    public void shutdown(ComponentDescriptor<Component> descriptor) {
+    // implement ComponentRegistry
+    override fun startup(descriptor: ComponentDescriptor<Component>) {
+        val addresses = services.computeIfAbsent(descriptor.name) { _: String? -> ArrayList() }
+        addresses.addAll(descriptor.externalAddresses!!)
+    }
+
+    override fun shutdown(descriptor: ComponentDescriptor<Component>) {
         // noop
     }
 
-    @Override
-    public List<String> getServices() {
-        return services.keySet().stream().toList();
+    override fun getServices(): List<String> {
+        return services.keys.stream().toList()
     }
 
-    @Override
-    public List<ServiceInstance> getInstances(String service) {
-        return services.get(service).stream()
-                .map(address -> address.getServiceInstance())
-                .collect(Collectors.toList());
+    override fun getInstances(service: String): List<ServiceInstance> {
+        return getServiceAddresses(service)
+            .stream()
+            .map { address: ServiceAddress -> address.serviceInstance!! }
+            .collect(Collectors.toList())
     }
 }

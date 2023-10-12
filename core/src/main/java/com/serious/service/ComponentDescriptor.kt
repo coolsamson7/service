@@ -36,7 +36,8 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDe
         super.registerBeans(registry)
 
         // fetch channels
-        if (implementingBeans.get(this as BaseDescriptor<Service>) != null) {
+
+        if (implementingBeans.get(this) != null) {
             val componentClass = class4Name(
                 implementingBeans.get(this)!!.beanClassName
             )

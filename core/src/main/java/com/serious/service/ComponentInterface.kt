@@ -1,13 +1,15 @@
 package com.serious.service
-
-import kotlin.reflect.KClass
-
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */ /**
- * @author Andreas Ernst
+ */
+
+import kotlin.reflect.KClass
+
+
+/**
+ * Marks [Component] interfaces
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)

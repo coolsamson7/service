@@ -28,34 +28,34 @@ import java.util.function.Consumer
  * @author Andreas Ernst
  */
 @RegisterChannel("rest")
-open class RestChannel  // constructor
-@Autowired constructor(channelManager: ChannelManager?) : AbstractChannel(channelManager!!) {
+open class RestChannel @Autowired constructor(channelManager: ChannelManager) : AbstractChannel(channelManager) {
     // instance data
+
     private var webClient: WebClient? = null
     private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
 
     // private
-    private fun getRequest(method: Method): Request? {
+    private fun getRequest(method: Method): Request {
         var request = requests[method]
         if (request == null) {
             requests[method] = computeRequest(method).also { request = it }
         }
-        return request
+        return request!!
     }
 
     private fun computeRequest(method: Method): Request {
-        return MethodAnalyzer().request(webClient, method)
+        return MethodAnalyzer().request(webClient!!, method)
     }
 
     // implement Channel
-    override fun invoke(invocation: MethodInvocation): Any? {
-        return getRequest(invocation.method)!!.execute(*invocation.arguments)
+    override fun invoke(invocation: MethodInvocation): Any {
+        return getRequest(invocation.method).execute(*invocation.arguments)
     }
 
     override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
         super.setup(componentClass, serviceAddresses)
 
-        val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder
+        val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder?
         var builder = WebClient.builder()
 
         // add some defaults
@@ -65,10 +65,12 @@ open class RestChannel  // constructor
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 
         // custom stuff
+
         if (channelBuilder != null && channelBuilder.isApplicable(componentClass)) builder =
             channelBuilder.build(builder)
 
         // done
+
         webClient = builder.build()
     }
 

@@ -21,12 +21,12 @@ class SpringChannelFactory // constructor
 ) : ChannelFactory {
     // implement ChannelFactory
     override fun makeChannel(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?): Channel? {
-        logger.trace("make channel " + serviceAddresses!![0]!!.channel)
+        logger.trace("make channel " + serviceAddresses!![0].channel)
 
         //beanDefinition.getPropertyValues().addPropertyValue("addresses", serviceAddresses);
         val beanFactory: DefaultListableBeanFactory =
             ChildBeanFactory((applicationContext as ConfigurableApplicationContext))
-        val beanName = serviceAddresses[0]!!.serviceInstance!!.instanceId
+        val beanName = serviceAddresses[0].serviceInstance!!.instanceId
         beanFactory.registerBeanDefinition(beanName, beanDefinition)
         val channel = beanFactory.getBean(beanName) as Channel
 

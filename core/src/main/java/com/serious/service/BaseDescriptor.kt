@@ -15,7 +15,7 @@ import java.net.URI
 import java.util.*
 
 /**
- * @author Andreas Ernst
+ * A <code>BaseDescriptor</code> covers the met data for both services and components.
  */
 open class BaseDescriptor<T : Service> protected constructor(// instance data
     @JvmField var serviceInterface: Class<out T>
@@ -86,7 +86,7 @@ open class BaseDescriptor<T : Service> protected constructor(// instance data
             }
         }
 
-        fun rememberImplementation(descriptor: BaseDescriptor<Service>, bean: BeanDefinition) {
+        fun rememberImplementation(descriptor: BaseDescriptor<out Service>, bean: BeanDefinition) {
             implementingBeans[descriptor] = bean
         }
 
