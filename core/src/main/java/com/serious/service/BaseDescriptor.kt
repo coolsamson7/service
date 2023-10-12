@@ -17,9 +17,9 @@ import java.util.*
 /**
  * A <code>BaseDescriptor</code> covers the met data for both services and components.
  */
-open class BaseDescriptor<T : Service> protected constructor(// instance data
-    @JvmField var serviceInterface: Class<out T>
-) {
+abstract class BaseDescriptor<T : Service> protected constructor(@JvmField var serviceInterface: Class<out T>) {
+    // instance data
+
     @JvmField
     var local: Service? = null
     var name: String
@@ -45,9 +45,7 @@ open class BaseDescriptor<T : Service> protected constructor(// instance data
     open val isService: Boolean
         get() = false
 
-    open fun getComponentDescriptor(): ComponentDescriptor<out Component> {
-        throw RuntimeException("ocuh") // TODO KOTLIN
-    }
+    abstract fun getComponentDescriptor(): ComponentDescriptor<out Component>
 
     val uri: URI?
         get() = null
@@ -57,6 +55,7 @@ open class BaseDescriptor<T : Service> protected constructor(// instance data
     }
 
     // override Object
+
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
         if (o == null || javaClass != o.javaClass) return false
@@ -80,7 +79,8 @@ open class BaseDescriptor<T : Service> protected constructor(// instance data
         fun class4Name(className: String?): Class<*>? {
             return try {
                 Class.forName(className)
-            } catch (e: ClassNotFoundException) {
+            }
+            catch (e: ClassNotFoundException) {
                 Exceptions.throwException(e)
                 null
             }

@@ -28,12 +28,12 @@ class MethodCache {
         // private
         fun analyze() {
             val methods = Arrays.asList(*clazz.getMethods()) // TODO ? ?getDeclared...
+
             methods.sortWith(Comparator.comparing { method: Method -> getSignature(method) })
-            var index = 0
-            for (method in methods) {
+
+            for ((index, method) in methods.withIndex()) {
                 method2Index[method] = index
                 index2Method[index] = method
-                index++
             }
         }
     }
@@ -52,12 +52,9 @@ class MethodCache {
     }
 
     // private
-    private fun getClassMethods(clazz: Class<*>): ClassMethods {
-        var classMethods = class2Methods[clazz]
-        if (classMethods == null)
-            class2Methods[clazz] = ClassMethods(clazz).also { classMethods = it }
 
-        return classMethods!!
+    private fun getClassMethods(clazz: Class<*>): ClassMethods {
+        return class2Methods.computeIfAbsent(clazz) { cl: Class<*> -> ClassMethods(cl) }
     }
 
     companion object {

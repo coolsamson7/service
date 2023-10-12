@@ -1,5 +1,6 @@
 package com.serious.service
 
+import com.serious.service.ComponentManager.Companion.log
 import lombok.extern.slf4j.Slf4j
 import org.springframework.cloud.commons.util.InetUtils
 import org.springframework.cloud.commons.util.InetUtilsProperties
@@ -15,16 +16,15 @@ import org.springframework.cloud.commons.util.InetUtilsProperties
 abstract class AbstractComponent : Component {
     // instance data
     override var status = ComponentStatus.VIRGIN
-    //TODO KOTLIN private set
 
     // implement Component
     override fun startup() {
-        //TODO KOTLIN AbstractComponent.log.info("starting up {}", javaClass.getName())
+        log.info("starting up {}", javaClass.getName())
         status = ComponentStatus.RUNNING
     }
 
     override fun shutdown() {
-        //TODO KOTLIN AbstractComponent.log.info("shutdown {}", javaClass.getName())
+        log.info("shutdown {}", javaClass.getName())
         status = ComponentStatus.STOPPED
     }
 
@@ -33,12 +33,12 @@ abstract class AbstractComponent : Component {
 
     companion object {
         // static data
+
         @JvmField
-        var port: String? = null // TODO
+        var port: String? = null
         var inet = InetUtils(InetUtilsProperties())
         @JvmStatic
         val host: String
-            // static methods
             get() = inet.findFirstNonLoopbackHostInfo().hostname // TODO getIpAddress();
     }
 }

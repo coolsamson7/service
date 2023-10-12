@@ -22,9 +22,7 @@ open class LocalComponentRegistry : ComponentRegistry {
 
     // implement ComponentRegistry
     override fun startup(descriptor: ComponentDescriptor<Component>) {
-        val addresses = services.computeIfAbsent(
-            descriptor.name
-        ) { _: String? -> ArrayList() }
+        val addresses = services.computeIfAbsent(descriptor.name) { _: String? -> ArrayList() }
 
         addresses.addAll(descriptor.externalAddresses!!)
     }

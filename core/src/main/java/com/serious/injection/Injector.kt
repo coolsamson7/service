@@ -139,11 +139,9 @@ class Injector : BeanPostProcessor {
         for (method in computeMethods(clazz)) {
             val annotations = method.annotations
             for (annotation in annotations) {
-                val annotationType: Class<out Annotation?> = annotation::class.java // TODO
+                val annotationType: Class<out Annotation?> = annotation::class.java
                 var methodsWithAnnotation = annotatedMethods[annotationType]
-                methodsWithAnnotation = if (methodsWithAnnotation == null) arrayOf(method) else add2(
-                    Method::class.java, methodsWithAnnotation, method
-                )
+                methodsWithAnnotation = if (methodsWithAnnotation == null) arrayOf(method) else add2(Method::class.java, methodsWithAnnotation, method)
                 annotatedMethods[annotationType] = methodsWithAnnotation
             } // for
         } // for

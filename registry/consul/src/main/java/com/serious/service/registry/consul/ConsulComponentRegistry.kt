@@ -8,6 +8,8 @@ package com.serious.service.registry.consul
 import com.ecwid.consul.v1.agent.model.NewService
 import com.serious.service.*
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
 import org.springframework.cloud.client.discovery.DiscoveryClient
@@ -41,23 +43,33 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     private var state: Any? = null
 
     // override ApplicationListener
+
     override fun onApplicationEvent(event: HeartbeatEvent) {
         if (state == null || state != event.value) {
-            // TODO KOTLIN ConsulHeartbeatListener.log.info("process consul heartbeat")
+            log.info("process consul heartbeat")
+
             val services = discoveryClient!!.services.stream()
                 .filter { service: String? -> componentManager!!.componentDescriptors.containsKey(service) }
                 .toList()
 
             // create new map
+
             val newMap: MutableMap<String, List<ServiceInstance>> = HashMap()
-            for (service in services) newMap[service] = discoveryClient!!.getInstances(service)
+
+            for (service in services)
+                newMap[service] = discoveryClient!!.getInstances(service)
 
             // set
+
             serviceInstanceRegistry!!.update(newMap)
 
             // done
             state = event.value
         }
+    }
+
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }
 
@@ -67,6 +79,7 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
 @Component
 class ConsulComponentRegistry : ComponentRegistry {
     // instance data
+
     @Autowired
     lateinit var consulServiceRegistry: ConsulServiceRegistry
 
@@ -78,7 +91,6 @@ class ConsulComponentRegistry : ComponentRegistry {
     var properties = ConsulDiscoveryProperties(InetUtils(InetUtilsProperties()))
     var registeredServices: MutableMap<ComponentDescriptor<*>, ConsulRegistration> = HashMap()
     private val localAddress: ServiceAddress?
-        // constructor
         get() = null //TODO new ServiceAddress("rest", URI.create())
     private val port: String?
         get() = AbstractComponent.port
@@ -101,10 +113,12 @@ class ConsulComponentRegistry : ComponentRegistry {
         val props = properties4(descriptor)
 
         // service
+
         val service = NewService()
         val meta: MutableMap<String, String> = HashMap()
 
         // build channels
+
         val channels = StringBuilder()
 
         // something like: rest(http://bla:90),http("https://hhh:90)
@@ -116,11 +130,13 @@ class ConsulComponentRegistry : ComponentRegistry {
                 .append("(")
                 .append(external.uri.toString())
                 .append(")")
+
             first = false
         }
         meta["channels"] = channels.toString()
 
-        //
+        // set properties
+
         service.port = props.port
         service.id = props.instanceId
         service.meta = meta
@@ -129,7 +145,9 @@ class ConsulComponentRegistry : ComponentRegistry {
         //service.setEnableTagOverride(serviceTemplate.getEnableTagOverride());
 
         // check
+
         val check = NewService.Check()
+
         check.interval = environment.getProperty("spring.cloud.consul.discovery.health-check-interval", "15s")
         check.http = "http://" + props.ipAddress + ":" + port + descriptor.health
         check.timeout = environment.getProperty("spring.cloud.consul.discovery.health-check-timeout", "90s")

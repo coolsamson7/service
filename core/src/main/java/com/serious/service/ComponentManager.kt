@@ -35,13 +35,13 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 @org.springframework.stereotype.Component
-class ComponentManager // constructor
-@Autowired internal constructor(
+class ComponentManager @Autowired internal constructor(
     var componentRegistry: ComponentRegistry,
     var channelManager: ChannelManager,
     var serviceInstanceRegistry: ServiceInstanceRegistry
 ) : ApplicationContextAware {
     // instance data
+
     @JvmField
     var applicationContext: ApplicationContext? = null
     @JvmField
@@ -57,37 +57,49 @@ class ComponentManager // constructor
         AbstractComponent.port = port
 
         // register components
-        for (componentDescriptor in ComponentLocator.components) addComponentDescriptor(componentDescriptor)
+
+        for (componentDescriptor in ComponentLocator.components)
+            addComponentDescriptor(componentDescriptor)
+
         ComponentLocator.components.clear()
 
         // create local component and service implementations
+
         createImplementations(applicationContext!!)
 
         // publish local components
-        for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) componentRegistry.startup(
-            componentDescriptor
-        )
+
+        for (componentDescriptor in componentDescriptors.values)
+            if (componentDescriptor.hasImplementation())
+                componentRegistry.startup(componentDescriptor)
 
         // force update of the service instance registry
+
         serviceInstanceRegistry.startup()
 
         // startup
+
         for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) {
             log.info("startup {}", componentDescriptor.name)
+
             (componentDescriptor.local!! as Component).startup()
         }
 
         // report
+
         report()
     }
 
     @PreDestroy
     fun shutdown() {
-        for (componentDescriptor in componentDescriptors.values) if (componentDescriptor.hasImplementation()) {
-            log.info("shutdown {}", componentDescriptor.name)
-            (componentDescriptor.local!! as Component).shutdown()
-            componentRegistry.shutdown(componentDescriptor)
-        }
+        for (componentDescriptor in componentDescriptors.values)
+            if (componentDescriptor.hasImplementation()) {
+                log.info("shutdown {}", componentDescriptor.name)
+
+                (componentDescriptor.local!! as Component).shutdown()
+
+                componentRegistry.shutdown(componentDescriptor)
+            }
     }
 
     // private
@@ -128,7 +140,9 @@ class ComponentManager // constructor
         val serviceClass: Class<out T> = descriptor.serviceInterface
         val channel = if (addresses != null && !addresses.isEmpty()) addresses[0].channel!! else "-"
         val key = serviceClass.getName() + ":" + channel
+
         var service = proxies[key] as T?
+
         if (service == null) {
             log.info("create proxy for {}.{}", descriptor.name, channel)
             if (channel == "local") proxies[key] = (Proxy.newProxyInstance(
@@ -141,7 +155,7 @@ class ComponentManager // constructor
 
                 method.invoke(descriptor.local, *b)
             } as T).also { service = it } else {
-                val channelInvocationHandler = forComponent(descriptor.getComponentDescriptor(), channel, addresses) // TODO: pass addresses
+                val channelInvocationHandler = forComponent(descriptor.getComponentDescriptor(), channel, addresses)
 
                 proxies[key] = (Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
@@ -161,11 +175,7 @@ class ComponentManager // constructor
         return serviceInstanceRegistry.getServiceAddresses(componentDescriptor, *channels)
     }
 
-    fun getChannel(
-        descriptor: BaseDescriptor<*>,
-        channelName: String,
-        serviceAddresses: List<ServiceAddress>?
-    ): Channel {
+    fun getChannel(descriptor: BaseDescriptor<*>, channelName: String, serviceAddresses: List<ServiceAddress>?): Channel {
         val channel = if (serviceAddresses != null && !serviceAddresses.isEmpty()) makeChannel(
             descriptor.getComponentDescriptor().serviceInterface,
             channelName,
@@ -174,11 +184,7 @@ class ComponentManager // constructor
         return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor().name)
     }
 
-    fun makeChannel(
-        componentClass: Class<out Component>,
-        channel: String,
-        serviceAddresses: List<ServiceAddress>?
-    ): Channel? {
+    fun makeChannel(componentClass: Class<out Component>, channel: String, serviceAddresses: List<ServiceAddress>?): Channel {
         return channelManager.make(componentClass, channel, serviceAddresses!!)
     }
 

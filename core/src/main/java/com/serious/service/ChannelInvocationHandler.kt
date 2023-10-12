@@ -65,21 +65,17 @@ class ChannelInvocationHandler private constructor(// instance data
 
     companion object {
         // static data
+
         var log = LoggerFactory.getLogger(ChannelInvocationHandler::class.java)
+
         private val handlers: MutableMap<String, ChannelInvocationHandler> = ConcurrentHashMap()
 
         // static methods
-        fun forComponent(
-            componentDescriptor: ComponentDescriptor<*>,
-            channel: String,
-            addresses: List<ServiceAddress>?
-        ): ChannelInvocationHandler? {
-            val key = componentDescriptor.name + ":" + channel
-            var handler = handlers[key] // TODO compute if absent
-            if (handler == null) handlers[key] =
-                ChannelInvocationHandler(componentDescriptor, channel, addresses).also { handler = it }
 
-            return handler
+        fun forComponent(componentDescriptor: ComponentDescriptor<*>, channel: String, addresses: List<ServiceAddress>?): ChannelInvocationHandler {
+            val key = componentDescriptor.name + ":" + channel
+
+           return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, channel, addresses)}
         }
 
         @JvmStatic
