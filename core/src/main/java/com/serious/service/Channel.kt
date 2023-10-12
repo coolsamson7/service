@@ -13,6 +13,6 @@ import java.lang.reflect.InvocationHandler
 interface Channel : MethodInterceptor, InvocationHandler {
     fun getPrimaryAddress(): ServiceAddress?
     fun getAddresses(): List<ServiceAddress?>?
-    fun needsUpdate(delta: ServiceInstanceRegistry.Delta?): Boolean
+    fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean
     fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?)
 }

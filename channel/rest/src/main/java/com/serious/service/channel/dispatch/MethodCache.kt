@@ -27,7 +27,7 @@ class MethodCache {
 
         // private
         fun analyze() {
-            val methods = Arrays.asList(*clazz.getMethods()) // TODO ? ?getDeclared...
+            val methods = Arrays.asList(*clazz.getMethods()) // do we need getDeclaredMethods + superclass traversal?
 
             methods.sortWith(Comparator.comparing { method: Method -> getSignature(method) })
 

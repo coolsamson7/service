@@ -27,8 +27,8 @@ abstract class AbstractChannel protected constructor(protected var channelManage
         return addresses
     }
 
-    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta?): Boolean {
-        return delta!!.isDeleted(getPrimaryAddress()!!.serviceInstance) // TODO cluster??
+    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
+        return delta.isDeleted(getPrimaryAddress()!!.serviceInstance) // TODO cluster??
     }
 
     override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {

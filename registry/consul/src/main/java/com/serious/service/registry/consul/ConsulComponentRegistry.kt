@@ -90,8 +90,6 @@ class ConsulComponentRegistry : ComponentRegistry {
     lateinit var discoveryClient: DiscoveryClient
     var properties = ConsulDiscoveryProperties(InetUtils(InetUtilsProperties()))
     var registeredServices: MutableMap<ComponentDescriptor<*>, ConsulRegistration> = HashMap()
-    private val localAddress: ServiceAddress?
-        get() = null //TODO new ServiceAddress("rest", URI.create())
     private val port: String?
         get() = AbstractComponent.port
 

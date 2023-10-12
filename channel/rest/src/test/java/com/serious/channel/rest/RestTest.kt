@@ -58,7 +58,7 @@ internal interface FluxMethods : Service {
 
     @RequestMapping(path = ["get-list/{world}/{count}"], method = [RequestMethod.GET])
     @ResponseBody
-    fun getList(@PathVariable("world") world: String, @PathVariable count: Int): Flux<Foo>
+    fun getList(@PathVariable("world") world: String, @PathVariable count: Int): Flux<String>
 }
 
 @ServiceInterface
@@ -160,13 +160,11 @@ internal class FluxMethodsImpl : AbstractService(), FluxMethods {
         return Mono.just(world)
     }
 
-    override fun getList(world: String, count: Int): Flux<Foo> {
-        val result: MutableList<Foo> = ArrayList()
-        for (i in 0 until count) {
-            val foo = Foo()
-            foo.id = world + i
-            result.add(foo)
-        }
+    override fun getList(world: String, count: Int): Flux<String> {
+        val result: MutableList<String> = ArrayList()
+        for (i in 0 until count)
+            result.add(world + i)
+
         return Flux.fromIterable(result)
     }
 }
@@ -293,28 +291,29 @@ open class TestConfig
 @EnableAutoConfiguration
 internal class RestTest {
     // instance data
+
     @LocalServerPort
     private val port = 0 // local.server.port
 
     @Autowired
-    var componentManager: ComponentManager? = null
+    lateinit var componentManager: ComponentManager
 
     @Autowired
-    var serviceInstanceRegistry: ServiceInstanceRegistry? = null
+    lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
 
     // lifecycle
     @BeforeEach
     fun before() {
         if (AbstractComponent.port == "0") {
             AbstractComponent.port = port.toString()
-            serviceInstanceRegistry!!.startup()
+            serviceInstanceRegistry.startup()
         }
     }
 
     // test
     @Test
     fun testBasicMethods() {
-        val service = componentManager!!.acquireService(BasicMethods::class.java)
+        val service = componentManager.acquireService(BasicMethods::class.java)
         val foo = Foo()
         foo.id = "id"
         Assertions.assertEquals("world", service.delete("world"))
@@ -334,9 +333,8 @@ internal class RestTest {
 
     @Test
     fun testRequestMappingMethods() {
-        val service = componentManager!!.acquireService(
-            RequestMappingMethods::class.java
-        )
+        val service = componentManager.acquireService(RequestMappingMethods::class.java)
+
         val foo = Foo()
         foo.id = "id"
         Assertions.assertEquals("world", service.delete("world"))
@@ -351,18 +349,19 @@ internal class RestTest {
 
     @Test
     fun testFlux() {
-        val service = componentManager!!.acquireService(FluxMethods::class.java)
+        val service = componentManager.acquireService(FluxMethods::class.java)
 
         // mono
-        Assertions.assertEquals("world", service["world"].block())
-        StepVerifier.create(service["world"])
+
+        StepVerifier.create(service.get("world"))
             .expectNext("world")
             .verifyComplete()
 
         // flux
 
-        //TODO KOTLIN val list = service.getList("world", 10).collect<List<Foo>, Any>(Collectors.toList()).block()
-
-        //Assertions.assertEquals(list.size, 10)
+        StepVerifier.create(service.getList("world", 2))
+            .expectNext("world0")
+            .expectNext("world1")
+            .verifyComplete()
     }
 }
