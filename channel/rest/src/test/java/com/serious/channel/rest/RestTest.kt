@@ -56,9 +56,9 @@ internal interface FluxMethods : Service {
     @ResponseBody
     operator fun get(@PathVariable("world") world: String): Mono<String>
 
-    @RequestMapping(path = ["get-list/{world}/{count}"], method = [RequestMethod.GET])
+    @RequestMapping(path = ["get-list/{count}"], method = [RequestMethod.GET])
     @ResponseBody
-    fun getList(@PathVariable("world") world: String, @PathVariable count: Int): Flux<String>
+    fun getList(@PathVariable count: Int): Flux<Int>
 }
 
 @ServiceInterface
@@ -160,10 +160,10 @@ internal class FluxMethodsImpl : AbstractService(), FluxMethods {
         return Mono.just(world)
     }
 
-    override fun getList(world: String, count: Int): Flux<String> {
-        val result: MutableList<String> = ArrayList()
+    override fun getList(count: Int): Flux<Int> {
+        val result: MutableList<Int> = ArrayList()
         for (i in 0 until count)
-            result.add(world + i)
+            result.add(i)
 
         return Flux.fromIterable(result)
     }
@@ -359,9 +359,9 @@ internal class RestTest {
 
         // flux
 
-        StepVerifier.create(service.getList("world", 2))
-            .expectNext("world0")
-            .expectNext("world1")
+        StepVerifier.create(service.getList(2))
+            .expectNext(0)
+            .expectNext(1)
             .verifyComplete()
     }
 }

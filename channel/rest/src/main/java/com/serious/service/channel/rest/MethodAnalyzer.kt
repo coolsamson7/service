@@ -301,10 +301,6 @@ class MethodAnalyzer {
     }
 
      fun createCollectionResponseHandler( method: Method) : ResponseHandler {
-         if (method.genericReturnType == null) throw ServiceRuntimeException(
-             "return type for method %s must be generic",
-             method.name
-         )
          val returnType = method.returnType
          val elementType = genericsType(method.genericReturnType)
          val arrayType = elementType.arrayType() as Class<Any>
