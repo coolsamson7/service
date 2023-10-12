@@ -1,13 +1,13 @@
 package com.serious.lang
+/**
+ *  @COPYRIGHT (C) 2023 Andreas Ernst
+ * All rights reserved
+ */
 
 import java.lang.reflect.Field
 import java.lang.reflect.Proxy
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  *
  */
 object Annotations {

@@ -1,5 +1,9 @@
 package com.serious.spring
-
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.BeanFactoryAware
@@ -7,11 +11,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.context.ConfigurableApplicationContext
 
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * @author Andreas Ernst
  */
 class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :

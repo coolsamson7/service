@@ -1,6 +1,6 @@
 package com.serious.service.registry.consul
 /*
-* @COPYRIGHT (C) 2016 Andreas Ernst
+* @COPYRIGHT (C) 2023 Andreas Ernst
 *
 * All rights reserved
 */

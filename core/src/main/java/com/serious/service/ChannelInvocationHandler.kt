@@ -1,16 +1,16 @@
 package com.serious.service
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.service.channel.MissingChannel
 import org.slf4j.LoggerFactory
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
-
-/*
-* @COPYRIGHT (C) 2016 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * @author Andreas Ernst
  */
 class ChannelInvocationHandler private constructor(// instance data
