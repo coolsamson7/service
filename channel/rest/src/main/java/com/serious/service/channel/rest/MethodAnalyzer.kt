@@ -268,34 +268,36 @@ class MethodAnalyzer {
     }
 
     // public
-    private fun <T : Collection<*>?> convertList2(list: List<*>, target: Type): T { // TODO KOTLIN
-        return if (!target.javaClass.isAssignableFrom(list.javaClass)) {
-            // interfaces
-            if (target === MutableCollection::class.java || target === MutableList::class.java) return ArrayList(
-                list
-            ) as T
 
-            // concrete
-            if (target === ArrayList::class.java) return ArrayList(list) as T
-            if (target === LinkedList::class.java) LinkedList(list) as T else throw ServiceRuntimeException(
-                "collection type " + target.typeName + " not supported"
-            )
-        } else list as T
-    }
+    private fun <T : List<Any>> convertArray2Collection(array: Array<Any>, target: Type): T {
+        if (target === MutableCollection::class.java || target === MutableList::class.java || target === List::class.java || target === ArrayList::class.java) {
+            val result = ArrayList<Any>()
 
-    private fun <T : Collection<Any>> convertArray2Collection(list: Array<Any>, target: Type): T {
-        if (target === MutableCollection::class.java || target === MutableList::class.java || target === ArrayList::class.java) return Arrays.asList(
-            *list
-        ) as T
+            Collections.addAll(result, *array)
+
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
+
+        else if (target === List::class.java) {
+            val result: List<Any> = listOf(*array)
+
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
 
         // concrete
-        return if (target === LinkedList::class.java) {
+
+        else if (target === LinkedList::class.java) {
             val result: LinkedList<Any> = LinkedList<Any>()
 
-            Collections.addAll(result, list)
+            Collections.addAll(result, *array)
 
-            result as T
-        } else throw ServiceRuntimeException("collection type %s not supported", target.typeName)
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
+
+        throw ServiceRuntimeException("collection type %s not supported", target.typeName)
     }
 
      fun createCollectionResponseHandler( method: Method) : ResponseHandler {
@@ -303,7 +305,7 @@ class MethodAnalyzer {
              "return type for method %s must be generic",
              method.name
          )
-         val type: Type = method.returnType
+         val returnType = method.returnType
          val elementType = genericsType(method.genericReturnType)
          val arrayType = elementType.arrayType() as Class<Any>
 
@@ -311,7 +313,7 @@ class MethodAnalyzer {
              convertArray2Collection(
                  spec
                      .bodyToMono(arrayType)
-                     .block() as Array<Any>, type
+                     .block() as Array<Any>, returnType
              )
          }
      }
@@ -324,7 +326,7 @@ class MethodAnalyzer {
         // response
 
         val responseHandler: ResponseHandler = if (method.returnType == Void.TYPE) {
-            { spec: WebClient.ResponseSpec -> Void.TYPE } // TODO???
+            { _: WebClient.ResponseSpec -> Void.TYPE }
         }
 
         else if (method.returnType.isArray) {

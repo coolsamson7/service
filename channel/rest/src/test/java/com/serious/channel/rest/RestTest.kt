@@ -103,6 +103,10 @@ internal interface BasicMethods : Service {
     @ResponseBody
     fun getObjectList(@PathVariable("world") world: String, @PathVariable count: Int): List<Foo>
 
+    @RequestMapping(path = ["get-object-array-list/{world}/{count}"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun getObjectArrayList(@PathVariable("world") world: String, @PathVariable count: Int): ArrayList<Foo>
+
     @RequestMapping(path = ["get-array/{world}/{count}"], method = [RequestMethod.GET])
     @ResponseBody
     fun getArray(@PathVariable("world") world: String, @PathVariable count: Int): Array<String>
@@ -178,6 +182,16 @@ internal class BasicMethodsImpl : AbstractService(), BasicMethods {
 
     override fun getObjectList(world: String, count: Int): List<Foo> {
         val result: MutableList<Foo> = ArrayList()
+        for (i in 0 until count) {
+            val foo = Foo()
+            foo.id = world + i
+            result.add(foo)
+        }
+        return result
+    }
+
+    override fun getObjectArrayList(world: String, count: Int): ArrayList<Foo> {
+        val result: ArrayList<Foo> = ArrayList()
         for (i in 0 until count) {
             val foo = Foo()
             foo.id = world + i
@@ -313,6 +327,7 @@ internal class RestTest {
         Assertions.assertEquals("world", service.getVariableNoName("world"))
         Assertions.assertEquals(2, service.getList("world", 2).size)
         Assertions.assertEquals(2, service.getObjectList("world", 2).size)
+        Assertions.assertEquals(2, service.getObjectArrayList("world", 2).size)
         Assertions.assertEquals(2, service.getArray("world", 2).size)
         Assertions.assertEquals(2, service.getObjectArray("world", 2).size)
     }
