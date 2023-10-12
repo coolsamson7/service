@@ -141,37 +141,33 @@ class ComponentManager @Autowired internal constructor(
         val channel = if (addresses != null && !addresses.isEmpty()) addresses[0].channel!! else "-"
         val key = serviceClass.getName() + ":" + channel
 
-        var service = proxies[key] as T?
+        var service : Service? = proxies[key]
 
         if (service == null) {
             log.info("create proxy for {}.{}", descriptor.name, channel)
-            if (channel == "local") proxies[key] = (Proxy.newProxyInstance(
-                serviceClass.getClassLoader(),
-                arrayOf<Class<*>>(serviceClass)
-            ) { proxy: Any?, method: Method, args: Array<Any?>? ->
-                var b = arrayOf<Any>();
-                if ( args != null)
-                    b = args as Array<Any>; // TODO KOTLIN
 
-                method.invoke(descriptor.local, *b)
-            } as T).also { service = it } else {
+            if (channel == "local")
+                proxies[key] = (Proxy.newProxyInstance(
+                    serviceClass.getClassLoader(),
+                    arrayOf<Class<*>>(serviceClass)) { proxy: Any?, method: Method, args: Array<Any>? ->
+                    method.invoke(descriptor.local, *args ?: emptyArgs)
+            } as Service).also { service = it }
+
+            else {
                 val channelInvocationHandler = forComponent(descriptor.getComponentDescriptor(), channel, addresses)
 
                 proxies[key] = (Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
                     arrayOf<Class<*>>(serviceClass),
                     channelInvocationHandler
-                ) as T).also { service = it }
-            }
+                ) as Service).also { service = it }
+            } // else
         } // if
 
-        return service!!
+        return service as T
     }
 
-    fun getServiceAddresses(
-        componentDescriptor: ComponentDescriptor<*>,
-        vararg channels: String?
-    ): List<ServiceAddress>? {
+    fun getServiceAddresses(componentDescriptor: ComponentDescriptor<*>, vararg channels: String?): List<ServiceAddress>? {
         return serviceInstanceRegistry.getServiceAddresses(componentDescriptor, *channels)
     }
 
@@ -181,6 +177,7 @@ class ComponentManager @Autowired internal constructor(
             channelName,
             serviceAddresses
         ) else null
+
         return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor().name)
     }
 
@@ -196,6 +193,9 @@ class ComponentManager @Autowired internal constructor(
 
     companion object {
         // static data
+
+        var emptyArgs = arrayOf<Any>();
+
         var log = LoggerFactory.getLogger(ComponentManager::class.java)
     }
 }

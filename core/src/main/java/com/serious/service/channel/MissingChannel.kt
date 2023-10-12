@@ -23,6 +23,7 @@ class MissingChannel(
     }
 
     // implement Channel
+
     @Throws(Throwable::class)
     override fun invoke(invocation: MethodInvocation): Any? {
         throw ServiceRuntimeException("unresolved channel for component %s", componentName)

@@ -13,9 +13,11 @@ import java.util.concurrent.ConcurrentHashMap
  /**
  * @author Andreas Ernst
  */
-class ChannelInvocationHandler private constructor(// instance data
+class ChannelInvocationHandler private constructor(
     private val componentDescriptor: ComponentDescriptor<*>, channelName: String, addresses: List<ServiceAddress>?
 ) : InvocationHandler {
+     // instance data
+
     private var channelName: String? = null
     private var channel: Channel? = null
 
@@ -57,14 +59,13 @@ class ChannelInvocationHandler private constructor(// instance data
     // implement InvocationHandler
     @Throws(Throwable::class)
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
-       var b = arrayOf<Any>();
-        if ( args != null)
-            b = args as Array<Any>; // TODO KOTLIN
-        return channel!!.invoke(proxy, method, b)
+        return channel!!.invoke(proxy, method, args ?: emptyArgs )
     }
 
     companion object {
         // static data
+
+        var emptyArgs = arrayOf<Any>();
 
         var log = LoggerFactory.getLogger(ChannelInvocationHandler::class.java)
 

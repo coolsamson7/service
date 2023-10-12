@@ -111,10 +111,7 @@ class ServiceInstanceRegistry {
         return instances ?: ArrayList()
     }
 
-    fun getServiceAddresses(
-        componentDescriptor: ComponentDescriptor<*>,
-        vararg preferredChannels: String?
-    ): List<ServiceAddress>? {
+    fun getServiceAddresses(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): List<ServiceAddress>? {
         val instances = getInstances(componentDescriptor)
         val addresses: MutableMap<ServiceInstance, List<ServiceAddress>> = HashMap()
 
