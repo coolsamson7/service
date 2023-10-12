@@ -57,7 +57,7 @@ class ChannelInvocationHandler private constructor(// instance data
     // implement InvocationHandler
     @Throws(Throwable::class)
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
-       var b = arrayOf< Any>();
+       var b = arrayOf<Any>();
         if ( args != null)
             b = args as Array<Any>; // TODO KOTLIN
         return channel!!.invoke(proxy, method, b)
@@ -75,16 +75,19 @@ class ChannelInvocationHandler private constructor(// instance data
             addresses: List<ServiceAddress>?
         ): ChannelInvocationHandler? {
             val key = componentDescriptor.name + ":" + channel
-            var handler = handlers[key]
+            var handler = handlers[key] // TODO compute if absent
             if (handler == null) handlers[key] =
                 ChannelInvocationHandler(componentDescriptor, channel, addresses).also { handler = it }
+
             return handler
         }
 
         @JvmStatic
         fun recheck(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta) {
             // recheck missing channels
-            for (invocationHandler in handlers.values) invocationHandler.checkUpdate(channelManager, delta)
+
+            for (invocationHandler in handlers.values)
+                invocationHandler.checkUpdate(channelManager, delta)
         }
     }
 }

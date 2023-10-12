@@ -28,7 +28,7 @@ import java.util.regex.Pattern
 class MethodAnalyzer {
     // local classes
     internal interface Analyzer {
-        fun build(): RequestBuilder<*>
+        fun build(): RequestBuilder<RHS>
     }
 
     internal abstract inner class RestAnalyzer protected constructor(
@@ -127,7 +127,7 @@ class MethodAnalyzer {
 
     internal inner class GetAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-        override fun build(): RequestBuilder<*> {
+        override fun build(): RequestBuilder<RHS> {
             val getMapping = method.getAnnotation(GetMapping::class.java)
             val getBuilder = RequestBuilder<RHS>(webClient).get()
 
@@ -141,13 +141,14 @@ class MethodAnalyzer {
 
     internal inner class PostAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-        override fun build(): RequestBuilder<*> {
+        override fun build(): RequestBuilder<RHS> {
             val postMapping = method.getAnnotation(PostMapping::class.java)
-            val getBuilder: RequestBuilder<*> = RequestBuilder<RHS>(webClient).post()
+            val getBuilder = RequestBuilder(webClient).post()
 
             // scan path
 
             val path = getPath(postMapping.value[0])
+            val attributes = scanMethod(path)
 
             if (body == -1) throw ServiceRegistryException(
                 "missing @RequestBody for %s.%s",
@@ -157,23 +158,24 @@ class MethodAnalyzer {
 
             // done
 
-            return getBuilder.uri(path, scanMethod(path) /* index */, requestParams).body(body)
+            return getBuilder.uri(path, attributes /* index */, requestParams).body(body)
         }
     }
 
     internal inner class PutAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-        override fun build(): RequestBuilder<*> {
+        override fun build(): RequestBuilder<RHS> {
             val postMapping = method.getAnnotation(PutMapping::class.java)
-            val getBuilder: RequestBuilder<*> = RequestBuilder(webClient).put()
+            val getBuilder = RequestBuilder(webClient).put()
 
             // scan path
 
             val path = getPath(postMapping.value[0])
+            val attributes = scanMethod(path)
 
             // done
 
-            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
+            val uri = getBuilder.uri(path, attributes /* index */, requestParams)
 
             return if (body >= 0) uri.body(body) else uri
         }
@@ -181,17 +183,18 @@ class MethodAnalyzer {
 
     internal inner class DeleteAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-        override fun build(): RequestBuilder<*> {
+        override fun build(): RequestBuilder<RHS> {
             val deleteMapping = method.getAnnotation(DeleteMapping::class.java)
-            val getBuilder: RequestBuilder<*> = RequestBuilder(webClient).delete()
+            val getBuilder = RequestBuilder(webClient).delete()
 
             // scan path
 
             val path = getPath(deleteMapping.value[0])
+            val attributes = scanMethod(path)
 
             // done
 
-            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
+            val uri = getBuilder.uri(path, attributes /* index */, requestParams)
 
             return if (body >= 0) uri.body(body) else uri
         }
@@ -199,7 +202,7 @@ class MethodAnalyzer {
 
     internal inner class RequestAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
-        override fun build(): RequestBuilder<*> {
+        override fun build(): RequestBuilder<RHS> {
             val requestMapping = method.getAnnotation(RequestMapping::class.java)
             val httpMethod = if (requestMapping.method.size > 0) requestMapping.method[0] else defaultMethod
 
@@ -209,9 +212,7 @@ class MethodAnalyzer {
                 httpMethod?.name
             )
 
-            val getBuilder: RequestBuilder<*>?
-
-            getBuilder = when (httpMethod) {
+            val getBuilder = when (httpMethod) {
                 RequestMethod.GET -> RequestBuilder(webClient).get()
 
                 RequestMethod.PUT -> RequestBuilder(webClient).put()
@@ -226,6 +227,7 @@ class MethodAnalyzer {
             // scan path
 
             val path = getPath(requestMapping.path[0])
+            val attributes = scanMethod(path)
 
             // checks
 
@@ -237,7 +239,7 @@ class MethodAnalyzer {
 
             // done
 
-            val uri = getBuilder.uri(path, scanMethod(path) /* index */, requestParams)
+            val uri = getBuilder.uri(path, attributes /* index */, requestParams)
 
             return if (body >= 0) uri.body(body) else uri
         }
@@ -252,9 +254,13 @@ class MethodAnalyzer {
         for (annotation in method.declaredAnnotations) {
             when (annotation) {
                 is GetMapping -> return GetAnalyzer(webClient, method).build()
+
                 is PostMapping -> return PostAnalyzer(webClient, method).build()
+
                 is DeleteMapping -> return DeleteAnalyzer(webClient, method).build()
+
                 is PutMapping -> return PutAnalyzer(webClient, method).build()
+
                 is RequestMapping -> return RequestAnalyzer(webClient, method).build()
             }
         }
@@ -262,7 +268,7 @@ class MethodAnalyzer {
     }
 
     // public
-    private fun <T : Collection<*>?> convertList2(list: List<*>, target: Type): T {
+    private fun <T : Collection<*>?> convertList2(list: List<*>, target: Type): T { // TODO KOTLIN
         return if (!target.javaClass.isAssignableFrom(list.javaClass)) {
             // interfaces
             if (target === MutableCollection::class.java || target === MutableList::class.java) return ArrayList(
@@ -346,7 +352,7 @@ class MethodAnalyzer {
 
         // done
 
-        return Request(builder.operations.toTypedArray() as Array<SpecOperation<*>>, responseHandler)
+        return Request(builder.operations.toTypedArray() as Array<SpecOperation<RHS>>, responseHandler)
     }
 
     companion object {

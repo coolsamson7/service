@@ -14,13 +14,13 @@ typealias ResponseHandler = (spec: WebClient.ResponseSpec) -> Any
   * A `Request` covers the technical webclient details for a single method call
   * by caching the steps needed for a webclient builder which will be executed while executing the method call.
   */
-class Request(private val specs: Array<SpecOperation<*>>, private val responseHandler: ResponseHandler) {
+class Request(private val specs: Array<SpecOperation<RHS>>, private val responseHandler: ResponseHandler) {
     // private
     private fun spec(vararg params: Any): RHS {
         var spec: RHS? = null
 
         for (operation in specs)
-            spec = operation.build(spec as Nothing?, *params)
+            spec = operation.build(spec, *params)
 
         return spec!!
     }

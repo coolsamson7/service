@@ -134,14 +134,15 @@ class ComponentManager // constructor
             if (channel == "local") proxies[key] = (Proxy.newProxyInstance(
                 serviceClass.getClassLoader(),
                 arrayOf<Class<*>>(serviceClass)
-            ) { proxy: Any?, method: Method, args: Array<Any?> ->
-                method.invoke(
-                    descriptor.local,
-                    *args
-                )
+            ) { proxy: Any?, method: Method, args: Array<Any?>? ->
+                var b = arrayOf<Any>();
+                if ( args != null)
+                    b = args as Array<Any>; // TODO KOTLIN
+
+                method.invoke(descriptor.local, *b)
             } as T).also { service = it } else {
-                val channelInvocationHandler =
-                    forComponent(descriptor.getComponentDescriptor(), channel, addresses) // TODO: pass addresses
+                val channelInvocationHandler = forComponent(descriptor.getComponentDescriptor(), channel, addresses) // TODO: pass addresses
+
                 proxies[key] = (Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
                     arrayOf<Class<*>>(serviceClass),

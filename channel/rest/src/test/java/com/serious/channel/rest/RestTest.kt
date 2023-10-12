@@ -273,7 +273,7 @@ internal class RequestMappingMethodsImpl : AbstractService(), RequestMappingMeth
 @Import(
     ServiceConfiguration::class
 )
-internal class TestConfig
+open class TestConfig
 
 @SpringBootTest(classes = [TestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration

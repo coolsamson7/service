@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration
 @ComponentScan
-class ServiceConfiguration {
+open class ServiceConfiguration {
     @Bean
-    fun injectorFactory(): InjectorFactory {
+    open fun injectorFactory(): InjectorFactory {
         return InjectorFactory()
     }
 }

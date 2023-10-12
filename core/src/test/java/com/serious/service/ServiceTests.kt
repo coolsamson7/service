@@ -66,7 +66,7 @@ internal class TestServiceImpl : AbstractService(), TestService {
 @Import(
     ServiceConfiguration::class
 )
-internal class TestConfig
+open class TestConfig
 
 @SpringBootTest(classes = [ServiceConfiguration::class])
 @Import(
