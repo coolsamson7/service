@@ -1,45 +1,38 @@
-package com.serious.util;
+package com.serious.util
 /*
- * @COPYRIGHT (C) 2023 Andreas Ernst
- *
- * All rights reserved
- */
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import java.lang.reflect.Field;
+import sun.misc.Unsafe
 
 /**
  * @author Andreas Ernst
  */
-public class Exceptions {
+object Exceptions {
     // required to avoid startup issues with the security manager.
 
-    static final sun.misc.Unsafe UNSAFE;
+    var UNSAFE: Unsafe? = null
 
-    static {
+    init {
         try {
-            Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-
-            UNSAFE = (sun.misc.Unsafe) field.get(null);
+            val field = Unsafe::class.java.getDeclaredField("theUnsafe")
+            field.setAccessible(true)
+            UNSAFE = field[null] as Unsafe
         }
-        catch (Exception e) {
-            throw new AssertionError(e);
+        catch (e: Exception) {
+            throw AssertionError(e)
         }
-    }
-
-    // constructor
-
-    private Exceptions() {
     }
 
     // static methods
-
     /**
      * Rethrow any throwable, even checked exceptions blindly. :-)
      *
      * @param e the exception
      */
-    public static void throwException(Throwable e) {
-        UNSAFE.throwException(e);
+    fun throwException(e: Throwable?) {
+        UNSAFE!!.throwException(e)
     }
 }
