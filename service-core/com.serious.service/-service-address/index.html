@@ -65,24 +65,24 @@
   <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.service</a><span class="delimiter">/</span><span class="current">ServiceAddress</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Service</span><wbr></wbr><span><span>Address</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">ServiceAddress</a></div><p class="paragraph">A <<code>ServiceAddress</code> is used to identify a specific service by the following attributes</p><ul><li><p class="paragraph">the channel name</p></li><li><p class="paragraph">the <a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html">URI</a></p></li><li><p class="paragraph">optionally a <span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span> for addresses that have already been resolved</p></li></ul></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ServiceAddress</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>channel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>serviceInstances<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">A <code>ServiceAddress</code> is a resolved <a href="../-channel-address/index.html">ChannelAddress</a></p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="1151948812%2FConstructors%2F1569566533" anchor-label="ServiceAddress" id="1151948812%2FConstructors%2F1569566533" data-filterable-set="service-core/JVM"></a>
+        <div class="table"><a data-name="341455337%2FConstructors%2F1569566533" anchor-label="ServiceAddress" id="341455337%2FConstructors%2F1569566533" data-filterable-set="service-core/JVM"></a>
           <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-service-address.html"><span>Service</span><wbr></wbr><span><span>Address</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1151948812%2FConstructors%2F1569566533"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="341455337%2FConstructors%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">uri<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html">URI</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">instance<span class="token operator">: </span><span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">serviceInstances<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -120,37 +120,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="channel.html">channel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="channel.html">channel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-909414158%2FProperties%2F1569566533" anchor-label="serviceInstance" id="-909414158%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+<a data-name="-855780331%2FProperties%2F1569566533" anchor-label="serviceInstances" id="-855780331%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="service-instance.html"><span>service</span><wbr></wbr><span><span>Instance</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-909414158%2FProperties%2F1569566533"></span>
+                  <div><a href="service-instances.html"><span>service</span><wbr></wbr><span><span>Instances</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-855780331%2FProperties%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="service-instance.html">serviceInstance</a><span class="token operator">: </span><span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span><span class="token operator">?</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-739753296%2FProperties%2F1569566533" anchor-label="uri" id="-739753296%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
-          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="uri.html"><span><span>uri</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-739753296%2FProperties%2F1569566533"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="uri.html">uri</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html">URI</a><span class="token operator">?</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="service-instances.html">serviceInstances</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span data-unresolved-link="org.springframework.cloud.client/ServiceInstance///PointingToDeclaration/">ServiceInstance</span><span class="token operator">&gt;</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -159,37 +144,7 @@
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="1170238723%2FFunctions%2F1569566533" anchor-label="equals" id="1170238723%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
-          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="equals.html"><span><span>equals</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1170238723%2FFunctions%2F1569566533"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">operator override </span><span class="token keyword">fun </span><a href="equals.html"><span class="token function">equals</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">o<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-148145021%2FFunctions%2F1569566533" anchor-label="hashCode" id="-148145021%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
-          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="hash-code.html"><span>hash</span><wbr></wbr><span><span>Code</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-148145021%2FFunctions%2F1569566533"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="hash-code.html"><span class="token function">hashCode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-326311086%2FFunctions%2F1569566533" anchor-label="toString" id="-326311086%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+        <div class="table"><a data-name="-326311086%2FFunctions%2F1569566533" anchor-label="toString" id="-326311086%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
