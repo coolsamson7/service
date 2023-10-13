@@ -5,6 +5,7 @@ package com.serious.service
 */
 
 import com.serious.service.channel.ChannelBuilder
+import com.serious.service.exception.ServiceRuntimeException
 import jakarta.annotation.PostConstruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -99,8 +100,11 @@ class ChannelManager : ApplicationContextAware {
             if (channel != null)
                 channels[address] = channel
         }
-// TODOD !!
-        return channel!!
+
+        if ( channel != null)
+            return channel!!
+        else
+            throw ServiceRuntimeException("could not create channel %s", address.channel)
     }
 
     // implement ApplicationContextAware

@@ -17,13 +17,15 @@ data class ServiceAddress(var channel: String, var serviceInstances: List<Servic
 
     override fun toString(): String {
         val builder = StringBuilder()
-        if (channel != null) {
-            builder
-                .append(channel).append("(")
-                //TODO .append(uri.toString())
-                .append(")")
-        }
-        else builder.append("-")
+
+        builder
+            .append(channel).append("(")
+
+        for ( instance in serviceInstances  )
+            builder.append(instance.toString())
+
+        builder
+            .append(")")
 
         return builder.toString()
     }

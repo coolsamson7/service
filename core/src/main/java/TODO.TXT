@@ -3,6 +3,7 @@
 === LATER
 
 - load balancer
+- keyowrds an channel?
 - open-api...
 
 === NOW

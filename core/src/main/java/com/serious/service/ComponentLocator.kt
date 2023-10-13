@@ -20,14 +20,11 @@ import org.springframework.core.type.filter.AnnotationTypeFilter
   * A `ComponentLocator` is a special [BeanFactoryPostProcessor] that will scan the classpath in order to find [Component] interfaces
   * annotated with [ComponentInterface]. ALl matches will be registered.
  * The lifecycle is:
- * *
- * *      * ComponentLocator as a BeanFactoryPostProcessor scans for annotated component interfaces
- * *      * generates the corresponding descriptors ( service and component )
- * *      * generates new bean definitions that reference a dynamic proxy that is handled by the descriptor
- * *      * if implementations are found, the beans are removed from the context, since they would lead to ambiguities and
- * *     remembered to be instantiated in a later phase setting the "local" attribute of the descriptor
- * *
- * *
+ * * ComponentLocator as a BeanFactoryPostProcessor scans for annotated component interfaces
+ * * generates the corresponding descriptors ( service and component )
+ * * generates new bean definitions that reference a dynamic proxy that is handled by the descriptor
+ * * if implementations are found, the beans are removed from the context, since they would lead to ambiguities and
+ * remembered to be instantiated in a later phase setting the "local" attribute of the descriptor
  */
 @org.springframework.stereotype.Component
 class ComponentLocator : BeanFactoryPostProcessor, EnvironmentAware {

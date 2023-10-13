@@ -5,10 +5,7 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
-import com.serious.service.ChannelManager
-import com.serious.service.Component
-import com.serious.service.RegisterChannel
-import com.serious.service.ServiceAddress
+import com.serious.service.*
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.http.HttpHeaders
@@ -55,7 +52,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
         // add some defaults
 
         var builder = WebClient.builder()
-            .baseUrl(address.serviceInstances.get(0).uri.toString()) // for now
+            .baseUrl(address.serviceInstances.get(0).uri.toString()) // TODO for now
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 
@@ -68,6 +65,10 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
         // done
 
         webClient = builder.build()
+    }
+
+    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
+        return delta.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
     }
 
     companion object {

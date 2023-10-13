@@ -22,7 +22,7 @@ abstract class AbstractChannel protected constructor(protected val channelManage
     }
 
     override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
-        return delta.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
+        return false
     }
 
     // implement InvocationHandler
