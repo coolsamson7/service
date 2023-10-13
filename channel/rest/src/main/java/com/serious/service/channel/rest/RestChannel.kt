@@ -11,7 +11,6 @@ import com.serious.service.RegisterChannel
 import com.serious.service.ServiceAddress
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientRequest
@@ -51,20 +50,20 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
     }
 
     override fun setup() {
-        val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder?
-        var builder = WebClient.builder()
+        val channelBuilders = channelManager.getChannelBuilders(RestChannel::class.java) as List<AbstractRestChannelBuilder>
 
         // add some defaults
 
-        builder
+        var builder = WebClient.builder()
             .baseUrl(getPrimaryAddress()!!.uri.toString())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 
         // custom stuff
 
-        if (channelBuilder != null && channelBuilder.isApplicable(componentClass))
-            builder = channelBuilder.build(builder)
+        for (channelBuilder in channelBuilders)
+            if ( channelBuilder.isApplicable(componentClass))
+                builder = channelBuilder.build(builder)
 
         // done
 

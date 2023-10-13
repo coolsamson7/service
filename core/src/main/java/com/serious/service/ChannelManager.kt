@@ -37,7 +37,7 @@ class ChannelManager : ApplicationContextAware {
     @JvmField
     var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
     var channels: MutableMap<ServiceAddress, Channel> = ConcurrentHashMap()
-    var channelBuilder: MutableMap<Class<out Channel>, ChannelBuilder<out Channel>> = HashMap()
+    private var channelBuilder: MutableMap<Class<out Channel>, MutableList<ChannelBuilder<out Channel>>> = HashMap()
 
     @Value("\${service.root:com.serious}")
     lateinit var rootPackage: String
@@ -45,11 +45,12 @@ class ChannelManager : ApplicationContextAware {
     // public
 
     fun registerChannelBuilder(channelBuilder: ChannelBuilder<*>) {
-        this.channelBuilder[channelBuilder.channelClass()] = channelBuilder
+        val builders = this.channelBuilder.computeIfAbsent(channelBuilder.channelClass()) {_ -> mutableListOf() }
+        builders.add(channelBuilder)
     }
 
-    fun <T : Channel> getChannelBuilder(channel: Class<out T>): ChannelBuilder<T>? {
-        return channelBuilder[channel] as ChannelBuilder<T>?
+    fun getChannelBuilders(channel: Class<out Channel>): MutableList<ChannelBuilder<out Channel>> {
+        return channelBuilder.computeIfAbsent(channel) {_ -> mutableListOf() }
     }
 
     @PostConstruct
