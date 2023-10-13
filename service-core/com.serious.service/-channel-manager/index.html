@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ChannelManager</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            service-core
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter="service-core/JVM">JVM</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="service-core::com.serious.service/ChannelManager///PointingToDeclaration//1569566533">
+  <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.service</a><span class="delimiter">/</span><span class="current">ChannelManager</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Channel</span><wbr></wbr><span><span>Manager</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.springframework.stereotype/Component///PointingToDeclaration/"><span class="token annotation builtin">Component</span></span></div></div><span class="token keyword">class </span><a href="index.html">ChannelManager</a> : <span data-unresolved-link="org.springframework.context/ApplicationContextAware///PointingToDeclaration/">ApplicationContextAware</span></div><p class="paragraph">A <code>ChannelManager</code> is responsible for the lifecycle of <a href="../-channel/index.html">Channel</a>s.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="975105055%2FConstructors%2F1569566533" anchor-label="ChannelManager" id="975105055%2FConstructors%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-channel-manager.html"><span>Channel</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="975105055%2FConstructors%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-234511592%2FClasslikes%2F1569566533" anchor-label="Companion" id="-234511592%2FClasslikes%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234511592%2FClasslikes%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="2130186954%2FProperties%2F1569566533" anchor-label="applicationContext" id="2130186954%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="application-context.html"><span>application</span><wbr></wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2130186954%2FProperties%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-field/index.html"><span class="token annotation builtin">JvmField</span></a></div></div><span class="token keyword"></span><span class="token keyword">var </span><a href="application-context.html">applicationContext</a><span class="token operator">: </span><span data-unresolved-link="org.springframework.context/ApplicationContext///PointingToDeclaration/">ApplicationContext</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="318184465%2FProperties%2F1569566533" anchor-label="channelBuilder" id="318184465%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-builder.html"><span>channel</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="318184465%2FProperties%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="channel-builder.html">channelBuilder</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../com.serious.service.channel/-channel-builder/index.html">ChannelBuilder</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-109042332%2FProperties%2F1569566533" anchor-label="channelFactories" id="-109042332%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-factories.html"><span>channel</span><wbr></wbr><span><span>Factories</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-109042332%2FProperties%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-field/index.html"><span class="token annotation builtin">JvmField</span></a></div></div><span class="token keyword"></span><span class="token keyword">var </span><a href="channel-factories.html">channelFactories</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-channel-factory/index.html">ChannelFactory</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-116709031%2FProperties%2F1569566533" anchor-label="channels" id="-116709031%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channels.html"><span><span>channels</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-116709031%2FProperties%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="channels.html">channels</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-service-address/index.html">ServiceAddress</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-channel/index.html">Channel</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="815865933%2FProperties%2F1569566533" anchor-label="rootPackage" id="815865933%2FProperties%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="root-package.html"><span>root</span><wbr></wbr><span><span>Package</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="815865933%2FProperties%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.springframework.beans.factory.annotation/Value///PointingToDeclaration/"><span class="token annotation builtin">Value</span></span><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;${service.root:com.serious}&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">lateinit value </span><span class="token keyword">var </span><a href="root-package.html">rootPackage</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1476857434%2FFunctions%2F1569566533" anchor-label="getChannelBuilder" id="-1476857434%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-channel-builder.html"><span>get</span><wbr></wbr><span>Channel</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1476857434%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="get-channel-builder.html">T</a><span class="token operator"> : </span><a href="../-channel/index.html">Channel</a><span class="token operator">&gt; </span><a href="get-channel-builder.html"><span class="token function">getChannelBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="get-channel-builder.html">T</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.serious.service.channel/-channel-builder/index.html">ChannelBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="get-channel-builder.html">T</a><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2029000507%2FFunctions%2F1569566533" anchor-label="make" id="-2029000507%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="make.html"><span><span>make</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2029000507%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="make.html"><span class="token function">make</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">componentClass<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token keyword">out </span><a href="../-component/index.html">Component</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">channelName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">serviceAddresses<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-service-address/index.html">ServiceAddress</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-channel/index.html">Channel</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="230739907%2FFunctions%2F1569566533" anchor-label="register" id="230739907%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register.html"><span><span>register</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="230739907%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="register.html"><span class="token function">register</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">definition<span class="token operator">: </span><span data-unresolved-link="org.springframework.beans.factory.config/BeanDefinition///PointingToDeclaration/">BeanDefinition</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1154411833%2FFunctions%2F1569566533" anchor-label="registerChannelBuilder" id="1154411833%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-channel-builder.html"><span>register</span><wbr></wbr><span>Channel</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1154411833%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="register-channel-builder.html"><span class="token function">registerChannelBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channelBuilder<span class="token operator">: </span><a href="../../com.serious.service.channel/-channel-builder/index.html">ChannelBuilder</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2121965731%2FFunctions%2F1569566533" anchor-label="removeChannel" id="-2121965731%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-channel.html"><span>remove</span><wbr></wbr><span><span>Channel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2121965731%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="remove-channel.html"><span class="token function">removeChannel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="../-channel/index.html">Channel</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-399410315%2FFunctions%2F1569566533" anchor-label="report" id="-399410315%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="report.html"><span><span>report</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-399410315%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="report.html"><span class="token function">report</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1234274636%2FFunctions%2F1569566533" anchor-label="scan" id="1234274636%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scan.html"><span><span>scan</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1234274636%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="jakarta.annotation/PostConstruct///PointingToDeclaration/"><span class="token annotation builtin">PostConstruct</span></span></div></div><span class="token keyword"></span><span class="token keyword">fun </span><a href="scan.html"><span class="token function">scan</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="367684875%2FFunctions%2F1569566533" anchor-label="setApplicationContext" id="367684875%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-application-context.html"><span>set</span><wbr></wbr><span>Application</span><wbr></wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="367684875%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-application-context.html"><span class="token function">setApplicationContext</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">applicationContext<span class="token operator">: </span><span data-unresolved-link="org.springframework.context/ApplicationContext///PointingToDeclaration/">ApplicationContext</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
