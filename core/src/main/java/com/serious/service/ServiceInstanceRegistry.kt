@@ -42,7 +42,9 @@ class ServiceInstanceRegistry {
 
         // public
         fun isDeleted(instance: ServiceInstance?): Boolean {
-            for (instances in deletedInstances.values) if (instances.contains(instance)) return true
+            for (instances in deletedInstances.values)
+                if (instances.contains(instance)) return true
+
             return false
         }
 
@@ -85,22 +87,21 @@ class ServiceInstanceRegistry {
     fun startup() {
         // fill initial services
 
-        for (componentDescriptor in ComponentDescriptor.descriptors) {
-            val instances = componentRegistry.getInstances(componentDescriptor.name)
-            serviceInstances[componentDescriptor.name] = instances
-        }
+        for (componentDescriptor in ComponentDescriptor.descriptors)
+            serviceInstances[componentDescriptor.name] = componentRegistry.getInstances(componentDescriptor.name)
     }
 
     // private
 
-    private fun extractAddresses(channels: String): List<ServiceAddress> {
+    private fun extractAddresses(channels: String): List<ChannelAddress> {
         return Arrays.stream(channels.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
             .map { channel: String ->
                 val lparen = channel.indexOf("(")
                 val rparen = channel.indexOf(")")
                 val protocol = channel.substring(0, lparen)
                 val uri = URI.create(channel.substring(lparen + 1, rparen))
-                ServiceAddress(protocol, uri)
+
+                ChannelAddress(protocol, uri)
             }
             .collect(Collectors.toList())
     }
@@ -111,9 +112,9 @@ class ServiceInstanceRegistry {
         return instances ?: ArrayList()
     }
 
-    fun getServiceAddresses(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): List<ServiceAddress>? {
+    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): ServiceAddress? {
         val instances = getInstances(componentDescriptor)
-        val addresses: MutableMap<ServiceInstance, List<ServiceAddress>> = HashMap()
+        val addresses: MutableMap<ServiceInstance, List<ChannelAddress>> = HashMap()
 
         // extract addresses
 
@@ -140,14 +141,14 @@ class ServiceInstanceRegistry {
         }
 
         return if (channelName != null) {
-            val finalChannelName: String = channelName
-            instances.stream()
+            val instances = instances.stream()
                 .filter { serviceInstance: ServiceInstance ->
                     addresses[serviceInstance]!!
-                        .stream().anyMatch { address: ServiceAddress -> address.channel == finalChannelName }
+                        .stream().anyMatch { address: ChannelAddress -> address.channel == channelName }
                 }
-                .map { serviceInstance: ServiceInstance? -> ServiceAddress(finalChannelName, serviceInstance!!) }
                 .collect(Collectors.toList())
+
+            return ServiceAddress(channelName, instances)
         } else null
     }
 
@@ -171,10 +172,7 @@ class ServiceInstanceRegistry {
         println(builder)
     }
 
-    private fun computeDelta(
-        oldMap: Map<String, List<ServiceInstance>>,
-        newMap: Map<String, List<ServiceInstance>>
-    ): Delta {
+    private fun computeDelta(oldMap: Map<String, List<ServiceInstance>>, newMap: Map<String, List<ServiceInstance>>): Delta {
         val delta = Delta()
         val oldKeys = oldMap.keys
         for (service in oldKeys) {
@@ -216,10 +214,8 @@ class ServiceInstanceRegistry {
     fun update(newMap: MutableMap<String, List<ServiceInstance>>) {
         val delta = computeDelta(serviceInstances, newMap)
 
-        if (!delta.isEmpty) {
-            // recheck missing channels
+        if (!delta.isEmpty)
             recheck(channelManager, delta)
-        }
 
         // new map
 
@@ -227,6 +223,6 @@ class ServiceInstanceRegistry {
     }
 
      companion object {
-         val log: Logger = LoggerFactory.getLogger(this::class.java)
+         val log: Logger = LoggerFactory.getLogger(ServiceInstanceRegistry::class.java)
      }
 }

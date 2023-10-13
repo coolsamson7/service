@@ -18,7 +18,7 @@ import org.aopalliance.intercept.MethodInvocation
  */
 class LocalChannel  // constructor
 protected constructor(channelManager: ChannelManager, componentClass: Class<out Component>)
-    : AbstractChannel(channelManager, componentClass, emptyList()) {
+    : AbstractChannel(channelManager, componentClass, ServiceAddress("local", emptyList())) {
     // implement Channel
     @Throws(Throwable::class)
     override fun invoke(invocation: MethodInvocation): Any? {

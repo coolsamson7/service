@@ -71,7 +71,7 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     }
 
     companion object {
-        val log: Logger = LoggerFactory.getLogger(this::class.java)
+        val log: Logger = LoggerFactory.getLogger(ConsulHeartbeatListener::class.java)
     }
 }
 
@@ -103,7 +103,7 @@ class ConsulComponentRegistry : ComponentRegistry {
     }
 
     private fun properties4(descriptor: ComponentDescriptor<com.serious.service.Component>): ConsulDiscoveryProperties {
-        properties.port = properties.port //serviceAddress.getUri().getPort());
+        properties.port = Integer.valueOf(port)//properties.port //serviceAddress.getUri().getPort());
         properties.instanceId = getId(descriptor)
         properties.healthCheckPath = descriptor.health
         return properties

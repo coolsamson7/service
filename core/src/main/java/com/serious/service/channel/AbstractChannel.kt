@@ -12,28 +12,17 @@ import java.lang.reflect.Method
 /**
  * abstract base class for [Channel]s
  */
-abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, protected val componentClass: Class<out Component>, protected @JvmField val addresses: List<ServiceAddress>) : Channel, InvocationHandler {
-    // instance data
-
-    protected @JvmField var primaryAddress: ServiceAddress? = null // TODO
-
-    init {
-        primaryAddress = addresses[0] // TODO
-    }
-
+abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, protected val componentClass: Class<out Component>, protected @JvmField val address: ServiceAddress) : Channel, InvocationHandler {
     // implement Channel
 
     override fun setup() {}
 
-    override fun getPrimaryAddress(): ServiceAddress? {
-        return primaryAddress
-    }
-    override fun getAddresses(): List<ServiceAddress> {
-        return addresses
+    override fun getAddress(): ServiceAddress{
+        return address
     }
 
     override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
-        return delta.isDeleted(getPrimaryAddress()!!.serviceInstance) // TODO cluster??
+        return delta.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
     }
 
     // implement InvocationHandler

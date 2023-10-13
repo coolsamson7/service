@@ -14,35 +14,38 @@ import java.util.concurrent.ConcurrentHashMap
  /**
  * A special [InvocationHandler] that delegates calls to a [Channel]
  */
-class ChannelInvocationHandler private constructor(
-    private val componentDescriptor: ComponentDescriptor<*>, private val channelName: String, addresses: List<ServiceAddress>) : InvocationHandler {
-     // instance data
+class ChannelInvocationHandler private constructor(private val componentDescriptor: ComponentDescriptor<*>, private val address: ServiceAddress) : InvocationHandler {
+    // instance data
 
-    private var channel: Channel? = null
+    private val componentManager : ComponentManager
+        get() = componentDescriptor.componentManager!!
+
+    private var channel: Channel
 
     // constructor
+
     init {
-        resolve(channelName, addresses)
+        channel = resolveChannel()
     }
 
     // private
     private fun checkUpdate(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta): Boolean {
         if (channel is MissingChannel) {
-            val componentManager = componentDescriptor.componentManager!!
-            val serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName)
+            val address = componentManager.getServiceAddress(componentDescriptor, address.channel)
 
-            channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses)
+            if ( address != null)
+                channel = componentManager.getChannel(componentDescriptor, address)
         }
         else {
-            if (channel!!.needsUpdate(delta)) {
+            if (channel.needsUpdate(delta)) {
                 // remove
-                log.info("channel {} for {} is dead", channel!!.getPrimaryAddress(), componentDescriptor.name)
+                log.info("channel {} for {} is dead", address.channel, componentDescriptor.name)
 
-                channelManager.removeChannel(channel!!)
+                channelManager.removeChannel(channel)
 
                 // resolve
 
-                resolve(channelName, componentDescriptor.componentManager!!.getServiceAddresses(componentDescriptor, channelName)!!)
+                resolveChannel()
             }
         }
 
@@ -50,16 +53,19 @@ class ChannelInvocationHandler private constructor(
     }
 
     // public
-    fun resolve(channelName: String, addresses: List<ServiceAddress>) {
-        channel = componentDescriptor.componentManager!!.getChannel(componentDescriptor, channelName, addresses)
+    fun resolveChannel() : Channel {
+        channel = componentManager.getChannel(componentDescriptor, address)
 
-        log.info("resolved channel {} for component {}", channelName, componentDescriptor)
+        log.info("resolved channel {} for component {}", address.channel, componentDescriptor)
+
+        return channel
     }
 
     // implement InvocationHandler
+
     @Throws(Throwable::class)
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
-        return channel!!.invoke(proxy, method, args ?: emptyArgs )
+        return channel.invoke(proxy, method, args ?: emptyArgs )
     }
 
     companion object {
@@ -73,10 +79,10 @@ class ChannelInvocationHandler private constructor(
 
         // static methods
 
-        fun forComponent(componentDescriptor: ComponentDescriptor<*>, channel: String, addresses: List<ServiceAddress>): ChannelInvocationHandler {
+        fun forComponent(componentDescriptor: ComponentDescriptor<*>, channel: String, address: ServiceAddress): ChannelInvocationHandler {
             val key = componentDescriptor.name + ":" + channel
 
-           return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, channel, addresses)}
+           return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, address)}
         }
 
         @JvmStatic

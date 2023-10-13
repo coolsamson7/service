@@ -6,10 +6,7 @@ package com.serious.demo.impl
 */
 
 import com.serious.demo.TestRemoteComponent
-import com.serious.service.AbstractComponent
-import com.serious.service.ComponentHealth
-import com.serious.service.ComponentHost
-import com.serious.service.ServiceAddress
+import com.serious.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.actuate.health.Status
@@ -39,9 +36,9 @@ class TestRemoteComponentImpl : AbstractComponent(), TestRemoteComponent {
 
     @get:ResponseBody
     @get:GetMapping("/uri")
-    override val addresses: List<ServiceAddress>
-        get() = java.util.List.of(
-            ServiceAddress("dispatch", URI.create("http://$host:$port")),
-            ServiceAddress("rest", URI.create("http://$host:$port"))
+    override val addresses: List<ChannelAddress>
+        get() = listOf(
+            ChannelAddress("dispatch", URI.create("http://$host:$port")),
+            ChannelAddress("rest", URI.create("http://$host:$port"))
         )
 }

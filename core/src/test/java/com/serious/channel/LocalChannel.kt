@@ -9,6 +9,7 @@ import com.serious.service.BaseDescriptor.Companion.forService
 import com.serious.service.ChannelManager
 import com.serious.service.Component
 import com.serious.service.Service
+import com.serious.service.ServiceAddress
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 
@@ -17,7 +18,7 @@ import org.aopalliance.intercept.MethodInvocation
   * that it delegates to
  */
 open class LocalChannel(channelManager: ChannelManager, componentClass: Class<out Component>)
-     : AbstractChannel(channelManager, componentClass, emptyList()) {
+     : AbstractChannel(channelManager, componentClass, ServiceAddress("local", emptyList())) {
     // implement
     @Throws(Throwable::class)
     override fun invoke(invocation: MethodInvocation): Any? {

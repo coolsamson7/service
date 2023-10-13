@@ -20,7 +20,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
-import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
 
  /**
@@ -48,13 +47,10 @@ class ComponentManager @Autowired internal constructor(
     var componentDescriptors: MutableMap<String, ComponentDescriptor<Component>> = HashMap()
     var proxies: MutableMap<String, Service> = ConcurrentHashMap()
 
-    @Value("\${server.port}")
-    var port: String? = null
+    // public
 
-    // lifecycle
-    @PostConstruct
-    fun startup() {
-        AbstractComponent.port = port
+    fun startup(port: Int) {
+        AbstractComponent.port = port.toString()
 
         // register components
 
@@ -121,30 +117,27 @@ class ComponentManager @Autowired internal constructor(
         val descriptor = forService<T>(serviceClass)
 
         return if (descriptor.hasImplementation())
-            acquireService(descriptor, listOf(ServiceAddress("local", null as URI?)))
+            acquireService(descriptor, ServiceAddress("local", emptyList()))
         else
             throw ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName())
     }
 
     fun <T : Service> acquireService(serviceClass: Class<T>, vararg channels: String?): T {
         val descriptor = forService(serviceClass)
-        val serviceAddresses = getServiceAddresses(descriptor.getComponentDescriptor(), *channels)
+        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor(), *channels)
+            ?: throw ServiceRuntimeException("no service instances for %s", descriptor.getComponentDescriptor().name + if (channels.size > 0) " channels..." else "")
 
-        if (serviceAddresses.isNullOrEmpty())
-            throw ServiceRuntimeException("no service instances for %s", descriptor.getComponentDescriptor().name + if (channels.size > 0) " channels..." else "")
-
-        return acquireService(descriptor, serviceAddresses)
+        return acquireService(descriptor, serviceAddress)
     }
 
-    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, addresses: List<ServiceAddress>): T {
+    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, address: ServiceAddress): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
-        val channel = if (!addresses.isEmpty()) addresses[0].channel!! else "-"
-        val key = serviceClass.getName() + ":" + channel
+        val key = serviceClass.getName() + ":" + address.channel
 
         return proxies.computeIfAbsent(key) { _ ->
-            log.info("create proxy for {}.{}", descriptor.name, channel)
+            log.info("create proxy for {}.{}", descriptor.name, address.channel)
 
-            if (channel == "local")
+            if (address.channel == "local")
                 Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
                     arrayOf<Class<*>>(serviceClass)
@@ -155,26 +148,23 @@ class ComponentManager @Autowired internal constructor(
                 Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
                     arrayOf<Class<*>>(serviceClass),
-                    forComponent(descriptor.getComponentDescriptor(), channel, addresses)
+                    forComponent(descriptor.getComponentDescriptor(), address.channel, address)
                 ) as T
         } as T
     }
 
-    fun getServiceAddresses(componentDescriptor: ComponentDescriptor<*>, vararg channels: String?): List<ServiceAddress>? {
-        return serviceInstanceRegistry.getServiceAddresses(componentDescriptor, *channels)
+    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg channels: String?): ServiceAddress? {
+        return serviceInstanceRegistry.getServiceAddress(componentDescriptor, *channels)
     }
 
-    fun getChannel(descriptor: BaseDescriptor<*>, channelName: String, serviceAddresses: List<ServiceAddress>?): Channel {
-        val channel = if (serviceAddresses != null && !serviceAddresses.isEmpty())
-            makeChannel(descriptor.getComponentDescriptor().serviceInterface, channelName, serviceAddresses)
-        else
-            null
+    fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
+        val channel = makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)
 
         return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor())
     }
 
-    fun makeChannel(componentClass: Class<out Component>, channel: String, serviceAddresses: List<ServiceAddress>): Channel {
-        return channelManager.make(componentClass, channel, serviceAddresses)
+    fun makeChannel(componentClass: Class<out Component>,address: ServiceAddress): Channel {
+        return channelManager.make(componentClass, address)
     }
 
     // implement ApplicationContextAware

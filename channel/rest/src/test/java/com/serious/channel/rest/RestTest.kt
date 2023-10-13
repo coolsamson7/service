@@ -7,12 +7,15 @@ package com.serious.channel.rest
 
 import com.serious.service.*
 import com.serious.service.registry.LocalComponentRegistry
+import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalManagementPort
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.cloud.client.ServiceInstance
@@ -21,6 +24,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -33,20 +37,6 @@ internal class Foo {
 
 @Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry() {
-    override fun getInstances(service: String): List<ServiceInstance> {
-        val meta: MutableMap<String, String> = HashMap()
-        meta["channels"] = "rest(http://localhost:" + AbstractComponent.port + ")"
-        return java.util.List.of<ServiceInstance>(
-            DefaultServiceInstance(
-                "id",
-                "test",
-                "localhost",
-                AbstractComponent.port!!.toInt(),
-                false,
-                meta
-            )
-        )
-    }
 }
 
 @ServiceInterface
@@ -149,8 +139,8 @@ internal interface TestComponent : com.serious.service.Component
 
 @ComponentHost
 internal class TestComponentImpl : AbstractComponent(), TestComponent {
-    override val addresses: List<ServiceAddress>
-        get() = listOf(ServiceAddress("rest", URI.create("http://localhost::$port")))
+    override val addresses: List<ChannelAddress>
+        get() = listOf(ChannelAddress("rest", URI.create("http://localhost:$port")))
 }
 
 @Component
@@ -282,9 +272,7 @@ internal class RequestMappingMethodsImpl : RequestMappingMethods {
 // test classes
 @Configuration
 @ComponentScan
-@Import(
-    ServiceConfiguration::class
-)
+@Import(ServiceConfiguration::class)
 open class TestConfig
 
 @SpringBootTest(classes = [TestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -293,21 +281,14 @@ internal class RestTest {
     // instance data
 
     @LocalServerPort
-    private val port = 0 // local.server.port
+    private val port = "0" // server.port
 
     @Autowired
     lateinit var componentManager: ComponentManager
 
-    @Autowired
-    lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
-
-    // lifecycle
-    @BeforeEach
-    fun before() {
-        if (AbstractComponent.port == "0") {
-            AbstractComponent.port = port.toString()
-            serviceInstanceRegistry.startup()
-        }
+    @PostConstruct
+   fun  setup() {
+        componentManager.startup(port.toInt())
     }
 
     // test

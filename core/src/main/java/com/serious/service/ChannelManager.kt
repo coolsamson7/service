@@ -86,21 +86,20 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun removeChannel(channel: Channel) {
-        channels.remove(channel.getPrimaryAddress())
+        channels.remove(channel.getAddress())
     }
 
-    fun make(componentClass: Class<out Component>, channelName: String, serviceAddresses: List<ServiceAddress>): Channel {
-        val primaryServiceAddress = serviceAddresses[0]
-        var channel = channels[primaryServiceAddress]
+    fun make(componentClass: Class<out Component>, address: ServiceAddress) : Channel {
+        var channel = channels[address]
 
         if (channel == null) {
-            log.info("create channel for {}", primaryServiceAddress.toString())
+            log.info("create channel for {}", address.toString())
 
-            channel = channelFactories[channelName]?.makeChannel(componentClass, serviceAddresses)
+            channel = channelFactories[address.channel]?.makeChannel(componentClass, address)
             if (channel != null)
-                channels[primaryServiceAddress] = channel
+                channels[address] = channel
         }
-
+// TODOD !!
         return channel!!
     }
 
@@ -112,6 +111,6 @@ class ChannelManager : ApplicationContextAware {
     }
 
     companion object {
-        val log: Logger = LoggerFactory.getLogger(this::class.java)
+        val log: Logger = LoggerFactory.getLogger(ChannelManager::class.java)
     }
 }

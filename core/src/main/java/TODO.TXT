@@ -7,8 +7,6 @@
 
 === NOW
 
-- primaryAddress doof
-
 === DONE
 
 - channelbuilder LIST!!!

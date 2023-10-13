@@ -2,13 +2,16 @@ package com.serious.demo
 
 import com.serious.service.ComponentManager
 import com.serious.service.ServiceConfiguration
+import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.stereotype.Component
 
 // a configuration
 @Configuration
@@ -22,8 +25,19 @@ internal open class RootConfig
 @SpringBootApplication
 @EnableDiscoveryClient
 @Slf4j
+@Component
 open class ServiceApplication1 {
+    @Value("\${server.port}")
+    val port = 0
+
+    @PostConstruct
+    fun init() {
+        ServiceApplication1.port = port
+    }
+
     companion object {
+        var port : Int = 0
+
         @JvmStatic
         fun main(args: Array<String>) {
             val context = SpringApplication.run(ServiceApplication1::class.java, *args)
@@ -35,6 +49,9 @@ open class ServiceApplication1 {
             catch (e: InterruptedException) {
             }
             val manager = context.getBean(ComponentManager::class.java)
+
+            manager.startup(port)
+
             val remoteRest = manager.acquireService(TestRemoteRestService::class.java, "rest")
             val remoteDispatch = manager.acquireService(TestRemoteRestService::class.java, "dispatch")
             val local = manager.acquireLocalService(TestRemoteRestService::class.java)

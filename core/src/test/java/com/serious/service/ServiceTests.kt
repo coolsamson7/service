@@ -4,21 +4,24 @@ import com.serious.channel.LocalChannel
 import com.serious.registry.LocalComponentRegistry
 import com.serious.service.annotations.InjectService
 import com.serious.service.exception.ServiceRuntimeException
+import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import java.net.URI
 
 // test classes
 @RegisterChannel("test")
-internal class TestChannel protected constructor(channelManager: ChannelManager,  componentClass: Class<out Component>) : LocalChannel(channelManager, componentClass)
+internal class TestChannel(channelManager: ChannelManager,  componentClass: Class<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentClass)
 
 @RegisterChannel("test1")
-internal class Test1Channel protected constructor(channelManager: ChannelManager,  componentClass: Class<out Component>) : LocalChannel(channelManager, componentClass)
+internal class Test1Channel(channelManager: ChannelManager,  componentClass: Class<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentClass)
 
 @org.springframework.stereotype.Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()
@@ -43,13 +46,9 @@ internal class TestComponentImpl : AbstractComponent(), TestComponent {
         return "hello $world"
     }
 
-    override val addresses: List<ServiceAddress>
+    override val addresses: List<ChannelAddress>
         get() {
-            val meta: MutableMap<String, String> = HashMap()
-            meta["channels"] = "test(http://localhost:0),test1(http://localhost:0)"
-            return java.util.List.of(
-                ServiceAddress("test", DefaultServiceInstance("id", "test", "localhost", 0, false, meta))
-            )
+            return listOf(ChannelAddress("test", URI.create("http://localhost:$port")))
         }
 }
 
@@ -69,25 +68,28 @@ internal class TestServiceImpl : TestService {
 open class TestConfig
 
 @SpringBootTest(classes = [ServiceConfiguration::class])
-@Import(
-    ServiceConfiguration::class
-)
+@Import(ServiceConfiguration::class)
 internal class ServiceTests {
-    // instance data
+    //@LocalServerPort
+    private val port = "0" // server.port
+
     @Autowired
     lateinit var componentManager: ComponentManager
 
-    @InjectService
     lateinit var testService: TestService
-
-    @InjectService(preferLocal = true)
     lateinit var localTestService: TestService
-
-    @InjectService
     lateinit var testComponent: TestComponent
-
-    @InjectService(preferLocal = true)
     lateinit var localTestComponent: TestComponent
+
+    @PostConstruct
+    fun  setup() {
+        componentManager.startup(port.toInt())
+
+        testService        = componentManager.acquireService(TestService::class.java)
+        localTestService   = componentManager.acquireLocalService(TestService::class.java)
+        testComponent      = componentManager.acquireService(TestComponent::class.java)
+        localTestComponent = componentManager.acquireLocalService(TestComponent::class.java)
+    }
 
     // test
     @Test

@@ -7,6 +7,7 @@ package com.serious.service.channel
 
 import com.serious.service.ChannelManager
 import com.serious.service.ComponentDescriptor
+import com.serious.service.ServiceAddress
 import com.serious.service.exception.ServiceRuntimeException
 import org.aopalliance.intercept.MethodInvocation
 
@@ -14,7 +15,7 @@ import org.aopalliance.intercept.MethodInvocation
  * A channel constructed for non-resolvable addresses
  */
 class MissingChannel(channelManager: ChannelManager, private val componentDescriptor: ComponentDescriptor<*>)
-    : AbstractChannel(channelManager, componentDescriptor.serviceInterface, emptyList()) {
+    : AbstractChannel(channelManager, componentDescriptor.serviceInterface, ServiceAddress("missing", emptyList())) {
     // implement Channel
 
     @Throws(Throwable::class)

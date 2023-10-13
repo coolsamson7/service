@@ -12,8 +12,8 @@ interface ChannelFactory {
     /**
      * create a new [Channel] based on the specified [ServiceAddress].
      * @param componentClass the component class
-     * @param serviceAddresses a list of [ServiceAddress]
+     * @param addresses a [ServiceAddress]
      * @return the created [Channel]
      */
-    fun makeChannel(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>): Channel
+    fun makeChannel(componentClass: Class<out Component>, addresses: ServiceAddress): Channel
 }

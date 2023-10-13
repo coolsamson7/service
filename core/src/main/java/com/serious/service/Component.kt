@@ -12,7 +12,7 @@ interface Component : Service {
     fun startup()
     fun shutdown()
 
-    val addresses: List<ServiceAddress>
+    val addresses: List<ChannelAddress>
 
     val status: ComponentStatus
 

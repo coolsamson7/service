@@ -21,7 +21,7 @@ import java.util.*
  * A specific [Channel] used to dispatch [ServiceRequest]s using a [RestChannel]
  */
 @RegisterChannel("dispatch")
-class DispatchChannel @Autowired constructor(channelManager: ChannelManager, componentClass: Class<out Component>, addresses: List<ServiceAddress>) : RestChannel(channelManager, componentClass, addresses) {
+class DispatchChannel @Autowired constructor(channelManager: ChannelManager, componentClass: Class<out Component>, address: ServiceAddress) : RestChannel(channelManager, componentClass, address) {
     // instance data
 
     @Autowired

@@ -60,17 +60,25 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
         }
 
         // services
-        for (serviceDescriptor in services) serviceDescriptor.registerBeans(registry)
+
+        for (serviceDescriptor in services)
+            serviceDescriptor.registerBeans(registry)
     }
 
     // private
     private fun analyze() {
         val annotation = serviceInterface.getAnnotation(ComponentInterface::class.java)
-        if (!annotation.name.isBlank()) name = annotation.name
-        if (!annotation.description.isBlank()) description = annotation.description
+
+        if (!annotation.name.isBlank())
+            name = annotation.name
+
+        if (!annotation.description.isBlank())
+            description = annotation.description
 
         // analyze services
-        for (service in annotation.services) registerService(service.java)
+
+        for (service in annotation.services)
+            registerService(service.java)
     }
 
     private fun <T : Service> registerService(service: Class<T>) {
@@ -82,8 +90,10 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
         builder
             .append("component ")
             .append(name).append("\n")
+
         if (hasImplementation()) {
             builder.append("\taddress:\n")
+
             if (externalAddresses != null)
                 for (externalAddress in externalAddresses!!)
                     builder
@@ -100,11 +110,10 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
             serviceDescriptor.report(builder)
     }
 
-    val externalAddresses: List<ServiceAddress>?
+    val externalAddresses: List<ChannelAddress>?
         get() = if (local != null) (local!! as Component).addresses else null
 
     companion object {
-        // static data
         @JvmField
         var descriptors: MutableList<ComponentDescriptor<*>> = ArrayList()
     }

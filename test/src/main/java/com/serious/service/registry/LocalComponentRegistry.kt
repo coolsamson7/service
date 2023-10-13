@@ -5,27 +5,24 @@ package com.serious.service.registry
 * All rights reserved
 */
 
-import com.serious.service.Component
-import com.serious.service.ComponentDescriptor
-import com.serious.service.ComponentRegistry
-import com.serious.service.ServiceAddress
+import com.serious.service.*
 import com.serious.service.exception.ServiceRuntimeException
+import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.cloud.client.ServiceInstance
 import java.util.stream.Collectors
 
 /**
- * A local [ComponentRegistry] implementation used for test pruposes
+ * A local [ComponentRegistry] implementation used for test purposes
  */
-//@org.springframework.stereotype.Component
 open class LocalComponentRegistry : ComponentRegistry {
     // instance data
 
-    private var services: MutableMap<String, MutableList<ServiceAddress>> = HashMap()
+    private var services: MutableMap<String, MutableList<ChannelAddress>> = HashMap()
 
     // private
 
-    private fun getServiceAddresses(service : String) :List<ServiceAddress> {
-        return services[service] ?: throw ServiceRuntimeException("unknown service " + service)
+    private fun getServiceAddresses(service : String) :List<ChannelAddress> {
+        return services[service] ?: throw ServiceRuntimeException("unknown service $service")
     }
 
     // implement ComponentRegistry
@@ -43,9 +40,25 @@ open class LocalComponentRegistry : ComponentRegistry {
     }
 
     override fun getInstances(service: String): List<ServiceInstance> {
-        return getServiceAddresses(service)
-            .stream()
-            .map { address: ServiceAddress -> address.serviceInstance!! }
-            .collect(Collectors.toList())
+        val meta : ( address: ChannelAddress ) -> Map<String,String> = {
+                address ->
+            val result = HashMap<String,String>()
+            result.put("channels", address.channel + "(" + address.uri.toString() + ")")
+            result
+        }
+
+        if ( services.containsKey(service))
+            return services[service]!!.stream()
+                .map { address: ChannelAddress ->
+                    DefaultServiceInstance(
+                        address.channel + ":" + address.uri.toString(),
+                        service,
+                        address.uri.host,
+                        address.uri.port,
+                        false,
+                        meta(address)
+                    )}
+                .collect(Collectors.toList())
+        else return emptyList()
     }
 }

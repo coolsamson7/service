@@ -25,8 +25,8 @@ import java.util.function.Consumer
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
  */
 @RegisterChannel("rest")
-open class RestChannel(channelManager: ChannelManager, componentClass: Class<out Component>, addresses: List<ServiceAddress>)
-    : AbstractChannel(channelManager, componentClass, addresses) {
+open class RestChannel(channelManager: ChannelManager, componentClass: Class<out Component>, address: ServiceAddress)
+    : AbstractChannel(channelManager, componentClass, address) {
 
     // instance data
 
@@ -55,7 +55,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
         // add some defaults
 
         var builder = WebClient.builder()
-            .baseUrl(getPrimaryAddress()!!.uri.toString())
+            .baseUrl(address.serviceInstances.get(0).uri.toString()) // for now
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 

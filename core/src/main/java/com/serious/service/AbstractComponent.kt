@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j
 import org.springframework.cloud.commons.util.InetUtils
 import org.springframework.cloud.commons.util.InetUtilsProperties
 
- /**
+/**
  * abstract base class for components
  */
 @Slf4j

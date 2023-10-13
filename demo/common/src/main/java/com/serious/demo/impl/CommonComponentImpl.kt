@@ -1,10 +1,7 @@
 package com.serious.demo.impl
 
 import com.serious.demo.CommonComponent
-import com.serious.service.AbstractComponent
-import com.serious.service.ComponentHealth
-import com.serious.service.ComponentHost
-import com.serious.service.ServiceAddress
+import com.serious.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.actuate.health.Status
@@ -37,10 +34,10 @@ class CommonComponentImpl : AbstractComponent(), CommonComponent {
 
     @get:ResponseBody
     @get:GetMapping("/uri")
-    override val addresses: List<ServiceAddress>
+    override val addresses: List<ChannelAddress>
         // implement TestComponent
         get() = java.util.List.of(
-            ServiceAddress("dispatch", URI.create("http://$host:$port")),
-            ServiceAddress("rest", URI.create("http://$host:$port"))
+            ChannelAddress("dispatch", URI.create("http://$host:$port")),
+            ChannelAddress("rest", URI.create("http://$host:$port"))
         )
 }
