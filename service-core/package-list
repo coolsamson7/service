@@ -75,7 +75,7 @@ $dokka.location:com.serious.service.channel/AbstractChannel/getAddresses/#/Point
 $dokka.location:com.serious.service.channel/AbstractChannel/getPrimaryAddress/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/get-primary-address.html
 $dokka.location:com.serious.service.channel/AbstractChannel/invoke/#kotlin.Any#java.lang.reflect.Method#kotlin.Array[kotlin.Any]/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/invoke.html
 $dokka.location:com.serious.service.channel/AbstractChannel/needsUpdate/#com.serious.service.ServiceInstanceRegistry.Delta/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/needs-update.html
-$dokka.location:com.serious.service.channel/AbstractChannel/setup/#java.lang.Class[com.serious.service.Component]#kotlin.collections.List[com.serious.service.ServiceAddress]/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/setup.html
+$dokka.location:com.serious.service.channel/AbstractChannel/setup/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/setup.html
 $dokka.location:com.serious.service.channel/AbstractChannelBuilder///PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-builder/index.html
 $dokka.location:com.serious.service.channel/AbstractChannelBuilder/channelClass/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-builder/channel-class.html
 $dokka.location:com.serious.service.channel/AbstractChannelBuilder/isApplicable/#java.lang.Class[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-builder/is-applicable.html
@@ -83,7 +83,7 @@ $dokka.location:com.serious.service.channel/ChannelBuilder///PointingToDeclarati
 $dokka.location:com.serious.service.channel/ChannelBuilder/channelClass/#/PointingToDeclaration/service-core/com.serious.service.channel/-channel-builder/channel-class.html
 $dokka.location:com.serious.service.channel/ChannelBuilder/isApplicable/#java.lang.Class[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service.channel/-channel-builder/is-applicable.html
 $dokka.location:com.serious.service.channel/MissingChannel///PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/index.html
-$dokka.location:com.serious.service.channel/MissingChannel/MissingChannel/#com.serious.service.ChannelManager#kotlin.String/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/-missing-channel.html
+$dokka.location:com.serious.service.channel/MissingChannel/MissingChannel/#com.serious.service.ChannelManager#com.serious.service.ComponentDescriptor[*]/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/-missing-channel.html
 $dokka.location:com.serious.service.channel/MissingChannel/invoke/#org.aopalliance.intercept.MethodInvocation/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/invoke.html
 $dokka.location:com.serious.service.channel/RegisterChannelBuilder///PointingToDeclaration/service-core/com.serious.service.channel/-register-channel-builder/index.html
 $dokka.location:com.serious.service.channel/RegisterChannelBuilder/channel/#/PointingToDeclaration/service-core/com.serious.service.channel/-register-channel-builder/channel.html
@@ -137,7 +137,7 @@ $dokka.location:com.serious.service/Channel///PointingToDeclaration/service-cor
 $dokka.location:com.serious.service/Channel/getAddresses/#/PointingToDeclaration/service-core/com.serious.service/-channel/get-addresses.html
 $dokka.location:com.serious.service/Channel/getPrimaryAddress/#/PointingToDeclaration/service-core/com.serious.service/-channel/get-primary-address.html
 $dokka.location:com.serious.service/Channel/needsUpdate/#com.serious.service.ServiceInstanceRegistry.Delta/PointingToDeclaration/service-core/com.serious.service/-channel/needs-update.html
-$dokka.location:com.serious.service/Channel/setup/#java.lang.Class[com.serious.service.Component]#kotlin.collections.List[com.serious.service.ServiceAddress]/PointingToDeclaration/service-core/com.serious.service/-channel/setup.html
+$dokka.location:com.serious.service/Channel/setup/#/PointingToDeclaration/service-core/com.serious.service/-channel/setup.html
 $dokka.location:com.serious.service/ChannelFactory///PointingToDeclaration/service-core/com.serious.service/-channel-factory/index.html
 $dokka.location:com.serious.service/ChannelFactory/makeChannel/#java.lang.Class[com.serious.service.Component]#kotlin.collections.List[com.serious.service.ServiceAddress]/PointingToDeclaration/service-core/com.serious.service/-channel-factory/make-channel.html
 $dokka.location:com.serious.service/ChannelInvocationHandler.Companion///PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/index.html
@@ -287,8 +287,8 @@ $dokka.location:com.serious.service/ServiceInterface/name/#/PointingToDeclaratio
 $dokka.location:com.serious.service/SpringChannelFactory.Companion///PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-companion/index.html
 $dokka.location:com.serious.service/SpringChannelFactory.Companion/logger/#/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-companion/logger.html
 $dokka.location:com.serious.service/SpringChannelFactory///PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/index.html
-$dokka.location:com.serious.service/SpringChannelFactory/SpringChannelFactory/#org.springframework.context.ApplicationContext#org.springframework.beans.factory.config.BeanDefinition/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-spring-channel-factory.html
-$dokka.location:com.serious.service/SpringChannelFactory/applicationContext/#/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/application-context.html
+$dokka.location:com.serious.service/SpringChannelFactory/SpringChannelFactory/#com.serious.service.ChannelManager#org.springframework.beans.factory.config.BeanDefinition/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-spring-channel-factory.html
+$dokka.location:com.serious.service/SpringChannelFactory/channelManager/#/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/channel-manager.html
 $dokka.location:com.serious.service/SpringChannelFactory/makeChannel/#java.lang.Class[com.serious.service.Component]#kotlin.collections.List[com.serious.service.ServiceAddress]/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/make-channel.html
 $dokka.location:com.serious.spring////PointingToDeclaration/service-core/com.serious.spring/index.html
 $dokka.location:com.serious.spring/ChildBeanFactory///PointingToDeclaration/service-core/com.serious.spring/-child-bean-factory/index.html
