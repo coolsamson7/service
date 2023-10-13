@@ -37,7 +37,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn dokka:dokka
+      run: |
+        cd core
+        mvn dokka:dokka
     - name: Deploy
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
       uses: JamesIves/github-pages-deploy-action@3.7.1
