@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Import
 
 // test classes
 @RegisterChannel("test")
-internal class TestChannel protected constructor(channelManager: ChannelManager) : LocalChannel(channelManager)
+internal class TestChannel protected constructor(channelManager: ChannelManager,  componentClass: Class<out Component>) : LocalChannel(channelManager, componentClass)
 
 @RegisterChannel("test1")
-internal class Test1Channel protected constructor(channelManager: ChannelManager) : LocalChannel(channelManager)
+internal class Test1Channel protected constructor(channelManager: ChannelManager,  componentClass: Class<out Component>) : LocalChannel(channelManager, componentClass)
 
 @org.springframework.stereotype.Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()

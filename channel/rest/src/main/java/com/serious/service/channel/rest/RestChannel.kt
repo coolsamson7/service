@@ -24,11 +24,11 @@ import java.util.function.Consumer
 
 /**
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
- *
- * @author Andreas Ernst
  */
 @RegisterChannel("rest")
-open class RestChannel @Autowired constructor(channelManager: ChannelManager) : AbstractChannel(channelManager) {
+open class RestChannel(channelManager: ChannelManager, componentClass: Class<out Component>, addresses: List<ServiceAddress>)
+    : AbstractChannel(channelManager, componentClass, addresses) {
+
     // instance data
 
     private var webClient: WebClient? = null
@@ -50,13 +50,12 @@ open class RestChannel @Autowired constructor(channelManager: ChannelManager) : 
         return getRequest(invocation.method).execute(*invocation.arguments)
     }
 
-    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>) {
-        super.setup(componentClass, serviceAddresses)
-
+    override fun setup() {
         val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder?
         var builder = WebClient.builder()
 
         // add some defaults
+
         builder
             .baseUrl(getPrimaryAddress()!!.uri.toString())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

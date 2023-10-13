@@ -21,7 +21,7 @@ import java.util.*
  * A specific [Channel] used to dispatch [ServiceRequest]s using a [RestChannel]
  */
 @RegisterChannel("dispatch")
-class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : RestChannel(channelManager) {
+class DispatchChannel @Autowired constructor(channelManager: ChannelManager, componentClass: Class<out Component>, addresses: List<ServiceAddress>) : RestChannel(channelManager, componentClass, addresses) {
     // instance data
 
     @Autowired
@@ -36,10 +36,6 @@ class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : R
         val result = super.invoke(SimpleMethodInvocation(null, dispatchMethod, encodeAsString(encodeObject(request)))) as String
 
         return decodeObject(decodeFromString(result))
-    }
-
-    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>) {
-        super.setup(componentClass, serviceAddresses)
     }
 
     companion object {

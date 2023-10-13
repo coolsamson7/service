@@ -81,26 +81,21 @@ class ChannelManager : ApplicationContextAware {
 
         log.info("register channel {}", definition.beanClassName)
 
-        channelFactories[spec.value] = SpringChannelFactory(applicationContext!!, definition)
+        channelFactories[spec.value] = SpringChannelFactory(this, definition)
     }
 
     fun removeChannel(channel: Channel) {
         channels.remove(channel.getPrimaryAddress())
     }
 
-    fun make(
-        componentClass: Class<out Component>,
-        channelName: String,
-        serviceAddresses: List<ServiceAddress>
-    ): Channel {
+    fun make(componentClass: Class<out Component>, channelName: String, serviceAddresses: List<ServiceAddress>): Channel {
         val primaryServiceAddress = serviceAddresses[0]
         var channel = channels[primaryServiceAddress]
 
         if (channel == null) {
             log.info("create channel for {}", primaryServiceAddress.toString())
 
-            val channelFactory = channelFactories[channelName]
-            channel = channelFactory?.makeChannel(componentClass, serviceAddresses)
+            channel = channelFactories[channelName]?.makeChannel(componentClass, serviceAddresses)
             if (channel != null)
                 channels[primaryServiceAddress] = channel
         }

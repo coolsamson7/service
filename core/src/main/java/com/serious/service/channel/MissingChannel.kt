@@ -6,17 +6,19 @@ package com.serious.service.channel
 */
 
 import com.serious.service.ChannelManager
+import com.serious.service.ComponentDescriptor
 import com.serious.service.exception.ServiceRuntimeException
 import org.aopalliance.intercept.MethodInvocation
 
 /**
  * A channel constructed for non-resolvable addresses
  */
-class MissingChannel(channelManager: ChannelManager, private val componentName: String) : AbstractChannel(channelManager) {
+class MissingChannel(channelManager: ChannelManager, private val componentDescriptor: ComponentDescriptor<*>)
+    : AbstractChannel(channelManager, componentDescriptor.serviceInterface, emptyList()) {
     // implement Channel
 
     @Throws(Throwable::class)
     override fun invoke(invocation: MethodInvocation): Any? {
-        throw ServiceRuntimeException("unresolved channel for component %s", componentName)
+        throw ServiceRuntimeException("unresolved channel for component %s", componentDescriptor.name)
     }
 }

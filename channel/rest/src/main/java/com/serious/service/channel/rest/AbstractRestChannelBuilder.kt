@@ -12,8 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 /**
  * abstract base class for [ChannelBuilder] based on a [WebClient]
  */
-abstract class AbstractRestChannelBuilder  // constructor
-protected constructor(channelManager: ChannelManager) : AbstractChannelBuilder<RestChannel>(channelManager) {
-    // protected
+abstract class AbstractRestChannelBuilder protected constructor(channelManager: ChannelManager) : AbstractChannelBuilder<RestChannel>(channelManager) {
+    // abstract
     abstract fun build(builder: WebClient.Builder): WebClient.Builder
 }

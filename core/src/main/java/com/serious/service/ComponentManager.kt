@@ -170,7 +170,7 @@ class ComponentManager @Autowired internal constructor(
         else
             null
 
-        return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor().name)
+        return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor())
     }
 
     fun makeChannel(componentClass: Class<out Component>, channel: String, serviceAddresses: List<ServiceAddress>): Channel {

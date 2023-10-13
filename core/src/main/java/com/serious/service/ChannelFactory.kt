@@ -11,7 +11,7 @@ package com.serious.service
 interface ChannelFactory {
     /**
      * create a new [Channel] based on the specified [ServiceAddress].
-     *
+     * @param componentClass the component class
      * @param serviceAddresses a list of [ServiceAddress]
      * @return the created [Channel]
      */

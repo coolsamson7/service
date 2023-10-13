@@ -7,7 +7,6 @@
 
 === NOW
 
-- channel builder doof
 - primaryAddress doof
 
 === DONE

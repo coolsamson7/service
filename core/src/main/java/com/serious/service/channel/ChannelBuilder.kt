@@ -13,7 +13,7 @@ import com.serious.service.Component
  */
 interface ChannelBuilder<T : Channel> {
     /**
-     * return the corresponding channel class that this builder is repsonsible for
+     * return the corresponding channel class that this builder is responsible for
      */
     fun channelClass(): Class<out Channel>
 
