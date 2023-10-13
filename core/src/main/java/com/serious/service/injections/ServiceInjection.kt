@@ -24,10 +24,8 @@ import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 
  /**
- * Special `Injector` that injects [Service]s into target objects based on a field
+ * Special [Injection] that injects [Service]s into target objects based on a field
  * or method annotation of type [InjectService].
- *
- * @author Andreas Ernst
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -45,6 +43,7 @@ class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) 
     }
 
     // implement AbstractInjection
+
     override fun computeValue(
         targetObject: Any?,
         accessibleObjectType: Class<*>?,
@@ -53,14 +52,15 @@ class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) 
         context: Keywords?
     ): Service {
         val serviceInterface = (accessibleObject as Field?)!!.type as Class<out Service>
-        return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).local != null) componentManager!!.acquireLocalService(
-            serviceInterface
-        ) else {
+
+        return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).local != null)
+            componentManager!!.acquireLocalService(serviceInterface)
+        else
             componentManager!!.acquireService(serviceInterface, *annotation.channels)
-        }
     }
 
     // implement ApplicationContextAware
+
     @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         componentManager = applicationContext.getBean(ComponentManager::class.java)

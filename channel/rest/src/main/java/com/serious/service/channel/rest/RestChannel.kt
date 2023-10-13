@@ -35,12 +35,9 @@ open class RestChannel @Autowired constructor(channelManager: ChannelManager) : 
     private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
 
     // private
+
     private fun getRequest(method: Method): Request {
-        var request = requests[method]
-        if (request == null) {
-            requests[method] = computeRequest(method).also { request = it }
-        }
-        return request!!
+        return requests.computeIfAbsent(method) { _ -> computeRequest(method) }
     }
 
     private fun computeRequest(method: Method): Request {
@@ -48,11 +45,12 @@ open class RestChannel @Autowired constructor(channelManager: ChannelManager) : 
     }
 
     // implement Channel
+
     override fun invoke(invocation: MethodInvocation): Any {
         return getRequest(invocation.method).execute(*invocation.arguments)
     }
 
-    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
+    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>) {
         super.setup(componentClass, serviceAddresses)
 
         val channelBuilder = channelManager.getChannelBuilder(RestChannel::class.java) as AbstractRestChannelBuilder?
@@ -66,8 +64,8 @@ open class RestChannel @Autowired constructor(channelManager: ChannelManager) : 
 
         // custom stuff
 
-        if (channelBuilder != null && channelBuilder.isApplicable(componentClass)) builder =
-            channelBuilder.build(builder)
+        if (channelBuilder != null && channelBuilder.isApplicable(componentClass))
+            builder = channelBuilder.build(builder)
 
         // done
 

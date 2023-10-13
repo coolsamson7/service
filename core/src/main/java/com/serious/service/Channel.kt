@@ -1,18 +1,24 @@
 package com.serious.service
-
-import org.aopalliance.intercept.MethodInterceptor
-import java.lang.reflect.InvocationHandler
-
 /*
 * @COPYRIGHT (C) 2023 Andreas Ernst
 *
 * All rights reserved
-*/ /**
- * @author Andreas Ernst
+*/
+
+import org.aopalliance.intercept.MethodInterceptor
+import java.lang.reflect.InvocationHandler
+
+ /**
+ * A `Channel` is the communication mechanism used by the different [Service]s.
  */
 interface Channel : MethodInterceptor, InvocationHandler {
     fun getPrimaryAddress(): ServiceAddress?
-    fun getAddresses(): List<ServiceAddress?>?
+
+     /**
+      * return the associated list of [ServiceAddress]s
+      */
+    fun getAddresses(): List<ServiceAddress>
+
     fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean
-    fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?)
+    fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>)
 }

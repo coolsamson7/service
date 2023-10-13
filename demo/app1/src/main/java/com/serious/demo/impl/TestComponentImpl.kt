@@ -26,16 +26,18 @@ import java.net.URI
 @RequestMapping(value = ["/api/test-component"])
 class TestComponentImpl : AbstractComponent(), TestComponent {
     // instance data
+
     @Autowired
-    var healthEndpoint: HealthEndpoint? = null
+    lateinit var healthEndpoint: HealthEndpoint
 
     @get:ResponseBody
     @get:GetMapping("/test-health")
     override val health: ComponentHealth
         // override AbstractComponent
-        get() = if (healthEndpoint!!.health().status === Status.UP) ComponentHealth.UP else ComponentHealth.DOWN
+        get() = if (healthEndpoint.health().status === Status.UP) ComponentHealth.UP else ComponentHealth.DOWN
 
     // implement TestComponent
+
     override fun hello(): String {
         return "hello"
     }

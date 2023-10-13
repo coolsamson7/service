@@ -1,20 +1,19 @@
 package com.serious.service
-
-import org.springframework.beans.factory.support.DefaultListableBeanFactory
-import org.springframework.web.bind.annotation.GetMapping
-import java.util.*
-
 /*
 * @COPYRIGHT (C) 2023 Andreas Ernst
 *
 * All rights reserved
-*/ /**
- * @author Andreas Ernst
+*/
+import org.springframework.beans.factory.support.DefaultListableBeanFactory
+import org.springframework.web.bind.annotation.GetMapping
+import java.util.*
+
+ /**
+ * A `ComponentDescriptor` covers the meta-data associated with a [Component]
  */
-class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDescriptor<T>(
-    componentInterface!!
-) {
+class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDescriptor<T>(componentInterface) {
     // instance data
+
     @JvmField
     var health: String? = null
     @JvmField
@@ -28,6 +27,7 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDe
     }
 
     // public
+
     override fun getComponentDescriptor(): ComponentDescriptor<T> {
         return this
     }
@@ -38,15 +38,15 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDe
         // fetch channels
 
         if (implementingBeans.get(this) != null) {
-            val componentClass = class4Name(
-                implementingBeans.get(this)!!.beanClassName
-            )
-            val host = componentClass!!.getAnnotation(ComponentHost::class.java) as ComponentHost
+            val componentClass = Class.forName(implementingBeans.get(this)!!.beanClassName)
+            val host = componentClass.getAnnotation(ComponentHost::class.java) as ComponentHost
 
             // health
+
             health = host.health
 
             // patch the request mapping for the getHealth()
+
             try {
                 val getHealth = componentClass.getMethod("getHealth")
                 if (getHealth.getAnnotation(GetMapping::class.java) != null) {
@@ -84,13 +84,20 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>?) : BaseDe
             .append(name).append("\n")
         if (hasImplementation()) {
             builder.append("\taddress:\n")
-            if (externalAddresses != null) for (externalAddress in externalAddresses!!) builder.append("\t\t")
-                .append(externalAddress.toString()).append("\n")
+            if (externalAddresses != null)
+                for (externalAddress in externalAddresses!!)
+                    builder
+                        .append("\t\t")
+                        .append(externalAddress.toString())
+                        .append("\n")
         }
 
         // services
+
         builder.append("\tservices:").append("\n")
-        for (serviceDescriptor in services) serviceDescriptor.report(builder)
+
+        for (serviceDescriptor in services)
+            serviceDescriptor.report(builder)
     }
 
     val externalAddresses: List<ServiceAddress>?

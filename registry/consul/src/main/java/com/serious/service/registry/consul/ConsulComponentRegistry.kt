@@ -32,14 +32,15 @@ import java.util.*
 @Slf4j
 internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     // instance data
-    @Autowired
-    var discoveryClient: DiscoveryClient? = null
 
     @Autowired
-    var serviceInstanceRegistry: ServiceInstanceRegistry? = null
+    lateinit var discoveryClient: DiscoveryClient
 
     @Autowired
-    var componentManager: ComponentManager? = null
+    lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
+
+    @Autowired
+    lateinit var componentManager: ComponentManager
     private var state: Any? = null
 
     // override ApplicationListener
@@ -48,8 +49,8 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
         if (state == null || state != event.value) {
             log.info("process consul heartbeat")
 
-            val services = discoveryClient!!.services.stream()
-                .filter { service: String? -> componentManager!!.componentDescriptors.containsKey(service) }
+            val services = discoveryClient.services.stream()
+                .filter { service: String? -> componentManager.componentDescriptors.containsKey(service) }
                 .toList()
 
             // create new map
@@ -57,13 +58,14 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
             val newMap: MutableMap<String, List<ServiceInstance>> = HashMap()
 
             for (service in services)
-                newMap[service] = discoveryClient!!.getInstances(service)
+                newMap[service] = discoveryClient.getInstances(service)
 
             // set
 
-            serviceInstanceRegistry!!.update(newMap)
+            serviceInstanceRegistry.update(newMap)
 
             // done
+
             state = event.value
         }
     }

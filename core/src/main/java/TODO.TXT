@@ -2,21 +2,18 @@
 
 === LATER
 
-- github workflow
 - load balancer
 - open-api...
-
-- kotlin
 
 === NOW
 
 - channel builder doof
-- primaryAdreess doof
-
-- mvn package
+- primaryAddress doof
 
 === DONE
 
+- mvn package
+- kotlin
 - publish ( github package )
 - log delta
 - list bodyToFlux(class).toList()

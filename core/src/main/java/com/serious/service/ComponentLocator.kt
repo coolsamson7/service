@@ -1,6 +1,10 @@
 package com.serious.service
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.serious.util.Exceptions
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition
 import org.springframework.beans.factory.config.BeanDefinition
@@ -12,11 +16,9 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.env.Environment
 import org.springframework.core.type.filter.AnnotationTypeFilter
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
+  * A `ComponentLocator` is a special [BeanFactoryPostProcessor] that will scan the classpath in order to find [Component] interfaces
+  * annotated with [ComponentInterface]. ALl matches will be registered.
  * The lifecycle is:
  * *
  * *      * ComponentLocator as a BeanFactoryPostProcessor scans for annotated component interfaces
@@ -60,15 +62,13 @@ class ComponentLocator : BeanFactoryPostProcessor, EnvironmentAware {
     // implement
     @Throws(BeansException::class)
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
-        try {
-            this.scan()
-        }
-        catch (e: ClassNotFoundException) {
-            Exceptions.throwException(e)
-        }
+
+        scan()
+
         val registry = beanFactory as DefaultListableBeanFactory
 
         // create beans
+
         for (componentDescriptor in components)
             componentDescriptor.registerBeans(registry)
     }

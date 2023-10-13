@@ -1,18 +1,19 @@
 package com.serious.service
-
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
- */ /**
- * @author Andreas Ernst
+ */
+
+/**
+ * A `ChannelFactory` is a factory for - guess what - [Channel]s
  */
 interface ChannelFactory {
     /**
      * create a new [Channel] based on the specified [ServiceAddress].
      *
-     * @param serviceAddress a [ServiceAddress]
+     * @param serviceAddresses a list of [ServiceAddress]
      * @return the created [Channel]
      */
-    fun makeChannel(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?): Channel?
+    fun makeChannel(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>): Channel
 }

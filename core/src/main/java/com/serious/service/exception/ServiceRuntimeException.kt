@@ -6,10 +6,10 @@ package com.serious.service.exception
  */
 
 /**
- * @author Andreas Ernst
+ * Any service related exception that occurs during the runtime.
  */
 class ServiceRuntimeException : RuntimeException {
-    // ServiceException
-    constructor(message: String?, vararg args: Any?) : super(String.format(message!!, *args))
-    internal constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(message: String, vararg args: Any?) : super(String.format(message, *args))
+
+    internal constructor(message: String, cause: Throwable?) : super(message, cause)
 }

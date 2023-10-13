@@ -5,9 +5,7 @@ package com.serious.service
 */
 
 import com.serious.service.channel.ChannelBuilder
-import com.serious.util.Exceptions
 import jakarta.annotation.PostConstruct
-import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeansException
@@ -58,14 +56,8 @@ class ChannelManager : ApplicationContextAware {
     fun scan() {
         val provider = ChannelProvider()
         val beans = provider.findCandidateComponents(rootPackage)
-        for (bean in beans) {
-            try {
-                register(bean)
-            }
-            catch (e: ClassNotFoundException) {
-                Exceptions.throwException(e)
-            }
-        }
+        for (bean in beans)
+            register(bean)
 
         // done
 

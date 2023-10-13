@@ -6,7 +6,6 @@ package com.serious.service
 */
 
 import com.serious.service.exception.ServiceRuntimeException
-import com.serious.util.Exceptions
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
@@ -73,18 +72,6 @@ abstract class BaseDescriptor<T : Service> protected constructor(@JvmField var s
         var descriptors: MutableMap<Class<out Service>, BaseDescriptor<*>> = HashMap()
         @JvmField
         var implementingBeans: MutableMap<BaseDescriptor<out Service>, BeanDefinition> = HashMap()
-
-        // static methods
-        @JvmStatic
-        fun class4Name(className: String?): Class<*>? {
-            return try {
-                Class.forName(className)
-            }
-            catch (e: ClassNotFoundException) {
-                Exceptions.throwException(e)
-                null
-            }
-        }
 
         fun rememberImplementation(descriptor: BaseDescriptor<out Service>, bean: BeanDefinition) {
             implementingBeans[descriptor] = bean

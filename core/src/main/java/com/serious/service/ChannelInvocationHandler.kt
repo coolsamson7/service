@@ -29,24 +29,24 @@ class ChannelInvocationHandler private constructor(
     // private
     private fun checkUpdate(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta): Boolean {
         if (channel is MissingChannel) {
-            val componentManager = componentDescriptor.componentManager
-            val serviceAddresses = componentManager!!.getServiceAddresses(
-                componentDescriptor, channelName
-            )
+            val componentManager = componentDescriptor.componentManager!!
+            val serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName)
+
             channel = componentManager.getChannel(componentDescriptor, channelName!!, serviceAddresses)
-        } else {
+        }
+        else {
             if (channel!!.needsUpdate(delta)) {
                 // remove
                 log.info("channel {} for {} is dead", channel!!.getPrimaryAddress(), componentDescriptor.name)
+
                 channelManager.removeChannel(channel!!)
 
                 // resolve
-                resolve(
-                    channelName,
-                    componentDescriptor.componentManager!!.getServiceAddresses(componentDescriptor, channelName)
-                )
+
+                resolve(channelName, componentDescriptor.componentManager!!.getServiceAddresses(componentDescriptor, channelName))
             }
         }
+
         return true
     }
 

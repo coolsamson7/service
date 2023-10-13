@@ -11,7 +11,6 @@ import com.serious.service.RegisterChannel
 import com.serious.service.ServiceAddress
 import com.serious.service.channel.SimpleMethodInvocation
 import com.serious.service.channel.rest.RestChannel
-import com.serious.util.Exceptions
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.*
@@ -26,26 +25,20 @@ class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : R
     // instance data
 
     @Autowired
-    var methodCache: MethodCache? = null
+    lateinit var methodCache: MethodCache
     val dispatchMethod = DispatchService::class.java.getDeclaredMethod("dispatch", String::class.java)
 
     // implement Channel
     override fun invoke(invocation: MethodInvocation): Any {
         val clazz = invocation.method.declaringClass
-        val request = ServiceRequest(
-            clazz.getName(),
-            methodCache!!.getIndex(clazz, invocation.method),
-            invocation.arguments
-        )
+        val request = ServiceRequest(clazz.getName(), methodCache.getIndex(clazz, invocation.method), invocation.arguments)
 
-        val result = super.invoke(
-            SimpleMethodInvocation(null, dispatchMethod, encodeAsString(encodeObject(request)))
-        ) as String
+        val result = super.invoke(SimpleMethodInvocation(null, dispatchMethod, encodeAsString(encodeObject(request)))) as String
 
         return decodeObject(decodeFromString(result))
     }
 
-    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>?) {
+    override fun setup(componentClass: Class<out Component>, serviceAddresses: List<ServiceAddress>) {
         super.setup(componentClass, serviceAddresses)
     }
 
@@ -64,19 +57,14 @@ class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : R
         @JvmStatic
         fun encodeObject(o: Any): ByteArray {
             val bos = ByteArrayOutputStream()
-            var out: ObjectOutputStream?
 
             return try {
-                out = ObjectOutputStream(bos)
+                val out = ObjectOutputStream(bos)
 
                 out.writeObject(o)
                 out.flush()
 
                 bos.toByteArray()
-            }
-            catch (e: IOException) {
-                Exceptions.throwException(e)
-                return bos.toByteArray() // make the compiler happy
             }
             finally {
                 try {
@@ -97,9 +85,6 @@ class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : R
 
                 return objectInput.readObject()
             }
-            catch (e: Exception) {
-                Exceptions.throwException(e)
-            }
             finally {
                 try {
                     objectInput?.close()
@@ -108,8 +93,6 @@ class DispatchChannel @Autowired constructor(channelManager: ChannelManager) : R
                     // ignore close exception
                 }
             }
-
-            return objectInput!!.readObject() // make the compiler happy
         }
     }
 }
