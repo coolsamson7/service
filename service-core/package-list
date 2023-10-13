@@ -153,10 +153,9 @@ $dokka.location:com.serious.service/ChannelManager.Companion/log/#/PointingToDec
 $dokka.location:com.serious.service/ChannelManager///PointingToDeclaration/service-core/com.serious.service/-channel-manager/index.html
 $dokka.location:com.serious.service/ChannelManager/ChannelManager/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/-channel-manager.html
 $dokka.location:com.serious.service/ChannelManager/applicationContext/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/application-context.html
-$dokka.location:com.serious.service/ChannelManager/channelBuilder/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/channel-builder.html
 $dokka.location:com.serious.service/ChannelManager/channelFactories/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/channel-factories.html
 $dokka.location:com.serious.service/ChannelManager/channels/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/channels.html
-$dokka.location:com.serious.service/ChannelManager/getChannelBuilder/#java.lang.Class[TypeParam(bounds=[com.serious.service.Channel])]/PointingToDeclaration/service-core/com.serious.service/-channel-manager/get-channel-builder.html
+$dokka.location:com.serious.service/ChannelManager/getChannelBuilders/#java.lang.Class[com.serious.service.Channel]/PointingToDeclaration/service-core/com.serious.service/-channel-manager/get-channel-builders.html
 $dokka.location:com.serious.service/ChannelManager/make/#java.lang.Class[com.serious.service.Component]#kotlin.String#kotlin.collections.List[com.serious.service.ServiceAddress]/PointingToDeclaration/service-core/com.serious.service/-channel-manager/make.html
 $dokka.location:com.serious.service/ChannelManager/register/#org.springframework.beans.factory.config.BeanDefinition/PointingToDeclaration/service-core/com.serious.service/-channel-manager/register.html
 $dokka.location:com.serious.service/ChannelManager/registerChannelBuilder/#com.serious.service.channel.ChannelBuilder[*]/PointingToDeclaration/service-core/com.serious.service/-channel-manager/register-channel-builder.html
