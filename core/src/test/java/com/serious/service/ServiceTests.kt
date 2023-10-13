@@ -54,7 +54,7 @@ internal class TestComponentImpl : AbstractComponent(), TestComponent {
 }
 
 @org.springframework.stereotype.Component
-internal class TestServiceImpl : AbstractService(), TestService {
+internal class TestServiceImpl : TestService {
     override fun hello(world: String): String {
         return "hello $world"
     }

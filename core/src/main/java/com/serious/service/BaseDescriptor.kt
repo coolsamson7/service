@@ -14,7 +14,7 @@ import java.net.URI
 import java.util.*
 
 /**
- * A <code>BaseDescriptor</code> covers the met data for both services and components.
+ * A <code>BaseDescriptor</code> covers the meta-data for both services and components.
  */
 abstract class BaseDescriptor<T : Service> protected constructor(@JvmField var serviceInterface: Class<out T>) {
     // instance data

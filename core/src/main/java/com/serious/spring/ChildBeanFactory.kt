@@ -12,10 +12,9 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.context.ConfigurableApplicationContext
 
  /**
- * @author Andreas Ernst
+ * A special [DefaultListableBeanFactory] that preserves all [BeanPostProcessor] of the parent factory
  */
-class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :
-    DefaultListableBeanFactory(parentBeanFactory) {
+class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) : DefaultListableBeanFactory(parentBeanFactory) {
     // local classes
     internal class ParentContextBeanPostProcessor(
         parent: ConfigurableApplicationContext,
@@ -34,26 +33,24 @@ class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :
             parentBeanFactory = parent.beanFactory
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Throws(BeansException::class)
         override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
             var bean = bean
             for (processor in parentProcessors) {
-                if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(beanFactory)
+                if (processor is BeanFactoryAware)
+                        (processor as BeanFactoryAware).setBeanFactory(beanFactory)
+
                 bean = try {
                     processor.postProcessBeforeInitialization(bean, beanName)
-                } finally {
-                    if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
+                }
+                finally {
+                    if (processor is BeanFactoryAware)
+                            (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
                 }
             }
             return bean
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Throws(BeansException::class)
         override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
             var bean = bean
@@ -61,8 +58,10 @@ class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :
                 if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(beanFactory)
                 bean = try {
                     processor.postProcessAfterInitialization(bean, beanName)
-                } finally {
-                    if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
+                }
+                finally {
+                    if (processor is BeanFactoryAware)
+                            (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
                 }
             }
             return bean
@@ -71,9 +70,8 @@ class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) :
 
     // constructor
     init {
-        for (postProcessor in parentBeanFactory.getBeansOfType(BeanPostProcessor::class.java).values) addBeanPostProcessor(
-            postProcessor
-        )
+        for (postProcessor in parentBeanFactory.getBeansOfType(BeanPostProcessor::class.java).values)
+            addBeanPostProcessor(postProcessor)
 
         //addBeanPostProcessor(new ParentContextBeanPostProcessor(parentBeanFactory, this));
     }

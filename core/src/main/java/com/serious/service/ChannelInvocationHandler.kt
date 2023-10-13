@@ -10,20 +10,19 @@ import org.slf4j.LoggerFactory
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
+
  /**
- * @author Andreas Ernst
+ * A special [InvocationHandler] that delegates calls to a [Channel]
  */
 class ChannelInvocationHandler private constructor(
-    private val componentDescriptor: ComponentDescriptor<*>, channelName: String, addresses: List<ServiceAddress>?
-) : InvocationHandler {
+    private val componentDescriptor: ComponentDescriptor<*>, private val channelName: String, addresses: List<ServiceAddress>) : InvocationHandler {
      // instance data
 
-    private var channelName: String? = null
     private var channel: Channel? = null
 
     // constructor
     init {
-        resolve(channelName.also { this.channelName = it }, addresses)
+        resolve(channelName, addresses)
     }
 
     // private
@@ -32,7 +31,7 @@ class ChannelInvocationHandler private constructor(
             val componentManager = componentDescriptor.componentManager!!
             val serviceAddresses = componentManager.getServiceAddresses(componentDescriptor, channelName)
 
-            channel = componentManager.getChannel(componentDescriptor, channelName!!, serviceAddresses)
+            channel = componentManager.getChannel(componentDescriptor, channelName, serviceAddresses)
         }
         else {
             if (channel!!.needsUpdate(delta)) {
@@ -43,7 +42,7 @@ class ChannelInvocationHandler private constructor(
 
                 // resolve
 
-                resolve(channelName, componentDescriptor.componentManager!!.getServiceAddresses(componentDescriptor, channelName))
+                resolve(channelName, componentDescriptor.componentManager!!.getServiceAddresses(componentDescriptor, channelName)!!)
             }
         }
 
@@ -51,8 +50,9 @@ class ChannelInvocationHandler private constructor(
     }
 
     // public
-    fun resolve(channelName: String?, addresses: List<ServiceAddress>?) {
-        channel = componentDescriptor.componentManager!!.getChannel(componentDescriptor, channelName!!, addresses)
+    fun resolve(channelName: String, addresses: List<ServiceAddress>) {
+        channel = componentDescriptor.componentManager!!.getChannel(componentDescriptor, channelName, addresses)
+
         log.info("resolved channel {} for component {}", channelName, componentDescriptor)
     }
 
@@ -73,7 +73,7 @@ class ChannelInvocationHandler private constructor(
 
         // static methods
 
-        fun forComponent(componentDescriptor: ComponentDescriptor<*>, channel: String, addresses: List<ServiceAddress>?): ChannelInvocationHandler {
+        fun forComponent(componentDescriptor: ComponentDescriptor<*>, channel: String, addresses: List<ServiceAddress>): ChannelInvocationHandler {
             val key = componentDescriptor.name + ":" + channel
 
            return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, channel, addresses)}

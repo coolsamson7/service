@@ -46,7 +46,7 @@ class TestComponentImpl : AbstractComponent(), TestComponent {
     @get:GetMapping("/uri")
     override val addresses: List<ServiceAddress>
         get() = java.util.List.of(
-            ServiceAddress("dispatch", URI.create("http://" + host + ":" + port)),
-            ServiceAddress("rest", URI.create("http://" + host + ":" + port))
+            ServiceAddress("dispatch", URI.create("http://$host:$port")),
+            ServiceAddress("rest", URI.create("http://$host:$port"))
         )
 }

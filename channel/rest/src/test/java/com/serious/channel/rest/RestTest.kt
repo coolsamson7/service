@@ -150,12 +150,12 @@ internal interface TestComponent : com.serious.service.Component
 @ComponentHost
 internal class TestComponentImpl : AbstractComponent(), TestComponent {
     override val addresses: List<ServiceAddress>
-        get() = listOf(ServiceAddress("rest", URI.create("http://localhost:" + ":" + port)))
+        get() = listOf(ServiceAddress("rest", URI.create("http://localhost::$port")))
 }
 
 @Component
 @RestController
-internal class FluxMethodsImpl : AbstractService(), FluxMethods {
+internal class FluxMethodsImpl : FluxMethods {
     override fun get(world: String): Mono<String> {
         return Mono.just(world)
     }
@@ -171,7 +171,7 @@ internal class FluxMethodsImpl : AbstractService(), FluxMethods {
 
 @Component
 @RestController
-internal class BasicMethodsImpl : AbstractService(), BasicMethods {
+internal class BasicMethodsImpl : BasicMethods {
     override fun getList(world: String, count: Int): List<String> {
         val result: MutableList<String> = ArrayList()
         for (i in 0 until count) result.add(world + i)
@@ -248,7 +248,7 @@ internal class BasicMethodsImpl : AbstractService(), BasicMethods {
 
 @Component
 @RestController
-internal class RequestMappingMethodsImpl : AbstractService(), RequestMappingMethods {
+internal class RequestMappingMethodsImpl : RequestMappingMethods {
     override fun getVariable(world: String): String {
         return world
     }

@@ -1,22 +1,20 @@
 package com.serious.injection
-
-import java.lang.reflect.AccessibleObject
-
 /*
 * @COPYRIGHT (C) 2023 Andreas Ernst
 *
 * All rights reserved
-*/ /**
+*/
+
+import java.lang.reflect.AccessibleObject
+
+ /**
  * An `Injection` is responsible for the injection of a single resource into a target
  * object using a property of the target
- * object which is marked by a Java5 annotation. The property is an `AccessibleObject` in
+ * object which is marked by an annotation. The property is an `AccessibleObject` in
  * the sense of Java reflection. To be
  * more precise: a field or a method; constructors are not supported. Any visibility of the
  * field/method (private, public, ...) is
  * supported.
- *
- * @author Andreas Ernst
- * @version 1.0
  */
 interface Injection<AnnotationType : Annotation?, InjectionContext>  {
     var annotationClass: Class<out Annotation>

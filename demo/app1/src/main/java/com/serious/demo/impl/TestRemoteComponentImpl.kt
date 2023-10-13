@@ -1,4 +1,9 @@
 package com.serious.demo.impl
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.demo.TestRemoteComponent
 import com.serious.service.AbstractComponent
@@ -14,11 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * @author Andreas Ernst
  */
 @ComponentHost(health = "/api/test-remote-component/test-health")
@@ -40,7 +41,7 @@ class TestRemoteComponentImpl : AbstractComponent(), TestRemoteComponent {
     @get:GetMapping("/uri")
     override val addresses: List<ServiceAddress>
         get() = java.util.List.of(
-            ServiceAddress("dispatch", URI.create("http://" + host + ":" + port)),
-            ServiceAddress("rest", URI.create("http://" + host + ":" + port))
+            ServiceAddress("dispatch", URI.create("http://$host:$port")),
+            ServiceAddress("rest", URI.create("http://$host:$port"))
         )
 }

@@ -1,33 +1,16 @@
 package com.serious.lang
-
-import java.io.*
-
 /*
 * @COPYRIGHT (C) 2023 Andreas Ernst
 *
 * All rights reserved
-*/ /**
+*/
+
+import java.io.*
+
+ /**
  * The class `Keywords` is a helper for supporting named optional method arguments. These
- * arguments are handled like an array of
- * arguments with the difference that each argument is named and may or may not be provided in a
- * concrete method call. The concept of a
- * keyword arguments is fundamental for all languages derived from LISP and is even useful in a
- * language like Java.
- *
- *
- *
- *
- * Note: The main drawback using keyword arguments is that compile time type checking is effectively
- * disabled. Furthermore a little storage
- * overhead is posed on each method call using keyword arguments.
- *
- *
- *
- *
- * Note: `Keywords` implements the `toString` method and the
- * `clone` method.
- *
- * @author Andreas Ernst
+ * arguments are handled like an array of arguments with the difference that each argument is named and may or may not be provided in a
+ * concrete method call.
  */
 open class Keywords : Cloneable, Externalizable {
     // local classes

@@ -10,20 +10,16 @@ import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Method
 
 /**
- * @author Andreas Ernst
+ * Simple [MethodInvocation] implementation
  */
-class SimpleMethodInvocation : MethodInvocation {
+class SimpleMethodInvocation(private var targetObject: Any?, private var method: Method, vararg args: Any) : MethodInvocation {
     // instance data
 
-    private var method: Method
     private var arguments: Array<Any>
-    private var targetObject: Any?
 
     // constructor
 
-    constructor(targetObject: Any?, method: Method, vararg args: Any) {
-        this.targetObject = targetObject
-        this.method = method
+    init {
         this.arguments = args as Array<Any>
     }
 

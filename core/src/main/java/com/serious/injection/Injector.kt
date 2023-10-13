@@ -1,4 +1,9 @@
 package com.serious.injection
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.collections.Arrays.add2
 import com.serious.lang.Keywords
@@ -9,11 +14,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.*
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * An `Injector` is responsible for the complete dependency injection of target
  * objects. Basically, it performs two tasks:
  *
@@ -26,9 +27,6 @@ import java.util.*
  * target type, looks up registered injectors for the annotations' types and - if present - calls,
  * one after the other, the
  * `inject` method of these injectors for the target object.
- *
- *
- * @author Andreas Ernst
  */
 class Injector : BeanPostProcessor {
     // local classes
@@ -73,6 +71,7 @@ class Injector : BeanPostProcessor {
         cachedMethodInjectors = IdentityHashMap()
     }
     // public
+
     /**
      * Returns the registered injector for this annotation type.
      *
@@ -195,12 +194,14 @@ class Injector : BeanPostProcessor {
                 methodInjectors = cacheMethodInjectors(targetObject)
             }
         } // synchronized
+
         for (cachedInjector in fieldInjectors!!) cachedInjector.injection.inject(
             targetObject,
             cachedInjector.accessibleObject,
             cachedInjector.annotation,
             context
         )
+
         for (cachedInjector in methodInjectors!!) cachedInjector.injection.inject(
             targetObject,
             cachedInjector.accessibleObject,
@@ -220,6 +221,7 @@ class Injector : BeanPostProcessor {
         inject(bean, Keywords.NONE)
 
         // done
+
         return bean
     }
 

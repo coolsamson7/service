@@ -6,11 +6,10 @@ package com.serious.demo.impl
 */
 
 import com.serious.demo.TestService
-import com.serious.service.AbstractService
 import org.springframework.stereotype.Component
 
 @Component
-class TestServiceImpl : AbstractService(), TestService {
+class TestServiceImpl : TestService {
     override fun hello(): String {
         return "hello"
     }

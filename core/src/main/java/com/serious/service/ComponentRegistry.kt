@@ -8,7 +8,7 @@ package com.serious.service
 import org.springframework.cloud.client.ServiceInstance
 
  /**
- * @author Andreas Ernst
+ * A `ComponentRegistry` is a registry for components.
  */
 interface ComponentRegistry {
     fun startup(descriptor: ComponentDescriptor<Component>)

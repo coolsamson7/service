@@ -10,7 +10,7 @@ import com.serious.service.exception.ServiceRuntimeException
 import org.aopalliance.intercept.MethodInvocation
 
 /**
- * @author Andreas Ernst
+ * A channel constructed for non-resolvable addresses
  */
 class MissingChannel(channelManager: ChannelManager, private val componentName: String) : AbstractChannel(channelManager) {
     // implement Channel

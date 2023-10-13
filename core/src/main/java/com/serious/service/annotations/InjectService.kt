@@ -6,7 +6,7 @@ package com.serious.service.annotations
  */
 
 /**
- * @author Andreas Ernst
+ * Fields annotated with this annotation will inject the corresponding service proxy.
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)

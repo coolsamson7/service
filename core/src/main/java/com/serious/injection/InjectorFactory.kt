@@ -16,7 +16,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBean<Any?>, BeanPostProcessor {
     // constructor
     init {
-        for (injection in injections) INSTANCE.registerInjection(injection)
+        for (injection in injections)
+            INSTANCE.registerInjection(injection)
     }
 
     // public

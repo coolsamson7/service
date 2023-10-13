@@ -40,7 +40,7 @@ class CommonComponentImpl : AbstractComponent(), CommonComponent {
     override val addresses: List<ServiceAddress>
         // implement TestComponent
         get() = java.util.List.of(
-            ServiceAddress("dispatch", URI.create("http://" + host + ":" + port)),
-            ServiceAddress("rest", URI.create("http://" + host + ":" + port))
+            ServiceAddress("dispatch", URI.create("http://$host:$port")),
+            ServiceAddress("rest", URI.create("http://$host:$port"))
         )
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
 /**
- * @author Andreas Ernst
+ * Marks a [ChannelBuilder]
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)

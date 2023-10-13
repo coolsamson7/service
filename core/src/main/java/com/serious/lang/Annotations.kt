@@ -8,7 +8,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Proxy
 
  /**
- *
+ * Utility class dealing with annotations
  */
 object Annotations {
     // methods
@@ -30,11 +30,14 @@ object Annotations {
         val memberValues: MutableMap<String, Any>
         memberValues = try {
             field[handler] as MutableMap<String, Any>
-        } catch (e: IllegalArgumentException) {
-            throw IllegalStateException(e)
-        } catch (e: IllegalAccessException) {
+        }
+        catch (e: IllegalArgumentException) {
             throw IllegalStateException(e)
         }
+        catch (e: IllegalAccessException) {
+            throw IllegalStateException(e)
+        }
+
         val oldValue = memberValues[key]
         require(!(oldValue == null || oldValue.javaClass != newValue.javaClass))
         memberValues[key] = newValue
