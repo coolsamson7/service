@@ -20,44 +20,15 @@ abstract class AbstractInjection<Resource, AnnotationType : Annotation, Injectio
 
         val value = computeValue(targetObject, accessibleType, accessibleObject, annotation, context)
 
-        if (accessibleObject is Field)
-            injectByField(targetObject, value, accessibleObject)
+        try {
+            if (accessibleObject is Field)
+                accessibleObject.set(targetObject, value)
 
-        else if (accessibleObject is Method)
-            injectByMethod(targetObject, value, accessibleObject)
-    }
-
-    private fun injectByField(targetObject: Any, value: Resource, field: Field) {
-        synchronized(field) {
-            try {
-                field.setAccessible(true)
-                field[targetObject] = value
-            }
-            catch (e: IllegalAccessException) {
-                throw InjectionException("Failed to inject value " + value + " to field " + field.name + " of " + targetObject.javaClass.getName(), e)
-            }
-            finally {
-                field.setAccessible(false)
-            }
+            else if (accessibleObject is Method)
+                accessibleObject.invoke(targetObject, value)
         }
-    }
-
-    private fun injectByMethod(targetObject: Any, value: Resource, method: Method) {
-        // temporary access grant must be an atomic operation
-        synchronized(method) {
-            try {
-                method.setAccessible(true)
-                method.invoke(targetObject, value)
-            }
-            catch (e: IllegalAccessException) {
-                throw InjectionException("Failed to inject value " + value + " by calling method " + method.name + " of " + targetObject.javaClass.getName(), e)
-            }
-            catch (e: InvocationTargetException) {
-                throw InjectionException("Failed to inject value " + value + " by calling method " + method.name + " of " + targetObject.javaClass.getName(), e.targetException)
-            }
-            finally {
-                method.setAccessible(false)
-            }
+        catch (e: Exception) {
+            throw InjectionException("Failed to inject value $value of ${targetObject.javaClass.getName()}", e)
         }
     }
 

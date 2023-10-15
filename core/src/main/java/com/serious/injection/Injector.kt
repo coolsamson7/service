@@ -81,6 +81,8 @@ class Injector(vararg injections: Injection<Annotation, Any>) : BeanPostProcesso
             if (fieldsWithAnnotation != null) {
                 for (field in fieldsWithAnnotation) {
                     val annotation = field.getAnnotation(annotationType)!!
+
+                    field.trySetAccessible() // if false?
                     cachedInjectors.add(CachedInjector(field, annotation, value))
                 }
             } // if
@@ -112,6 +114,8 @@ class Injector(vararg injections: Injection<Annotation, Any>) : BeanPostProcesso
             if (methodsWithAnnotation != null) {
                 for (method in methodsWithAnnotation) {
                     val annotation = method.getAnnotation(annotationType)!!
+
+                    method.trySetAccessible() // if result is false?
                     cachedInjectors.add(CachedInjector(method, annotation, value))
                 }
             } // if
