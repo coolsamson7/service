@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MethodDispatcher</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            service-core
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter="service-core/JVM">JVM</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="service-core::com.serious.util/MethodDispatcher///PointingToDeclaration//1569566533">
+  <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.util</a><span class="delimiter">/</span><span class="current">MethodDispatcher</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Method</span><wbr></wbr><span><span>Dispatcher</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">MethodDispatcher</a></div><p class="paragraph">A <code class="lang-kotlin">MethodDispatcher</code> organizes a set of methods with identical signatures - possibly defined in distinct classes - and is able to dispatch to an applicable method by analyzing the first argument of - possibly multiple - supplied arguments.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="987121161%2FConstructors%2F1569566533" anchor-label="MethodDispatcher" id="987121161%2FConstructors%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-method-dispatcher.html"><span>Method</span><wbr></wbr><span><span>Dispatcher</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="987121161%2FConstructors%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span></span><span class="parameter ">methodName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">create a new <code class="lang-kotlin">MethodDispatcher</code>. The instance will collect all matching methods of the supplied instance class.</p></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">methodName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">create a new <code class="lang-kotlin">MethodDispatcher</code>. The instance will collect all matching methods of its own class.</p></div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">original<span class="token operator">: </span><a href="index.html">MethodDispatcher</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-2094899403%2FClasslikes%2F1569566533" anchor-label="Companion" id="-2094899403%2FClasslikes%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2094899403%2FClasslikes%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="750745946%2FClasslikes%2F1569566533" anchor-label="NoApplicableMethodError" id="750745946%2FClasslikes%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-no-applicable-method-error/index.html"><span>No</span><wbr></wbr><span>Applicable</span><wbr></wbr><span>Method</span><wbr></wbr><span><span>Error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="750745946%2FClasslikes%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">class </span><a href="-no-applicable-method-error/index.html">NoApplicableMethodError</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clazz<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span> : <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html">RuntimeException</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1049556222%2FClasslikes%2F1569566533" anchor-label="RegisteredMethod" id="1049556222%2FClasslikes%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-registered-method/index.html"><span>Registered</span><wbr></wbr><span><span>Method</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1049556222%2FClasslikes%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">class </span><a href="-registered-method/index.html">RegisteredMethod</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1739600351%2FFunctions%2F1569566533" anchor-label="addMethods" id="-1739600351%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-methods.html"><span>add</span><wbr></wbr><span><span>Methods</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1739600351%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="add-methods.html"><span class="token function">addMethods</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span></span><span class="parameter ">methodName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">look for all named methods of the instance's class and add them to the list of methods that can be dispatched.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="993129891%2FFunctions%2F1569566533" anchor-label="dispatch" id="993129891%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dispatch.html"><span><span>dispatch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="993129891%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="dispatch.html"><span class="token function">dispatch</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>args<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></div><div class="brief "><p class="paragraph">Invoke the most applicable method with respect to the supplied argument and returns its return value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="987976464%2FFunctions%2F1569566533" anchor-label="ensureUniqueMethods" id="987976464%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ensure-unique-methods.html"><span>ensure</span><wbr></wbr><span>Unique</span><wbr></wbr><span><span>Methods</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="987976464%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="ensure-unique-methods.html"><span class="token function">ensureUniqueMethods</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unique<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1747745624%2FFunctions%2F1569566533" anchor-label="foo" id="-1747745624%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="foo.html"><span><span>foo</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1747745624%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="foo.html"><span class="token function">foo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1439109550%2FFunctions%2F1569566533" anchor-label="getApplicableMethod" id="1439109550%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-applicable-method.html"><span>get</span><wbr></wbr><span>Applicable</span><wbr></wbr><span><span>Method</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1439109550%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-applicable-method.html"><span class="token function">getApplicableMethod</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clazz<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html">Method</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="24083077%2FFunctions%2F1569566533" anchor-label="getApplicableMethods" id="24083077%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-applicable-methods.html"><span>get</span><wbr></wbr><span>Applicable</span><wbr></wbr><span><span>Methods</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="24083077%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-applicable-methods.html"><span class="token function">getApplicableMethods</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clazz<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-registered-method/index.html">MethodDispatcher.RegisteredMethod</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-97831958%2FFunctions%2F1569566533" anchor-label="hasApplicableMethod" id="-97831958%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-applicable-method.html"><span>has</span><wbr></wbr><span>Applicable</span><wbr></wbr><span><span>Method</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-97831958%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="has-applicable-method.html"><span class="token function">hasApplicableMethod</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clazz<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">return <code class="lang-kotlin">true</code> if an applicable method for the supplied argument is available, <code class="lang-kotlin">false</code> otherwise.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="342533044%2FFunctions%2F1569566533" anchor-label="replaceMethods" id="342533044%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="replace-methods.html"><span>replace</span><wbr></wbr><span><span>Methods</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="342533044%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="replace-methods.html"><span class="token function">replaceMethods</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">instance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span></span><span class="parameter ">methodName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">look for all named methods of the instance's class and add them to the list of methods that can be dispatched possibly replacing existing methods.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
