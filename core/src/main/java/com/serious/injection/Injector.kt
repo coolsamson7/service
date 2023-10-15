@@ -13,50 +13,34 @@ import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.*
+import kotlin.collections.ArrayList
 
- /**
+/**
  * An `Injector` is responsible for the complete dependency injection of target
  * objects. Basically, it performs two tasks:
  *
- *  * It serves as a registry for [Injection]s. An injector is registered for a certain type
- * of annotation. the injection manager can
- * only process annotated fields and methods if there is an injector registered for the annotation
- * type.
- *  * It performs the injection of resources into a target object. Therefore, it computes all
- * annotations of fields and methods of the
- * target type, looks up registered injectors for the annotations' types and - if present - calls,
- * one after the other, the
- * `inject` method of these injectors for the target object.
+ *  * It serves as a registry for [Injection]s.
+ *  * It performs the injection of resources into a target object.
  */
-class Injector : BeanPostProcessor {
+class Injector(vararg injections: Injection<Annotation, Any>) : BeanPostProcessor {
     // local classes
-    private class CachedInjector // constructor
-    internal constructor(// instance data
-        val accessibleObject: AccessibleObject, val annotation: Annotation, val injection: Injection<Annotation, Any>
-    )
+    private class CachedInjector(val accessibleObject: AccessibleObject, val annotation: Annotation, val injection: Injection<Annotation, Any>)
 
     // instance data
-    // Registered injectors are collected in a LinkedHashMap in order to preserve the order of
-    // registration (see methods cacheFieldInjectors and cacheMethodInjectors)
-    private val injections: MutableMap<Class<out Annotation?>?, Injection<Annotation, Any>> = LinkedHashMap()
+
+    private val injections: MutableMap<Class<out Annotation>, Injection<Annotation, Any>> = LinkedHashMap()
     private var cachedFieldInjectors: MutableMap<Class<*>, Array<CachedInjector>> = IdentityHashMap()
     private var cachedMethodInjectors: MutableMap<Class<*>, Array<CachedInjector>> = IdentityHashMap()
 
     // constructor
-    constructor()
 
-    fun injections(): Map<Class<out Annotation?>?, Injection<Annotation, Any>> {
-        return injections
-    }
+     init {
+         for (injection in injections)
+             registerInjection(injection)
+     }
 
-    constructor(vararg injections: Injection<Annotation, Any>) {
-        for (injection in injections) registerInjection(injection)
-    }
-
-    constructor(injections: List<Injection<Annotation, Any>>) {
-        for (injection in injections) registerInjection(injection)
-    }
     // public
+
     /**
      * Registers a dependency injector for the given annotation type. The manager will use this
      * injector for a given object if there are
@@ -67,50 +51,33 @@ class Injector : BeanPostProcessor {
     @Synchronized
     fun registerInjection(injection: Injection<Annotation, Any>) {
         injections[injection.annotationClass] = injection
-        cachedFieldInjectors = IdentityHashMap()
-        cachedMethodInjectors = IdentityHashMap()
+        cachedFieldInjectors.clear()
+        cachedMethodInjectors.clear()
     }
+
     // public
 
-    /**
-     * Returns the registered injector for this annotation type.
-     *
-     * @param annotationClass the annotation type
-     * @return the injector or `null` of there is no injector registered for that
-     * annotation type
-     */
-    @Synchronized
-    fun getInjection(annotationClass: Class<out Annotation?>?): Injection<Annotation, Any>? {
-        return injections[annotationClass]
-    }
-
-    private fun cacheFieldInjectors(`object`: Any): Array<CachedInjector> {
-        val clazz: Class<*> = `object`.javaClass
-
+    private fun computeFieldInjectors(clazz: Class<*>): Array<CachedInjector> {
         // When computing the cached injectors consider the order in which the injectors have been
         // registered
-        // (i.e. a field with an annotation whose injector has been registered first will be
-        // injected first).
-        // So, first collect all fields per annotation type...
-        val annotatedFields: MutableMap<Class<out Annotation?>?, Array<Field>> = IdentityHashMap()
+
+        val annotatedFields: MutableMap<Class<out Annotation>, Array<Field>> = IdentityHashMap()
         for (field in computeFields(clazz)) {
-            //val annotations = field.annotations
             for (annotation in field.getAnnotations()) {
-                val annotationType: Class<out Annotation?> = annotation.annotationClass.java
+                val annotationType: Class<out Annotation> = annotation.annotationClass.java
+
                 var fieldsWithAnnotation = annotatedFields[annotationType]
-                fieldsWithAnnotation = if (fieldsWithAnnotation == null) arrayOf(field) else add2(
-                    Field::class.java, fieldsWithAnnotation, field
-                )
+                fieldsWithAnnotation = if (fieldsWithAnnotation == null) arrayOf(field) else add2(Field::class.java, fieldsWithAnnotation, field)
                 annotatedFields[annotationType] = fieldsWithAnnotation
             } // for
         } // for
 
-        // ... and then iterate over all registered injectors (LinkedHashMap, so order of
-        // registration is preserved!)
-        // and then use map of fields from above to cache the injectors in an ordered list
+        // ... and then iterate over all registered injectors
+
         val cachedInjectors: MutableList<CachedInjector> = ArrayList()
         for ((annotationType, value) in injections) {
             val fieldsWithAnnotation = annotatedFields[annotationType]
+
             if (fieldsWithAnnotation != null) {
                 for (field in fieldsWithAnnotation) {
                     val annotation = field.getAnnotation(annotationType)!!
@@ -119,35 +86,26 @@ class Injector : BeanPostProcessor {
             } // if
         } // for
 
-        val injectors = cachedInjectors.toTypedArray<CachedInjector>()
-
-        cachedFieldInjectors[clazz] = injectors
-
-        return injectors
+        return cachedInjectors.toTypedArray<CachedInjector>()
     }
 
-    private fun cacheMethodInjectors(`object`: Any): Array<CachedInjector> {
-        val clazz: Class<*> = `object`.javaClass
+    private fun computeMethodInjectors(clazz: Class<*>): Array<CachedInjector> {
+        // When computing the cached injectors consider the order in which the injectors have been registered
 
-        // When computing the cached injectors consider the order in which the injectors have been
-        // registered
-        // (i.e. a method with an annotation whose injector has been registered first will be
-        // injected first).
-        // So, first collect all methods per annotation type...
-        val annotatedMethods: MutableMap<Class<out Annotation?>?, Array<Method>> = IdentityHashMap()
+        val annotatedMethods: MutableMap<Class<out Annotation>, Array<Method>> = IdentityHashMap()
         for (method in computeMethods(clazz)) {
-            val annotations = method.annotations
-            for (annotation in annotations) {
-                val annotationType: Class<out Annotation?> = annotation::class.java
+            for (annotation in method.annotations) {
+                val annotationType: Class<out Annotation> = annotation::class.java
+
                 var methodsWithAnnotation = annotatedMethods[annotationType]
                 methodsWithAnnotation = if (methodsWithAnnotation == null) arrayOf(method) else add2(Method::class.java, methodsWithAnnotation, method)
+
                 annotatedMethods[annotationType] = methodsWithAnnotation
             } // for
         } // for
 
-        // ... and then iterate over all registered injectors (LinkedHashMap, so order of
-        // registration is preserved!)
-        // and then use map of methods from above to cache the injectors in an ordered list
+        // ... and then iterate over all registered injectors
+
         val cachedInjectors: MutableList<CachedInjector> = ArrayList()
         for ((annotationType, value) in injections) {
             val methodsWithAnnotation = annotatedMethods[annotationType]
@@ -159,19 +117,7 @@ class Injector : BeanPostProcessor {
             } // if
         } // for
 
-        val injectors = cachedInjectors.toTypedArray<CachedInjector>()
-
-        cachedMethodInjectors[clazz] = injectors
-
-        return injectors
-    }
-
-    private fun getFieldInjectors(clazz: Class<*>): Array<CachedInjector>? {
-        return cachedFieldInjectors[clazz]
-    }
-
-    private fun getMethodInjectors(clazz: Class<*>): Array<CachedInjector>? {
-        return cachedMethodInjectors[clazz]
+        return cachedInjectors.toTypedArray<CachedInjector>()
     }
 
     /**
@@ -183,31 +129,13 @@ class Injector : BeanPostProcessor {
      * needs of the injectors that have been registered by the caller)
      */
     fun inject(targetObject: Any, context: Any) {
-        val clazz: Class<*> = targetObject.javaClass
+        val fieldInjectors  = cachedFieldInjectors.computeIfAbsent(targetObject.javaClass) { _ -> computeFieldInjectors(targetObject.javaClass) }
+        for (cachedInjector in fieldInjectors)
+            cachedInjector.injection.inject(targetObject, cachedInjector.accessibleObject, cachedInjector.annotation, context)
 
-        var fieldInjectors  = getFieldInjectors(clazz)
-        var methodInjectors = getMethodInjectors(clazz)
-
-        synchronized(this) {
-            if (fieldInjectors == null) {
-                fieldInjectors = cacheFieldInjectors(targetObject)
-                methodInjectors = cacheMethodInjectors(targetObject)
-            }
-        } // synchronized
-
-        for (cachedInjector in fieldInjectors!!) cachedInjector.injection.inject(
-            targetObject,
-            cachedInjector.accessibleObject,
-            cachedInjector.annotation,
-            context
-        )
-
-        for (cachedInjector in methodInjectors!!) cachedInjector.injection.inject(
-            targetObject,
-            cachedInjector.accessibleObject,
-            cachedInjector.annotation,
-            context
-        )
+        val methodInjectors = cachedMethodInjectors.computeIfAbsent(targetObject.javaClass) { _ -> computeMethodInjectors(targetObject.javaClass) }
+        for (cachedInjector in methodInjectors)
+            cachedInjector.injection.inject(targetObject, cachedInjector.accessibleObject, cachedInjector.annotation, context)
     }
 
     // implement BeanPostProcessor
@@ -228,34 +156,38 @@ class Injector : BeanPostProcessor {
     companion object {
         private fun computeFields(clazz: Class<*>): Array<Field> {
             val fields: MutableCollection<Field> = ArrayList()
-            collectFields(clazz, fields)
+
+            fun collect(clazz: Class<*>) {
+                val superclass = clazz.superclass
+                if (superclass != null && superclass != Any::class.java)
+                    collect(superclass)
+
+                fields.addAll(arrayListOf(*clazz.getDeclaredFields()))
+            }
+
+            // go forrest
+
+            collect(clazz)
 
             return fields.toTypedArray<Field>()
         }
 
-        private fun collectFields(clazz: Class<*>, collectedFields: MutableCollection<Field>) {
-            val superclass = clazz.superclass
-            if (superclass != null && superclass != Any::class.java)
-                // Needn't collect fields of Object, cannot be annotated...
-                collectFields(superclass, collectedFields)
-
-            Collections.addAll(collectedFields, *clazz.getDeclaredFields())
-        }
-
         private fun computeMethods(clazz: Class<*>): Array<Method> {
             val methods: MutableCollection<Method> = ArrayList()
-            collectMethods(clazz, methods)
+
+            fun collect(clazz: Class<*>) {
+                val superclass = clazz.superclass
+                if (superclass != null && superclass != Any::class.java)
+                    collect(superclass)
+
+                methods.addAll(arrayListOf(*clazz.getDeclaredMethods()))
+            }
+
+            // go forrest
+
+            collect(clazz)
 
             return methods.toTypedArray<Method>()
-        }
-
-        private fun collectMethods(clazz: Class<*>, collectedMethods: MutableCollection<Method>) {
-            val superclass = clazz.superclass
-            if (superclass != null && superclass != Any::class.java)
-                // Needn't collect methods of Object, cannot be annotated...
-                collectMethods(superclass, collectedMethods)
-
-            Collections.addAll(collectedMethods, *clazz.getDeclaredMethods())
         }
     }
 }

@@ -117,7 +117,7 @@ class ComponentManager @Autowired internal constructor(
         val descriptor = forService<T>(serviceClass)
 
         return if (descriptor.hasImplementation())
-            acquireService(descriptor, ServiceAddress("local", emptyList()))
+            acquireService(descriptor, ServiceAddress.LOCAL)
         else
             throw ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName())
     }
@@ -140,14 +140,14 @@ class ComponentManager @Autowired internal constructor(
             if (address.channel == "local")
                 Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
-                    arrayOf<Class<*>>(serviceClass)
+                    arrayOf(serviceClass)
                 ) { _: Any?, method: Method, args: Array<Any>? ->
                     method.invoke(descriptor.local, *args ?: emptyArgs)
                 } as T
             else
                 Proxy.newProxyInstance(
                     serviceClass.getClassLoader(),
-                    arrayOf<Class<*>>(serviceClass),
+                    arrayOf(serviceClass),
                     forComponent(descriptor.getComponentDescriptor(), address.channel, address)
                 ) as T
         } as T

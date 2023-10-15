@@ -30,11 +30,9 @@ import java.lang.reflect.Field
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) :
-    AbstractInjection<Service?, InjectService, Keywords?>(
-        InjectService::class.java
-    ), ApplicationContextAware {
+    AbstractInjection<Service, InjectService, Keywords?>(InjectService::class.java), ApplicationContextAware {
     // instance data
-    private var componentManager: ComponentManager? = null
+    private lateinit var componentManager: ComponentManager
 
     // public
 
@@ -44,19 +42,13 @@ class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) 
 
     // implement AbstractInjection
 
-    override fun computeValue(
-        targetObject: Any?,
-        accessibleObjectType: Class<*>?,
-        accessibleObject: AccessibleObject?,
-        annotation: InjectService,
-        context: Keywords?
-    ): Service {
-        val serviceInterface = (accessibleObject as Field?)!!.type as Class<out Service>
+    override fun computeValue(targetObject: Any, accessibleObjectType: Class<*>, accessibleObject: AccessibleObject, annotation: InjectService, context: Keywords?): Service {
+        val serviceInterface = (accessibleObject as Field).type as Class<out Service>
 
-        return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).local != null)
-            componentManager!!.acquireLocalService(serviceInterface)
+        return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).hasImplementation())
+            componentManager.acquireLocalService(serviceInterface)
         else
-            componentManager!!.acquireService(serviceInterface, *annotation.channels)
+            componentManager.acquireService(serviceInterface, *annotation.channels)
     }
 
     // implement ApplicationContextAware

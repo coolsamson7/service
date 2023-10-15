@@ -5,26 +5,15 @@ package com.serious.injection
 * All rights reserved
 */
 
-import org.apache.logging.log4j.util.Strings
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
  /**
- * Base implementation of an `Injector` which is able to inject resources via fields or
- * methods. It uses the following generic
- * types:
- *
- *  * `Resource`: the type of the resource to inject.
- *  * `AnnotationType`: the type of annotation that requrests the injection of that
- * resource.
- *  * `InjectionContext`: the type of the context that this injector depends on; if the
- * injector does not need any context
- * information, `Object` should be used.
+ * Base class for a [Injection]
  */
-abstract class AbstractInjection<Resource, AnnotationType : Annotation?, InjectionContext> // constructor
-protected constructor(override var annotationClass: Class<out Annotation>) : Injection<AnnotationType, InjectionContext> {
+abstract class AbstractInjection<Resource, AnnotationType : Annotation, InjectionContext>(override var annotationClass: Class<out Annotation>) : Injection<AnnotationType, InjectionContext> {
 
     override fun inject(targetObject: Any, accessibleObject: AccessibleObject, annotation: AnnotationType, context: InjectionContext) {
         val accessibleType = computeAccessibleType(accessibleObject, targetObject)
@@ -83,23 +72,7 @@ protected constructor(override var annotationClass: Class<out Annotation>) : Inj
      * @param context              the injection context
      * @return the resource to inject
      */
-    protected abstract fun computeValue(
-        targetObject: Any?,
-        accessibleObjectType: Class<*>?,
-        accessibleObject: AccessibleObject?,
-        annotation: AnnotationType,
-        context: InjectionContext
-    ): Resource
-
-    /**
-     * Helper method that checks whether the given string contains a not null non empty string.
-     *
-     * @param value the string
-     * @return `true` if the string has a nonempty value
-     */
-    protected fun hasText(value: String?): Boolean {
-        return !Strings.isEmpty(value)
-    }
+    protected abstract fun computeValue(targetObject: Any, accessibleObjectType: Class<*>, accessibleObject: AccessibleObject, annotation: AnnotationType, context: InjectionContext): Resource
 
     companion object {
         private fun computeAccessibleType(accessibleObject: AccessibleObject, accessibleObjectOwner: Any): Class<*> {
@@ -108,10 +81,8 @@ protected constructor(override var annotationClass: Class<out Annotation>) : Inj
 
             if (accessibleObject is Method) {
                 val parameterTypes: Array<Class<*>> = accessibleObject.parameterTypes
-                if (parameterTypes.size != 1) throw InjectionException(
-                    "Cannot inject a value to object " + accessibleObjectOwner + " by means of method " + accessibleObject.name
-                            + ": Method must have exactly one parameter"
-                )
+                if (parameterTypes.size != 1)
+                    throw InjectionException("Cannot inject a value to object $accessibleObjectOwner by means of method ${accessibleObject.name}: Method must have exactly one parameter")
 
                 return parameterTypes[0]
             }

@@ -31,7 +31,11 @@ data class ServiceAddress(var channel: String, var serviceInstances: List<Servic
     }
 
     companion object {
+        val LOCAL = ServiceAddress("local", emptyList())
+
         // static methods
+
+        // TODO
         private fun extractAddresses(channels: String): List<ChannelAddress?> {
             return Arrays.stream(channels.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
                 .map { channel: String ->

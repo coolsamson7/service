@@ -13,7 +13,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor
  /**
  * @author Andreas Ernst
  */
-class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBean<Any?>, BeanPostProcessor {
+class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBean<Any>, BeanPostProcessor {
     // constructor
     init {
         for (injection in injections)
@@ -52,7 +52,6 @@ class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBe
     }
 
     companion object {
-        // static data
         private val INSTANCE = Injector()
     }
 }
