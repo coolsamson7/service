@@ -6,6 +6,8 @@ $dokka.location:com.serious.collections/Arrays/add2/#java.lang.Class[TypeParam(b
 $dokka.location:com.serious.collections/Arrays/add2/#java.lang.Class[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]#kotlin.Int#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/service-core/com.serious.collections/-arrays/add2.html
 $dokka.location:com.serious.collections/Arrays/contains/#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/service-core/com.serious.collections/-arrays/contains.html
 $dokka.location:com.serious.exception////PointingToDeclaration/service-core/com.serious.exception/index.html
+$dokka.location:com.serious.exception/AllowedException///PointingToDeclaration/service-core/com.serious.exception/-allowed-exception/index.html
+$dokka.location:com.serious.exception/AllowedException/AllowedException/#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.exception/-allowed-exception/-allowed-exception.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion///PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/index.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion/EMPTY_HANDLERS_ARRAY/#/PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/-e-m-p-t-y_-h-a-n-d-l-e-r-s_-a-r-r-a-y.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion/clearExternal/#/PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/clear-external.html
@@ -50,6 +52,10 @@ $dokka.location:com.serious.injection/InjectorFactory/isSingleton/#/PointingToDe
 $dokka.location:com.serious.injection/InjectorFactory/postProcessAfterInitialization/#kotlin.Any#kotlin.String/PointingToDeclaration/service-core/com.serious.injection/-injector-factory/post-process-after-initialization.html
 $dokka.location:com.serious.injection/InjectorFactory/postProcessBeforeInitialization/#kotlin.Any#kotlin.String/PointingToDeclaration/service-core/com.serious.injection/-injector-factory/post-process-before-initialization.html
 $dokka.location:com.serious.injection/InjectorFactory/registerInjection/#com.serious.injection.Injection[kotlin.Annotation,kotlin.Any]/PointingToDeclaration/service-core/com.serious.injection/-injector-factory/register-injection.html
+$dokka.location:com.serious.jackson////PointingToDeclaration/service-core/com.serious.jackson/index.html
+$dokka.location:com.serious.jackson/ThrowableMapper///PointingToDeclaration/service-core/com.serious.jackson/-throwable-mapper/index.html
+$dokka.location:com.serious.jackson/ThrowableMapper/fromJSON/#kotlin.String/PointingToDeclaration/service-core/com.serious.jackson/-throwable-mapper/from-j-s-o-n.html
+$dokka.location:com.serious.jackson/ThrowableMapper/toJSON/#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.jackson/-throwable-mapper/to-j-s-o-n.html
 $dokka.location:com.serious.lang////PointingToDeclaration/service-core/com.serious.lang/index.html
 $dokka.location:com.serious.lang/Annotations///PointingToDeclaration/service-core/com.serious.lang/-annotations/index.html
 $dokka.location:com.serious.lang/Annotations/changeAnnotationValue/#kotlin.Annotation?#kotlin.String#kotlin.Any/PointingToDeclaration/service-core/com.serious.lang/-annotations/change-annotation-value.html
@@ -328,6 +334,7 @@ $dokka.location:com.serious.util/MethodDispatcher/replaceMethods/#kotlin.Any#kot
 com.serious.collections
 com.serious.exception
 com.serious.injection
+com.serious.jackson
 com.serious.lang
 com.serious.service
 com.serious.service.annotations
