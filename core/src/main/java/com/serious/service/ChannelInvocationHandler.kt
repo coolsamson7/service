@@ -71,7 +71,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
     companion object {
         // static data
 
-        var emptyArgs = arrayOf<Any>();
+        var emptyArgs = arrayOf<Any>()
 
         var log = LoggerFactory.getLogger(ChannelInvocationHandler::class.java)
 

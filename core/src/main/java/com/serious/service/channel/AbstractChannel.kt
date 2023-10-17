@@ -12,7 +12,7 @@ import java.lang.reflect.Method
 /**
  * abstract base class for [Channel]s
  */
-abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, protected val componentClass: Class<out Component>, protected @JvmField val address: ServiceAddress) : Channel, InvocationHandler {
+abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, protected val componentClass: Class<out Component>, @JvmField protected val address: ServiceAddress) : Channel, InvocationHandler {
     // implement Channel
 
     override fun setup() {}

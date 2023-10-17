@@ -36,8 +36,7 @@ internal class Foo {
 }
 
 @Component
-internal class TestComponentComponentRegistry : LocalComponentRegistry() {
-}
+internal class TestComponentComponentRegistry : LocalComponentRegistry()
 
 @ServiceInterface
 @RequestMapping("flux/")

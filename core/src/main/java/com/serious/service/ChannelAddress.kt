@@ -13,5 +13,4 @@ import java.net.URI
  * @property channel the channel name
  * @property uri the [URI]
  */
-data class ChannelAddress(val channel: String, val uri: URI) {
-}
+data class ChannelAddress(val channel: String, val uri: URI)

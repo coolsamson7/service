@@ -66,7 +66,7 @@ class RequestBuilder<S : RHS> internal constructor(var client: WebClient) {
     internal inner class Body(private val index: Int) : SpecOperation<WebClient.RequestBodySpec> {
         // implement
         override fun build(spec: WebClient.RequestBodySpec?, vararg args: Any?): RHS {
-            return spec!!.bodyValue(args!![index])
+            return spec!!.bodyValue(args[index])
         }
     }
 

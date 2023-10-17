@@ -86,7 +86,7 @@ class ConsulComponentRegistry : ComponentRegistry {
     lateinit var consulServiceRegistry: ConsulServiceRegistry
 
     @Autowired
-    lateinit private var environment: Environment
+    private lateinit var environment: Environment
 
     @Autowired
     lateinit var discoveryClient: DiscoveryClient

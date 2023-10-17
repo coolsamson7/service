@@ -5,5 +5,4 @@ package com.serious.exception
 * All rights reserved
 */
 
-class AllowedException(e: Throwable) : RuntimeException(e) {
-}
+class AllowedException(e: Throwable) : RuntimeException(e)

@@ -25,7 +25,7 @@ class Demo {
     // lifecycle
     @PostConstruct
     fun demo() {
-        System.out.println("testRemoteRestService.hello()");
+        System.out.println("testRemoteRestService.hello()")
         //System.out.println(localTestRemoteRestService.hello());
     }
 }

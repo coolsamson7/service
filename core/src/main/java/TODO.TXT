@@ -8,6 +8,11 @@
 
 === NOW
 
+- applicationexception
+    communication
+    server
+- einbau exceptin manager
+
 === DONE
 
 - channelbuilder LIST!!!

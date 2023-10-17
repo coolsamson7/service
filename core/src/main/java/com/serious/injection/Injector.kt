@@ -63,7 +63,7 @@ class Injector(vararg injections: Injection<Annotation, Any>) : BeanPostProcesso
 
         val annotatedFields: MutableMap<Class<out Annotation>, Array<Field>> = IdentityHashMap()
         for (field in computeFields(clazz)) {
-            for (annotation in field.getAnnotations()) {
+            for (annotation in field.annotations) {
                 val annotationType: Class<out Annotation> = annotation.annotationClass.java
 
                 var fieldsWithAnnotation = annotatedFields[annotationType]

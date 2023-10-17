@@ -160,7 +160,7 @@ class ComponentManager @Autowired internal constructor(
     fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
         val channel = makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)
 
-        return channel ?: MissingChannel(channelManager, descriptor.getComponentDescriptor())
+        return channel
     }
 
     fun makeChannel(componentClass: Class<out Component>,address: ServiceAddress): Channel {
@@ -176,7 +176,7 @@ class ComponentManager @Autowired internal constructor(
     companion object {
         // static data
 
-        var emptyArgs = arrayOf<Any>();
+        var emptyArgs = arrayOf<Any>()
 
         var log = LoggerFactory.getLogger(ComponentManager::class.java)
     }

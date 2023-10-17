@@ -20,7 +20,7 @@ import java.lang.reflect.Method
 class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() {
 
     init {
-        setOrder(LOWEST_PRECEDENCE - 1);
+        order = LOWEST_PRECEDENCE - 1
     }
 
     // private
@@ -31,7 +31,7 @@ class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() 
                 if (exception.isAssignableFrom(ex.javaClass) )
                     return true
 
-            return false;
+            return false
         }
 
         return declaredException()

@@ -102,7 +102,7 @@ class ChannelManager : ApplicationContextAware {
         }
 
         if ( channel != null)
-            return channel!!
+            return channel
         else
             throw ServiceRuntimeException("could not create channel %s", address.channel)
     }

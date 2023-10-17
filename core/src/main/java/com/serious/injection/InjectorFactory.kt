@@ -27,7 +27,7 @@ class InjectorFactory(vararg injections: Injection<Annotation, Any>) : FactoryBe
 
     // implement FactoryBean
     @Throws(Exception::class)
-    override fun getObject(): Any? {
+    override fun getObject(): Any {
         return INSTANCE
     }
 
