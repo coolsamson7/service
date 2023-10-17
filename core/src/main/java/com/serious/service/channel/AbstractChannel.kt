@@ -28,7 +28,7 @@ abstract class AbstractChannel protected constructor(protected val channelManage
     // implement InvocationHandler
 
     @Throws(Throwable::class)
-    override fun invoke(target: Any, method: Method, args: Array<Any>): Any {
-        return this.invoke(SimpleMethodInvocation(target, method, *args))!!
+    override fun invoke(target: Any, method: Method, args: Array<Any>): Any? {
+        return this.invoke(SimpleMethodInvocation(target, method, *args))
     }
 }

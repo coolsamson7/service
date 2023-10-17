@@ -13,4 +13,8 @@ class TestServiceImpl : TestService {
     override fun hello(): String {
         return "hello"
     }
+
+    override fun throwException(): Void {
+       throw RuntimeException("ouch")
+    }
 }

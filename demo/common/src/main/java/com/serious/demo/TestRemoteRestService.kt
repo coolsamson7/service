@@ -15,6 +15,11 @@ import reactor.core.publisher.Mono
 @ServiceInterface
 @RestController
 interface TestRemoteRestService : Service {
+    @PostMapping("/throw")
+    @ResponseBody
+    @Throws(RuntimeException::class)
+    fun throwException(@RequestBody id: String): Void
+
     @GetMapping("/hello")
     fun hello(): String
 

@@ -8,6 +8,7 @@ package com.serious.demo
 import com.serious.service.annotations.InjectService
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
+import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver
 
  /**
  * @author Andreas Ernst
@@ -24,7 +25,7 @@ class Demo {
     // lifecycle
     @PostConstruct
     fun demo() {
-        //System.out.println(testRemoteRestService.hello());
+        System.out.println("testRemoteRestService.hello()");
         //System.out.println(localTestRemoteRestService.hello());
     }
 }

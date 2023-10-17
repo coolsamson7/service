@@ -53,6 +53,18 @@ open class ServiceApplication1 {
             manager.startup(port)
 
             val remoteRest = manager.acquireService(TestRemoteRestService::class.java, "rest")
+
+
+            //
+
+            try {
+                remoteRest.throwException("Foo()")
+            }
+            catch(e: Throwable) {
+                println()
+            }
+
+            //
             val remoteDispatch = manager.acquireService(TestRemoteRestService::class.java, "dispatch")
             val local = manager.acquireLocalService(TestRemoteRestService::class.java)
             local.hello()

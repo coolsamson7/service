@@ -64,7 +64,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
     // implement InvocationHandler
 
     @Throws(Throwable::class)
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any? {
         return channel.invoke(proxy, method, args ?: emptyArgs )
     }
 

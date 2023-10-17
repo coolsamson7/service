@@ -39,6 +39,18 @@
             <artifactId>spring-webflux</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <!-- TODO -->
+            <version>6.0.0</version>
+        </dependency>
+
         <!-- test dependencies -->
 
         <dependency>

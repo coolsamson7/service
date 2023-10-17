@@ -5,18 +5,21 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
+import com.serious.jackson.ThrowableMapper
 import com.serious.service.*
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
+
 
 /**
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
@@ -46,6 +49,20 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
         return getRequest(invocation.method).execute(*invocation.arguments)
     }
 
+    fun errorHandler(): ExchangeFilterFunction {
+        return ExchangeFilterFunction.ofResponseProcessor { clientResponse: ClientResponse ->
+            if (clientResponse.statusCode().value() == 404) {
+                return@ofResponseProcessor clientResponse
+                    .bodyToMono<String>(String::class.java)
+                    .flatMap<ClientResponse> { errorBody: String ->
+                        Mono.error(ThrowableMapper.fromJSON(errorBody))
+                    }
+            }
+            else {
+                return@ofResponseProcessor Mono.just<ClientResponse>(clientResponse)
+            }
+        }
+    }
     override fun setup() {
         val channelBuilders = channelManager.getChannelBuilders(RestChannel::class.java) as List<AbstractRestChannelBuilder>
 
@@ -55,6 +72,8 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
             .baseUrl(address.serviceInstances.get(0).uri.toString()) // TODO for now
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+
+            .filter(errorHandler())
 
         // custom stuff
 

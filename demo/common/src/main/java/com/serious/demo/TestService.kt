@@ -11,4 +11,6 @@ import com.serious.service.ServiceInterface
 @ServiceInterface(name = "test service")
 interface TestService : Service {
     fun hello(): String
+
+    fun throwException() : Void
 }
