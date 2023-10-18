@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap
 class ChannelInvocationHandler private constructor(private val componentDescriptor: ComponentDescriptor<*>, private val address: ServiceAddress) : InvocationHandler {
     // instance data
 
-    private val componentManager : ComponentManager
-        get() = componentDescriptor.componentManager!!
+    private val serviceManager : ServiceManager
+        get() = componentDescriptor.serviceManager!!
 
     private var channel: Channel
 
@@ -31,10 +31,10 @@ class ChannelInvocationHandler private constructor(private val componentDescript
     // private
     private fun checkUpdate(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta): Boolean {
         if (channel is MissingChannel) {
-            val address = componentManager.getServiceAddress(componentDescriptor, address.channel)
+            val address = serviceManager.getServiceAddress(componentDescriptor, address.channel)
 
             if ( address != null)
-                channel = componentManager.getChannel(componentDescriptor, address)
+                channel = serviceManager.getChannel(componentDescriptor, address)
         }
         else {
             if (channel.needsUpdate(delta)) {
@@ -54,7 +54,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
 
     // public
     fun resolveChannel() : Channel {
-        channel = componentManager.getChannel(componentDescriptor, address)
+        channel = serviceManager.getChannel(componentDescriptor, address)
 
         log.info("resolved channel {} for component {}", address.channel, componentDescriptor)
 

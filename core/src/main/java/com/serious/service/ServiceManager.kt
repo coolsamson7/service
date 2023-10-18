@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 @org.springframework.stereotype.Component
-class ComponentManager @Autowired internal constructor(
+class ServiceManager @Autowired internal constructor(
     var componentRegistry: ComponentRegistry,
     var channelManager: ChannelManager,
     var serviceInstanceRegistry: ServiceInstanceRegistry
@@ -104,7 +104,7 @@ class ComponentManager @Autowired internal constructor(
     // private
     private fun addComponentDescriptor(descriptor: ComponentDescriptor<Component>) {
         componentDescriptors[descriptor.name] = descriptor
-        descriptor.componentManager = this
+        descriptor.serviceManager = this
     }
 
     private fun report() {
@@ -227,6 +227,6 @@ class ComponentManager @Autowired internal constructor(
 
         var emptyArgs = arrayOf<Any>()
 
-        var log = LoggerFactory.getLogger(ComponentManager::class.java)
+        var log = LoggerFactory.getLogger(ServiceManager::class.java)
     }
 }

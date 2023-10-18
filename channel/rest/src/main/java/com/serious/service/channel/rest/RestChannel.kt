@@ -23,6 +23,14 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
 
+//{"timestamp":"2023-10-18T09:02:16.790+00:00","status":500,"error":"Internal Server Error","path":"/exception/throwDeclared"}
+data class SpringError(
+    val timestamp: String,
+    val status: Int,
+    val error: String,
+    val path: String
+) : Exception()
+
 /**
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
  */
@@ -71,7 +79,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
                 return@ofResponseProcessor clientResponse
                     .bodyToMono<String>(String::class.java)
                     .flatMap<ClientResponse> { errorBody: String ->
-                        Mono.error(ServerException(errorBody)) // TODO
+                        Mono.error(ServerException(ThrowableMapper.fromJSON(errorBody, SpringError::class.java))) // TODO
                     }
             }
             else if (clientResponse.statusCode().is4xxClientError()) {

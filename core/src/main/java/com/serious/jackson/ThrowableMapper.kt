@@ -21,6 +21,10 @@ object ThrowableMapper {
         return mapper.readValue(json, Throwable::class.java)
     }
 
+    fun <T>fromJSON(json : String, clazz : Class<T>) : T {
+        return mapper.readValue(json, clazz)
+    }
+
     private val mapper = createObjectMapper()
 
     private fun createObjectMapper(): ObjectMapper {

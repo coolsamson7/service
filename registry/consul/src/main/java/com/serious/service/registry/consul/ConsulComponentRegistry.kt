@@ -40,7 +40,7 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
 
     @Autowired
-    lateinit var componentManager: ComponentManager
+    lateinit var serviceManager: ServiceManager
     private var state: Any? = null
 
     // override ApplicationListener
@@ -50,7 +50,7 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
             log.info("process consul heartbeat")
 
             val services = discoveryClient.services.stream()
-                .filter { service: String? -> componentManager.componentDescriptors.containsKey(service) }
+                .filter { service: String? -> serviceManager.componentDescriptors.containsKey(service) }
                 .toList()
 
             // create new map

@@ -17,7 +17,7 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     @JvmField
     var health: String? = null
     @JvmField
-    var componentManager: ComponentManager? = null
+    var serviceManager: ServiceManager? = null
     var services: MutableList<ServiceDescriptor<*>> = LinkedList()
 
     // constructor

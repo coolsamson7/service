@@ -8,7 +8,7 @@ package com.serious.service.channel.rest
 import com.serious.exception.AllowedException
 import com.serious.exception.FatalException
 import com.serious.service.BaseDescriptor
-import com.serious.service.ComponentManager
+import com.serious.service.ServiceManager
 import com.serious.service.Service
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -28,7 +28,7 @@ class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() 
     // instance data
 
     @Autowired
-    lateinit var componentManager : ComponentManager
+    lateinit var serviceManager : ServiceManager
 
     // constructor
 
@@ -122,7 +122,7 @@ class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() 
         else {
             val component = BaseDescriptor.forService(serviceInterface).getComponentDescriptor();
 
-            val exception = component.componentManager!!.exceptionManager.handleException(ex) as Exception
+            val exception = component.serviceManager!!.exceptionManager.handleException(ex) as Exception
 
             return super.doResolveHandlerMethodException(request, response, handlerMethod, FatalException(exception))
         }

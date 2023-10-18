@@ -109,7 +109,7 @@ service methods easily.
   // get the manager from spring
   
   val context : ApplicationContext  = ... 
-  val manager = context.getBean(ComponentManager::class.java)
+  val manager = context.getBean(ServiceManager::class.java)
 
   // fetch the service ( proxy )  
             

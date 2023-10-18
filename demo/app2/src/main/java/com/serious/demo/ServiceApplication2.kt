@@ -1,6 +1,6 @@
 package com.serious.demo
 
-import com.serious.service.ComponentManager
+import com.serious.service.ServiceManager
 import com.serious.service.ServiceConfiguration
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
@@ -10,7 +10,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 @Configuration
@@ -39,7 +38,7 @@ open class ServiceApplication2 {
 
             //context.getBean(Environment::class.javaClass).
 
-            val manager = context.getBean(ComponentManager::class.java)
+            val manager = context.getBean(ServiceManager::class.java)
             manager.startup(port)
             val testRemoteRestService = manager.acquireService(TestRemoteRestService::class.java)
             println(testRemoteRestService.hello())

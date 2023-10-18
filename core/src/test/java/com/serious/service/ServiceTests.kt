@@ -3,15 +3,12 @@ package com.serious.service
 import com.serious.channel.LocalChannel
 import com.serious.exception.FatalException
 import com.serious.registry.LocalComponentRegistry
-import com.serious.service.annotations.InjectService
 import com.serious.service.exception.ServiceRuntimeException
 import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -90,7 +87,7 @@ internal class ServiceTests {
     private val port = "0" // server.port
 
     @Autowired
-    lateinit var componentManager: ComponentManager
+    lateinit var serviceManager: ServiceManager
 
     lateinit var testService: TestService
     lateinit var localTestService: TestService
@@ -99,19 +96,19 @@ internal class ServiceTests {
 
     @PostConstruct
     fun  setup() {
-        componentManager.startup(port.toInt())
+        serviceManager.startup(port.toInt())
 
-        testService        = componentManager.acquireService(TestService::class.java)
-        localTestService   = componentManager.acquireLocalService(TestService::class.java)
-        testComponent      = componentManager.acquireService(TestComponent::class.java)
-        localTestComponent = componentManager.acquireLocalService(TestComponent::class.java)
+        testService        = serviceManager.acquireService(TestService::class.java)
+        localTestService   = serviceManager.acquireLocalService(TestService::class.java)
+        testComponent      = serviceManager.acquireService(TestComponent::class.java)
+        localTestComponent = serviceManager.acquireLocalService(TestComponent::class.java)
     }
 
     // test
     @Test
     fun testUnknownService() {
         try {
-            componentManager.acquireService(BadService::class.java)
+            serviceManager.acquireService(BadService::class.java)
             Assertions.fail<Any>("should throw")
         } catch (e: ServiceRuntimeException) {
         }
@@ -120,7 +117,7 @@ internal class ServiceTests {
     @Test
     fun testMissingChannel() {
         try {
-            componentManager.acquireService(TestService::class.java, "dunno")
+            serviceManager.acquireService(TestService::class.java, "dunno")
             Assertions.fail<Any>("should throw")
         } catch (e: ServiceRuntimeException) {
         }

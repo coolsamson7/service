@@ -5,7 +5,7 @@ package com.serious.service
 * All rights reserved
 */
 
-import com.serious.service.ComponentManager.Companion.log
+import com.serious.service.ServiceManager.Companion.log
 import lombok.extern.slf4j.Slf4j
 import org.springframework.cloud.commons.util.InetUtils
 import org.springframework.cloud.commons.util.InetUtilsProperties

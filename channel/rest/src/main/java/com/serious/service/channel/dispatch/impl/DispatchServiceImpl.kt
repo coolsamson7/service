@@ -5,7 +5,7 @@ package com.serious.service.channel.dispatch.impl
 * All rights reserved
 */
 
-import com.serious.service.ComponentManager
+import com.serious.service.ServiceManager
 import com.serious.service.Service
 import com.serious.service.channel.dispatch.DispatchChannel.Companion.decodeFromString
 import com.serious.service.channel.dispatch.DispatchChannel.Companion.decodeObject
@@ -28,7 +28,7 @@ class DispatchServiceImpl : DispatchService {
     // instance data
 
     @Autowired
-    lateinit var componentManager: ComponentManager
+    lateinit var serviceManager: ServiceManager
 
     @Autowired
     lateinit var methodCache: MethodCache
@@ -44,7 +44,7 @@ class DispatchServiceImpl : DispatchService {
     override fun dispatch(@RequestBody request: String): String {
         val serviceRequest = decodeObject(decodeFromString(request)) as ServiceRequest
         val serviceClass = class4Name(serviceRequest.service)
-        val service = componentManager.acquireLocalService(serviceClass)
+        val service = serviceManager.acquireLocalService(serviceClass)
         val method = methodCache.getMethod(serviceClass, serviceRequest.method)
 
         return encodeAsString(encodeObject(method.invoke(service, *serviceRequest.arguments)))

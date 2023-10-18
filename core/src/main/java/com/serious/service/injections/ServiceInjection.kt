@@ -10,7 +10,7 @@ import com.serious.injection.Injection
 import com.serious.injection.InjectorFactory
 import com.serious.lang.Keywords
 import com.serious.service.BaseDescriptor
-import com.serious.service.ComponentManager
+import com.serious.service.ServiceManager
 import com.serious.service.Service
 import com.serious.service.annotations.InjectService
 import org.springframework.beans.BeansException
@@ -32,7 +32,7 @@ import java.lang.reflect.Field
 class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) :
     AbstractInjection<Service, InjectService, Keywords?>(InjectService::class.java), ApplicationContextAware {
     // instance data
-    private lateinit var componentManager: ComponentManager
+    private lateinit var serviceManager: ServiceManager
 
     // public
 
@@ -46,15 +46,15 @@ class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) 
         val serviceInterface = (accessibleObject as Field).type as Class<out Service>
 
         return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).hasImplementation())
-            componentManager.acquireLocalService(serviceInterface)
+            serviceManager.acquireLocalService(serviceInterface)
         else
-            componentManager.acquireService(serviceInterface, *annotation.channels)
+            serviceManager.acquireService(serviceInterface, *annotation.channels)
     }
 
     // implement ApplicationContextAware
 
     @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
-        componentManager = applicationContext.getBean(ComponentManager::class.java)
+        serviceManager = applicationContext.getBean(ServiceManager::class.java)
     }
 }

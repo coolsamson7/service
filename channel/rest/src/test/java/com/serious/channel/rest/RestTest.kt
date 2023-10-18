@@ -10,28 +10,21 @@ import com.serious.service.*
 import com.serious.service.registry.LocalComponentRegistry
 import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalManagementPort
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.cloud.client.DefaultServiceInstance
-import org.springframework.cloud.client.ServiceInstance
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.lang.NullPointerException
 import java.net.URI
-import java.util.stream.Collectors
 
 internal class Foo {
     var id: String? = null
@@ -310,17 +303,17 @@ internal class RestTest {
     private val port = "0" // server.port
 
     @Autowired
-    lateinit var componentManager: ComponentManager
+    lateinit var serviceManager: ServiceManager
 
     @PostConstruct
    fun  setup() {
-        componentManager.startup(port.toInt())
+        serviceManager.startup(port.toInt())
     }
 
     // test
     @Test
     fun testBasicMethods() {
-        val service = componentManager.acquireService(BasicMethods::class.java)
+        val service = serviceManager.acquireService(BasicMethods::class.java)
         val foo = Foo()
         foo.id = "id"
         Assertions.assertEquals("world", service.delete("world"))
@@ -340,7 +333,7 @@ internal class RestTest {
 
     @Test
     fun testRequestMappingMethods() {
-        val service = componentManager.acquireService(RequestMappingMethods::class.java)
+        val service = serviceManager.acquireService(RequestMappingMethods::class.java)
 
         val foo = Foo()
         foo.id = "id"
@@ -356,7 +349,7 @@ internal class RestTest {
 
     @Test
     fun testExceptions() {
-        val service = componentManager.acquireService(ExceptionMethods::class.java)
+        val service = serviceManager.acquireService(ExceptionMethods::class.java)
 
         try {
             service.throwDeclaredException()
@@ -375,7 +368,7 @@ internal class RestTest {
 
         @Test
     fun testFlux() {
-        val service = componentManager.acquireService(FluxMethods::class.java)
+        val service = serviceManager.acquireService(FluxMethods::class.java)
 
         // mono
 

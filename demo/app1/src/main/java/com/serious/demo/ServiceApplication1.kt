@@ -1,8 +1,6 @@
 package com.serious.demo
 
-import com.serious.exception.AbstractExceptionHandler
-import com.serious.exception.RegisterExceptionHandler
-import com.serious.service.ComponentManager
+import com.serious.service.ServiceManager
 import com.serious.service.ServiceConfiguration
 import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
@@ -50,7 +48,7 @@ open class ServiceApplication1 {
             }
             catch (e: InterruptedException) {
             }
-            val manager = context.getBean(ComponentManager::class.java)
+            val manager = context.getBean(ServiceManager::class.java)
 
             manager.startup(port)
 
