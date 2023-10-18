@@ -179,5 +179,8 @@ Two demo applications are available under `demo`
 While both host a set of common services, app2 calls services hosted by app1.
 Both applications assume a running consul server under the typical port.
  
-The Kotlin API can be found here
+The Kotlin API can be found [here](http://ernstandreas.de/service/)
 
+Check the corresponding [here](https://github.com/coolsamson7/service/wiki) for detailed information.
+
+Have fun!
