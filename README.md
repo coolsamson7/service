@@ -122,9 +122,10 @@ service methods easily.
 Voila!
 ## Basic concepts
 
-As we have already seen, there are 3 different basic building blocks
+As we have already seen, there are 4 different basic building blocks
 * Service
 * Component
+* Component Registry
 * Channel
 
 ### Service
@@ -171,12 +172,14 @@ The framework offers the following features
 Its always good the check the `JUnit` tests which are available for 
 * the core module
 * the rest module
-Both make use of a local component registry
+
+* Both make use of a local component registry
 
 Two demo applications are available under `demo`
 * app1
 * app2
-While both host a set of common services, app2 calls services hosted by app1.
+
+* While both host a set of common services, app2 calls services hosted by app1.
 Both applications assume a running consul server under the typical port.
  
 The Kotlin API can be found [here](http://ernstandreas.de/service/)
