@@ -6,13 +6,13 @@ package com.serious.service.channel.rest
 */
 
 import com.serious.service.ChannelManager
-import com.serious.service.channel.AbstractChannelBuilder
+import com.serious.service.channel.AbstractChannelCustomizer
 import org.springframework.web.reactive.function.client.WebClient
 
 /**
  * abstract base class for [ChannelBuilder] based on a [WebClient]
  */
-abstract class AbstractRestChannelBuilder protected constructor(channelManager: ChannelManager) : AbstractChannelBuilder<RestChannel>(channelManager) {
+abstract class AbstractRestChannelCustomizer protected constructor(channelManager: ChannelManager) : AbstractChannelCustomizer<RestChannel>(channelManager) {
     // abstract
-    abstract fun build(builder: WebClient.Builder): WebClient.Builder
+    abstract fun customize(builder: WebClient.Builder): WebClient.Builder
 }

@@ -4,7 +4,7 @@ package com.serious.service
 * All rights reserved
 */
 
-import com.serious.service.channel.ChannelBuilder
+import com.serious.service.channel.ChannelCustomizer
 import com.serious.service.exception.ServiceRuntimeException
 import jakarta.annotation.PostConstruct
 import org.slf4j.Logger
@@ -38,20 +38,20 @@ class ChannelManager : ApplicationContextAware {
     @JvmField
     var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
     var channels: MutableMap<ServiceAddress, Channel> = ConcurrentHashMap()
-    private var channelBuilder: MutableMap<Class<out Channel>, MutableList<ChannelBuilder<out Channel>>> = HashMap()
+    private var channelCustomizer: MutableMap<Class<out Channel>, MutableList<ChannelCustomizer<out Channel>>> = HashMap()
 
     @Value("\${service.root:com.serious}")
     lateinit var rootPackage: String
 
     // public
 
-    fun registerChannelBuilder(channelBuilder: ChannelBuilder<*>) {
-        val builders = this.channelBuilder.computeIfAbsent(channelBuilder.channelClass()) {_ -> mutableListOf() }
-        builders.add(channelBuilder)
+    fun registerChannelCustomizer(channelCustomizer: ChannelCustomizer<*>) {
+        val builders = this.channelCustomizer.computeIfAbsent(channelCustomizer.channelClass()) { _ -> mutableListOf() }
+        builders.add(channelCustomizer)
     }
 
-    fun getChannelBuilders(channel: Class<out Channel>): MutableList<ChannelBuilder<out Channel>> {
-        return channelBuilder.computeIfAbsent(channel) {_ -> mutableListOf() }
+    fun getChannelCustomizers(channel: Class<out Channel>): MutableList<ChannelCustomizer<out Channel>> {
+        return channelCustomizer.computeIfAbsent(channel) { _ -> mutableListOf() }
     }
 
     @PostConstruct

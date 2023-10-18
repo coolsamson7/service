@@ -9,9 +9,9 @@ import com.serious.service.Channel
 import com.serious.service.Component
 
 /**
- * A [ChannelBuilder] is used to dynamically intercept channel construction with custom logic
+ * A [ChannelCustomizer] is used to dynamically intercept channel construction with custom logic
  */
-interface ChannelBuilder<T : Channel> {
+interface ChannelCustomizer<T : Channel> {
     /**
      * return the corresponding channel class that this builder is responsible for
      */

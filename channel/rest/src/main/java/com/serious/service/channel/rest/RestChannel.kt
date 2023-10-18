@@ -11,7 +11,6 @@ import com.serious.service.*
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
@@ -87,7 +86,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
         }
     }
     override fun setup() {
-        val channelBuilders = channelManager.getChannelBuilders(RestChannel::class.java) as List<AbstractRestChannelBuilder>
+        val channelBuilders = channelManager.getChannelCustomizers(RestChannel::class.java) as List<AbstractRestChannelCustomizer>
 
         // add some defaults
 
@@ -102,7 +101,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
 
         for (channelBuilder in channelBuilders)
             if ( channelBuilder.isApplicable(componentClass))
-                builder = channelBuilder.build(builder)
+                builder = channelBuilder.customize(builder)
 
         // done
 

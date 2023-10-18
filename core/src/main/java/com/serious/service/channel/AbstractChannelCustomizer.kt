@@ -10,18 +10,18 @@ import com.serious.service.ChannelManager
 import com.serious.service.Component
 
 /**
- * abstract base class for [ChannelBuilder]s
+ * abstract base class for [ChannelCustomizer]s
  */
-open class AbstractChannelBuilder<T : Channel> protected constructor(channelManager: ChannelManager) : ChannelBuilder<T> {
+open class AbstractChannelCustomizer<T : Channel> protected constructor(channelManager: ChannelManager) : ChannelCustomizer<T> {
     // instance data
 
     var channelClass: Class<out Channel>
 
     // constructor
     init {
-        channelClass = javaClass.getAnnotation(RegisterChannelBuilder::class.java).channel.java
+        channelClass = javaClass.getAnnotation(RegisterChannelCustomizer::class.java).channel.java
 
-        channelManager.registerChannelBuilder(this)
+        channelManager.registerChannelCustomizer(this)
     }
 
     // implement ChannelBuilder

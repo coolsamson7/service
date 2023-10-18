@@ -1,5 +1,7 @@
 package com.serious.demo
 
+import com.serious.exception.AbstractExceptionHandler
+import com.serious.exception.RegisterExceptionHandler
 import com.serious.service.ComponentManager
 import com.serious.service.ServiceConfiguration
 import jakarta.annotation.PostConstruct
@@ -58,7 +60,7 @@ open class ServiceApplication1 {
             //
 
             try {
-                remoteRest.throwException("Foo()")
+                remoteRest.throwException("Foo")
             }
             catch(e: Throwable) {
                 println()

@@ -9,6 +9,10 @@ import java.lang.reflect.UndeclaredThrowableException
  */
 @RegisterExceptionHandler
 class DefaultExceptionHandler : AbstractExceptionHandler() {
+    fun log(e : Throwable) {
+        println(e.message)
+    }
+
     // prexform
 
     fun prexform(e : Throwable) : Throwable {

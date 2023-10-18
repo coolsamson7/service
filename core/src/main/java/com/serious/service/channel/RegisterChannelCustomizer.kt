@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
 /**
- * Marks a [ChannelBuilder]
+ * Marks a [ChannelCustomizer]
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Component
-annotation class RegisterChannelBuilder(val channel: KClass<out Channel>)
+annotation class RegisterChannelCustomizer(val channel: KClass<out Channel>)

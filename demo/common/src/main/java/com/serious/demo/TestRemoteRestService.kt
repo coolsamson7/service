@@ -20,6 +20,10 @@ interface TestRemoteRestService : Service {
     @Throws(RuntimeException::class)
     fun throwException(@RequestBody id: String): Void
 
+    @PostMapping("/throwFatal")
+    @ResponseBody
+    fun throwFatalException(@RequestBody id: String): Void
+
     @GetMapping("/hello")
     fun hello(): String
 
