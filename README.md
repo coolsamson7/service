@@ -83,7 +83,7 @@ The component implementation adds the necessary details in order to establish a 
 * returning a channel type ( here "rest" )
 * the address
 * and health endpoints that are usually called by different kind of registries
-* 
+
 ```
 @ComponentHost(health = "/api/test-health")
 @RestController
@@ -120,3 +120,64 @@ service methods easily.
     
 ```
 Voila!
+## Basic concepts
+
+As we have already seen, there are 3 different basic building blocks
+* Service
+* Component
+* Channel
+
+### Service
+A service is represented by an annotated ( in order to be scanned by spring ) interface extending the tagging interface `Service` . 
+There are no other restrictions except that it should contain all the necessary information so that the communication channels are able to do the remoting.
+In our example we simply added the spring mvc annotations.
+
+The service implementation is any spring bean ( that a channel can connect to ) 
+
+### Component
+
+The purpose of a component interface is to bundle a list of services that share the same channel
+
+The implementation takes care of
+* lifecycle of the component ( e.g. startup and shutdown methods )
+* registration with a component registry
+* health endpoint
+
+### Component Registry
+
+A component registry is a central registry that knows about all active component implementations and their supported channels
+
+### Channel
+
+A channel implements the technical remoting protocol whenever remote services are executed.
+Resolving a proper channel is done lazily based on the available information from the component registry
+which return a list of service instances and supported channels.
+
+It is up to a concrete channel if ( client side ) loadbalancing is supported or not.
+The current implementation simply talsk to the first address ( as long as alive )
+
+Channels will automaticylly adjist to changes on the topology.
+
+## Features
+
+The framework offers the following features
+* first component registry implementation based on spring consul
+* rest channel based on `WebClient` supporting the _basic_ annotations
+* injection possibilities for services
+* central dynamic exception handling
+
+## Getting started
+
+Its always good the check the `JUnit` tests which are available for 
+* the core module
+* the rest module
+Both make use of a local component registry
+
+Two demo applications are available under `demo`
+* app1
+* app2
+While both host a set of common services, app2 calls services hosted by app1.
+Both applications assume a running consul server under the typical port.
+ 
+The Kotlin API can be found here
+
