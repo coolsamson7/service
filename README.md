@@ -10,7 +10,7 @@ available that help to solve most of the problems in  a distributed microservice
 - registries ( consul, etc. ) and
 - loadbalancing mechanisms
 
-the result from a developer perspective is still too complicated and also has some shortcomings.
+the result from a developer perspective in my mind is still too complicated and also has some shortcomings.
 Even if most of the technical details are nicely hidden, the programmer typically still needs to write low-level protocol agnostic code to call services.
 
 **Example:** 
@@ -37,13 +37,86 @@ public class MyClass {
 ```
 
 What's bad?
+- the code assumes that the called service is remote
 - we commit to a specific protocol
 - we commit to a loadbalanced connection
-- necessity to write technical webclient code
+- we have to write technical boilerplate webclient code
 
-It would be much nicer, if we whouldn't have to care at all and simply call a...well...interface with someone else in the background taking care of an appropriate implementation connected with whatever protocol.
-This would also give us the opportunity to skip remote calls at all, if in a specific deployment scenario implementations are hosted in the same vm.
+This is _clumsy_ and against pretty valuable architectural principles like separation of concern, etc.
+
+What we would like to do instead is
+
+- services are described in form of interfaces
+- corresponding implementations run somewhere and register with a central registry
+- service calls use this information by establishing some kind of - transparent - remoting
+- local services are executed locally
 
 ## Sample
 
-Let's look at a first example.
+Let's look at a simple example. Let's declare a service interface first
+```
+@ServiceInterface(name = "TestService")
+interface TestService : Service {
+    @GetMapping("/hello")
+    @ResponseBody
+    fun hello(): String
+}
+```
+By coincidence, it declares all the necessary annotations for spring!
+
+Services are bundled by a _component_
+```
+@ComponentInterface(name = "TestRemoteComponent", services = [TestRemoteRestService::class])
+@RestController
+interface TestRemoteComponent : Component
+```
+The service implementation is a normal rest controller
+```
+@RestController
+class TestServiceImpl : TestService {
+    override fun hello(): String {
+        return "foo"
+    }
+}
+```
+The component implementation adds the necessary details in order to establish a remote connection, by
+* returning a channel type ( here "rest" )
+* the address
+* and health endpoints that are usually called by different kind of registries
+* 
+```
+@ComponentHost(health = "/api/test-health")
+@RestController
+@RequestMapping("/api")
+class TestComponentImpl : AbstractComponent(), TestComponent {
+    // override AbstractComponent
+
+    @ResponseBody
+    @GetMapping("/test-health")
+    override val health: ComponentHealth
+        get() = ComponentHealth.UP
+
+    override val addresses: List<ChannelAddress>
+        get() = listOf(
+            ChannelAddress("rest", URI.create("http://$host:$port")) // local host and port
+        )
+}
+```
+Assuming that a channel of type "rest" is known ( we will come back to that later ), we can now call
+service methods easily.
+```
+  // get the manager from spring
+  
+  val context : ApplicationContext  = ... 
+  val manager = context.getBean(ComponentManager::class.java)
+
+  // fetch the service ( proxy )  
+            
+  val service = manager.acquireService(TestService::class.java)
+
+  // go forrest
+  
+  service.hello()
+    
+```
+Voila!
