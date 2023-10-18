@@ -38,20 +38,6 @@ class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() 
 
     // private
 
-    private fun wrapException(method: Method, ex: java.lang.Exception) : Boolean {
-        fun declaredException() : Boolean {
-            for (exception in method.exceptionTypes)
-                if (exception.isAssignableFrom(ex.javaClass) )
-                    return true
-
-            return false
-        }
-
-        return declaredException()
-    }
-
-    // private
-
     val method2Interface : MutableMap<Method, Class<out Service>> = ConcurrentHashMap()
 
     private fun serviceInterface(method: Method) : Class<out Service>? {
@@ -95,10 +81,10 @@ class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() 
         }
 
         val result = method2Interface.computeIfAbsent(method, {_ -> computeInterface()})
-        if ( result === Service::class)
-            return null
+        return if ( result === Service::class.java)
+            null
         else
-            return result
+            result
     }
 
     // override

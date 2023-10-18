@@ -209,12 +209,10 @@ class ComponentManager @Autowired internal constructor(
      }
 
     fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
-        val channel = makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)
-
-        return channel
+        return makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)
     }
 
-    fun makeChannel(componentClass: Class<out Component>,address: ServiceAddress): Channel {
+    private fun makeChannel(componentClass: Class<out Component>, address: ServiceAddress): Channel {
         return channelManager.make(componentClass, address)
     }
 

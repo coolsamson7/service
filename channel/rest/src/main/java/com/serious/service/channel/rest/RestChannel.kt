@@ -5,6 +5,7 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
+import com.serious.exception.CommunicationException
 import com.serious.exception.ServerException
 import com.serious.jackson.ThrowableMapper
 import com.serious.service.*
@@ -77,7 +78,7 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
                 return@ofResponseProcessor clientResponse
                     .bodyToMono<String>(String::class.java)
                     .flatMap<ClientResponse> { errorBody: String ->
-                        Mono.error(ServerException(errorBody)) // TODO
+                        Mono.error(CommunicationException(errorBody)) // TODO
                     }
             }
             else {

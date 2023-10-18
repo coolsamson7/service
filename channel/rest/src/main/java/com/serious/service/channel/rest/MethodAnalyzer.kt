@@ -129,13 +129,13 @@ class MethodAnalyzer {
         // implement
         override fun build(): RequestBuilder<RHS> {
             val getMapping = method.getAnnotation(GetMapping::class.java)
-            val getBuilder = RequestBuilder<RHS>(webClient).get()
+            val builder = RequestBuilder(webClient).get()
 
             val path = getPath(getMapping.value[0])
 
             // done
 
-            return getBuilder.uri(path, scanMethod(path), requestParams)
+            return builder.uri(path, scanMethod(path), requestParams)
         }
     }
 
@@ -143,39 +143,38 @@ class MethodAnalyzer {
         // implement
         override fun build(): RequestBuilder<RHS> {
             val postMapping = method.getAnnotation(PostMapping::class.java)
-            val getBuilder = RequestBuilder(webClient).post()
+            var builder = RequestBuilder(webClient).post()
 
             // scan path
 
             val path = getPath(postMapping.value[0])
             val attributes = scanMethod(path)
 
-            if (body == -1) throw ServiceRegistryException(
-                "missing @RequestBody for %s.%s",
-                method.declaringClass.getName(),
-                method.name
-            )
+            builder = builder.uri(path, attributes /* index */, requestParams)
 
             // done
 
-            return getBuilder.uri(path, attributes /* index */, requestParams).body(body)
+            return if ( body !=0 -1)
+                builder.body(body)
+            else
+                builder
         }
     }
 
     internal inner class PutAnalyzer(webClient: WebClient, method: Method) : RestAnalyzer(webClient, method) {
         // implement
         override fun build(): RequestBuilder<RHS> {
-            val postMapping = method.getAnnotation(PutMapping::class.java)
-            val getBuilder = RequestBuilder(webClient).put()
+            val putMapping = method.getAnnotation(PutMapping::class.java)
+            val builder = RequestBuilder(webClient).put()
 
             // scan path
 
-            val path = getPath(postMapping.value[0])
+            val path = getPath(putMapping.value[0])
             val attributes = scanMethod(path)
 
             // done
 
-            val uri = getBuilder.uri(path, attributes /* index */, requestParams)
+            val uri = builder.uri(path, attributes /* index */, requestParams)
 
             return if (body >= 0) uri.body(body) else uri
         }
@@ -185,7 +184,7 @@ class MethodAnalyzer {
         // implement
         override fun build(): RequestBuilder<RHS> {
             val deleteMapping = method.getAnnotation(DeleteMapping::class.java)
-            val getBuilder = RequestBuilder(webClient).delete()
+            val builder = RequestBuilder(webClient).delete()
 
             // scan path
 
@@ -194,7 +193,7 @@ class MethodAnalyzer {
 
             // done
 
-            val uri = getBuilder.uri(path, attributes /* index */, requestParams)
+            val uri = builder.uri(path, attributes /* index */, requestParams)
 
             return if (body >= 0) uri.body(body) else uri
         }
@@ -229,14 +228,6 @@ class MethodAnalyzer {
             val path = getPath(requestMapping.path[0])
             val attributes = scanMethod(path)
 
-            // checks
-
-            if (httpMethod == RequestMethod.POST && body == -1) throw ServiceRegistryException(
-                "missing @RequestBody in method %s.%s",
-                this.method.declaringClass.getName(),
-                httpMethod.name
-            )
-
             // done
 
             val uri = getBuilder.uri(path, attributes /* index */, requestParams)
@@ -250,7 +241,7 @@ class MethodAnalyzer {
     private val parameterNameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
 
     // private
-    fun build(webClient: WebClient, method: Method): RequestBuilder<*> {
+    private fun build(webClient: WebClient, method: Method): RequestBuilder<*> {
         for (annotation in method.declaredAnnotations) {
             when (annotation) {
                 is GetMapping -> return GetAnalyzer(webClient, method).build()
@@ -266,8 +257,6 @@ class MethodAnalyzer {
         }
         throw ServiceRuntimeException("http channel does not support the method %s missing annotation!", method.name)
     }
-
-    // public
 
     private fun <T : List<Any>> convertArray2Collection(array: Array<Any>, target: Type): T {
         if (target === MutableCollection::class.java || target === MutableList::class.java || target === List::class.java || target === ArrayList::class.java) {
@@ -300,7 +289,7 @@ class MethodAnalyzer {
         throw ServiceRuntimeException("collection type %s not supported", target.typeName)
     }
 
-     fun createCollectionResponseHandler( method: Method) : ResponseHandler {
+     private fun createCollectionResponseHandler(method: Method) : ResponseHandler {
          val returnType = method.returnType
          val elementType = genericsType(method.genericReturnType)
          val arrayType = elementType.arrayType() as Class<Any>
@@ -350,6 +339,7 @@ class MethodAnalyzer {
 
         // done
 
+        @Suppress("UNCHECKED_CAST")
         return Request(builder.operations.toTypedArray() as Array<SpecOperation<RHS>>, responseHandler)
     }
 
@@ -359,6 +349,7 @@ class MethodAnalyzer {
             if (clazz is ParameterizedType) {
                 val typeArguments: Array<Type> = clazz.actualTypeArguments
 
+                @Suppress("UNCHECKED_CAST")
                 return typeArguments[0] as Class<Any>
             }
 

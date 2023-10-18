@@ -8,13 +8,14 @@
 
 === NOW
 
-irgendetwas mit post? body
+
 componentmanager selber handler??
 
 === DENK NACH
 
 === DONE
 
+irgendetwas mit post? body
 - exception handler
 - channelbuilder LIST!!!
 - mvn package
