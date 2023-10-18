@@ -8,10 +8,36 @@
 
 === NOW
 
+irgendetwas mit post? body
+componentmanager selber handler??
+
 - applicationexception
     communication
     server
 - einbau exceptin manager
+
+=== DENK NACH
+
+ComponenentManager
+  -> Proxy -> Method
+  -> Channel
+
+
+Lokal
+Client -> Proxy -> Method... ( könnte auch kette sein... )
+im proxy behandlung!
+
+Remote Fall:
+Client -> Proxy -> Channel
+RestCall ( z.B. )  ( kann auch services aufrufen ) -> ExceptionHandler
+  -> verpackt exception als AllowedException + return auf client
+  -> wenn nicjt, normale behandling
+
+
+problem. IM serever ist kein service weit und breit...! ( und damit kein handler )
+
+ist doch: interface -> descriptor -> manager!
+
 
 === DONE
 

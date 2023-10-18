@@ -81,16 +81,19 @@ open class ServiceApplication1 {
             val z1 = System.currentTimeMillis() - ms
 
             // rest
+
             ms = System.currentTimeMillis()
             for (i in 0 until loops) remoteRest.postBody(foo)
             val z2 = System.currentTimeMillis() - ms
 
             // dispatch
+
             ms = System.currentTimeMillis()
             for (i in 0 until loops) remoteDispatch.postBody(foo)
             val z3 = System.currentTimeMillis() - ms
 
             // print
+
             println(loops.toString() + " local loops in " + z1 + "ms = " + z1.toDouble() / loops + "ms/loop")
             println(loops.toString() + " remote rest loops in " + z2 + "ms = " + z2.toDouble() / loops + "ms/loop")
             println(loops.toString() + " remote dispatch loops in " + z3 + "ms = " + z3.toDouble() / loops + "ms/loop")

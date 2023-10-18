@@ -28,10 +28,11 @@ class TestRemoteComponentImpl : AbstractComponent(), TestRemoteComponent {
     @Autowired
     lateinit var healthEndpoint: HealthEndpoint
 
+    // override AbstractComponent
+
     @get:ResponseBody
     @get:GetMapping("/test-health")
     override val health: ComponentHealth
-        // override AbstractComponent
         get() = if (healthEndpoint.health().status === Status.UP) ComponentHealth.UP else ComponentHealth.DOWN
 
     @get:ResponseBody

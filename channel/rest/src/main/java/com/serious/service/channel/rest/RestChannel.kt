@@ -5,11 +5,13 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
+import com.serious.exception.ServerException
 import com.serious.jackson.ThrowableMapper
 import com.serious.service.*
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
@@ -51,11 +53,32 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
 
     fun errorHandler(): ExchangeFilterFunction {
         return ExchangeFilterFunction.ofResponseProcessor { clientResponse: ClientResponse ->
-            if (clientResponse.statusCode().value() == 404) {
+            if (clientResponse.statusCode().value() == 210) {
                 return@ofResponseProcessor clientResponse
                     .bodyToMono<String>(String::class.java)
                     .flatMap<ClientResponse> { errorBody: String ->
                         Mono.error(ThrowableMapper.fromJSON(errorBody))
+                    }
+            }
+            else if (clientResponse.statusCode().value() == 512) {
+                return@ofResponseProcessor clientResponse
+                    .bodyToMono<String>(String::class.java)
+                    .flatMap<ClientResponse> { errorBody: String ->
+                        Mono.error(ServerException(ThrowableMapper.fromJSON(errorBody)))
+                    }
+            }
+            else if (clientResponse.statusCode().is5xxServerError()) {
+                return@ofResponseProcessor clientResponse
+                    .bodyToMono<String>(String::class.java)
+                    .flatMap<ClientResponse> { errorBody: String ->
+                        Mono.error(ServerException(errorBody)) // TODO
+                    }
+            }
+            else if (clientResponse.statusCode().is4xxClientError()) {
+                return@ofResponseProcessor clientResponse
+                    .bodyToMono<String>(String::class.java)
+                    .flatMap<ClientResponse> { errorBody: String ->
+                        Mono.error(ServerException(errorBody)) // TODO
                     }
             }
             else {

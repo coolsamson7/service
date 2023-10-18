@@ -5,11 +5,13 @@ package com.serious.service
 * All rights reserved
 */
 
+import com.serious.exception.ExceptionManager
 import com.serious.injection.InjectorFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
- /**
+
+/**
  * @author Andreas Ernst
  */
 @Configuration
@@ -19,4 +21,9 @@ open class ServiceConfiguration {
     open fun injectorFactory(): InjectorFactory {
         return InjectorFactory()
     }
+
+     @Bean
+     open fun exceptionManager(): ExceptionManager {
+         return ExceptionManager()
+     }
 }

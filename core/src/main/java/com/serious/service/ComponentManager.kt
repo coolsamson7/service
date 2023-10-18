@@ -5,24 +5,25 @@ package com.serious.service
 * All rights reserved
 */
 
+import com.serious.exception.ExceptionManager
+import com.serious.exception.FatalException
 import com.serious.service.BaseDescriptor.Companion.createImplementations
 import com.serious.service.BaseDescriptor.Companion.forService
 import com.serious.service.ChannelInvocationHandler.Companion.forComponent
-import com.serious.service.channel.MissingChannel
 import com.serious.service.exception.ServiceRuntimeException
-import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.lang.reflect.UndeclaredThrowableException
 import java.util.concurrent.ConcurrentHashMap
 
- /**
+/**
  * The [ComponentLocator] has already scanned and registered the corresponding descriptor and beans.
  * In a postConstruct phase the following logic is executed
  *
@@ -46,6 +47,8 @@ class ComponentManager @Autowired internal constructor(
     @JvmField
     var componentDescriptors: MutableMap<String, ComponentDescriptor<Component>> = HashMap()
     var proxies: MutableMap<String, Service> = ConcurrentHashMap()
+    @Autowired
+    lateinit var exceptionManager : ExceptionManager
 
     // public
 
@@ -132,30 +135,78 @@ class ComponentManager @Autowired internal constructor(
 
     fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, address: ServiceAddress): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
-        val key = serviceClass.getName() + ":" + address.channel
+        val key = "${serviceClass.getName()}:${address.channel}"
 
         return proxies.computeIfAbsent(key) { _ ->
             log.info("create proxy for {}.{}", descriptor.name, address.channel)
 
             if (address.channel == "local")
-                Proxy.newProxyInstance(
-                    serviceClass.getClassLoader(),
-                    arrayOf(serviceClass)
-                ) { _: Any?, method: Method, args: Array<Any>? ->
-                    method.invoke(descriptor.local, *args ?: emptyArgs)
+                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass)) { _: Any?, method: Method, args: Array<Any>? ->
+                    try {
+                        method.invoke(descriptor.local, *args ?: emptyArgs)
+                    }
+                    catch(exception: Throwable) {
+                        handleException(method, exception)
+                    }
                 } as T
             else
-                Proxy.newProxyInstance(
-                    serviceClass.getClassLoader(),
-                    arrayOf(serviceClass),
-                    forComponent(descriptor.getComponentDescriptor(), address.channel, address)
-                ) as T
+                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass), forComponent(descriptor.getComponentDescriptor(), address.channel, address)) as T
         } as T
     }
 
     fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg channels: String?): ServiceAddress? {
         return serviceInstanceRegistry.getServiceAddress(componentDescriptor, *channels)
     }
+
+     fun handleException(method: Method, e: Throwable) : Throwable {
+         // some local functions
+
+         fun isPartOfSignature(throwable: Throwable, method: Method): Boolean {
+             for (exceptionType in method.exceptionTypes)
+                 if (exceptionType.isAssignableFrom(throwable.javaClass))
+                     return true
+
+             return false
+         }
+
+         // get rid of stupid reflection wrappers, etc.
+         fun unwrapException(ex: Throwable): Throwable {
+             var exception = ex
+             var more = true
+             while (more) {
+                 more = false
+
+                 // invocation target
+                 if (exception is InvocationTargetException) {
+                     exception = exception.targetException
+                     more = true
+                 } // if
+
+                 else if (exception is UndeclaredThrowableException) {
+                     exception = exception.undeclaredThrowable
+                     more = true
+                 } // if
+             } // while
+
+             return exception
+         }
+
+         // go forrest
+
+         val unwrapped = unwrapException(e)
+
+         // check exception type
+
+         if (isPartOfSignature(unwrapped, method)) // TODO or alwaysthrow...
+             throw unwrapped
+
+         else {
+             if (unwrapped is FatalException)
+                 throw unwrapped
+             else
+                 throw FatalException(exceptionManager.handleException(unwrapped)) // details
+         } // else
+     }
 
     fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
         val channel = makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)

@@ -1,6 +1,7 @@
 package com.serious.service
 
 import com.serious.channel.LocalChannel
+import com.serious.exception.FatalException
 import com.serious.registry.LocalComponentRegistry
 import com.serious.service.annotations.InjectService
 import com.serious.service.exception.ServiceRuntimeException
@@ -14,6 +15,7 @@ import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import java.lang.NullPointerException
 import java.net.URI
 
 // test classes
@@ -29,6 +31,11 @@ internal class TestComponentComponentRegistry : LocalComponentRegistry()
 @ServiceInterface
 internal interface TestService : Service {
     fun hello(world: String): String
+
+    @Throws(NullPointerException::class)
+    fun throwException()
+
+    fun throwUnhandledException()
 }
 
 internal interface BadService : Service {
@@ -56,6 +63,15 @@ internal class TestComponentImpl : AbstractComponent(), TestComponent {
 internal class TestServiceImpl : TestService {
     override fun hello(world: String): String {
         return "hello $world"
+    }
+
+    @Throws(NullPointerException::class)
+    override fun throwException() {
+        throw NullPointerException()
+    }
+
+    override fun throwUnhandledException() {
+        throw NullPointerException()
     }
 }
 
@@ -113,6 +129,42 @@ internal class ServiceTests {
     @Test
     fun testLocalService() {
         Assertions.assertEquals("hello world", localTestService.hello("world"))
+    }
+
+    @Test
+    fun testLocalException() {
+        try {
+            localTestService.throwException()
+        }
+        catch(e : NullPointerException) {
+
+        }
+
+        try {
+            localTestService.throwUnhandledException()
+        }
+        catch(e : FatalException) {
+
+        }
+
+    }
+
+    @Test
+    fun testRemoteException() {
+        try {
+            testService.throwException()
+        }
+        catch(e : NullPointerException) {
+
+        }
+
+        try {
+            testService.throwUnhandledException()
+        }
+        catch(e : FatalException) {
+
+        }
+
     }
 
     //@Test

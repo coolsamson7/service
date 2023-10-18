@@ -5,6 +5,7 @@ package com.serious.channel.rest
 * All rights reserved
 */
 
+import com.serious.exception.FatalException
 import com.serious.service.*
 import com.serious.service.registry.LocalComponentRegistry
 import jakarta.annotation.PostConstruct
@@ -28,6 +29,7 @@ import org.springframework.web.service.annotation.PostExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import java.lang.NullPointerException
 import java.net.URI
 import java.util.stream.Collectors
 
@@ -37,6 +39,19 @@ internal class Foo {
 
 @Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()
+
+@ServiceInterface
+@RequestMapping("exception/")
+internal interface ExceptionMethods : Service {
+    @RequestMapping(path = ["throwDeclared"], method = [RequestMethod.GET])
+    @ResponseBody
+    @Throws(NullPointerException::class)
+    fun throwDeclaredException(): String
+
+    @RequestMapping(path = ["throw"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun throwException(): String
+}
 
 @ServiceInterface
 @RequestMapping("flux/")
@@ -133,13 +148,25 @@ internal interface BasicMethods : Service {
     fun postRequestParam(@RequestBody foo: Foo, @RequestParam("bar") bar: Int): Foo
 }
 
-@ComponentInterface(services = [BasicMethods::class, RequestMappingMethods::class, FluxMethods::class])
+@ComponentInterface(services = [BasicMethods::class, RequestMappingMethods::class, FluxMethods::class, ExceptionMethods::class])
 internal interface TestComponent : com.serious.service.Component
 
 @ComponentHost
 internal class TestComponentImpl : AbstractComponent(), TestComponent {
     override val addresses: List<ChannelAddress>
         get() = listOf(ChannelAddress("rest", URI.create("http://localhost:$port")))
+}
+
+@Component
+@RestController
+internal class ExceptionMethodsImpl : ExceptionMethods {
+    override fun throwDeclaredException(): String {
+        throw NullPointerException()
+    }
+
+    override fun throwException(): String {
+        throw NullPointerException()
+    }
 }
 
 @Component
@@ -328,6 +355,25 @@ internal class RestTest {
     }
 
     @Test
+    fun testExceptions() {
+        val service = componentManager.acquireService(ExceptionMethods::class.java)
+
+        try {
+            service.throwDeclaredException()
+        }
+        catch(exception: NullPointerException) {
+            // ok
+        }
+
+        try {
+            service.throwException()
+        }
+        catch(exception: FatalException) {
+            // ok
+        }
+    }
+
+        @Test
     fun testFlux() {
         val service = componentManager.acquireService(FluxMethods::class.java)
 
