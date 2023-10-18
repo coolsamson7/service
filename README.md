@@ -66,8 +66,7 @@ By coincidence, it declares all the necessary annotations for spring!
 
 Services are bundled by a _component_
 ```
-@ComponentInterface(name = "TestRemoteComponent", services = [TestRemoteRestService::class])
-@RestController
+@ComponentInterface(name = "TestComponent", services = [TestService::class])
 interface TestRemoteComponent : Component
 ```
 The service implementation is a normal rest controller
@@ -82,17 +81,17 @@ class TestServiceImpl : TestService {
 The component implementation adds the necessary details in order to establish a remote connection, by
 * returning a channel type ( here "rest" )
 * the address
-* and health endpoints that are usually called by different kind of registries
+* and http health endpoints that are usually called by different kind of registries
 
 ```
-@ComponentHost(health = "/api/test-health")
+@ComponentHost(health = "/api/health")
 @RestController
 @RequestMapping("/api")
 class TestComponentImpl : AbstractComponent(), TestComponent {
     // override AbstractComponent
 
     @ResponseBody
-    @GetMapping("/test-health")
+    @GetMapping("/health")
     override val health: ComponentHealth
         get() = ComponentHealth.UP
 
@@ -102,6 +101,8 @@ class TestComponentImpl : AbstractComponent(), TestComponent {
         )
 }
 ```
+As we can see here, we utilize the normal spring mechanisms to expose the health method :-) 
+
 Assuming that a channel of type "rest" is known ( we will come back to that later ), we can now call
 service methods easily.
 ```
@@ -119,6 +120,20 @@ service methods easily.
   service.hello()
     
 ```
+An alternative approach would be to use annotations
+```
+class Foo {
+   // inject services
+   
+   @InjectService
+   val service : TestService
+   @InjectService(preferLocal=true)
+   val localService : TestService // works if the implementation lives in teh same VM
+   ...
+}
+```
+
+
 Voila!
 ## Basic concepts
 
@@ -179,7 +194,7 @@ Two demo applications are available under `demo`
 * app1
 * app2
 
-* While both host a set of common services, app2 calls services hosted by app1.
+While both host a set of common services, app2 calls services hosted by app1.
 Both applications assume a running consul server under the typical port.
  
 The Kotlin API can be found [here](http://ernstandreas.de/service/)
