@@ -62,7 +62,7 @@ internal class TestServiceImpl : TestService {
         return "hello $world"
     }
 
-    @Throws(NullPointerException::class)
+    //@Throws(NullPointerException::class)
     override fun throwException() {
         throw NullPointerException()
     }
