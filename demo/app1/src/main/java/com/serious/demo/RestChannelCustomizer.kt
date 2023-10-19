@@ -20,6 +20,11 @@ import org.springframework.web.reactive.function.client.WebClient
 @RegisterChannelCustomizer(channel = RestChannel::class)
 class RestChannelCustomizer @Autowired constructor(channelManager: ChannelManager) : AbstractRestChannelCustomizer(channelManager) {
     // implement AbstractRestChannelBuilder
+
+     override fun apply(channel: RestChannel) {
+         channel.roundRobin()
+     }
+
     override fun customize(builder: WebClient.Builder): WebClient.Builder {
         return builder.filter { clientRequest: ClientRequest, nextFilter: ExchangeFunction ->
             nextFilter.exchange(clientRequest)

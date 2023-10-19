@@ -16,7 +16,7 @@ import java.util.stream.Collectors
 data class ServiceAddress(var component: String, var channel: String, var serviceInstances: List<ServiceInstance>) {
     // instance data
 
-    val uri : Set<URI>
+    val uri : List<URI>
 
     init {
         uri = computeURIs()
@@ -24,7 +24,7 @@ data class ServiceAddress(var component: String, var channel: String, var servic
 
     // private
 
-    private fun computeURIs() :Set<URI> {
+    private fun computeURIs() :List<URI> {
         val result = HashSet<URI>()
 
         for (serviceInstance in serviceInstances ) {
@@ -40,7 +40,7 @@ data class ServiceAddress(var component: String, var channel: String, var servic
             }
         }
 
-        return result;
+        return result.toList()
     }
 
     // override

@@ -13,12 +13,10 @@ import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.web.reactive.function.client.ClientRequest
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.*
 import reactor.core.publisher.Mono
 import java.lang.reflect.Method
+import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
@@ -38,10 +36,56 @@ data class SpringError(
 open class RestChannel(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress)
     : AbstractChannel(channelManager, componentDescriptor, address) {
 
+    // local interfaces
+
+    interface URIProvider {
+        fun update(newAddress :ServiceAddress)
+        fun provide() : URI
+    }
+
+    class URIValueProvider(var uri : URI) : URIProvider {
+        override fun update(newAddress: ServiceAddress) {
+            uri = newAddress.uri.get(0)
+        }
+
+        // implement URIProvider
+        override fun provide(): URI {
+            return uri
+        }
+    }
+
+    class RoundRobinURIProvider(var uris : List<URI>) : URIProvider {
+        // instance data
+
+        private var index = 0
+
+        // implement URIProvider
+        override fun update(newAddress: ServiceAddress) {
+            uris = newAddress.uri
+            index = 0
+        }
+
+        override fun provide(): URI {
+            try {
+                return uris.get(index)
+            }
+            finally {
+                index = ++index % uris.size
+            }
+        }
+    }
+
     // instance data
 
     private var webClient: WebClient? = null
+    lateinit private var uriProvider : URIProvider
     private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
+
+    // public
+
+    fun roundRobin() {
+        uriProvider = RoundRobinURIProvider(address.uri)
+    }
 
     // private
 
@@ -53,7 +97,7 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         return MethodAnalyzer().request(webClient!!, method)
     }
 
-    // implement Channel
+    // implement MethodInterceptor
 
     override fun invoke(invocation: MethodInvocation): Any {
         return getRequest(invocation.method).execute(*invocation.arguments)
@@ -96,6 +140,24 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
     }
 
     override fun setup() {
+        // local functions
+
+        val urlModifyingFilter = ExchangeFilterFunction { clientRequest: ClientRequest, nextFilter: ExchangeFunction ->
+            val url = clientRequest.url()
+            val nextURI = uriProvider.provide();
+            val newUrl: URI = URI.create("${nextURI.scheme}://${nextURI.authority}${url.path}")
+
+            nextFilter.exchange( ClientRequest.from(clientRequest)
+                .url(newUrl)
+                .build())
+        }
+
+        // start with fixed uri
+
+        uriProvider = URIValueProvider(address.uri.get(0))
+
+        // fetch customizers
+
         val channelCustomizers = channelManager.getChannelCustomizers<AbstractRestChannelCustomizer>(this)
 
         // general stuff
@@ -106,11 +168,12 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         // add some defaults
 
         var builder = WebClient.builder()
-            .baseUrl(address.serviceInstances.get(0).uri.toString()) // TODO for now
+            .baseUrl(address.uri.get(0).toString()) // doesn't matter actually
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 
             .filter(errorHandler())
+            .filter(urlModifyingFilter)
 
         // webclient stuff
 
@@ -122,10 +185,12 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         webClient = builder.build()
     }
 
-    override fun topologyUpdate(serviceAddress :ServiceAddress) {
+    override fun topologyUpdate(newAddress :ServiceAddress) {
+        uriProvider.update(newAddress)
 
-        // TODO
-        //return topologyUpdate.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
+        // super
+
+        super.topologyUpdate(newAddress) // for now...
     }
 
     companion object {
