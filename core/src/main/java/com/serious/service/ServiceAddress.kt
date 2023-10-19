@@ -13,12 +13,43 @@ import java.util.stream.Collectors
 /**
  * A <code>ServiceAddress</code> is a resolved [ChannelAddress]
  */
-data class ServiceAddress(var channel: String, var serviceInstances: List<ServiceInstance>) {
+data class ServiceAddress(var component: String, var channel: String, var serviceInstances: List<ServiceInstance>) {
+    // instance data
+
+    val uri : Set<URI>
+
+    init {
+        uri = computeURIs()
+    }
+
+    // private
+
+    private fun computeURIs() :Set<URI> {
+        val result = HashSet<URI>()
+
+        for (serviceInstance in serviceInstances ) {
+            val channels = serviceInstance.metadata.get("channels")!!
+
+            for ( channel in channels.split(",".toRegex())) {
+                val lparen = channel.indexOf("(")
+                val rparen = channel.indexOf(")")
+                val protocol = channel.substring(0, lparen)
+
+                if (protocol == this.channel)
+                    result.add(URI.create(channel.substring(lparen + 1, rparen)))
+            }
+        }
+
+        return result;
+    }
+
+    // override
 
     override fun toString(): String {
         val builder = StringBuilder()
 
         builder
+            //.append("<").append(component).append(">")
             .append(channel).append("(")
 
         for ( instance in serviceInstances  )
@@ -31,28 +62,6 @@ data class ServiceAddress(var channel: String, var serviceInstances: List<Servic
     }
 
     companion object {
-        val LOCAL = ServiceAddress("local", emptyList())
-
-        // static methods
-
-        // TODO
-        private fun extractAddresses(channels: String): List<ChannelAddress?> {
-            return Arrays.stream(channels.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-                .map { channel: String ->
-                    val lparen = channel.indexOf("(")
-                    val rparen = channel.indexOf(")")
-                    val protocol = channel.substring(0, lparen)
-                    val uri = URI.create(channel.substring(lparen + 1, rparen))
-
-                    ChannelAddress(protocol, uri)
-                }
-                .collect(Collectors.toList())
-        }
-
-        /*private fun getAddress(channel: String, instance: ServiceInstance): ServiceAddress? {
-            val addresses = extractAddresses(instance.metadata["channels"])
-            return addresses.stream().filter { address: ServiceAddress? -> address!!.channel == channel }.findFirst()
-                .orElse(null)
-        }*/
+        val LOCAL = ServiceAddress("component", "local", emptyList()) // TODO
     }
 }

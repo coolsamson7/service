@@ -12,18 +12,12 @@ import org.springframework.cloud.client.ServiceInstance
 import java.util.stream.Collectors
 
  /**
- * A local [ComponentRegistry] implementation used for test pruposes
+ * A local [ComponentRegistry] implementation used for test purposes
  */
  open class LocalComponentRegistry : ComponentRegistry {
      // instance data
 
      private var services: MutableMap<String, MutableList<ChannelAddress>> = HashMap()
-
-     // private
-
-     private fun getServiceAddresses(service : String) :List<ChannelAddress> {
-         return services[service] ?: throw ServiceRuntimeException("unknown service $service")
-     }
 
      // implement ComponentRegistry
      override fun startup(descriptor: ComponentDescriptor<Component>) {

@@ -11,9 +11,9 @@ package com.serious.service
 interface ChannelFactory {
     /**
      * create a new [Channel] based on the specified [ServiceAddress].
-     * @param componentClass the component class
+     * @param descriptor the [ComponentDescriptor]
      * @param addresses a [ServiceAddress]
      * @return the created [Channel]
      */
-    fun makeChannel(componentClass: Class<out Component>, addresses: ServiceAddress): Channel
+    fun makeChannel(descriptor: ComponentDescriptor<out Component>, addresses: ServiceAddress): Channel
 }

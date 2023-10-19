@@ -209,11 +209,11 @@ class ServiceManager @Autowired internal constructor(
      }
 
     fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
-        return makeChannel(descriptor.getComponentDescriptor().serviceInterface, address)
+        return makeChannel(descriptor.getComponentDescriptor(), address)
     }
 
-    private fun makeChannel(componentClass: Class<out Component>, address: ServiceAddress): Channel {
-        return channelManager.make(componentClass, address)
+    private fun makeChannel(componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress): Channel {
+        return channelManager.make(componentDescriptor, address)
     }
 
     // implement ApplicationContextAware

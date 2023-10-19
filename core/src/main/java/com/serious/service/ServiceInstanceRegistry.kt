@@ -5,7 +5,7 @@ package com.serious.service
 * All rights reserved
 */
 
-import com.serious.service.ChannelInvocationHandler.Companion.recheck
+import com.serious.service.ChannelInvocationHandler.Companion.updateTopology
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,13 +25,21 @@ import java.util.stream.Collectors
 class ServiceInstanceRegistry {
     // local classes
 
-    class Delta {
+     inner class TopologyUpdate {
         // instance data
 
-        var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
-        var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
+        private var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
+        private var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
 
-        // private
+        // public
+        fun newServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): ServiceAddress? {
+            return getServiceAddress(componentDescriptor, *preferredChannels)
+        }
+
+        fun involvesService(service : String) : Boolean {
+            return deletedInstances.containsKey(service) || addedInstances.containsKey(service)
+        }
+
         fun getDeletedInstances(service: String): MutableList<ServiceInstance?> {
             return deletedInstances.computeIfAbsent(service) { _: String? -> LinkedList() }
         }
@@ -109,7 +117,7 @@ class ServiceInstanceRegistry {
     private fun getInstances(componentDescriptor: ComponentDescriptor<*>): List<ServiceInstance> {
         val instances = serviceInstances[componentDescriptor.name]
 
-        return instances ?: ArrayList()
+        return instances ?: emptyList()
     }
 
     fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): ServiceAddress? {
@@ -148,7 +156,7 @@ class ServiceInstanceRegistry {
                 }
                 .collect(Collectors.toList())
 
-            return ServiceAddress(channelName, instances)
+            return ServiceAddress(componentDescriptor.name, channelName, instances)
         } else null
     }
 
@@ -172,11 +180,11 @@ class ServiceInstanceRegistry {
         println(builder)
     }
 
-    private fun computeDelta(oldMap: Map<String, List<ServiceInstance>>, newMap: Map<String, List<ServiceInstance>>): Delta {
-        val delta = Delta()
+    private fun topologyUpdate(oldMap: Map<String, List<ServiceInstance>>, newMap: Map<String, List<ServiceInstance>>): TopologyUpdate {
+        val topologyUpdate = TopologyUpdate()
         val oldKeys = oldMap.keys
         for (service in oldKeys) {
-            if (!newMap.containsKey(service)) delta.deletedServices(
+            if (!newMap.containsKey(service)) topologyUpdate.deletedServices(
                 service,
                 oldMap[service]!!
             )
@@ -188,6 +196,7 @@ class ServiceInstanceRegistry {
 
                 for (serviceInstance in oldMap[service]!!)
                     oldInstances[serviceInstance.instanceId] = serviceInstance
+
                 for (serviceInstance in newMap[service]!!)
                     newInstances[serviceInstance.instanceId] = serviceInstance
 
@@ -196,30 +205,32 @@ class ServiceInstanceRegistry {
                 val oldInstanceIds: Set<String> = oldInstances.keys
                 for (instanceId in oldInstanceIds)
                     if (!newInstances.containsKey(instanceId))
-                        delta.deletedService(service, oldInstances[instanceId])
+                        topologyUpdate.deletedService(service, oldInstances[instanceId])
 
                 for (instanceId in newInstances.keys)
                     if (!oldInstanceIds.contains(instanceId))
-                        delta.addedService(service, newInstances[instanceId])
+                        topologyUpdate.addedService(service, newInstances[instanceId])
             }
         }
 
         for (service in newMap.keys)
             if (!oldMap.containsKey(service))
-                delta.addedServices(service, newMap[service]!!)
+                topologyUpdate.addedServices(service, newMap[service]!!)
 
-        return delta
+        return topologyUpdate
     }
 
     fun update(newMap: MutableMap<String, List<ServiceInstance>>) {
-        val delta = computeDelta(serviceInstances, newMap)
+        val topologyUpdate = topologyUpdate(serviceInstances, newMap)
 
-        if (!delta.isEmpty)
-            recheck(channelManager, delta)
-
-        // new map
+        // set new map, so channels can already adapt
 
         serviceInstances = newMap
+
+        // check for necessary updates
+
+        if (!topologyUpdate.isEmpty)
+            updateTopology(this, topologyUpdate)
     }
 
      companion object {

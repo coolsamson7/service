@@ -35,8 +35,8 @@ data class SpringError(
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
  */
 @RegisterChannel("rest")
-open class RestChannel(channelManager: ChannelManager, componentClass: Class<out Component>, address: ServiceAddress)
-    : AbstractChannel(channelManager, componentClass, address) {
+open class RestChannel(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress)
+    : AbstractChannel(channelManager, componentDescriptor, address) {
 
     // instance data
 
@@ -94,8 +94,14 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
             }
         }
     }
+
     override fun setup() {
-        val channelBuilders = channelManager.getChannelCustomizers(RestChannel::class.java) as List<AbstractRestChannelCustomizer>
+        val channelCustomizers = channelManager.getChannelCustomizers<AbstractRestChannelCustomizer>(this)
+
+        // general stuff
+
+        for (channelCustomizer in channelCustomizers)
+            channelCustomizer.apply(this)
 
         // add some defaults
 
@@ -106,19 +112,20 @@ open class RestChannel(channelManager: ChannelManager, componentClass: Class<out
 
             .filter(errorHandler())
 
-        // custom stuff
+        // webclient stuff
 
-        for (channelBuilder in channelBuilders)
-            if ( channelBuilder.isApplicable(componentClass))
-                builder = channelBuilder.customize(builder)
+        for (channelCustomizer in channelCustomizers)
+            builder = channelCustomizer.customize(builder)
 
         // done
 
         webClient = builder.build()
     }
 
-    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
-        return delta.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
+    override fun topologyUpdate(serviceAddress :ServiceAddress) {
+
+        // TODO
+        //return topologyUpdate.isDeleted(address.serviceInstances.get(0)) // TODO cluster??
     }
 
     companion object {

@@ -40,22 +40,23 @@ open class Keywords : Cloneable, Externalizable {
     }
 
     // instance data
-    private var keywords: Array<Any?>?
+
+    private var keywords: Array<Any?>
 
     /**
      * return the size of this instance which includes both keys and values.
      *
      * @return the size
      */
-    open var size // the used space of the mKeywords which may contain nulls at the end!
-            : Int
+     var size: Int
         protected set
+
     // constructor
     /**
      * Constructs a empty set of `Pair` using the two given objects as head and tail.
      */
     constructor() {
-        keywords = null
+        keywords = emptyArray()
         size = 0
     }
 
@@ -78,7 +79,7 @@ open class Keywords : Cloneable, Externalizable {
     constructor(originalKeywords: Keywords, vararg keywords: Any?) {
         size = originalKeywords.size
         this.keywords = arrayOfNulls(size + keywords.size)
-        if (originalKeywords.keywords != null) System.arraycopy(originalKeywords.keywords, 0, this.keywords, 0, size)
+        System.arraycopy(originalKeywords.keywords, 0, this.keywords, 0, size)
 
         // add additional keywords
         var i = 0
@@ -111,8 +112,8 @@ open class Keywords : Cloneable, Externalizable {
      * @return the value of the named argument or `null`
      * @see .getValue
      */
-    fun <T> getValue(keyword: String, clazz: Class<T>?): T? {
-        return getKeyword(keyword, null) as T?
+    fun <T> getValue(keyword: String, clazz: Class<T>): T {
+        return getKeyword(keyword, null) as T
     }
 
     /**
@@ -124,8 +125,8 @@ open class Keywords : Cloneable, Externalizable {
      * @return the value of the named argument or the default value
      * @see .getValue
      */
-    fun <T> getValue(keyword: String, defaultValue: T): T? {
-        return getKeyword(keyword, defaultValue) as T?
+    fun <T> getValue(keyword: String, defaultValue: T): T {
+        return getKeyword(keyword, defaultValue) as T
     }
 
     /**
@@ -137,8 +138,8 @@ open class Keywords : Cloneable, Externalizable {
      * @return the value of the named argument or the default value
      * @see .getValue
      */
-    fun <T> getValue(keyword: String, clazz: Class<T>?, defaultValue: T): T? {
-        return getKeyword(keyword, defaultValue) as T?
+    fun <T> getValue(keyword: String, clazz: Class<T>, defaultValue: T): T {
+        return getKeyword(keyword, defaultValue) as T
     }
 
     /**
@@ -173,7 +174,7 @@ open class Keywords : Cloneable, Externalizable {
 
     /**
      * add all keys of the specified [Keywords] arguments to this instance possibly
-     * overwritting existing entries.
+     * overwriting existing entries.
      *
      * @param keywords the [Keywords] argument.
      * @return this
@@ -181,7 +182,7 @@ open class Keywords : Cloneable, Externalizable {
     fun add(keywords: Keywords): Keywords {
         var i = 0
         while (i < keywords.size) {
-            addValue(keywords.keywords!![i] as String?, keywords.keywords!![i + 1])
+            addValue(keywords.keywords[i] as String?, keywords.keywords[i + 1])
             i += 2
         }
         return this
@@ -196,7 +197,7 @@ open class Keywords : Cloneable, Externalizable {
         var index = -1
         var i = 0
         while (i < size) {
-            if ((keywords!![i] as String?).equals(keyword, ignoreCase = true)) {
+            if ((keywords[i] as String?).equals(keyword, ignoreCase = true)) {
                 index = i
                 break
             }
@@ -204,8 +205,8 @@ open class Keywords : Cloneable, Externalizable {
         }
         if (index >= 0) {
             System.arraycopy(keywords, index + 2, keywords, index, size - index - 2)
-            keywords!![--size] = null
-            keywords!![--size] = null
+            keywords[--size] = null
+            keywords[--size] = null
         }
     }
 
@@ -243,7 +244,7 @@ open class Keywords : Cloneable, Externalizable {
     private fun getKeyword(keyword: String, defaultValue: Any?): Any? {
         var i = 0
         while (i < size) {
-            if ((keywords!![i] as String?).equals(keyword, ignoreCase = true)) return keywords!![i + 1]
+            if ((keywords[i] as String?).equals(keyword, ignoreCase = true)) return keywords[i + 1]
             i += 2
         }
         return defaultValue
@@ -252,28 +253,31 @@ open class Keywords : Cloneable, Externalizable {
     private fun setKeyword(keyword: String?, value: Any?) {
         var i = 0
         while (i < size) {
-            if ((keywords!![i] as String?).equals(keyword, ignoreCase = true)) {
-                keywords!![i + 1] = value
+            if ((keywords[i] as String?).equals(keyword, ignoreCase = true)) {
+                keywords[i + 1] = value
                 return
             } // if
             i += 2
         }
-        val length = if (keywords != null) keywords!!.size else 0
+        val length = keywords.size
         val newSize = size + 2
-        if (newSize <= length && keywords != null) System.arraycopy(keywords, 0, keywords, 2, size) else {
+        if (newSize <= length)
+            System.arraycopy(keywords, 0, keywords, 2, size)
+        else {
             val newKeywords = arrayOfNulls<Any>(newSize + 8)
-            if (keywords != null) System.arraycopy(keywords, 0, newKeywords, 2, size)
+            System.arraycopy(keywords, 0, newKeywords, 2, size)
             keywords = newKeywords
         } // else
-        keywords!![0] = keyword
-        keywords!![1] = value
+
+        keywords[0] = keyword
+        keywords[1] = value
         size = newSize
     }
 
     private fun getKeys(keys: MutableCollection<String?>) {
         var i = 0
         while (i < size) {
-            if (!keys.contains(keywords!![i])) keys.add(keywords!![i] as String?)
+            if (!keys.contains(keywords[i])) keys.add(keywords[i] as String?)
             i += 2
         }
     }
@@ -289,7 +293,7 @@ open class Keywords : Cloneable, Externalizable {
         run {
             var i = 1
             while (i < size) {
-                val value = keywords!![i]
+                val value = keywords[i]
                 if (value !is Serializable && value != null) newSize -= 2
                 i += 2
             }
@@ -298,9 +302,9 @@ open class Keywords : Cloneable, Externalizable {
         var index = 0
         var i = 1
         while (i < size) {
-            val value = keywords!![i]
+            val value = keywords[i]
             if (value is Serializable || value == null) {
-                newKeywords[index++] = keywords!![i - 1]
+                newKeywords[index++] = keywords[i - 1]
                 newKeywords[index++] = value
             } // if
             i += 2
@@ -322,16 +326,20 @@ open class Keywords : Cloneable, Externalizable {
         var i = 0
         while (i < size) {
             if (i > 0) result.append(", ")
-            result.append(keywords!![i])
+            result.append(keywords[i])
             result.append(": ")
-            val value = keywords!![i + 1]
-            if (value is String) result.append('"').append(value)
-                .append('"') else if (value is Char) result.append('\'').append(value).append('\'') else result.append(
-                value
-            )
+            val value = keywords[i + 1]
+            when (value) {
+                is String -> result.append('"').append(value).append('"')
+
+                is Char -> result.append('\'').append(value).append('\'')
+                else -> result.append(value)
+            }
             i += 2
         }
+
         result.append('>')
+
         return result.toString()
     }
 
@@ -339,23 +347,25 @@ open class Keywords : Cloneable, Externalizable {
         return keywords.contentHashCode()
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        return if (o == null) false else {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return if (other == null) false else {
             try {
-                val k = o as Keywords
+                val k = other as Keywords
                 if (size != k.size) return false
                 var i = 0
                 while (i < size) {
-                    if (keywords!![i] != k.keywords!![i]) return false
-                    val value = keywords!![i + 1]
+                    if (keywords[i] != k.keywords[i]) return false
+                    val value = keywords[i + 1]
                     if (value == null) {
-                        if (value !== k.keywords!![i + 1]) return false
-                    } else if (value != k.keywords!![i + 1]) return false
+                        if (value !== k.keywords[i + 1]) return false
+                    }
+                    else if (value != k.keywords[i + 1]) return false
                     i += 2
                 }
                 true
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 false
             }
         }

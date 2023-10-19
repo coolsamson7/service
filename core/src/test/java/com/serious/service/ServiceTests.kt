@@ -17,10 +17,10 @@ import java.net.URI
 
 // test classes
 @RegisterChannel("test")
-internal class TestChannel(channelManager: ChannelManager,  componentClass: Class<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentClass)
+internal class TestChannel(channelManager: ChannelManager,  componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentDescriptor)
 
 @RegisterChannel("test1")
-internal class Test1Channel(channelManager: ChannelManager,  componentClass: Class<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentClass)
+internal class Test1Channel(channelManager: ChannelManager,  componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : LocalChannel(channelManager, componentDescriptor)
 
 @org.springframework.stereotype.Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()

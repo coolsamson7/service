@@ -38,20 +38,19 @@ class ChannelManager : ApplicationContextAware {
     @JvmField
     var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
     var channels: MutableMap<ServiceAddress, Channel> = ConcurrentHashMap()
-    private var channelCustomizer: MutableMap<Class<out Channel>, MutableList<ChannelCustomizer<out Channel>>> = HashMap()
+    private var channelCustomizers: ArrayList<ChannelCustomizer<out Channel>> = ArrayList()
 
     @Value("\${service.root:com.serious}")
     lateinit var rootPackage: String
 
     // public
 
-    fun registerChannelCustomizer(channelCustomizer: ChannelCustomizer<*>) {
-        val builders = this.channelCustomizer.computeIfAbsent(channelCustomizer.channelClass()) { _ -> mutableListOf() }
-        builders.add(channelCustomizer)
+    fun registerChannelCustomizer(channelCustomizer: ChannelCustomizer<out Channel>) {
+        channelCustomizers.add(channelCustomizer)
     }
 
-    fun getChannelCustomizers(channel: Class<out Channel>): MutableList<ChannelCustomizer<out Channel>> {
-        return channelCustomizer.computeIfAbsent(channel) { _ -> mutableListOf() }
+    fun <T : ChannelCustomizer<out Channel>> getChannelCustomizers(channel: Channel): List<T> {
+        return channelCustomizers.filter { customizer -> customizer.channelClass().isAssignableFrom(channel.javaClass) && customizer.isApplicable(channel.componentDescriptor.serviceInterface) } as List<T>
     }
 
     @PostConstruct
@@ -87,16 +86,16 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun removeChannel(channel: Channel) {
-        channels.remove(channel.getAddress())
+        channels.remove(channel.address)
     }
 
-    fun make(componentClass: Class<out Component>, address: ServiceAddress) : Channel {
+    fun make(componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : Channel {
         var channel = channels[address]
 
         if (channel == null) {
             log.info("create channel for {}", address.toString())
 
-            channel = channelFactories[address.channel]?.makeChannel(componentClass, address)
+            channel = channelFactories[address.channel]?.makeChannel(componentDescriptor, address)
             if (channel != null)
                 channels[address] = channel
         }

@@ -5,10 +5,7 @@ package com.serious.service.channel.dispatch
 * All rights reserved
 */
 
-import com.serious.service.ChannelManager
-import com.serious.service.Component
-import com.serious.service.RegisterChannel
-import com.serious.service.ServiceAddress
+import com.serious.service.*
 import com.serious.service.channel.SimpleMethodInvocation
 import com.serious.service.channel.rest.RestChannel
 import org.aopalliance.intercept.MethodInvocation
@@ -21,7 +18,7 @@ import java.util.*
  * A specific [Channel] used to dispatch [ServiceRequest]s using a [RestChannel]
  */
 @RegisterChannel("dispatch")
-class DispatchChannel @Autowired constructor(channelManager: ChannelManager, componentClass: Class<out Component>, address: ServiceAddress) : RestChannel(channelManager, componentClass, address) {
+class DispatchChannel @Autowired constructor(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : RestChannel(channelManager, componentDescriptor, address) {
     // instance data
 
     @Autowired

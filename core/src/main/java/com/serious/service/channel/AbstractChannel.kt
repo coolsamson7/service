@@ -12,17 +12,15 @@ import java.lang.reflect.Method
 /**
  * abstract base class for [Channel]s
  */
-abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, protected val componentClass: Class<out Component>, @JvmField protected val address: ServiceAddress) : Channel, InvocationHandler {
+abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, override val componentDescriptor: ComponentDescriptor<out Component>, override val address: ServiceAddress) : Channel, InvocationHandler {
     // implement Channel
+
+    override val name: String
+        get() = address.channel
 
     override fun setup() {}
 
-    override fun getAddress(): ServiceAddress{
-        return address
-    }
-
-    override fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean {
-        return false
+    override fun topologyUpdate(newAddress: ServiceAddress) {
     }
 
     // implement InvocationHandler

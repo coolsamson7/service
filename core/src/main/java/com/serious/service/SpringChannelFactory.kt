@@ -8,10 +8,7 @@ package com.serious.service
 import com.serious.spring.ChildBeanFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanDefinition
-import org.springframework.beans.factory.support.ChildBeanDefinition
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
-import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationListener
 import org.springframework.context.ConfigurableApplicationContext
 
  /**
@@ -24,17 +21,17 @@ class SpringChannelFactory(var channelManager: ChannelManager, private val beanD
         get() = channelManager.applicationContext!! as ConfigurableApplicationContext
 
     // implement ChannelFactory
-    override fun makeChannel(componentClass: Class<out Component>, address: ServiceAddress): Channel {
-        logger.trace("make channel " + address.channel)
+    override fun makeChannel(descriptor: ComponentDescriptor<out Component>, addresses: ServiceAddress): Channel {
+        logger.trace("make channel " + addresses.channel)
 
         val beanFactory: DefaultListableBeanFactory = ChildBeanFactory(applicationContext)
-        val beanName = address.channel
+        val beanName = addresses.channel
 
         val constructorArgumentValues = beanDefinition.constructorArgumentValues
 
         constructorArgumentValues.addIndexedArgumentValue(0, channelManager)
-        constructorArgumentValues.addIndexedArgumentValue(1, componentClass)
-        constructorArgumentValues.addIndexedArgumentValue(2, address)
+        constructorArgumentValues.addIndexedArgumentValue(1, descriptor)
+        constructorArgumentValues.addIndexedArgumentValue(2, addresses)
 
         beanFactory.registerBeanDefinition(beanName, beanDefinition)
 

@@ -29,27 +29,23 @@ class ChannelInvocationHandler private constructor(private val componentDescript
     }
 
     // private
-    private fun checkUpdate(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta): Boolean {
+    private fun topologyUpdate(newAddress: ServiceAddress?) {
         if (channel is MissingChannel) {
-            val address = serviceManager.getServiceAddress(componentDescriptor, address.channel)
-
-            if ( address != null)
-                channel = serviceManager.getChannel(componentDescriptor, address)
+            if ( newAddress != null)
+                channel = serviceManager.getChannel(componentDescriptor, newAddress)
         }
         else {
-            if (channel.needsUpdate(delta)) {
-                // remove
+            if ( newAddress == null) {
                 log.info("channel {} for {} is dead", address.channel, componentDescriptor.name)
 
-                channelManager.removeChannel(channel)
+                serviceManager.channelManager.removeChannel(channel)
 
-                // resolve
+                // resolve to missing channel
 
                 resolveChannel()
             }
+            else channel.topologyUpdate(newAddress)
         }
-
-        return true
     }
 
     // public
@@ -86,11 +82,27 @@ class ChannelInvocationHandler private constructor(private val componentDescript
         }
 
         @JvmStatic
-        fun recheck(channelManager: ChannelManager, delta: ServiceInstanceRegistry.Delta) {
+        fun updateTopology(serviceInstanceRegistry: ServiceInstanceRegistry, topologyUpdate: ServiceInstanceRegistry.TopologyUpdate) {
+            // local functions
+
+            fun equalObjects(o1: Any?, o2: Any?) : Boolean {
+                if ( o1 == null || o2 == null)
+                    return o1 == o2
+                else
+                    return o1.equals(o2)
+            }
+
             // recheck missing channels
 
             for (invocationHandler in handlers.values)
-                invocationHandler.checkUpdate(channelManager, delta)
+                if (topologyUpdate.involvesService(invocationHandler.componentDescriptor.name)) {
+                    // recompute new address
+
+                    val newAddress = serviceInstanceRegistry.getServiceAddress(invocationHandler.componentDescriptor, invocationHandler.channel.name)
+
+                    if (!equalObjects(invocationHandler.channel.address, newAddress))
+                        invocationHandler.topologyUpdate(newAddress)
+                }
         }
     }
 }

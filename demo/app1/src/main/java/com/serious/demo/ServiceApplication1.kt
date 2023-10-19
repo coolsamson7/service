@@ -52,6 +52,11 @@ open class ServiceApplication1 {
 
             manager.startup(port)
 
+
+
+            val common = manager.acquireService(CommonService::class.java, "rest")
+
+
             val remoteRest = manager.acquireService(TestRemoteRestService::class.java, "rest")
 
 

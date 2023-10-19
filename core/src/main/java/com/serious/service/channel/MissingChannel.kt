@@ -14,8 +14,8 @@ import org.aopalliance.intercept.MethodInvocation
 /**
  * A channel constructed for non-resolvable addresses
  */
-class MissingChannel(channelManager: ChannelManager, private val componentDescriptor: ComponentDescriptor<*>)
-    : AbstractChannel(channelManager, componentDescriptor.serviceInterface, ServiceAddress("missing", emptyList())) {
+class MissingChannel(channelManager: ChannelManager, override val componentDescriptor: ComponentDescriptor<*>)
+    : AbstractChannel(channelManager, componentDescriptor, ServiceAddress(componentDescriptor.name, "missing", emptyList())) {
     // implement Channel
 
     @Throws(Throwable::class)

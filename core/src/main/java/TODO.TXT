@@ -8,14 +8,59 @@
 
 === NOW
 
-
+exceptionamanger
+confugre channel
 componentmanager selber handler??
 
 === DENK NACH
 
+insatcne:
+  addresse: <meine-adresse>
+  channales:
+     rest http://...
+     other http:// ...
+
+serviceadress:
+  channel: rest
+  insatnces: a, b, c
+
+ channelmanager pro address -> channel
+
+ Logik:
+
+ ServiceInstanceRegistry ( Map<service, List<ServcieInsatcne> )
+   getAdresss(<component>)
+      - finde alle insatcnes zu dem service
+      - checke alle channels un dnehme den erste ( oder preferred )
+      - return die gefuiletrte liste
+
+  servucemanager getChannel(addtess) -> channelManager ( map<address,channel> )
+
+
+
+
+  SItuation
+  restchannel()
+     address(service, "rest", insatcnes a, b, c) uri: e, f
+
+
+
+     neu berechenn und vergleichen, wenn ja switch
+  update
+     serice neu
+     service delete
+
+
+NEU:
+   Restchannel muss instacnes auf uris mappen ( Set )
+   das kann einer oder meherer sein!
+
+NEU: berechene serviceaddress nue und vergleiche!
+
+
 === DONE
 
-irgendetwas mit post? body
+- irgendetwas mit post? body
 - exception handler
 - channelbuilder LIST!!!
 - mvn package

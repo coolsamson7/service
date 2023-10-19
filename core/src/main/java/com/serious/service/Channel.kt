@@ -12,12 +12,27 @@ import java.lang.reflect.InvocationHandler
  * A `Channel` is the communication mechanism used by the different [Service]s.
  */
 interface Channel : MethodInterceptor, InvocationHandler {
-    fun setup()
+     /**
+      * return the supported [ComponentDescriptor]
+      */
+    val componentDescriptor: ComponentDescriptor<out Component>
+
+     /**
+      * return the channel name
+      */
+    val name : String
 
      /**
       * return the associated [ServiceAddress]
       */
-    fun getAddress(): ServiceAddress
+    val address : ServiceAddress
 
-    fun needsUpdate(delta: ServiceInstanceRegistry.Delta): Boolean
+    fun setup()
+
+     /**
+      * react to topology updates
+      *
+      * @param newAddress the new [ServiceAddress]
+      */
+    fun topologyUpdate(newAddress: ServiceAddress)
 }

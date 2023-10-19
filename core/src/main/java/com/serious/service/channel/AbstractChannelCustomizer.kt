@@ -32,4 +32,8 @@ open class AbstractChannelCustomizer<T : Channel> protected constructor(channelM
     override fun isApplicable(component: Class<out Component>): Boolean {
         return true
     }
+
+    override fun apply(channel: T):Unit {
+        // noop
+    }
 }

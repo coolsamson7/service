@@ -21,4 +21,12 @@ interface ChannelCustomizer<T : Channel> {
      * return true if this builder is responsible for a particular [Component]
      */
     fun isApplicable(component: Class<out Component>): Boolean
+
+    /**
+     * apply any inital customizations
+     *
+     * @param channel the [Channel]
+     * @return
+     */
+    fun apply(channel: T):Unit
 }
