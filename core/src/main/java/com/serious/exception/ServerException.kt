@@ -5,7 +5,7 @@ package com.serious.exception
  *
  * All rights reserved
  */
-class ServerException : FatalException {
+open class ServerException : FatalException {
    constructor(message: String) : super(message) {}
 
     constructor(throwable: Throwable) : super(throwable) {}

@@ -5,12 +5,14 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.exception.CommunicationException
 import com.serious.exception.ServerException
 import com.serious.jackson.ThrowableMapper
 import com.serious.service.*
 import com.serious.service.channel.AbstractChannel
 import org.aopalliance.intercept.MethodInvocation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.*
@@ -27,7 +29,7 @@ data class SpringError(
     val status: Int,
     val error: String,
     val path: String
-) : Exception()
+)
 
 /**
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
@@ -36,41 +38,43 @@ data class SpringError(
 open class RestChannel(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress)
     : AbstractChannel(channelManager, componentDescriptor, address) {
 
+    @Autowired
+    lateinit var objectMapper  :ObjectMapper
+
     // local interfaces
 
-    interface URIProvider {
-        fun update(newAddress :ServiceAddress)
-        fun provide() : URI
+    abstract class URIProvider(var address :ServiceAddress) {
+        open fun update(newAddress :ServiceAddress) {
+            address = newAddress
+        }
+        abstract fun provide() : URI
     }
 
-    class URIValueProvider(var uri : URI) : URIProvider {
-        override fun update(newAddress: ServiceAddress) {
-            uri = newAddress.uri.get(0)
-        }
-
+    class URIValueProvider(address :ServiceAddress) : URIProvider(address) {
         // implement URIProvider
         override fun provide(): URI {
-            return uri
+            return address.uri.get(0)
         }
     }
 
-    class RoundRobinURIProvider(var uris : List<URI>) : URIProvider {
+    class RoundRobinURIProvider(address :ServiceAddress) : URIProvider(address) {
         // instance data
 
         private var index = 0
 
         // implement URIProvider
         override fun update(newAddress: ServiceAddress) {
-            uris = newAddress.uri
+            super.update(newAddress)
+
             index = 0
         }
 
         override fun provide(): URI {
             try {
-                return uris.get(index)
+                return address.uri.get(index) // TODO sync!
             }
             finally {
-                index = ++index % uris.size
+                index = ++index % address.uri.size
             }
         }
     }
@@ -84,10 +88,16 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
     // public
 
     fun roundRobin() {
-        uriProvider = RoundRobinURIProvider(address.uri)
+        uriProvider = RoundRobinURIProvider(address)
     }
 
     // private
+
+    private fun createError(errorBody: String) :RestException {
+        val error = objectMapper.readValue(errorBody, SpringError::class.java)
+
+        return RestException(error.timestamp, error. status, error. error, error.path)
+    }
 
     private fun getRequest(method: Method): Request {
         return requests.computeIfAbsent(method) { _ -> computeRequest(method) }
@@ -123,14 +133,14 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
                 return@ofResponseProcessor clientResponse
                     .bodyToMono<String>(String::class.java)
                     .flatMap<ClientResponse> { errorBody: String ->
-                        Mono.error(ServerException(ThrowableMapper.fromJSON(errorBody, SpringError::class.java))) // TODO
+                        Mono.error(createError(errorBody))
                     }
             }
             else if (clientResponse.statusCode().is4xxClientError()) {
                 return@ofResponseProcessor clientResponse
                     .bodyToMono<String>(String::class.java)
                     .flatMap<ClientResponse> { errorBody: String ->
-                        Mono.error(CommunicationException(errorBody)) // TODO
+                        Mono.error(createError(errorBody))
                     }
             }
             else {
@@ -154,7 +164,7 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
 
         // start with fixed uri
 
-        uriProvider = URIValueProvider(address.uri.get(0))
+        uriProvider = URIValueProvider(address)
 
         // fetch customizers
 
