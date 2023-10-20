@@ -2,9 +2,7 @@ package com.serious.demo
 
 import com.serious.service.ServiceManager
 import com.serious.service.ServiceConfiguration
-import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -16,10 +14,8 @@ import org.springframework.stereotype.Component
 // a configuration
 @Configuration
 @ComponentScan
-@Import(
-    ServiceConfiguration::class
-)
-internal open class RootConfig
+@Import(ServiceConfiguration::class)
+open class RootConfig
 
 // main application
 @SpringBootApplication
@@ -27,17 +23,7 @@ internal open class RootConfig
 @Slf4j
 @Component
 open class ServiceApplication1 {
-    @Value("\${server.port}")
-    val port = 0
-
-    @PostConstruct
-    fun init() {
-        ServiceApplication1.port = port
-    }
-
     companion object {
-        var port : Int = 0
-
         @JvmStatic
         fun main(args: Array<String>) {
             val context = SpringApplication.run(ServiceApplication1::class.java, *args)
@@ -50,26 +36,10 @@ open class ServiceApplication1 {
             }
             val manager = context.getBean(ServiceManager::class.java)
 
-            manager.startup(port)
-
-
-
             val common = manager.acquireService(CommonService::class.java, "rest")
-
 
             val remoteRest = manager.acquireService(TestRemoteRestService::class.java, "rest")
 
-
-            //
-
-            try {
-                remoteRest.throwException("Foo")
-            }
-            catch(e: Throwable) {
-                println()
-            }
-
-            //
             val remoteDispatch = manager.acquireService(TestRemoteRestService::class.java, "dispatch")
             val local = manager.acquireLocalService(TestRemoteRestService::class.java)
             local.hello()

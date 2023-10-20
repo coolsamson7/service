@@ -8,7 +8,14 @@
 
 componentmanager selber handler??
 
+
+ServiceInejction
+  -> Inejctor
+  -> ServiceManager
+       postconstrut -> startup
+
 === DONE
+
 - load balancer
 - irgendetwas mit post? body
 - exception handler

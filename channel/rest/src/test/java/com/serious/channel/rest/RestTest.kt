@@ -8,13 +8,11 @@ package com.serious.channel.rest
 import com.serious.exception.FatalException
 import com.serious.service.*
 import com.serious.service.registry.LocalComponentRegistry
-import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -288,7 +286,6 @@ internal class RequestMappingMethodsImpl : RequestMappingMethods {
     }
 }
 
-// test classes
 @Configuration
 @ComponentScan
 @Import(ServiceConfiguration::class)
@@ -299,16 +296,8 @@ open class TestConfig
 internal class RestTest {
     // instance data
 
-    @LocalServerPort
-    private val port = "0" // server.port
-
     @Autowired
     lateinit var serviceManager: ServiceManager
-
-    @PostConstruct
-   fun  setup() {
-        serviceManager.startup(port.toInt())
-    }
 
     // test
     @Test
@@ -366,7 +355,7 @@ internal class RestTest {
         }
     }
 
-        @Test
+    @Test
     fun testFlux() {
         val service = serviceManager.acquireService(FluxMethods::class.java)
 

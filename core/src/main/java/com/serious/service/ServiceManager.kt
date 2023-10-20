@@ -11,6 +11,7 @@ import com.serious.service.BaseDescriptor.Companion.createImplementations
 import com.serious.service.BaseDescriptor.Companion.forService
 import com.serious.service.ChannelInvocationHandler.Companion.forComponent
 import com.serious.service.exception.ServiceRuntimeException
+import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeansException
@@ -24,21 +25,15 @@ import java.lang.reflect.UndeclaredThrowableException
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * The [ComponentLocator] has already scanned and registered the corresponding descriptor and beans.
- * In a postConstruct phase the following logic is executed
- *
- *
- *  * component descriptors are copied fom the locator
- *  * local implementations are instantiated
- *  * local components are published to the registry
- *  * local components start up
- *
+ * `ServiceManager` is the central building block that knows about all registered components and services +
+ * and is able to create the corresponding proxies.
  */
 @org.springframework.stereotype.Component
 class ServiceManager @Autowired internal constructor(
     var componentRegistry: ComponentRegistry,
     var channelManager: ChannelManager,
-    var serviceInstanceRegistry: ServiceInstanceRegistry
+    var serviceInstanceRegistry: ServiceInstanceRegistry,
+
 ) : ApplicationContextAware {
     // instance data
 
@@ -52,8 +47,9 @@ class ServiceManager @Autowired internal constructor(
 
     // public
 
-    fun startup(port: Int) {
-        AbstractComponent.port = port.toString()
+    @PostConstruct
+    fun setup() {
+        instance = this
 
         // register components
 
@@ -65,6 +61,10 @@ class ServiceManager @Autowired internal constructor(
         // create local component and service implementations
 
         createImplementations(applicationContext!!)
+    }
+
+    fun startup(port: Int) {
+        AbstractComponent.port = port.toString()
 
         // publish local components
 
@@ -224,6 +224,8 @@ class ServiceManager @Autowired internal constructor(
 
     companion object {
         // static data
+
+        var instance : ServiceManager? = null
 
         var emptyArgs = arrayOf<Any>()
 

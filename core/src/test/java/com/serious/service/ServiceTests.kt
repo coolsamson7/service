@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -75,17 +76,12 @@ internal class TestServiceImpl : TestService {
 // test classes
 @Configuration
 @ComponentScan
-@Import(
-    ServiceConfiguration::class
-)
+@Import(ServiceConfiguration::class)
 open class TestConfig
 
 @SpringBootTest(classes = [ServiceConfiguration::class])
 @Import(ServiceConfiguration::class)
 internal class ServiceTests {
-    //@LocalServerPort
-    private val port = "0" // server.port
-
     @Autowired
     lateinit var serviceManager: ServiceManager
 
@@ -96,8 +92,6 @@ internal class ServiceTests {
 
     @PostConstruct
     fun  setup() {
-        serviceManager.startup(port.toInt())
-
         testService        = serviceManager.acquireService(TestService::class.java)
         localTestService   = serviceManager.acquireLocalService(TestService::class.java)
         testComponent      = serviceManager.acquireService(TestComponent::class.java)
