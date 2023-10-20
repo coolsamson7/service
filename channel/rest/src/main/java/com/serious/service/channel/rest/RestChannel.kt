@@ -6,7 +6,6 @@ package com.serious.service.channel.rest
 */
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.serious.exception.CommunicationException
 import com.serious.exception.ServerException
 import com.serious.jackson.ThrowableMapper
 import com.serious.service.*
@@ -20,6 +19,7 @@ import reactor.core.publisher.Mono
 import java.lang.reflect.Method
 import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 
@@ -43,6 +43,10 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
 
     // local interfaces
 
+    interface URIProviderFactory {
+        fun create(address :ServiceAddress) : URIProvider
+    }
+
     abstract class URIProvider(var address :ServiceAddress) {
         open fun update(newAddress :ServiceAddress) {
             address = newAddress
@@ -50,7 +54,7 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         abstract fun provide() : URI
     }
 
-    class URIValueProvider(address :ServiceAddress) : URIProvider(address) {
+    class FirstMatchURIProvider(address :ServiceAddress) : URIProvider(address) {
         // implement URIProvider
         override fun provide(): URI {
             return address.uri.get(0)
@@ -60,22 +64,17 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
     class RoundRobinURIProvider(address :ServiceAddress) : URIProvider(address) {
         // instance data
 
-        private var index = 0
+        private var index = AtomicInteger(0)
 
         // implement URIProvider
         override fun update(newAddress: ServiceAddress) {
             super.update(newAddress)
 
-            index = 0
+            index.set(0)
         }
 
         override fun provide(): URI {
-            try {
-                return address.uri.get(index) // TODO sync!
-            }
-            finally {
-                index = ++index % address.uri.size
-            }
+            return address.uri.get(index.getAndUpdate { value ->  (value + 1) % address.uri.size})
         }
     }
 
@@ -86,6 +85,10 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
     private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
 
     // public
+
+    fun uriProvider(factory : URIProviderFactory) {
+        uriProvider = factory.create(address)
+    }
 
     fun roundRobin() {
         uriProvider = RoundRobinURIProvider(address)
@@ -164,7 +167,7 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
 
         // start with fixed uri
 
-        uriProvider = URIValueProvider(address)
+        uriProvider = FirstMatchURIProvider(address)
 
         // fetch customizers
 
