@@ -65,7 +65,7 @@
   <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.service</a><span class="delimiter">/</span><span class="current">ServiceManager</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Service</span><wbr></wbr><span><span>Manager</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.springframework.stereotype/Component///PointingToDeclaration/"><span class="token annotation builtin">Component</span></span></div></div><span class="token keyword">class </span><a href="index.html">ServiceManager</a> : <span data-unresolved-link="org.springframework.context/ApplicationContextAware///PointingToDeclaration/">ApplicationContextAware</span></div><p class="paragraph">The <a href="../-component-locator/index.html">ComponentLocator</a> has already scanned and registered the corresponding descriptor and beans. In a postConstruct phase the following logic is executed</p><ul><li><p class="paragraph">component descriptors are copied fom the locator</p></li><li><p class="paragraph">local implementations are instantiated</p></li><li><p class="paragraph">local components are published to the registry</p></li><li><p class="paragraph">local components start up</p></li></ul></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.springframework.stereotype/Component///PointingToDeclaration/"><span class="token annotation builtin">Component</span></span></div></div><span class="token keyword">class </span><a href="index.html">ServiceManager</a> : <span data-unresolved-link="org.springframework.context/ApplicationContextAware///PointingToDeclaration/">ApplicationContextAware</span></div><p class="paragraph"><code class="lang-kotlin">ServiceManager</code> is the central building block that knows about all registered components and services + and is able to create the corresponding proxies.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -286,6 +286,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-application-context.html"><span class="token function">setApplicationContext</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">applicationContext<span class="token operator">: </span><span data-unresolved-link="org.springframework.context/ApplicationContext///PointingToDeclaration/">ApplicationContext</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-315683802%2FFunctions%2F1569566533" anchor-label="setup" id="-315683802%2FFunctions%2F1569566533" data-filterable-set="service-core/JVM"></a>
+          <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="setup.html"><span><span>setup</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-315683802%2FFunctions%2F1569566533"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="jakarta.annotation/PostConstruct///PointingToDeclaration/"><span class="token annotation builtin">PostConstruct</span></span></div></div><span class="token keyword"></span><span class="token keyword">fun </span><a href="setup.html"><span class="token function">setup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>

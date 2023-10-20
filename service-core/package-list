@@ -278,6 +278,7 @@ $dokka.location:com.serious.service/ServiceConfiguration///PointingToDeclaration
 $dokka.location:com.serious.service/ServiceConfiguration/ServiceConfiguration/#/PointingToDeclaration/service-core/com.serious.service/-service-configuration/-service-configuration.html
 $dokka.location:com.serious.service/ServiceConfiguration/exceptionManager/#/PointingToDeclaration/service-core/com.serious.service/-service-configuration/exception-manager.html
 $dokka.location:com.serious.service/ServiceConfiguration/injectorFactory/#/PointingToDeclaration/service-core/com.serious.service/-service-configuration/injector-factory.html
+$dokka.location:com.serious.service/ServiceConfiguration/serverPortListenerBean/#/PointingToDeclaration/service-core/com.serious.service/-service-configuration/server-port-listener-bean.html
 $dokka.location:com.serious.service/ServiceDescriptor///PointingToDeclaration/service-core/com.serious.service/-service-descriptor/index.html
 $dokka.location:com.serious.service/ServiceDescriptor/ServiceDescriptor/#com.serious.service.ComponentDescriptor[com.serious.service.Component]#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]/PointingToDeclaration/service-core/com.serious.service/-service-descriptor/-service-descriptor.html
 $dokka.location:com.serious.service/ServiceDescriptor/componentDescriptor/#/PointingToDeclaration/service-core/com.serious.service/-service-descriptor/component-descriptor.html
@@ -313,6 +314,7 @@ $dokka.location:com.serious.service/ServiceInterface/description/#/PointingToDec
 $dokka.location:com.serious.service/ServiceInterface/name/#/PointingToDeclaration/service-core/com.serious.service/-service-interface/name.html
 $dokka.location:com.serious.service/ServiceManager.Companion///PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/index.html
 $dokka.location:com.serious.service/ServiceManager.Companion/emptyArgs/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/empty-args.html
+$dokka.location:com.serious.service/ServiceManager.Companion/instance/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/instance.html
 $dokka.location:com.serious.service/ServiceManager.Companion/log/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/log.html
 $dokka.location:com.serious.service/ServiceManager///PointingToDeclaration/service-core/com.serious.service/-service-manager/index.html
 $dokka.location:com.serious.service/ServiceManager/acquireLocalService/#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-local-service.html
@@ -329,6 +331,7 @@ $dokka.location:com.serious.service/ServiceManager/handleException/#java.lang.re
 $dokka.location:com.serious.service/ServiceManager/proxies/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/proxies.html
 $dokka.location:com.serious.service/ServiceManager/serviceInstanceRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/service-instance-registry.html
 $dokka.location:com.serious.service/ServiceManager/setApplicationContext/#org.springframework.context.ApplicationContext/PointingToDeclaration/service-core/com.serious.service/-service-manager/set-application-context.html
+$dokka.location:com.serious.service/ServiceManager/setup/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/setup.html
 $dokka.location:com.serious.service/ServiceManager/shutdown/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/shutdown.html
 $dokka.location:com.serious.service/ServiceManager/startup/#kotlin.Int/PointingToDeclaration/service-core/com.serious.service/-service-manager/startup.html
 $dokka.location:com.serious.service/SpringChannelFactory.Companion///PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-companion/index.html
