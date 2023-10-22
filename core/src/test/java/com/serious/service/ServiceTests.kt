@@ -3,6 +3,7 @@ package com.serious.service
 import com.serious.channel.LocalChannel
 import com.serious.exception.FatalException
 import com.serious.registry.LocalComponentRegistry
+import com.serious.service.annotations.InjectService
 import com.serious.service.exception.ServiceRuntimeException
 import jakarta.annotation.PostConstruct
 import org.junit.jupiter.api.Assertions
@@ -85,6 +86,7 @@ internal class ServiceTests {
     @Autowired
     lateinit var serviceManager: ServiceManager
 
+    @InjectService
     lateinit var testService: TestService
     lateinit var localTestService: TestService
     lateinit var testComponent: TestComponent
@@ -92,6 +94,8 @@ internal class ServiceTests {
 
     @PostConstruct
     fun  setup() {
+        serviceManager.startup(0)
+
         testService        = serviceManager.acquireService(TestService::class.java)
         localTestService   = serviceManager.acquireLocalService(TestService::class.java)
         testComponent      = serviceManager.acquireService(TestComponent::class.java)
@@ -110,11 +114,7 @@ internal class ServiceTests {
 
     @Test
     fun testMissingChannel() {
-        try {
-            serviceManager.acquireService(TestService::class.java, "dunno")
-            Assertions.fail<Any>("should throw")
-        } catch (e: ServiceRuntimeException) {
-        }
+        serviceManager.acquireService(TestService::class.java, "dunno")
     }
 
     @Test

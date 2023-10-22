@@ -119,28 +119,30 @@ class ServiceManager @Autowired internal constructor(
     fun <T : Service> acquireLocalService(serviceClass: Class<T>): T {
         val descriptor = forService<T>(serviceClass)
 
-        return if (descriptor.hasImplementation())
-            acquireService(descriptor, ServiceAddress.LOCAL)
+        if (descriptor.hasImplementation())
+            return acquireService(descriptor, "local", ServiceAddress.localAddress(descriptor.getComponentDescriptor()))
         else
             throw ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName())
     }
 
-    fun <T : Service> acquireService(serviceClass: Class<T>, vararg channels: String?): T {
-        val descriptor = forService(serviceClass)
-        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor(), *channels)
-            ?: throw ServiceRuntimeException("no service instances for %s", descriptor.getComponentDescriptor().name + if (channels.size > 0) " channels..." else "")
+    fun <T : Service> acquireService(serviceClass: Class<T>, preferredChannel: String? = null): T {
+        report()
 
-        return acquireService(descriptor, serviceAddress)
+        val descriptor = forService(serviceClass)
+        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor(), preferredChannel)
+
+        return acquireService(descriptor, preferredChannel, serviceAddress)
     }
 
-    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>, address: ServiceAddress): T {
+    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>,  preferredChannel: String? = null, address: ServiceAddress?): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
-        val key = "${serviceClass.getName()}:${address.channel}"
+        var key = serviceClass.getName()
+        if ( preferredChannel != null ) key += ":${preferredChannel}"
 
         return proxies.computeIfAbsent(key) { _ ->
-            log.info("create proxy for {}.{}", descriptor.name, address.channel)
+            log.info("create proxy for {}", descriptor.name)
 
-            if (address.channel == "local")
+            if (address?.channel == "local")
                 Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass)) { _: Any?, method: Method, args: Array<Any>? ->
                     try {
                         method.invoke(descriptor.local, *args ?: emptyArgs)
@@ -150,12 +152,12 @@ class ServiceManager @Autowired internal constructor(
                     }
                 } as T
             else
-                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass), forComponent(descriptor.getComponentDescriptor(), address.channel, address)) as T
+                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass), forComponent(descriptor.getComponentDescriptor(), preferredChannel, address)) as T
         } as T
     }
 
-    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg channels: String?): ServiceAddress? {
-        return serviceInstanceRegistry.getServiceAddress(componentDescriptor, *channels)
+    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
+        return serviceInstanceRegistry.getServiceAddress(componentDescriptor, preferredChannel)
     }
 
      fun handleException(method: Method, e: Throwable) : Throwable {

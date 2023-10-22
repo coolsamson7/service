@@ -6,6 +6,38 @@
 
 === NOW
 
+
+Was ist mit
+ - "local"
+ - "missing" ??
+
+Problem:
+   channel ist erst kar, wenn aufgelöst, vorher nur missing???
+
+   acquireService() {
+      address = null???
+
+   }
+
+TODO: auch LocalChannel aber mit instanz!!!!
+
+
+ChannelInvocationHandler
+    private val handlers: MutableMap<"<component-name>:<channel-name>", ChannelInvocationHandler> = ConcurrentHashMap() // <component-name>:<channel-name>
+    TODO: auch ohne :
+    TODO: keine locals!
+
+ChannelManager
+    var channels: MutableMap<ServiceAddress<comp,channel,instances,uris>, Channel> = ConcurrentHashMap()  // component-name, channel-name, list<instacnes>, liust<uri> equals???
+    TODO: key ist quatsch!!!!
+
+ServiceManager
+    var proxies: MutableMap<"<service-class>:<channel>", Service> = ConcurrentHashMap() /// <service-class>:<channel> -> Proxy mit ChannelInvocationHandler als handler!
+    TODO: Das muss der gewünschte channelseiun??? ( ist aber liste ) ???? ALOS: WEG!!! UND: ohne : der erste...
+
+Wen ein channelinvocationahndelr da ist kann er channel austauschen! ( resolve()
+
+
 componentmanager selber handler??
 
 

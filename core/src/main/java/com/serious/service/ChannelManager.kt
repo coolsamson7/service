@@ -37,7 +37,7 @@ class ChannelManager : ApplicationContextAware {
     var applicationContext: ApplicationContext? = null
     @JvmField
     var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
-    var channels: MutableMap<ServiceAddress, Channel> = ConcurrentHashMap()
+    var channels: MutableMap<String, Channel> = ConcurrentHashMap()
     private var channelCustomizers: ArrayList<ChannelCustomizer<out Channel>> = ArrayList()
 
     @Value("\${service.root:com.serious}")
@@ -86,18 +86,21 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun removeChannel(channel: Channel) {
-        channels.remove(channel.address)
+        val key = channel.componentDescriptor.name + ":" + channel.name
+        channels.remove(key)
     }
 
     fun make(componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : Channel {
-        var channel = channels[address]
+        val key = componentDescriptor.name + ":" + address.channel
+
+        var channel = channels[key]
 
         if (channel == null) {
             log.info("create channel for {}", address.toString())
 
             channel = channelFactories[address.channel]?.makeChannel(componentDescriptor, address)
             if (channel != null)
-                channels[address] = channel
+                channels[key] = channel
         }
 
         if ( channel != null)

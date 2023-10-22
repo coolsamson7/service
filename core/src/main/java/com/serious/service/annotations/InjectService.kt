@@ -11,4 +11,4 @@ package com.serious.service.annotations
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD)
-annotation class InjectService(val preferLocal: Boolean = false, val channels: Array<String> = []) 
+annotation class InjectService(val preferLocal: Boolean = false, val channel: String = "")

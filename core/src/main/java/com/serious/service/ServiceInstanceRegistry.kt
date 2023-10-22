@@ -32,9 +32,6 @@ class ServiceInstanceRegistry {
         private var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
 
         // public
-        fun newServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): ServiceAddress? {
-            return getServiceAddress(componentDescriptor, *preferredChannels)
-        }
 
         fun involvesService(service : String) : Boolean {
             return deletedInstances.containsKey(service) || addedInstances.containsKey(service)
@@ -95,8 +92,14 @@ class ServiceInstanceRegistry {
     fun startup() {
         // fill initial services
 
+        val initialInstances: MutableMap<String, List<ServiceInstance>> = ConcurrentHashMap()
+
         for (componentDescriptor in ComponentDescriptor.descriptors)
-            serviceInstances[componentDescriptor.name] = componentRegistry.getInstances(componentDescriptor.name)
+            initialInstances[componentDescriptor.name] = componentRegistry.getInstances(componentDescriptor.name)
+
+        // first incremental update needed for unresolved injected services
+
+        this.update(initialInstances)
     }
 
     // private
@@ -120,7 +123,7 @@ class ServiceInstanceRegistry {
         return instances ?: emptyList()
     }
 
-    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, vararg preferredChannels: String?): ServiceAddress? {
+    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
         val instances = getInstances(componentDescriptor)
         val addresses: MutableMap<ServiceInstance, List<ChannelAddress>> = HashMap()
 
@@ -133,13 +136,13 @@ class ServiceInstanceRegistry {
 
         var channelName: String? = null
         if (!instances.isEmpty()) {
-            if (preferredChannels.size == 0) {
+            if (preferredChannel === null) {
                 channelName = addresses[instances[0]]!![0].channel
             }
             else {
                 for (instance in instances) {
                     for (address in addresses[instance]!!)
-                        if (channelName == null && Arrays.asList(*preferredChannels).contains(address.channel)) {
+                        if (channelName == null && preferredChannel == address.channel) {
                         channelName = address.channel
                         break
                     }
@@ -229,8 +232,9 @@ class ServiceInstanceRegistry {
 
         // check for necessary updates
 
-        if (!topologyUpdate.isEmpty)
+        if (!topologyUpdate.isEmpty) {
             updateTopology(this, topologyUpdate)
+        }
     }
 
      companion object {

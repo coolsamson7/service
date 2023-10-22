@@ -22,6 +22,23 @@ data class ServiceAddress(var component: String, var channel: String, var servic
         uri = computeURIs()
     }
 
+    fun changed(address : ServiceAddress) : Boolean {
+        if ( channel != address.channel)
+            return true
+
+        if ( uri.size != address.uri.size )
+            return true
+
+        if ( serviceInstances.size != address.serviceInstances.size )
+            return true
+
+        // TODO: more??
+
+        // oke
+
+        return false
+    }
+
     // private
 
     private fun computeURIs() :List<URI> {
@@ -62,6 +79,12 @@ data class ServiceAddress(var component: String, var channel: String, var servic
     }
 
     companion object {
-        val LOCAL = ServiceAddress("component", "local", emptyList()) // TODO
+        fun localAddress(componentDescriptor: ComponentDescriptor<*>) : ServiceAddress {
+            return ServiceAddress(componentDescriptor.name, "local", emptyList())
+        }
+
+        fun missingAddress(componentDescriptor: ComponentDescriptor<*>) : ServiceAddress {
+            return ServiceAddress(componentDescriptor.name, "missing", emptyList())
+        }
     }
 }

@@ -48,7 +48,7 @@ class ServiceInjection @Autowired constructor(injectorFactory: InjectorFactory) 
         return if (annotation.preferLocal && BaseDescriptor.forService(serviceInterface).hasImplementation())
             serviceManager.acquireLocalService(serviceInterface)
         else
-            serviceManager.acquireService(serviceInterface, *annotation.channels)
+            serviceManager.acquireService(serviceInterface, if ( annotation.channel.isEmpty()) null else annotation.channel )
     }
 
     // implement ApplicationContextAware

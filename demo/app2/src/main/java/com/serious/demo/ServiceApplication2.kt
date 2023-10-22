@@ -25,9 +25,12 @@ open class ServiceApplication2 {
         fun main(args: Array<String>) {
             val context = SpringApplication.run(ServiceApplication2::class.java, *args)
 
-            //val manager = context.getBean(ServiceManager::class.java)
+            val manager = context.getBean(ServiceManager::class.java)
 
-            //val testRemoteRestService = manager.acquireService(TestRemoteRestService::class.java)
+            val commonService = manager.acquireService(CommonService::class.java)
+            commonService.hello()
+            commonService.hello()
+
             //println(testRemoteRestService.hello())
         }
     }
