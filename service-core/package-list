@@ -319,7 +319,6 @@ $dokka.location:com.serious.service/ServiceManager.Companion/instance/#/Pointing
 $dokka.location:com.serious.service/ServiceManager.Companion/log/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/log.html
 $dokka.location:com.serious.service/ServiceManager///PointingToDeclaration/service-core/com.serious.service/-service-manager/index.html
 $dokka.location:com.serious.service/ServiceManager/acquireLocalService/#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-local-service.html
-$dokka.location:com.serious.service/ServiceManager/acquireService/#com.serious.service.BaseDescriptor[TypeParam(bounds=[com.serious.service.Service])]#kotlin.String?#com.serious.service.ServiceAddress?/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-service.html
 $dokka.location:com.serious.service/ServiceManager/acquireService/#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-service.html
 $dokka.location:com.serious.service/ServiceManager/applicationContext/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/application-context.html
 $dokka.location:com.serious.service/ServiceManager/channelManager/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/channel-manager.html
@@ -327,7 +326,6 @@ $dokka.location:com.serious.service/ServiceManager/componentDescriptors/#/Pointi
 $dokka.location:com.serious.service/ServiceManager/componentRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/component-registry.html
 $dokka.location:com.serious.service/ServiceManager/exceptionManager/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/exception-manager.html
 $dokka.location:com.serious.service/ServiceManager/getChannel/#com.serious.service.ComponentDescriptor[*]#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-service-manager/get-channel.html
-$dokka.location:com.serious.service/ServiceManager/getServiceAddress/#com.serious.service.ComponentDescriptor[*]#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-manager/get-service-address.html
 $dokka.location:com.serious.service/ServiceManager/handleException/#java.lang.reflect.Method#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.service/-service-manager/handle-exception.html
 $dokka.location:com.serious.service/ServiceManager/proxies/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/proxies.html
 $dokka.location:com.serious.service/ServiceManager/serviceInstanceRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/service-instance-registry.html
