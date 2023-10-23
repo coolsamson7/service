@@ -8,7 +8,7 @@ package com.serious.service
 import java.net.URI
 
 /**
- * Channel address
+ * Components expose [ChannelAddress] es under which they can be called by establishing a [Channel]
  *
  * @property channel the channel name
  * @property uri the [URI]

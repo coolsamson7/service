@@ -63,6 +63,11 @@ class ServiceManager @Autowired internal constructor(
         createImplementations(applicationContext!!)
     }
 
+    /**
+     * startup the service manager under the passed local port which will in turn register all local components.
+     *
+     * @param port the local port
+     */
     fun startup(port: Int) {
         AbstractComponent.port = port.toString()
 
@@ -116,6 +121,13 @@ class ServiceManager @Autowired internal constructor(
     }
 
     // public
+    /**
+     * create a service proxy which will call the local implementation
+     *
+     * @param T the service type
+     * @param serviceClass the service class
+     * @return the proxy
+     */
     fun <T : Service> acquireLocalService(serviceClass: Class<T>): T {
         val descriptor = forService<T>(serviceClass)
 
@@ -125,6 +137,14 @@ class ServiceManager @Autowired internal constructor(
             throw ServiceRuntimeException("cannot create local service for %s, implementation missing", descriptor.serviceInterface.getName())
     }
 
+    /**
+     * create a service proxy for a remote service. A proxy will be cerated even if no channels are registered.
+     *
+     * @param T the service type
+     * @param serviceClass the service class
+     * @param preferredChannel optional preferred channel name
+     * @return the proxy
+     */
     fun <T : Service> acquireService(serviceClass: Class<T>, preferredChannel: String? = null): T {
         report()
 
@@ -134,7 +154,7 @@ class ServiceManager @Autowired internal constructor(
         return acquireService(descriptor, preferredChannel, serviceAddress)
     }
 
-    fun <T : Service> acquireService(descriptor: BaseDescriptor<T>,  preferredChannel: String? = null, address: ServiceAddress?): T {
+    private fun <T : Service> acquireService(descriptor: BaseDescriptor<T>,  preferredChannel: String? = null, address: ServiceAddress?): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
         var key = serviceClass.getName()
         if ( preferredChannel != null ) key += ":${preferredChannel}"
@@ -156,10 +176,19 @@ class ServiceManager @Autowired internal constructor(
         } as T
     }
 
-    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
+    private fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
         return serviceInstanceRegistry.getServiceAddress(componentDescriptor, preferredChannel)
     }
 
+    /**
+     * handle exceptions throw by the service method by unwrapping reflection wrappers ( e.g. UndeclaredThrowable ) first
+     * If the exception is part of the signature, the exception is simply rethrown.
+     * Only if not, it will be delegates to the central exception manager to handle it, and then wrapped in a [FatalException].
+     * If a [FatalException] is caught it will be rethrown immediately
+     * @param method the called method
+     * @param e the exception
+     * @return the exception
+     */
      fun handleException(method: Method, e: Throwable) : Throwable {
          // some local functions
 
@@ -210,6 +239,13 @@ class ServiceManager @Autowired internal constructor(
          } // else
      }
 
+    /**
+     * Get return a suitable channel for the given component descriptor and address
+     *
+     * @param descriptor a [ComponentDescriptor]
+     * @param address the [ServiceAddress]
+     * @return the channel
+     */
     fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
         return makeChannel(descriptor.getComponentDescriptor(), address)
     }
