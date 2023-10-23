@@ -199,7 +199,7 @@ class ServiceManager @Autowired internal constructor(
 
          // check exception type
 
-         if (isPartOfSignature(unwrapped, method)) // TODO or alwaysthrow...
+         if (isPartOfSignature(unwrapped, method))
              throw unwrapped
 
          else {

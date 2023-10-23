@@ -29,10 +29,12 @@ data class ServiceAddress(var component: String, var channel: String, var servic
         if ( uri.size != address.uri.size )
             return true
 
-        if ( serviceInstances.size != address.serviceInstances.size )
-            return true
+        if ( !HashSet<URI>(uri).equals(HashSet<URI>(address.uri)))
+            return false
 
-        // TODO: more??
+        // actually we don't care...
+        //if ( serviceInstances.size != address.serviceInstances.size )
+        //    return true
 
         // oke
 

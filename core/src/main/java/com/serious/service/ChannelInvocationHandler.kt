@@ -42,7 +42,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
 
                 // resolve to missing channel
 
-                resolveChannel()
+                channel = MissingChannel(this.serviceManager.channelManager, componentDescriptor)
             }
             else channel.topologyUpdate(newAddress)
         }
@@ -87,11 +87,11 @@ class ChannelInvocationHandler private constructor(private val componentDescript
         fun updateTopology(serviceInstanceRegistry: ServiceInstanceRegistry, topologyUpdate: ServiceInstanceRegistry.TopologyUpdate) {
             // local functions
 
-            fun addressChanged(o1: ServiceAddress?, o2: ServiceAddress?) : Boolean { // TODO
-                return if ( o1 === null || o2 === null)
-                    o1 !== o2
+            fun addressChanged(a1: ServiceAddress?, a2: ServiceAddress?) : Boolean {
+                return if ( a1 === null || a2 === null)
+                    a1 !== a2
                 else
-                    o1.changed(o2)
+                    a1.changed(a2)
             }
 
             // recheck missing channels

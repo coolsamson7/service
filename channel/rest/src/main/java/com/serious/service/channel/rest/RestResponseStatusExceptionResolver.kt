@@ -25,11 +25,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Component
 class RestResponseStatusExceptionResolver : ExceptionHandlerExceptionResolver() {
-    // instance data
-
-    @Autowired
-    lateinit var serviceManager : ServiceManager
-
     // constructor
 
     init {

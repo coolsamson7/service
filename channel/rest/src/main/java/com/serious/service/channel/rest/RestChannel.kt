@@ -158,10 +158,9 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         val urlModifyingFilter = ExchangeFilterFunction { clientRequest: ClientRequest, nextFilter: ExchangeFunction ->
             val url = clientRequest.url()
             val nextURI = uriProvider.provide();
-            val newUrl: URI = URI.create("${nextURI.scheme}://${nextURI.authority}${url.path}")
 
             nextFilter.exchange( ClientRequest.from(clientRequest)
-                .url(newUrl)
+                .url(URI(nextURI.scheme, nextURI.authority, url.path, url.query, url.fragment))
                 .build())
         }
 

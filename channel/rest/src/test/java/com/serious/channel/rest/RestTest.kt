@@ -83,6 +83,10 @@ internal interface RequestMappingMethods : Service {
     @ResponseBody
     fun post(@RequestBody foo: Foo): Foo
 
+    @RequestMapping(path = ["request-param"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun getRequestParam(@RequestParam("bar") bar: Int): Foo
+
     @RequestMapping(path = ["request-param"], method = [RequestMethod.POST])
     @ResponseBody
     fun postRequestParam(@RequestBody foo: Foo, @RequestParam("bar") bar: Int): Foo
@@ -134,7 +138,15 @@ internal interface BasicMethods : Service {
     @ResponseBody
     fun post(@RequestBody foo: Foo): Foo
 
-    @PostMapping("/request-param")
+    @GetMapping("/get-request-params")
+    @ResponseBody
+    fun getRequestParams(@RequestParam foo: String, @RequestParam bar: Int, @RequestParam baz: Boolean): Foo
+
+    @GetMapping("/get-request-param")
+    @ResponseBody
+    fun getRequestParam(@RequestParam("bar") bar: Int): Foo
+
+    @PostMapping("/post-request-param")
     @ResponseBody
     fun postRequestParam(@RequestBody foo: Foo, @RequestParam("bar") bar: Int): Foo
 }
@@ -247,6 +259,18 @@ internal class BasicMethodsImpl : BasicMethods {
         return foo
     }
 
+    override fun getRequestParams(foo: String, bar: Int, baz: Boolean): Foo {
+        val result = Foo()
+        result.id = "${foo}${bar}${baz}"
+        return result
+    }
+
+    override fun getRequestParam(bar: Int): Foo {
+        val foo = Foo()
+        foo.id = bar.toString()
+        return foo
+    }
+
     override fun postRequestParam(foo: Foo, bar: Int): Foo {
         foo.id = bar.toString()
         return foo
@@ -280,6 +304,12 @@ internal class RequestMappingMethodsImpl : RequestMappingMethods {
         return foo
     }
 
+    override fun getRequestParam(bar: Int): Foo {
+        val foo = Foo()
+        foo.id = bar.toString()
+        return foo
+    }
+
     override fun postRequestParam(foo: Foo, bar: Int): Foo {
         foo.id = bar.toString()
         return foo
@@ -309,7 +339,9 @@ internal class RestTest {
         Assertions.assertEquals("world", service.getVariable("world"))
         Assertions.assertEquals("world", service.getVariableNoName("world"))
         Assertions.assertEquals("id", service.post(foo).id)
-        //Assertions.assertEquals("1", service.postRequestParam(foo, 1).id)
+        Assertions.assertEquals("foo1true", service.getRequestParams("foo", 1, true).id)
+        Assertions.assertEquals("1", service.getRequestParam(1).id)
+        Assertions.assertEquals("1", service.postRequestParam(foo, 1).id)
         Assertions.assertEquals("foobar", service.getVariables("foo", "bar"))
         Assertions.assertEquals("world", service.putVariable("world"))
         Assertions.assertEquals("world", service.getVariableNoName("world"))
@@ -330,7 +362,8 @@ internal class RestTest {
         Assertions.assertEquals("world", service.getVariable("world"))
         Assertions.assertEquals("world", service.getVariableNoName("world"))
         Assertions.assertEquals("id", service.post(foo).id)
-        //Assertions.assertEquals("1", service.postRequestParam(foo, 1).id)
+        Assertions.assertEquals("1", service.getRequestParam(1).id)
+        Assertions.assertEquals("1", service.postRequestParam(foo, 1).id)
         Assertions.assertEquals("foobar", service.getVariables("foo", "bar"))
         Assertions.assertEquals("world", service.putVariable("world"))
         Assertions.assertEquals("world", service.getVariableNoName("world"))
