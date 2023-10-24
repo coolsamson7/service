@@ -37,19 +37,20 @@ public class MyClass {
 ```
 
 What's bad?
-- the code assumes that the called service is remote
-- we commit to a specific protocol
-- we commit to a loadbalanced connection
+- the code assumes that the called service is remote in the first place
+- we have to commit to a specific protocol
+- we even add technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
+- loadbalancing in spring cloud is done on an application level
 
 This is _clumsy_ and against pretty valuable architectural principles like separation of concern, etc.
 
 What we would like to do instead is
 
-- services are described in form of interfaces
-- corresponding implementations run somewhere and register with a central registry
-- service calls use this information by establishing some kind of - transparent - remoting
-- local services are executed locally
+- we want to program against simple interfaces
+- we don't want to care where the implementation is. It could be remote, it could be local as well.
+- depending on a specific deployment scenarios - e.g class path - different remoting situations are achieved dynamically.
+- wherever it is, we don't want to care about the technical datails, it should be completely transparent based on a central registry of running services
 
 ## Sample
 
@@ -79,7 +80,7 @@ class TestServiceImpl : TestService {
 }
 ```
 The component implementation adds the necessary details in order to establish a remote connection, by
-* returning a channel type ( here "rest" )
+* referencing a channel type ( here "rest" )
 * the address
 * and http health endpoints that are usually called by different kind of registries
 
@@ -135,6 +136,7 @@ class Foo {
 
 
 Voila!
+
 ## Basic concepts
 
 As we have already seen, there are 4 different basic building blocks
@@ -170,7 +172,7 @@ Resolving a proper channel is done lazily based on the available information fro
 which return a list of service instances and supported channels.
 
 It is up to a concrete channel if ( client side ) loadbalancing is supported or not.
-The current implementation simply talsk to the first address ( as long as alive )
+The current implementation simply talks to the first address ( as long as alive )
 
 Channels will automaticylly adjist to changes on the topology.
 
@@ -180,7 +182,7 @@ The framework offers the following features
 * first component registry implementation based on spring consul
 * rest channel based on `WebClient` supporting the _basic_ annotations
 * injection possibilities for services
-* central dynamic exception handling
+* central exception handling mechanisms
 
 ## Getting started
 
