@@ -36,14 +36,14 @@ public class MyClass {
 }
 ```
 
-What's bad?
+What's wrong?
 - the code assumes that the called service is remote in the first place
 - we have to commit to a specific protocol
 - we even add technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
-- loadbalancing in spring cloud is done on an application level
+- loadbalancing in spring cloud is done on an application and not module level!
 
-This is _clumsy_ and against pretty valuable architectural principles like separation of concern, etc.
+This is _clumsy_ and against some major architectural principles like separation of concern, etc.
 
 What we would like to do instead is
 
@@ -98,7 +98,7 @@ class TestComponentImpl : AbstractComponent(), TestComponent {
 
     override val addresses: List<ChannelAddress>
         get() = listOf(
-            ChannelAddress("rest", URI.create("http://$host:$port")) // local host and port
+            ChannelAddress("rest", URI.create("http://$host:$port")) // local host and port in this case!
         )
 }
 ```
@@ -134,18 +134,18 @@ class Foo {
 }
 ```
 
-
-Voila!
+Voila, easy, eh?
 
 ## Basic concepts
 
-As we have already seen, there are 4 different basic building blocks
+As we have already seen, there are four different basic building blocks
 * Service
 * Component
 * Component Registry
 * Channel
 
 ### Service
+
 A service is represented by an annotated ( in order to be scanned by spring ) interface extending the tagging interface `Service` . 
 There are no other restrictions except that it should contain all the necessary information so that the communication channels are able to do the remoting.
 In our example we simply added the spring mvc annotations.
@@ -172,9 +172,8 @@ Resolving a proper channel is done lazily based on the available information fro
 which return a list of service instances and supported channels.
 
 It is up to a concrete channel if ( client side ) loadbalancing is supported or not.
-The current implementation simply talks to the first address ( as long as alive )
 
-Channels will automaticylly adjist to changes on the topology.
+Channels will automatically adjust to changes in the topology which is usually detected by failing heartbeats.
 
 ## Features
 
@@ -201,6 +200,6 @@ Both applications assume a running consul server under the typical port.
  
 The Kotlin API can be found [here](http://ernstandreas.de/service/)
 
-Check the corresponding [here](https://github.com/coolsamson7/service/wiki) for detailed information.
+Check the corresponding [Wiki](https://github.com/coolsamson7/service/wiki) for detailed information.
 
 Have fun!
