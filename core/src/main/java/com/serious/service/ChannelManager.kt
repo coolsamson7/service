@@ -50,7 +50,7 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun <T : ChannelCustomizer<out Channel>> getChannelCustomizers(channel: Channel): List<T> {
-        return channelCustomizers.filter { customizer -> customizer.channelClass().isAssignableFrom(channel.javaClass) && customizer.isApplicable(channel.componentDescriptor.serviceInterface) } as List<T>
+        return channelCustomizers.filter { customizer -> customizer.channelClass.isAssignableFrom(channel.javaClass) && customizer.isApplicable(channel.componentDescriptor.serviceInterface) } as List<T>
     }
 
     @PostConstruct

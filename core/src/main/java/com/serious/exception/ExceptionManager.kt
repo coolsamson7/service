@@ -25,23 +25,23 @@ class ExceptionManager {
      * A `Handler` contains logging and transformation code for specific exception
      * classes. Logging methods are identified by signature of type
      *
-     * * `prexform(e: <exception-class>)`
+     * * `unwrap(e: <exception-class>)`
      * * `log(e : <exception-class>)`
-     * * `xform(e: <exception-class>)`
-     * * ` handle(e: <exception-class>)`
+     * * `wrap(e: <exception-class>)`
+     * * `handle(e: <exception-class>)`
      */
     interface Handler {
-        // prexform(e: exception-class)
+        // unwrap(e: exception-class)
         // log(e: exception-class)
         // handle(e: exception-class)
-        // xform(e: exception-class)
+        // wrap(e: exception-class)
     }
 
     // instance data
 
-    private val pretransformer = MethodDispatcher(PRE_TRANSFORM)
+    private val pretransformer = MethodDispatcher(UNWRAP)
     private var logger = MethodDispatcher(LOG)
-    private var transformer = MethodDispatcher(TRANSFORM)
+    private var transformer = MethodDispatcher(WRAP)
     private var handler = MethodDispatcher(HANDLE)
 
     /**
@@ -84,15 +84,15 @@ class ExceptionManager {
     @JvmOverloads
     fun register(handler: Handler, replace: Boolean = false) {
         if (replace) {
-            pretransformer.replaceMethods(handler, PRE_TRANSFORM)
+            pretransformer.replaceMethods(handler, UNWRAP)
             logger.replaceMethods(handler, LOG)
-            transformer.replaceMethods(handler, TRANSFORM)
+            transformer.replaceMethods(handler, WRAP)
             this.handler.replaceMethods(handler, HANDLE)
         }
         else {
-            pretransformer.addMethods(handler, PRE_TRANSFORM)
+            pretransformer.addMethods(handler, UNWRAP)
             logger.addMethods(handler, LOG)
-            transformer.addMethods(handler, TRANSFORM)
+            transformer.addMethods(handler, WRAP)
             this.handler.addMethods(handler, HANDLE)
         }
 
@@ -106,13 +106,13 @@ class ExceptionManager {
      *  * execute the chain of matching `log` methods starting with the most specific.
      * Every log-method is free to call [ExceptionManager.proceed] that will call
      * the next best matching method.
-     *  * execute the chain of matching `xform` methods starting with the most specific.
-     * Every xform-method is free to call [ExceptionManager.proceed] that will call
+     *  * execute the chain of matching `wrap` methods starting with the most specific.
+     * Every wrap-method is free to call [ExceptionManager.proceed] that will call
      * the next best matching method. Any explicit `throw` statement
      * will terminate the chain and the toplevel `handleException` call. Otherwise
      * the resulting - possibly transformed - objects will be returned.
      *
-     * If no matching xform method can be identified the call will throw a
+     * If no matching wrap method can be identified the call will throw a
      * [MethodDispatcher.NoApplicableMethodError].
      *
      * @param exception the original exception.
@@ -179,8 +179,8 @@ class ExceptionManager {
         // constants
 
         private const val LOG = "log"
-        private const val PRE_TRANSFORM = "prexform"
-        private const val TRANSFORM = "xform"
+        private const val UNWRAP = "unwrap"
+        private const val WRAP = "wrap"
         private const val HANDLE = "handle"
         val EMPTY_HANDLERS_ARRAY = arrayOf<Handler>()
 

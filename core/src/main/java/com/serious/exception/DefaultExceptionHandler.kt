@@ -13,16 +13,16 @@ class DefaultExceptionHandler : AbstractExceptionHandler() {
         println(e.message)
     }
 
-    // prexform
+    // unwrap
 
-    fun prexform(e : Throwable) : Throwable {
+    fun unwrap(e : Throwable) : Throwable {
         return e
     }
-    fun prexform(e : UndeclaredThrowableException) : Throwable  {
+    fun unwrap(e : UndeclaredThrowableException) : Throwable  {
         return ExceptionManager.proceed(e.undeclaredThrowable)
     }
 
-    fun prexform(e : InvocationTargetException) : Throwable {
+    fun unwrap(e : InvocationTargetException) : Throwable {
         return ExceptionManager.proceed(e.targetException)
     }
 }

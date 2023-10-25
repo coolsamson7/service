@@ -27,6 +27,9 @@ interface Channel : MethodInterceptor, InvocationHandler {
       */
     val address : ServiceAddress
 
+     /**
+      * setup the channel details based on the supplied address
+      */
     fun setup()
 
      /**

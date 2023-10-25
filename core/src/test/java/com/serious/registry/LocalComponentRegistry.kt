@@ -20,12 +20,12 @@ import java.util.stream.Collectors
      private var services: MutableMap<String, MutableList<ChannelAddress>> = HashMap()
 
      // implement ComponentRegistry
-     override fun startup(descriptor: ComponentDescriptor<Component>) {
+     override fun register(descriptor: ComponentDescriptor<Component>) {
          val addresses = services.computeIfAbsent(descriptor.name) { _: String? -> ArrayList() }
          addresses.addAll(descriptor.externalAddresses!!)
      }
 
-     override fun shutdown(descriptor: ComponentDescriptor<Component>) {
+     override fun deregister(descriptor: ComponentDescriptor<Component>) {
          // noop
      }
 

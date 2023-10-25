@@ -20,7 +20,7 @@ interface Component : Service {
     fun shutdown()
 
     /**
-     * the available addresses under which teh component can be called remotely
+     * the available addresses under which the component can be called remotely
      */
     val addresses: List<ChannelAddress>
 

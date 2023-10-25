@@ -15,7 +15,7 @@ import com.serious.service.Component
 open class AbstractChannelCustomizer<T : Channel> protected constructor(channelManager: ChannelManager) : ChannelCustomizer<T> {
     // instance data
 
-    var channelClass: Class<out Channel>
+    override val channelClass: Class<out Channel>
 
     // constructor
     init {
@@ -25,15 +25,12 @@ open class AbstractChannelCustomizer<T : Channel> protected constructor(channelM
     }
 
     // implement ChannelBuilder
-    override fun channelClass(): Class<out Channel> {
-        return channelClass
-    }
 
     override fun isApplicable(component: Class<out Component>): Boolean {
         return true
     }
 
-    override fun apply(channel: T):Unit {
+    override fun apply(channel: T) {
         // noop
     }
 }

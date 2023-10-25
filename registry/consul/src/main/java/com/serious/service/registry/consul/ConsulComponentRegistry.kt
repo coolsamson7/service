@@ -163,7 +163,7 @@ class ConsulComponentRegistry : ComponentRegistry {
     }
 
     // implement ComponentRegistry
-    override fun startup(descriptor: ComponentDescriptor<com.serious.service.Component>) {
+    override fun register(descriptor: ComponentDescriptor<com.serious.service.Component>) {
         val registration = ConsulRegistration(
             service4(descriptor),
             properties4(descriptor)
@@ -172,7 +172,7 @@ class ConsulComponentRegistry : ComponentRegistry {
         consulServiceRegistry.register(registration)
     }
 
-    override fun shutdown(descriptor: ComponentDescriptor<com.serious.service.Component>) {
+    override fun deregister(descriptor: ComponentDescriptor<com.serious.service.Component>) {
         consulServiceRegistry.deregister(registeredServices[descriptor])
     }
 

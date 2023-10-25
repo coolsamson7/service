@@ -75,7 +75,7 @@ class ServiceManager @Autowired internal constructor(
 
         for (componentDescriptor in componentDescriptors.values)
             if (componentDescriptor.hasImplementation())
-                componentRegistry.startup(componentDescriptor)
+                componentRegistry.register(componentDescriptor)
 
         // force update of the service instance registry
 
@@ -102,7 +102,7 @@ class ServiceManager @Autowired internal constructor(
 
                 (componentDescriptor.local!! as Component).shutdown()
 
-                componentRegistry.shutdown(componentDescriptor)
+                componentRegistry.deregister(componentDescriptor)
             }
     }
 

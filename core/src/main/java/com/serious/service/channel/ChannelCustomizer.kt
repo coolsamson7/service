@@ -15,7 +15,7 @@ interface ChannelCustomizer<T : Channel> {
     /**
      * return the corresponding channel class that this builder is responsible for
      */
-    fun channelClass(): Class<out Channel>
+    val channelClass: Class<out Channel>
 
     /**
      * return true if this builder is responsible for a particular [Component]
