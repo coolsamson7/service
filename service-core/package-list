@@ -17,9 +17,9 @@ $dokka.location:com.serious.exception/CommunicationException/CommunicationExcept
 $dokka.location:com.serious.exception/DefaultExceptionHandler///PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/index.html
 $dokka.location:com.serious.exception/DefaultExceptionHandler/DefaultExceptionHandler/#/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/-default-exception-handler.html
 $dokka.location:com.serious.exception/DefaultExceptionHandler/log/#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/log.html
-$dokka.location:com.serious.exception/DefaultExceptionHandler/prexform/#java.lang.reflect.InvocationTargetException/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/prexform.html
-$dokka.location:com.serious.exception/DefaultExceptionHandler/prexform/#java.lang.reflect.UndeclaredThrowableException/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/prexform.html
-$dokka.location:com.serious.exception/DefaultExceptionHandler/prexform/#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/prexform.html
+$dokka.location:com.serious.exception/DefaultExceptionHandler/unwrap/#java.lang.reflect.InvocationTargetException/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/unwrap.html
+$dokka.location:com.serious.exception/DefaultExceptionHandler/unwrap/#java.lang.reflect.UndeclaredThrowableException/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/unwrap.html
+$dokka.location:com.serious.exception/DefaultExceptionHandler/unwrap/#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.exception/-default-exception-handler/unwrap.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion///PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/index.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion/EMPTY_HANDLERS_ARRAY/#/PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/-e-m-p-t-y_-h-a-n-d-l-e-r-s_-a-r-r-a-y.html
 $dokka.location:com.serious.exception/ExceptionManager.Companion/clearExternal/#/PointingToDeclaration/service-core/com.serious.exception/-exception-manager/-companion/clear-external.html
@@ -251,10 +251,10 @@ $dokka.location:com.serious.service/ComponentLocator/registerComponent/#org.spri
 $dokka.location:com.serious.service/ComponentLocator/scan/#/PointingToDeclaration/service-core/com.serious.service/-component-locator/scan.html
 $dokka.location:com.serious.service/ComponentLocator/setEnvironment/#org.springframework.core.env.Environment/PointingToDeclaration/service-core/com.serious.service/-component-locator/set-environment.html
 $dokka.location:com.serious.service/ComponentRegistry///PointingToDeclaration/service-core/com.serious.service/-component-registry/index.html
+$dokka.location:com.serious.service/ComponentRegistry/deregister/#com.serious.service.ComponentDescriptor[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service/-component-registry/deregister.html
 $dokka.location:com.serious.service/ComponentRegistry/getInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-registry/get-instances.html
 $dokka.location:com.serious.service/ComponentRegistry/getServices/#/PointingToDeclaration/service-core/com.serious.service/-component-registry/get-services.html
-$dokka.location:com.serious.service/ComponentRegistry/shutdown/#com.serious.service.ComponentDescriptor[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service/-component-registry/shutdown.html
-$dokka.location:com.serious.service/ComponentRegistry/startup/#com.serious.service.ComponentDescriptor[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service/-component-registry/startup.html
+$dokka.location:com.serious.service/ComponentRegistry/register/#com.serious.service.ComponentDescriptor[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service/-component-registry/register.html
 $dokka.location:com.serious.service/ComponentStatus.RUNNING///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}service-core/com.serious.service/-component-status/-r-u-n-n-i-n-g/index.html
 $dokka.location:com.serious.service/ComponentStatus.STOPPED///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}service-core/com.serious.service/-component-status/-s-t-o-p-p-e-d/index.html
 $dokka.location:com.serious.service/ComponentStatus.VIRGIN///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}service-core/com.serious.service/-component-status/-v-i-r-g-i-n/index.html
