@@ -6,6 +6,53 @@
 
 === NOW
 
+node 6.1.0 -> 21.1.0
+npm 3.8.6 -> 10.2.0
+
+Alle komponenten & alle instanzen haben administrative komponente:
+ich brauhe nur die instanzen einer komponente
+
+hab ich: das ist die serviceadress mit uris...
+
+Also: ServiceManger + [:<uri>]
+
+ServiceManager cached
+  <service>:<channel> -> proxy ( mkt invocation handler)
+
+
+  acquireService(<class>, <channel>)
+
+ChannelinvocationHandler cached
+   <service>[:<preferredChannel>] ->ChannelinvocationHandler
+
+ChannelManager cached
+   <service>[:<preferredChannel>] -> Channel
+
+Channel.resolve()
+
+client -> server
+            -> fragt alle instanzen eines services
+
+serviceIds = {s1, s2, s3 }
+
+
+componentX -> call(<service>) -> macht erneut call auf 2. adresse
+
+server macht acquireService(FooComponent.::class) // GEHT NICHT
+
+PROBLEM
+- proxy geht nur, wenn klasse bekannt
+- ein server kann meherer compoennts hosten, und dann?
+
+interface ComponentIntrospection {
+
+}
+
++ restservice
+
+introspect(compoenntName: String) !
+
+
 
 === DONE
 

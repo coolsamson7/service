@@ -117,14 +117,14 @@ class ServiceInstanceRegistry {
             .collect(Collectors.toList())
     }
 
-    private fun getInstances(componentDescriptor: ComponentDescriptor<*>): List<ServiceInstance> {
-        val instances = serviceInstances[componentDescriptor.name]
+    private fun getInstances(component: String): List<ServiceInstance> {
+        val instances = serviceInstances[component]
 
         return instances ?: emptyList()
     }
 
-    fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
-        val instances = getInstances(componentDescriptor)
+    fun getServiceAddress(component: String, preferredChannel: String? = null): ServiceAddress? {
+        val instances = getInstances(component)
         val addresses: MutableMap<ServiceInstance, List<ChannelAddress>> = HashMap()
 
         // extract addresses
@@ -159,7 +159,7 @@ class ServiceInstanceRegistry {
                 }
                 .collect(Collectors.toList())
 
-            return ServiceAddress(componentDescriptor.name, channelName, instances)
+            return ServiceAddress(component, channelName, instances)
         } else null
     }
 

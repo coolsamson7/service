@@ -78,7 +78,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
 
         fun forComponent(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String?, address: ServiceAddress?): ChannelInvocationHandler {
             var key = componentDescriptor.name;
-            if ( address != null) key += ":$preferredChannel"
+            if ( preferredChannel != null) key += ":$preferredChannel"
 
            return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, preferredChannel, address)}
         }
@@ -100,7 +100,7 @@ class ChannelInvocationHandler private constructor(private val componentDescript
                 if (topologyUpdate.involvesService(invocationHandler.componentDescriptor.name)) {
                     // recompute new address
 
-                    val newAddress = serviceInstanceRegistry.getServiceAddress(invocationHandler.componentDescriptor, invocationHandler.preferredChannel)
+                    val newAddress = serviceInstanceRegistry.getServiceAddress(invocationHandler.componentDescriptor.name, invocationHandler.preferredChannel)
 
                     if (addressChanged(invocationHandler.channel.address, newAddress))
                         invocationHandler.topologyUpdate(newAddress)

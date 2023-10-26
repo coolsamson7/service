@@ -1,5 +1,9 @@
 package com.serious.demo
 
+import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.QueryParams
+import com.ecwid.consul.v1.catalog.CatalogServicesRequest
+import com.ecwid.consul.v1.health.HealthChecksForServiceRequest
 import com.serious.service.ServiceManager
 import com.serious.service.ServiceConfiguration
 import lombok.extern.slf4j.Slf4j
@@ -10,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.stereotype.Component
+import kotlin.math.truncate
 
 // a configuration
 @Configuration
@@ -50,7 +55,7 @@ open class ServiceApplication1 {
             val foo = Foo()
 
             // local
-            val loops: Long = 10000
+            val loops: Long = 10//10000
             var ms = System.currentTimeMillis()
             for (i in 0 until loops) local.postBody(foo)
             val z1 = System.currentTimeMillis() - ms
@@ -72,6 +77,47 @@ open class ServiceApplication1 {
             println(loops.toString() + " local loops in " + z1 + "ms = " + z1.toDouble() / loops + "ms/loop")
             println(loops.toString() + " remote rest loops in " + z2 + "ms = " + z2.toDouble() / loops + "ms/loop")
             println(loops.toString() + " remote dispatch loops in " + z3 + "ms = " + z3.toDouble() / loops + "ms/loop")
+
+            // NEW
+
+            val consul = context.getBean(ConsulClient::class.java);
+
+            val services = consul.getCatalogServices(CatalogServicesRequest.newBuilder()
+                .build())
+
+            services.value.forEach { (serviceName: String, value) ->
+                print("$serviceName")
+
+                if ( value.contains("component")) {
+                    val sname : String = serviceName
+                    val r : CatalogServicesRequest = CatalogServicesRequest.newBuilder().build()
+                    val qp = QueryParams.Builder.builder().build()
+
+                    val catalogServices = consul.getCatalogService(sname!!, qp!!)
+
+                    for ( catalogService in catalogServices.value) {
+                        println(catalogService)
+
+                        catalogService.serviceId // ip:port:component
+                        catalogService.node // Andras-MPP
+                        catalogService.nodeMeta
+                        catalogService.serviceAddress
+                        catalogService.servicePort
+
+                        val checks = consul.getHealthChecksForService(serviceName, HealthChecksForServiceRequest.newBuilder()
+                            .build()).value
+
+                        for ( check in checks) {
+                            check.serviceId
+                            check.status
+                        }
+
+                        //catalogService.
+                    }
+                }
+            }
+
+            println()
         }
     }
 }

@@ -74,7 +74,7 @@ class ServiceManager @Autowired internal constructor(
         // publish local components
 
         for (componentDescriptor in componentDescriptors.values)
-            if (componentDescriptor.hasImplementation())
+            if (componentDescriptor.hasImplementation() && componentDescriptor.externalAddresses!!.isNotEmpty())
                 componentRegistry.register(componentDescriptor)
 
         // force update of the service instance registry
@@ -138,7 +138,7 @@ class ServiceManager @Autowired internal constructor(
     }
 
     /**
-     * create a service proxy for a remote service. A proxy will be cerated even if no channels are registered.
+     * create a service proxy for a remote service. A proxy will be created even if no channels are registered.
      *
      * @param T the service type
      * @param serviceClass the service class
@@ -146,14 +146,21 @@ class ServiceManager @Autowired internal constructor(
      * @return the proxy
      */
     fun <T : Service> acquireService(serviceClass: Class<T>, preferredChannel: String? = null): T {
-        report()
-
         val descriptor = forService(serviceClass)
-        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor(), preferredChannel)
+        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor().name, preferredChannel)
 
         return acquireService(descriptor, preferredChannel, serviceAddress)
     }
 
+    /**
+     * create a service proxy for a remote service.
+     *
+     * @param T the service type
+     * @param descriptor teh descriptor
+     * @param preferredChannel the preferred channel
+     * @param address the resolved address
+     * @return the proxy
+     */
     private fun <T : Service> acquireService(descriptor: BaseDescriptor<T>,  preferredChannel: String? = null, address: ServiceAddress?): T {
         val serviceClass: Class<out T> = descriptor.serviceInterface
         var key = serviceClass.getName()
@@ -176,8 +183,28 @@ class ServiceManager @Autowired internal constructor(
         } as T
     }
 
-    private fun getServiceAddress(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String? = null): ServiceAddress? {
-        return serviceInstanceRegistry.getServiceAddress(componentDescriptor, preferredChannel)
+    fun <T : Service> acquireAdministrativeService(component: String, clazz: Class<T>): T {
+
+        val descriptor = forService(clazz).getComponentDescriptor()
+        var key = component + ":" + clazz.name
+        var address = this.getServiceAddress(component)
+
+        return proxies.computeIfAbsent(key) { _ ->
+            log.info("create administrative proxy for {}", component)
+
+            Proxy.newProxyInstance(clazz.getClassLoader(), arrayOf(clazz), forComponent(descriptor, "rest", address)) as T
+        } as T
+    }
+
+    /**
+     * Get service address
+     *
+     * @param component the component name
+     * @param preferredChannel the preferred channel
+     * @return the [ServiceAddress] if it can be resolved
+     */
+    private fun getServiceAddress(component: String, preferredChannel: String? = null): ServiceAddress? {
+        return serviceInstanceRegistry.getServiceAddress(component, preferredChannel)
     }
 
     /**
