@@ -2,7 +2,7 @@
 <html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-    <title>Component</title>
+    <title>AdministrationComponent</title>
     <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
     <script>var pathToRoot = "../../../";</script>
     <script>document.documentElement.classList.replace("no-js","js");</script>
@@ -61,11 +61,11 @@
                 <div class="sidebar--inner" id="sideMenu"></div>
             </div>
             <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageIds="service-core::com.serious.service/Component///PointingToDeclaration//1569566533">
-  <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.service</a><span class="delimiter">/</span><span class="current">Component</span></div>
+<div class="main-content" data-page-type="classlike" id="content" pageIds="service-core::com.serious.service.administration/AdministrationComponent///PointingToDeclaration//1569566533">
+  <div class="breadcrumbs"><a href="../../../index.html">service-core</a><span class="delimiter">/</span><a href="../index.html">com.serious.service.administration</a><span class="delimiter">/</span><span class="current">AdministrationComponent</span></div>
   <div class="cover ">
-    <h1 class="cover"><span><span>Component</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">Component</a> : <a href="../-service/index.html">Service</a></div><p class="paragraph">A <code>Component</code> is a container for <a href="../-service/index.html">Service</a>s</p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-abstract-component/index.html">AbstractComponent</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../com.serious.service.administration/-administration-component/index.html">AdministrationComponent</a></div></span></div><div></div></div></div></div></div></div>
+    <h1 class="cover"><span>Administration</span><wbr></wbr><span><span>Component</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.serious.service/-component-interface/index.html"><span class="token annotation builtin">ComponentInterface</span></a><span class="token punctuation">(</span><span>services<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="../-component-introspection-service/index.html">ComponentIntrospectionService::class</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">interface </span><a href="index.html">AdministrationComponent</a> : <a href="../../com.serious.service/-component/index.html">Component</a></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -76,13 +76,13 @@
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="addresses.html"><span><span>addresses</span></span></a></div>
+                  <div><a href="../../com.serious.service/-component/addresses.html"><span><span>addresses</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1216145346%2FProperties%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="addresses.html">addresses</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-channel-address/index.html">ChannelAddress</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">the available addresses under which the component can be called remotely</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="../../com.serious.service/-component/addresses.html">addresses</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../com.serious.service/-channel-address/index.html">ChannelAddress</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">the available addresses under which the component can be called remotely</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -91,13 +91,13 @@
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="health.html"><span><span>health</span></span></a></div>
+                  <div><a href="../../com.serious.service/-component/health.html"><span><span>health</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-964342306%2FProperties%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="health.html">health</a><span class="token operator">: </span><a href="../-component-health/index.html">ComponentHealth</a></div><div class="brief "><p class="paragraph">the component health</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="../../com.serious.service/-component/health.html">health</a><span class="token operator">: </span><a href="../../com.serious.service/-component-health/index.html">ComponentHealth</a></div><div class="brief "><p class="paragraph">the component health</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -106,13 +106,13 @@
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="status.html"><span><span>status</span></span></a></div>
+                  <div><a href="../../com.serious.service/-component/status.html"><span><span>status</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1965828856%2FProperties%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="status.html">status</a><span class="token operator">: </span><a href="../-component-status/index.html">ComponentStatus</a></div><div class="brief "><p class="paragraph">the component status</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="../../com.serious.service/-component/status.html">status</a><span class="token operator">: </span><a href="../../com.serious.service/-component-status/index.html">ComponentStatus</a></div><div class="brief "><p class="paragraph">the component status</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -125,13 +125,13 @@
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="shutdown.html"><span><span>shutdown</span></span></a></div>
+                  <div><a href="../../com.serious.service/-component/shutdown.html"><span><span>shutdown</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1794608100%2FFunctions%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="shutdown.html"><span class="token function">shutdown</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">any shutdown code executed while shutting down</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../com.serious.service/-component/shutdown.html"><span class="token function">shutdown</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">any shutdown code executed while shutting down</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -140,13 +140,13 @@
           <div class="table-row" data-filterable-current="service-core/JVM" data-filterable-set="service-core/JVM">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="startup.html"><span><span>startup</span></span></a></div>
+                  <div><a href="../../com.serious.service/-component/startup.html"><span><span>startup</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1453804163%2FFunctions%2F1569566533"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="startup.html"><span class="token function">startup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">any startup code that will be executed on startup</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="service-core/JVM"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="../../com.serious.service/-component/startup.html"><span class="token function">startup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">any startup code that will be executed on startup</p></div></div></div>
                 </div>
               </div>
             </div>

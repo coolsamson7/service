@@ -105,6 +105,22 @@ $dokka.location:com.serious.lang/Keywords/setValue/#kotlin.String?#kotlin.Any?/P
 $dokka.location:com.serious.lang/Keywords/size/#/PointingToDeclaration/service-core/com.serious.lang/-keywords/size.html
 $dokka.location:com.serious.lang/Keywords/toString/#/PointingToDeclaration/service-core/com.serious.lang/-keywords/to-string.html
 $dokka.location:com.serious.lang/Keywords/writeExternal/#java.io.ObjectOutput/PointingToDeclaration/service-core/com.serious.lang/-keywords/write-external.html
+$dokka.location:com.serious.service.administration.impl////PointingToDeclaration/service-core/com.serious.service.administration.impl/index.html
+$dokka.location:com.serious.service.administration.impl/ComponentIntrospectionServiceImpl///PointingToDeclaration/service-core/com.serious.service.administration.impl/-component-introspection-service-impl/index.html
+$dokka.location:com.serious.service.administration.impl/ComponentIntrospectionServiceImpl/ComponentIntrospectionServiceImpl/#/PointingToDeclaration/service-core/com.serious.service.administration.impl/-component-introspection-service-impl/-component-introspection-service-impl.html
+$dokka.location:com.serious.service.administration.impl/ComponentIntrospectionServiceImpl/listServices/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration.impl/-component-introspection-service-impl/list-services.html
+$dokka.location:com.serious.service.administration////PointingToDeclaration/service-core/com.serious.service.administration/index.html
+$dokka.location:com.serious.service.administration/AdministrationComponent///PointingToDeclaration/service-core/com.serious.service.administration/-administration-component/index.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService///PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/index.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/ComponentAdministrationService/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/-component-administration-service.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/componentAdministration/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/component-administration.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/componentServices/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/component-services.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceHealth/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-health.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-instances.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceManager/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-manager.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/services/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/services.html
+$dokka.location:com.serious.service.administration/ComponentIntrospectionService///PointingToDeclaration/service-core/com.serious.service.administration/-component-introspection-service/index.html
+$dokka.location:com.serious.service.administration/ComponentIntrospectionService/listServices/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-introspection-service/list-services.html
 $dokka.location:com.serious.service.annotations////PointingToDeclaration/service-core/com.serious.service.annotations/index.html
 $dokka.location:com.serious.service.annotations/InjectService///PointingToDeclaration/service-core/com.serious.service.annotations/-inject-service/index.html
 $dokka.location:com.serious.service.annotations/InjectService/channel/#/PointingToDeclaration/service-core/com.serious.service.annotations/-inject-service/channel.html
@@ -219,6 +235,10 @@ $dokka.location:com.serious.service/Component/health/#/PointingToDeclaration/se
 $dokka.location:com.serious.service/Component/shutdown/#/PointingToDeclaration/service-core/com.serious.service/-component/shutdown.html
 $dokka.location:com.serious.service/Component/startup/#/PointingToDeclaration/service-core/com.serious.service/-component/startup.html
 $dokka.location:com.serious.service/Component/status/#/PointingToDeclaration/service-core/com.serious.service/-component/status.html
+$dokka.location:com.serious.service/ComponentAdministration///PointingToDeclaration/service-core/com.serious.service/-component-administration/index.html
+$dokka.location:com.serious.service/ComponentAdministration/getServiceInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/get-service-instances.html
+$dokka.location:com.serious.service/ComponentAdministration/getServices/#/PointingToDeclaration/service-core/com.serious.service/-component-administration/get-services.html
+$dokka.location:com.serious.service/ComponentAdministration/serviceHealth/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/service-health.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/index.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion/descriptors/#/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/descriptors.html
 $dokka.location:com.serious.service/ComponentDescriptor///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/index.html
@@ -306,7 +326,7 @@ $dokka.location:com.serious.service/ServiceInstanceRegistry///PointingToDeclarat
 $dokka.location:com.serious.service/ServiceInstanceRegistry/ServiceInstanceRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/-service-instance-registry.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/channelManager/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/channel-manager.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/componentRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/component-registry.html
-$dokka.location:com.serious.service/ServiceInstanceRegistry/getServiceAddress/#com.serious.service.ComponentDescriptor[*]#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/get-service-address.html
+$dokka.location:com.serious.service/ServiceInstanceRegistry/getServiceAddress/#kotlin.String#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/get-service-address.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/report/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/report.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/startup/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/startup.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/update/#kotlin.collections.MutableMap[kotlin.String,kotlin.collections.List[org.springframework.cloud.client.ServiceInstance]]/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/update.html
@@ -318,6 +338,7 @@ $dokka.location:com.serious.service/ServiceManager.Companion/emptyArgs/#/Pointin
 $dokka.location:com.serious.service/ServiceManager.Companion/instance/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/instance.html
 $dokka.location:com.serious.service/ServiceManager.Companion/log/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/-companion/log.html
 $dokka.location:com.serious.service/ServiceManager///PointingToDeclaration/service-core/com.serious.service/-service-manager/index.html
+$dokka.location:com.serious.service/ServiceManager/acquireAdministrativeService/#kotlin.String#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-administrative-service.html
 $dokka.location:com.serious.service/ServiceManager/acquireLocalService/#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-local-service.html
 $dokka.location:com.serious.service/ServiceManager/acquireService/#java.lang.Class[TypeParam(bounds=[com.serious.service.Service])]#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-manager/acquire-service.html
 $dokka.location:com.serious.service/ServiceManager/applicationContext/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/application-context.html
@@ -372,6 +393,8 @@ com.serious.injection
 com.serious.jackson
 com.serious.lang
 com.serious.service
+com.serious.service.administration
+com.serious.service.administration.impl
 com.serious.service.annotations
 com.serious.service.channel
 com.serious.service.exception
