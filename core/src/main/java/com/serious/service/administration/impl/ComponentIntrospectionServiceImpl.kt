@@ -7,15 +7,29 @@ package com.serious.service.administration.impl
 
 import com.serious.service.ComponentDescriptor
 import com.serious.service.administration.ComponentIntrospectionService
+import com.serious.service.administration.model.ChannelDTO
+import com.serious.service.administration.model.ComponentDTO
+import com.serious.service.administration.model.ServiceDTO
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.RequestParam
 
 @Component
 class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
     // implement
 
-    override fun listServices(component: String): List<String> {
-        val componentDescriptor = ComponentDescriptor.descriptors.find { cmp -> cmp.name == component }
+    override fun fetchComponent(@RequestParam component: String) : ComponentDTO {
+        val componentDescriptor = ComponentDescriptor.descriptors.get(component)!!
 
-        return componentDescriptor!!.services.map { service -> service.name }
+        return ComponentDTO(
+            component,
+            componentDescriptor.description,
+            componentDescriptor.services.map { service -> ServiceDTO(service.name, service.description) },
+            componentDescriptor.externalAddresses!!.map { address ->  ChannelDTO(address.channel, address.uri) })
+    }
+
+    override fun listServices(component: String): List<ServiceDTO> {
+        val componentDescriptor = ComponentDescriptor.descriptors.get(component)
+
+        return componentDescriptor!!.services.map { service -> ServiceDTO(service.name, service.description) }
     }
 }

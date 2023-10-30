@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+    <!-- button -->
+
+    <div fxHide.gt-xs>
+        <button mat-icon-button (click)="onToggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+
+    <!-- current selection -->
+
+    <div>{{app.selection.label}}</div>
+  </mat-toolbar>

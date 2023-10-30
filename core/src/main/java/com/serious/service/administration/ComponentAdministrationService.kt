@@ -7,6 +7,8 @@ package com.serious.service.administration
 
 import com.serious.service.ComponentAdministration
 import com.serious.service.ServiceManager
+import com.serious.service.administration.model.ComponentDTO
+import com.serious.service.administration.model.ServiceDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
 import org.springframework.web.bind.annotation.*
@@ -43,9 +45,19 @@ class ComponentAdministrationService {
 
     // calls that delegate to individual components
 
+    @GetMapping("/component/{component}")
+    @ResponseBody
+    fun fetchComponent(@PathVariable component: String) : ComponentDTO {
+        val administration = serviceManager.acquireAdministrativeService(component, ComponentIntrospectionService::class.java)
+
+        // go
+
+        return administration.fetchComponent(component)
+    }
+
     @GetMapping("/component-services/{component}")
     @ResponseBody
-    fun componentServices(@PathVariable component: String) : List<String> {
+    fun componentServices(@PathVariable component: String) : List<ServiceDTO> {
         val administration = serviceManager.acquireAdministrativeService(component, ComponentIntrospectionService::class.java)
 
         // go

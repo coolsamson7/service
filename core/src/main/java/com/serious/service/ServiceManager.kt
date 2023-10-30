@@ -156,7 +156,7 @@ class ServiceManager @Autowired internal constructor(
      * create a service proxy for a remote service.
      *
      * @param T the service type
-     * @param descriptor teh descriptor
+     * @param descriptor the descriptor
      * @param preferredChannel the preferred channel
      * @param address the resolved address
      * @return the proxy
@@ -184,10 +184,9 @@ class ServiceManager @Autowired internal constructor(
     }
 
     fun <T : Service> acquireAdministrativeService(component: String, clazz: Class<T>): T {
-
         val descriptor = forService(clazz).getComponentDescriptor()
-        var key = component + ":" + clazz.name
-        var address = this.getServiceAddress(component)
+        val key = component + ":" + clazz.name
+        val address = this.getServiceAddress(component)
 
         return proxies.computeIfAbsent(key) { _ ->
             log.info("create administrative proxy for {}", component)

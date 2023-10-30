@@ -1,0 +1,21 @@
+.container {
+    display: flex; /* or inline-flex */
+    flex-direction: column;
+    height: 100%
+}
+
+.breadcrumb {
+    display: flex; /* or inline-flex */
+    flex-direction: row;
+    width: 100%
+}
+
+.left {
+    height: 100%;
+    flex-grow: 0
+}
+
+.right {
+    height: 100%;
+    flex-grow: 4
+}

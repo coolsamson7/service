@@ -94,7 +94,7 @@ class ServiceInstanceRegistry {
 
         val initialInstances: MutableMap<String, List<ServiceInstance>> = ConcurrentHashMap()
 
-        for (componentDescriptor in ComponentDescriptor.descriptors)
+        for (componentDescriptor in ComponentDescriptor.descriptors.values)
             initialInstances[componentDescriptor.name] = componentRegistry.getInstances(componentDescriptor.name)
 
         // first incremental update needed for unresolved injected services

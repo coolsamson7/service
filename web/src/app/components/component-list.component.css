@@ -1,0 +1,17 @@
+.is-active {
+  background-color: rgb(120, 120, 120);
+}
+
+.mat-nav-list .mat-list-item:focus,
+.mat-action-list .mat-list-item:focus,
+.mat-list-option:focus {
+  background: #76b900 !important;
+}
+
+mat-list-item:focus {
+  border: solid blue 2px;
+}
+
+.active-item {
+  background-color: gray !important;
+}

@@ -1,0 +1,14 @@
+<mat-list navigableList role="list">
+  <a mat-list-item *ngFor="let comp of components"  [routerLinkActive]="['is-active']" routerLink="{{comp}}" role="listitem"
+  [class.active-item]="comp == selected" 
+  [navSelected]="comp == selected"
+  [navigableListItem]="comp" >
+    {{comp}}
+  </a>
+</mat-list>
+
+<!--mat-nav-list>
+  <a mat-list-item *ngFor="let item of portal.items" [routerLinkActive]="['is-active']" (click)="select(comp)" routerLink="{{item.route}}" style="cursor: pointer" (click)="select(item)">
+      <mat-icon>{{item.icon}}</mat-icon> <span class="nav-caption">{{item.label}}</span>
+  </a>
+</mat-nav-list-->

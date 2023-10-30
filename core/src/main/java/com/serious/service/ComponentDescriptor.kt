@@ -7,8 +7,9 @@ package com.serious.service
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.web.bind.annotation.GetMapping
 import java.util.*
+import kotlin.collections.HashMap
 
- /**
+/**
  * A `ComponentDescriptor` covers the meta-data associated with a [Component]
  */
 class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDescriptor<T>(componentInterface) {
@@ -18,12 +19,13 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     var health: String? = null
     @JvmField
     var serviceManager: ServiceManager? = null
-    var services: MutableList<ServiceDescriptor<*>> = LinkedList()
+    public var services: MutableList<ServiceDescriptor<*>> = LinkedList()
 
     // constructor
     init {
-        descriptors.add(this)
         analyze()
+
+        descriptors.put(name, this)
     }
 
     // public
@@ -54,7 +56,8 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
 
                     //Annotations.changeAnnotationValue(getMapping, "value", new String[]{health});
                 }
-            } catch (e: NoSuchMethodException) {
+            }
+            catch (e: NoSuchMethodException) {
                 // ignore
             }
         }
@@ -115,6 +118,6 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
 
     companion object {
         @JvmField
-        var descriptors: MutableList<ComponentDescriptor<*>> = ArrayList()
+        var descriptors: MutableMap<String, ComponentDescriptor<*>> = HashMap()
     }
 }
