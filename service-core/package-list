@@ -132,7 +132,9 @@ $dokka.location:com.serious.service.administration/ComponentAdministrationServic
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/componentAdministration/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/component-administration.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/componentServices/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/component-services.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/fetchComponent/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/fetch-component.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/nodes/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/nodes.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceHealth/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-health.html
+$dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceHealths/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-healths.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-instances.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/serviceManager/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/service-manager.html
 $dokka.location:com.serious.service.administration/ComponentAdministrationService/services/#/PointingToDeclaration/service-core/com.serious.service.administration/-component-administration-service/services.html
@@ -255,9 +257,11 @@ $dokka.location:com.serious.service/Component/shutdown/#/PointingToDeclaration/
 $dokka.location:com.serious.service/Component/startup/#/PointingToDeclaration/service-core/com.serious.service/-component/startup.html
 $dokka.location:com.serious.service/Component/status/#/PointingToDeclaration/service-core/com.serious.service/-component/status.html
 $dokka.location:com.serious.service/ComponentAdministration///PointingToDeclaration/service-core/com.serious.service/-component-administration/index.html
+$dokka.location:com.serious.service/ComponentAdministration/getNodes/#/PointingToDeclaration/service-core/com.serious.service/-component-administration/get-nodes.html
 $dokka.location:com.serious.service/ComponentAdministration/getServiceInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/get-service-instances.html
 $dokka.location:com.serious.service/ComponentAdministration/getServices/#/PointingToDeclaration/service-core/com.serious.service/-component-administration/get-services.html
 $dokka.location:com.serious.service/ComponentAdministration/serviceHealth/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/service-health.html
+$dokka.location:com.serious.service/ComponentAdministration/serviceHealths/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/service-healths.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/index.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion/descriptors/#/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/descriptors.html
 $dokka.location:com.serious.service/ComponentDescriptor///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/index.html
