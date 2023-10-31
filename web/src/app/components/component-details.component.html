@@ -1,33 +1,38 @@
+<div>
+    <div  *ngIf="outlet.isActivated == false" class="left">
+        <h1>{{component.name}}</h1>
+        <hr>
+        <mat-tab-group *ngIf="component.name">
+            <mat-tab label="General">
+                <div class="general">
+                    <mat-label>Description</mat-label>
+                    <div>{{component.description}}</div>
+                    <mat-label>Channels</mat-label>
+                    <div class="channel" *ngFor="let channel of component.channels">
+                        <div class="channel-name">{{channel.name}}</div>
+                        <div class="channel-uri">{{channel.uri}}</div>
+                    </div>
+                </div>
+            </mat-tab>
+    
+            <mat-tab class="services" label="Services">
+                <div *ngFor="let service of component.services">{{service.name}}</div>
+            </mat-tab>
+    
+            <mat-tab class="instances" label="Instances">
+                <service-instance-list *ngIf="component" [component]="component"></service-instance-list>
+            </mat-tab>
+    
+            <!--router-outlet></router-outlet-->
+        </mat-tab-group>
+    </div>
 
-<mat-tab-group>
-    <mat-tab label="General">
-        <div class="general">
-           <mat-label>Description</mat-label>
-           <div>asdasd{{component.description}}</div>
-           <mat-label>Description</mat-label>
-           <div>asdasd{{component.description}}</div>
-           <mat-label>Description</mat-label>
-           <div>asdasd{{component.description}}</div>
-           <mat-label>Description</mat-label>
-           <div>asdasd{{component.description}}</div>
-        </div>
-    </mat-tab>
+   <!-- router outlet -->
 
-    <mat-tab label="Services">
-        <div *ngFor="let service of component.services">{{service.name}}</div>
-    </mat-tab>
+   <!--div class="right">
+      <router-outlet  #outlet="outlet"></router-outlet>
+   </div-->
 
-    <mat-tab label="Channels"> 
-        <div *ngFor="let channel of component.channels">{{channel.name}}:{{channel.uri}}</div>
-    </mat-tab>
-
-    <mat-tab label="Instances"> 
-        <div *ngFor="let instance of instances">
-            Host {{instance.host}}
-            Port {{instance.port}}
-            ID {{instance.serviceInstanceId}}
-
-        </div>
-    </mat-tab>
-</mat-tab-group>
+   <router-outlet  #outlet="outlet"></router-outlet>
+</div>
 

@@ -7,7 +7,9 @@
 .breadcrumb {
     display: flex; /* or inline-flex */
     flex-direction: row;
-    width: 100%
+    column-gap: 10px;
+    width: 100%;
+    color: gray;
 }
 
 .left {

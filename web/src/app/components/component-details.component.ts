@@ -1,56 +1,97 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injectable, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, of, tap } from 'rxjs';
 import { ComponentService } from '../service/component-service.service';
 import { ComponentDTO } from '../model/component.interface';
-import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { ComponentsComponent, RouteElement } from './components.component';
+import { ServiceInstanceDTO } from '../model/service-instance.interface';
+
+
+@Injectable()
+export class ComponentStore {
+  // instance data
+
+  componentName: String
+  componentObservable: Observable<ComponentDTO>
+  instances: ServiceInstanceDTO[]
+
+  // constructor
+
+  constructor(private componentService: ComponentService) {
+  }
+
+  // public
+
+  setup(componentName: String) :Observable<ComponentDTO> {
+    this.componentName = componentName
+
+    return this.componentObservable = this.componentService.getDetails(componentName).pipe(
+      tap(val => {
+        // TODO val.instances = []
+      })
+    )
+  }
+
+  getInstances() :Observable<ServiceInstanceDTO[]>{
+    if (this.instances == null)
+      return this.componentService.getServiceInstances(this.componentName).pipe(
+        tap(val => {
+          this.instances = val
+        }));
+    else
+       return of(this.instances)
+  }
+
+  getComponent() :Observable<ComponentDTO> {
+    return this.componentObservable
+  }
+}
 
 @Component({
   selector: 'component-details',
   templateUrl: './component-details.component.html',
-  styleUrls: ['./component-details.component.css']
+  styleUrls: ['./component-details.component.scss'],
+  providers: [ComponentStore]
 })
 export class ComponentDetailsComponent implements OnInit, OnDestroy {
   // instance data
 
-  component: ComponentDTO
+  component: ComponentDTO = {
+     name: null,
+     description: "",
+     services: [],
+     channels: []
+  }
   subscription: Subscription
-  instances: ServiceInstanceDTO[] = []
+  element: RouteElement = {
+    label: "",
+    route: "/components/"
+  }
 
   // constructor
 
-  constructor(private activatedRoute: ActivatedRoute, private componentService: ComponentService, private componentsComponent: ComponentsComponent) {
-    this.component = this.activatedRoute.snapshot.params.component;
+  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent) {
+    componentsComponent.pushRouteElement(this.element)
   }
 
-  element: RouteElement
+  // private
+
+  private setComponent(componentName: string) {
+    this.componentStore.setup(componentName).subscribe({
+      next: (value: ComponentDTO) => {
+        this.component = value
+
+        this.element.label = componentName
+        this.element.route += componentName
+      }
+    });
+  }
 
   // implement OnInit
 
   ngOnInit() {
     this.subscription = this.activatedRoute.params.subscribe(params => {
-      this.componentService.getDetails(params['component']).subscribe({
-        next: (value: ComponentDTO) => {
-          this.component = value
-
-          // NEW
-
-          if ( this.element)
-             this.componentsComponent.routes.splice(this.componentsComponent.routes.indexOf(this.element, 0), 1);
-
-          this.componentsComponent.routes.push(this.element = {label: this.component.name, route: "/components/" + this.component.name})
-
-          // NEW
-
-          // load instances
-
-          this.componentService.getServiceInstances(this.component.name).subscribe({
-            next: (value: ServiceInstanceDTO[]) =>
-              this.instances = value
-          });
-        }
-      });
+      this.setComponent(params["component"])
     })
   }
 
@@ -58,7 +99,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if ( this.element)
-      this.componentsComponent.routes.splice(this.componentsComponent.routes.indexOf(this.element, 0), 1);
+      this.componentsComponent.popRouteElement(this.element);
 
     this.subscription.unsubscribe();
   }

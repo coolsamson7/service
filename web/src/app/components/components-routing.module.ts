@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { ComponentDetailsComponent } from "./component-details.component";
 import { ComponentsComponent } from "./components.component";
+import { ServiceInstanceComponent } from "./service-instance.component";
 
 const routes: Routes = [
     {
@@ -10,12 +11,18 @@ const routes: Routes = [
       children: [
             {
               path: ':component',
-              component: ComponentDetailsComponent
+              component: ComponentDetailsComponent,
+              children: [
+                    {
+                      path: ':instance',
+                      component: ServiceInstanceComponent
+                    }
+              ]
             }
           ]
     }
   ];
-  
+
   @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]

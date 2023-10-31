@@ -8,7 +8,7 @@ import {NavigableListItemDirective, NavigableListComponent} from '../widgets/nav
 @Component({
   selector: 'component-list',
   templateUrl: './component-list.component.html',
-  styleUrls: ['./component-list.component.css']
+  styleUrls: ['./component-list.component.scss']
 })
 export class ComponentListComponent implements OnInit {
    // instance data
@@ -19,7 +19,7 @@ export class ComponentListComponent implements OnInit {
    // constructor
 
    constructor(private router: Router, private route: ActivatedRoute, private componentService: ComponentService) { }
-    
+
    // public
 
     select(id: any) {
@@ -29,9 +29,8 @@ export class ComponentListComponent implements OnInit {
      // implement OnInit
 
      ngOnInit() {
-       this.componentService.listAll().subscribe(
-        (response) => { this.components = response; console.log(response);},
-        (error) => { console.log(error); });
-
+       this.componentService.listAll().subscribe( {
+        next: (response) => { this.components = response; }
+       });
      }
 }

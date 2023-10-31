@@ -4,18 +4,25 @@ import { ComponentsComponent } from './components/components.component';
 import { HomeComponent } from './home/home-component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
+import { ServiceInstanceComponent } from './components/service-instance.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { 
-    path: 'components',        
+  {
+    path: 'components',
     component: ComponentsComponent,
     children: [
       {
         path: ':component',
-        component: ComponentDetailsComponent
+        component: ComponentDetailsComponent,
+        children: [
+              {
+                path: ':instance',
+                component: ServiceInstanceComponent
+              }
+        ]
       }
-    ] 
+    ]
   },
   { path: '',   redirectTo: '/home', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }

@@ -2,15 +2,14 @@
     <!-- breadcrumb -->
 
     <div *ngIf="outlet.isActivated == true" class="breadcrumb">
-        &lt; 
         <ng-container *ngFor="let route of routes; let i = index; let first = first ;let last = last;">
-            <ng-container *ngIf="i > 0">
+            <ng-container *ngIf="i > 0 && i < routes.length">
                 /
             </ng-container>
 
             <a *ngIf="!last" routerLink="{{route.route}}"> {{route.label}}</a>
-            <div *ngIf="last"> {{route.label}}</div>
-           
+            <!--div *ngIf="last"> {{route.label}}</div-->
+
         </ng-container>
     </div>
 
@@ -19,10 +18,12 @@
     <div  *ngIf="outlet.isActivated == false" class="left">
         <component-list></component-list>
     </div>
-   
+
     <!-- router outlet -->
 
-    <div class="right">
+
+    <router-outlet  #outlet="outlet"></router-outlet>
+    <!--div class="right">
         <router-outlet  #outlet="outlet"></router-outlet>
-    </div>
+    </div-->
 </div>

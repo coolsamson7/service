@@ -10,6 +10,8 @@ import { MatListModule } from "@angular/material/list";
 import { RouterModule } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
+import { ServiceInstanceComponent } from "./service-instance.component";
+import { ServiceInstanceListComponent } from "./service-instance-list.component";
 
 @NgModule({
     declarations: [
@@ -17,6 +19,8 @@ import { NavigableListItemDirective, NavigableListComponent } from "../widgets/n
         ComponentListComponent, 
         ComponentDetailsComponent,
         NavigableListItemDirective, 
+        ServiceInstanceListComponent,
+        ServiceInstanceComponent,
         NavigableListComponent
     ],
     imports: [
