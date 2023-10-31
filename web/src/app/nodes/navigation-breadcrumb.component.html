@@ -1,0 +1,10 @@
+<div class="breadcrumb">
+    <ng-container *ngFor="let route of routes; let i = index; let first = first ;let last = last;">
+        <ng-container *ngIf="i > 0 && i < routes.length - 1">
+            /
+        </ng-container>
+
+        <a *ngIf="!last" routerLink="{{route.route}}"> {{route.label}}</a>
+        <!--div *ngIf="last"> {{route.label}}</div-->
+    </ng-container>
+</div>

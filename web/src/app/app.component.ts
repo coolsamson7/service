@@ -23,6 +23,11 @@ export class AppComponent {
         label: "Components",
         route: "/components",
         icon: "account_balance"      
+       },
+       {
+        label: "Nodes",
+        route: "/nodes",
+        icon: "account_balance"      
        }
     ]
   }

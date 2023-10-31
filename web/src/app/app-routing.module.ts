@@ -5,6 +5,8 @@ import { HomeComponent } from './home/home-component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
 import { ServiceInstanceComponent } from './components/service-instance.component';
+import { NodesComponent } from './nodes/nodes.component';
+import { NodeDetailsComponent } from './nodes/node-details.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -21,6 +23,16 @@ const routes: Routes = [
                 component: ServiceInstanceComponent
               }
         ]
+      }
+    ]
+  },
+  {
+    path: 'nodes',
+    component: NodesComponent,
+    children: [
+      {
+        path: ':node',
+        component: NodeDetailsComponent
       }
     ]
   },

@@ -31,10 +31,22 @@ class ComponentAdministrationService {
         return componentAdministration.getServices()
     }
 
+    @GetMapping("/nodes")
+    @ResponseBody
+    fun nodes(): List<String> {
+        return componentAdministration.getNodes()
+    }
+
     @GetMapping("/health/{service}/{service-id}")
     @ResponseBody
     fun serviceHealth(@PathVariable("service") serviceName: String, @PathVariable("service-id") serviceId: String): String {
         return componentAdministration.serviceHealth(serviceName, serviceId)
+    }
+
+    @GetMapping("/health/{service}")
+    @ResponseBody
+    fun serviceHealths(@PathVariable("service") serviceName: String): Map<String,String> {
+        return componentAdministration.serviceHealths(serviceName)
     }
 
     @GetMapping("/service-instances/{service}")

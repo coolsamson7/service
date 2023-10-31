@@ -1,10 +1,11 @@
 import { Component, Injectable, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, of, tap } from 'rxjs';
+import { Observable, Subscription, map, of, tap } from 'rxjs';
 import { ComponentService } from '../service/component-service.service';
 import { ComponentDTO } from '../model/component.interface';
-import { ComponentsComponent, RouteElement } from './components.component';
+import { ComponentsComponent } from './components.component';
 import { ServiceInstanceDTO } from '../model/service-instance.interface';
+import { RouteElement } from '../widgets/navigation-component.component';
 
 
 @Injectable()
@@ -14,6 +15,7 @@ export class ComponentStore {
   componentName: String
   componentObservable: Observable<ComponentDTO>
   instances: ServiceInstanceDTO[]
+  health: Map<String,String>
 
   // constructor
 
@@ -22,14 +24,24 @@ export class ComponentStore {
 
   // public
 
-  setup(componentName: String) :Observable<ComponentDTO> {
-    this.componentName = componentName
+  getHealth(instance: ServiceInstanceDTO) : Observable<String> {
+    return this.getHealths().pipe(
+      map(healths => {return healths[instance.instanceId]})
+    )
+  }
 
-    return this.componentObservable = this.componentService.getDetails(componentName).pipe(
-      tap(val => {
-        // TODO val.instances = []
+ getHealths() : Observable<Map<String,String>> {
+  if ( this.health == null)
+    return this.componentService.getServiceHealths(this.componentName).pipe(
+      tap(health => {
+        this.health = health
       })
     )
+    else return of(this.health)
+  }
+
+  setup(componentName: String) :Observable<ComponentDTO> {
+    return this.componentObservable = this.componentService.getDetails(this.componentName = componentName)
   }
 
   getInstances() :Observable<ServiceInstanceDTO[]>{

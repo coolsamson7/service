@@ -1,24 +1,16 @@
 === TODO
 
 - sse / websocket
-- layout anders ( Titel nict i bredcrumb )
-- einchecken
-- layout label feld label feld...
+
 - farben matlist
-- breadcrump + Abstand
-- healthchecks lesen und anzeigen
-- instanz als subview
-- Komponenz + n instances
 - logik acquire ändern ( local )
-- check dispatch??
-- nodes + -> services ( link auf service )
 
 - test wieder fixen
 - loadbalancer nach abstract
 
 === NOW
 
-- label text? + margin
+- nodes + -> services ( link auf service )
 
 === LoGIK
 
@@ -43,15 +35,16 @@ node
 
 - open-api...
 
-=== NOW
-
-- andere interafces + services -> console
-- index.ts checken!
-- navigation compents -> instances / services
-
-
 === DONE
 
+- healthchecks lesen und anzeigen
+- instance detauls analog
+- FIXIT!
+- instanz als subview
+- layout anders ( Titel nict i bredcrumb )
+- breadcrump + Abstand
+- layout label feld label feld...
+- checkin web
 - angular + http service
 - check cors
 - node 6.1.0 -> 21.1.0

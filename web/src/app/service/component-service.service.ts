@@ -17,6 +17,10 @@ export class ComponentService extends HTTPService {
     }
   
     // public
+
+    public getNodes(): Observable<String[]>{
+      return this.http.get<String[]>(`${this.baseURL}/administration/nodes`);
+    }
   
     public listAll(): Observable<String[]>{
       return this.http.get<String[]>(`${this.baseURL}/administration/services`);
@@ -28,6 +32,10 @@ export class ComponentService extends HTTPService {
 
     public getServiceHealth(serviceName: String, serviceId: String): Observable<String>{
       return this.http.get<String>(`${this.baseURL}/administration/health/` + serviceName + "/"+ serviceId);
+    }
+
+    public getServiceHealths(serviceName: String): Observable<Map<String, String>>{
+      return this.http.get<Map<String, String>>(`${this.baseURL}/administration/health/` + serviceName);
     }
 
     public getServiceInstances(serviceName: String): Observable<ServiceInstanceDTO[]>{

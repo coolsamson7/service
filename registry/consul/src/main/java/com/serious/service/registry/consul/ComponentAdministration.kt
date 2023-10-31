@@ -34,6 +34,13 @@ class ConsulComponentAdministration : ComponentAdministration {
             .keys.toList()
     }
 
+    override fun getNodes() : List<String> {
+        val nodes = consulClient.getNodes(QueryParams.DEFAULT).value // Map<String, List<String>>
+
+        return nodes
+            .map { node -> node.node }
+    }
+
     override fun getServiceInstances(serviceName: String) :List<ServiceInstance> {
         val catalogServices = consulClient.getCatalogService(serviceName, QueryParams.Builder.builder().build()).value
 
@@ -47,6 +54,19 @@ class ConsulComponentAdministration : ComponentAdministration {
                 //LinkedHashMap<>()
             )
         }
+    }
+
+    override fun serviceHealths(serviceName: String) : Map<String, String> {
+        val checks = consulClient.getHealthChecksForService(
+            serviceName, HealthChecksForServiceRequest.newBuilder()
+                .build()
+        ).value
+
+        val result = HashMap<String, String>();
+        for ( check in checks )
+            result.set(check.serviceId, check.status.toString())
+
+        return result
     }
 
     override fun serviceHealth(serviceName: String, serviceId: String) :String {

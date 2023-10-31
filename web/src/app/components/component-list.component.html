@@ -1,15 +1,8 @@
-<!--mat-list navigableList role="list">
+<mat-list navigableList role="list">
   <a mat-list-item *ngFor="let comp of components"  [routerLinkActive]="['is-active']" routerLink="{{comp}}" role="listitem"
   [class.active-item]="comp == selected" 
   [navSelected]="comp == selected"
   [navigableListItem]="comp" >
-    {{comp}}
-  </a>
-</mat-list-->
-
-<mat-list role="list">
-  <a mat-list-item *ngFor="let comp of components"  [routerLinkActive]="['is-active']" routerLink="{{comp}}" role="listitem"
-  [class.active-item]="comp == selected">
     {{comp}}
   </a>
 </mat-list>

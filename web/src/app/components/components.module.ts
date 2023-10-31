@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ComponentsComponent } from "./components.component";
 import { ComponentListComponent } from "./component-list.component";
@@ -29,7 +30,8 @@ import { ServiceInstanceListComponent } from "./service-instance-list.component"
       MatListModule,
       MatTabsModule,
       MatInputModule,
-      MatFormFieldModule
+      MatFormFieldModule,
+      MatIconModule
     ]
   })
 export class ComponentsModule { }
