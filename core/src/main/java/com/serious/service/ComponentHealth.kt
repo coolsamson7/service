@@ -15,7 +15,7 @@ enum class ComponentHealth {
     UP,
 
     /**
-     * teh component is not running
+     * the component is not running
      */
     DOWN
 }

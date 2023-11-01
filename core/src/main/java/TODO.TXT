@@ -7,10 +7,6 @@
 
 === NOW
 
-- keine klammern
-- value
-
-
 - SSE
 
 === LoGIK
@@ -38,6 +34,8 @@ node
 
 === DONE
 
+- keine klammern
+- value
 - nodes
 - healthchecks lesen und anzeigen
 - instance detauls analog

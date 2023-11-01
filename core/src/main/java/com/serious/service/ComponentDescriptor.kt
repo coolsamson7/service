@@ -20,6 +20,8 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     @JvmField
     var serviceManager: ServiceManager? = null
     public var services: MutableList<ServiceDescriptor<*>> = LinkedList()
+    @JvmField
+    var model : ComponentModel? = null
 
     // constructor
     init {
@@ -29,6 +31,13 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     }
 
     // public
+
+    fun getModel() : ComponentModel {
+        if ( model == null)
+            model = InterfaceAnalyzer().modelFor(this)
+
+        return model!!
+    }
 
     override fun getComponentDescriptor(): ComponentDescriptor<T> {
         return this

@@ -71,7 +71,11 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
   component: ComponentDTO = {
      name: null,
      description: "",
-     services: [],
+     model: {
+      component: null,
+      services: [],
+      models: []
+     },
      channels: []
   }
   subscription: Subscription
@@ -100,7 +104,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
       next: (value: ComponentDTO) => {
         this.component = value
 
-        this.open = value.services.map(_ => false)
+        this.open = value.model.services.map(_ => false)
 
         this.element.label = componentName
         this.element.route += componentName

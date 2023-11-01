@@ -24,13 +24,13 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
         return ComponentDTO(
             component,
             componentDescriptor.description,
-            componentDescriptor.services.map { service -> service.getInterfaceDescriptor() },
+            componentDescriptor.getModel(),
             componentDescriptor.externalAddresses!!.map { address ->  ChannelDTO(address.channel, address.uri) })
     }
 
-    override fun listServices(component: String): List<InterfaceDescriptor> {
+    override fun listServices(component: String): Collection<InterfaceDescriptor> {
         val componentDescriptor = ComponentDescriptor.descriptors.get(component)
 
-        return componentDescriptor!!.services.map { service -> service.getInterfaceDescriptor() }
+        return componentDescriptor!!.getModel().services
     }
 }

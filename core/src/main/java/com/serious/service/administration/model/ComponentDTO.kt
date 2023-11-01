@@ -5,14 +5,13 @@ package com.serious.service.administration.model
  * All rights reserved
  */
 
+import com.serious.service.ComponentModel
 import com.serious.service.InterfaceDescriptor
 import java.io.Serializable
-
-
 
 data class ComponentDTO (
     val name: String,
     val description: String,
-    val services: List<InterfaceDescriptor>,
+    val model: ComponentModel,
     val channels: List<ChannelDTO>
 ): Serializable

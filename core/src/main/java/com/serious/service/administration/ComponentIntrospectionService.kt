@@ -24,5 +24,5 @@ interface ComponentIntrospectionService : Service {
 
     @GetMapping("component-services/{component}")
     @ResponseBody
-    fun listServices(@RequestParam component: String) : List<InterfaceDescriptor>
+    fun listServices(@RequestParam component: String) : Collection<InterfaceDescriptor>
 }

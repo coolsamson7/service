@@ -5,6 +5,7 @@ package com.serious.service
  * All rights reserved
  */
 
+import java.io.Serializable
 import java.net.URI
 
 /**
@@ -13,4 +14,4 @@ import java.net.URI
  * @property channel the channel name
  * @property uri the [URI]
  */
-data class ChannelAddress(val channel: String, val uri: URI)
+data class ChannelAddress(val channel: String, val uri: URI) : Serializable

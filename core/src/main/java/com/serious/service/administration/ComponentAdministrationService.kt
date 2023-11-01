@@ -135,7 +135,7 @@ class ComponentAdministrationService {
 
     @GetMapping("/component-services/{component}")
     @ResponseBody
-    fun componentServices(@PathVariable component: String) : List<InterfaceDescriptor> {
+    fun componentServices(@PathVariable component: String) : Collection<InterfaceDescriptor> {
         val administration = serviceManager.acquireAdministrativeService(component, ComponentIntrospectionService::class.java)
 
         // go
