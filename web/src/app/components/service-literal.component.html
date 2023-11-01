@@ -1,0 +1,9 @@
+<span class="literal" [ngSwitch]="type">
+    <span class="string" *ngSwitchCase="'string'">&quot;{{value}}&quot;</span>
+    <span class="array" *ngSwitchCase="'array'">
+        &#91;
+        <literal *ngFor="let element of value" [value]="element"></literal>
+        &#93;
+    </span>
+    <span class="value" *ngSwitchDefault>{{value}}</span>
+</span>

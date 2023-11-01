@@ -6,6 +6,7 @@ package com.serious.service.administration.impl
  */
 
 import com.serious.service.ComponentDescriptor
+import com.serious.service.InterfaceDescriptor
 import com.serious.service.administration.ComponentIntrospectionService
 import com.serious.service.administration.model.ChannelDTO
 import com.serious.service.administration.model.ComponentDTO
@@ -23,13 +24,13 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
         return ComponentDTO(
             component,
             componentDescriptor.description,
-            componentDescriptor.services.map { service -> ServiceDTO(service.name, service.description) },
+            componentDescriptor.services.map { service -> service.getInterfaceDescriptor() },
             componentDescriptor.externalAddresses!!.map { address ->  ChannelDTO(address.channel, address.uri) })
     }
 
-    override fun listServices(component: String): List<ServiceDTO> {
+    override fun listServices(component: String): List<InterfaceDescriptor> {
         val componentDescriptor = ComponentDescriptor.descriptors.get(component)
 
-        return componentDescriptor!!.services.map { service -> ServiceDTO(service.name, service.description) }
+        return componentDescriptor!!.services.map { service -> service.getInterfaceDescriptor() }
     }
 }

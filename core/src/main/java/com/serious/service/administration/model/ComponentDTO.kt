@@ -1,20 +1,18 @@
 package com.serious.service.administration.model
-
-import java.io.Serializable
-
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
+import com.serious.service.InterfaceDescriptor
+import java.io.Serializable
 
-//import kotlinx.serialization.Serializable
 
-//@Serializable
+
 data class ComponentDTO (
     val name: String,
     val description: String,
-    val services: List<ServiceDTO>,
+    val services: List<InterfaceDescriptor>,
     val channels: List<ChannelDTO>
 ): Serializable

@@ -1,0 +1,8 @@
+<div class="service">
+    <annotation [annotation]="annotation" *ngFor="let annotation of service.annotations"/>
+    <div><span class="keyword">interface</span>&nbsp;{{service.name}} &#123;</div>
+    <span class="body">
+        <method [method]="method" *ngFor="let method of service.methods"/>
+    </span>
+    &#125;
+</div>

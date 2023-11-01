@@ -1,16 +1,12 @@
 package com.serious.service.administration.model
-
-import java.io.Serializable
-
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
-//import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-//@Serializable
 data class ServiceDTO(
     val name: String,
     val description: String

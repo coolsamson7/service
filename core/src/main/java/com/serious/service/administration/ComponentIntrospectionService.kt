@@ -5,6 +5,7 @@ package com.serious.service.administration
  * All rights reserved
  */
 
+import com.serious.service.InterfaceDescriptor
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.service.administration.model.ComponentDTO
@@ -23,5 +24,5 @@ interface ComponentIntrospectionService : Service {
 
     @GetMapping("component-services/{component}")
     @ResponseBody
-    fun listServices(@RequestParam component: String) : List<ServiceDTO>
+    fun listServices(@RequestParam component: String) : List<InterfaceDescriptor>
 }

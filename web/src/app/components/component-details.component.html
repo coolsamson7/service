@@ -16,7 +16,7 @@
             </mat-tab>
     
             <mat-tab class="services" label="Services">
-                <div *ngFor="let service of component.services">{{service.name}}</div>
+                <service *ngFor="let service of component.services" [service]="service"></service>
             </mat-tab>
     
             <mat-tab class="instances" label="Instances">

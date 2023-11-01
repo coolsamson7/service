@@ -1,16 +1,17 @@
 === TODO
 
 - sse / websocket
-
-- farben matlist
 - logik acquire ändern ( local )
-
 - test wieder fixen
 - loadbalancer nach abstract
 
 === NOW
 
-- nodes + -> services ( link auf service )
+- keine klammern
+- value
+
+
+- SSE
 
 === LoGIK
 
@@ -37,6 +38,7 @@ node
 
 === DONE
 
+- nodes
 - healthchecks lesen und anzeigen
 - instance detauls analog
 - FIXIT!

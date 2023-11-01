@@ -1,0 +1,12 @@
+.annotation {
+    display: flex;
+    flex-direction: row;
+
+    .parameter {
+        display: inline;
+    }
+
+    .name {
+        color: rgb(120, 120, 10)
+    }
+}

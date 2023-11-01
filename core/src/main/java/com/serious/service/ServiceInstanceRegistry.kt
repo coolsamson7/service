@@ -17,6 +17,13 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
+// NEW
+
+interface TopologyListener {
+    fun update(update: ServiceInstanceRegistry.TopologyUpdate)
+}
+
+// NEW
  /**
  * `ServiceInstanceRegistry` is responsible to cache the current known service instances.
  */
@@ -86,8 +93,13 @@ class ServiceInstanceRegistry {
     @Autowired
     lateinit var componentRegistry: ComponentRegistry
     private var serviceInstances: MutableMap<String, List<ServiceInstance>> = ConcurrentHashMap()
+    private val listener = ArrayList<TopologyListener>();
 
     // public
+
+     fun addListener(listener: TopologyListener) {
+         this.listener.add(listener)
+     }
 
     fun startup() {
         // fill initial services
@@ -230,9 +242,14 @@ class ServiceInstanceRegistry {
 
         serviceInstances = newMap
 
+        for ( listener in this.listener)
+            listener.update(topologyUpdate)
+        // TODO
         // check for necessary updates
 
         if (!topologyUpdate.isEmpty) {
+
+
             updateTopology(this, topologyUpdate)
         }
     }

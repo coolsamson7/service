@@ -1,0 +1,40 @@
+.general {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 10px;
+
+    mat-label {
+        font-weight: bold;
+    }
+
+    .channel {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+    }
+}
+
+.services {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 10px;
+
+    mat-label {
+        font-weight: bold;
+    }
+}
+
+.instances {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 10px;
+
+    mat-label {
+        font-weight: bold;
+    }
+}

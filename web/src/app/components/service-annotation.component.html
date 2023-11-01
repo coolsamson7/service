@@ -1,0 +1,7 @@
+<div class="annotation">
+    <span class="name">@{{annotation.name}}</span>
+    &#40;<span class="parameter" *ngFor="let parameter of annotation.parameters; let i = index">{{parameter.name}}=<literal [value]="parameter.value"/>
+        <span *ngIf="i > 0">, </span>
+    </span>
+    <span>&#41;</span>
+</div>

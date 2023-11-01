@@ -1,0 +1,19 @@
+<h1>{{instance.instanceId}}</h1>
+<hr>
+
+<div class="service-instance">
+    <mat-label>Host</mat-label>
+    <div>{{instance.host}}</div>
+    <mat-label>Port</mat-label>
+    <div>{{instance.port}}</div>
+    <mat-label>ID</mat-label>
+    <div>{{instance.instanceId}}</div>
+    <mat-label>Health</mat-label>
+
+    <div>
+        <mat-icon class="ok" *ngIf="health == 'PASSING'">check_circle</mat-icon>
+        <mat-icon class="nok" *ngIf="health != 'PASSING'">bug_report</mat-icon>
+
+        <div>{{health}}</div>
+    </div>
+</div>

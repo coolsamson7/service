@@ -1,0 +1,27 @@
+<!--div class="service-instances">
+    <div *ngFor="let instance of instances" class="service-instance" (click)="select(instance)">
+        Host {{instance.host}}
+        Port {{instance.port}}
+        ID {{instance.instanceId}}
+    </div>
+</div-->
+
+<mat-list navigableList class="service-instances" role="list">
+    <a mat-list-item *ngFor="let instance of instances"  [routerLinkActive]="['is-active']" routerLink="{{instance.instanceId}}" role="listitem"
+    [class.active-item]="instance == selected" 
+    [navSelected]="instance == selected"
+    [navigableListItem]="instance" >
+    <div class="service-instance" >
+      {{instance.instanceId}}
+      <mat-icon>language</mat-icon>
+      {{instance.host}}
+      <mat-icon>settings_internet</mat-icon>
+      {{instance.port}}
+      <mat-icon>settings_internet</mat-icon>
+      <mat-icon class="ok" *ngIf="health[instance.instanceId] == 'PASSING'">check_circle</mat-icon>
+      <mat-icon class="nok" *ngIf="health[instance.instanceId] != 'PASSING'">bug_report</mat-icon>
+      {{health[instance.instanceId]}}
+    </div>
+    </a>
+  </mat-list>
+  

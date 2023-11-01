@@ -1,0 +1,22 @@
+.service-instances {
+    .mat-list-item {
+        cursor: pointer;
+      }
+
+      a:hover {
+        background-color: rgb(228, 236, 239);
+      }
+
+    .service-instance {
+        display: flex;
+        justify-content: flex-start;
+        column-gap: 10px;
+
+        .ok {
+            color: green;
+        }
+        .nok {
+            color: red
+        }
+    }
+}
