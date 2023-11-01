@@ -69,8 +69,21 @@ export class ServiceComponent implements OnInit {
     // input
 
     @Input('service') service: InterfaceDescriptor 
+    @Input('open') open = false
+    icon = "expand_more"
 
     // public
+
+    toggle() {
+        if ( this.open) {
+            this.open = false
+            this.icon = "expand_more"
+        }
+        else {
+            this.open = true
+            this.icon = "expand_less"
+        }  
+    }
 
     format(o: any) {
         if ( typeof o == "string")
@@ -86,5 +99,7 @@ export class ServiceComponent implements OnInit {
     // implement OnInit
 
     ngOnInit(): void {
+        this.toggle()
+        this.toggle()
     }
 }

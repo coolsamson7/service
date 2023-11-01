@@ -17,10 +17,8 @@
 
 .services {
     margin: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    row-gap: 10px;
+    display: grid;
+    grid-template-columns: min-content 1fr !important;
 
     mat-label {
         font-weight: bold;

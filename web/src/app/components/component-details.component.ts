@@ -79,11 +79,18 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
     label: "",
     route: "/components/"
   }
+  open: boolean[]
 
   // constructor
 
   constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent) {
     componentsComponent.pushRouteElement(this.element)
+  }
+
+  // public
+
+  toggle(i : number) {
+      this.open[i] = ! this.open[i]
   }
 
   // private
@@ -92,6 +99,8 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
     this.componentStore.setup(componentName).subscribe({
       next: (value: ComponentDTO) => {
         this.component = value
+
+        this.open = value.services.map(_ => false)
 
         this.element.label = componentName
         this.element.route += componentName
