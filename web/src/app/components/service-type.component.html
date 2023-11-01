@@ -1,3 +1,11 @@
-<div class="type">
+<span class="type">
    {{formatType(type)}}
-</div>
+   <span *ngIf="type.parameter.length > 0">
+    &lt;
+   <span  *ngFor="let type of type.parameter; let i = index">
+      <type [type]="type"></type>
+      <span *ngIf="i > 0">, </span>
+   </span>
+    &gt;
+   </span>
+</span>
