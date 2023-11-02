@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -39,6 +40,7 @@ open class WebConfig {
 // main application
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableAsync
 @Slf4j
 @Component
 open class ServiceApplication1 {

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
 import org.springframework.stereotype.Component
+import java.io.Serializable
 import java.net.URI
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -32,7 +33,7 @@ interface TopologyListener {
 class ServiceInstanceRegistry {
     // local classes
 
-     inner class TopologyUpdate {
+    class TopologyUpdate : Serializable {
         // instance data
 
         private var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()

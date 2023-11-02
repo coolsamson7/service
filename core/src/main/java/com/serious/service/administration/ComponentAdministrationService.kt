@@ -7,7 +7,6 @@ package com.serious.service.administration
 
 import com.serious.service.*
 import com.serious.service.administration.model.ComponentDTO
-import com.serious.service.administration.model.ServiceDTO
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
@@ -15,13 +14,16 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.util.function.Consumer
+import java.io.Serializable
 
 
 // NEW
 
+data class Update(
+    val name: String
+) : Serializable
 @Component
-class Emitters : TopologyListener {
+class EmitterManager : TopologyListener {
     // instance data
 
     var emitters: ArrayList<SseEmitter> = ArrayList()
@@ -38,28 +40,40 @@ class Emitters : TopologyListener {
 
    // implement TopologyListener
     override fun update(update: ServiceInstanceRegistry.TopologyUpdate) {
+       println("update")
+
+        send("update")
+    }
+
+    fun send(data: String) {
+        println("send")
+
         val failedEmitters: MutableList<SseEmitter> = ArrayList()
 
         for ( emitter in this.emitters)
             try {
+                println("send to emitter")
+
                 emitter.send(
                     SseEmitter.event()
                         .name("update")
                         .id("id")
-                        .data("update")
+                        .data(Update(data), MediaType.APPLICATION_JSON)
                 )
                 //emitter.complete()
             }
             catch (e: Exception) {
+                println("emitter caught exception" + e.message)
+
                 emitter.completeWithError(e)
                 failedEmitters.add(emitter)
             }
 
-       emitters.removeAll(failedEmitters)
+        emitters.removeAll(failedEmitters)
     }
 
     fun listenTo(component: String): SseEmitter {
-        val emitter = SseEmitter(50000);
+        val emitter = SseEmitter(3_600_000L); // 1h
 
         emitter.onCompletion {
             println("emitter.onCompletion")
@@ -68,11 +82,18 @@ class Emitters : TopologyListener {
 
         emitter.onTimeout {
             println("emitter.onTimeout")
-            //emitter.complete()
-            //emitters.remove(emitter)
+            emitter.complete() // will trigger the second callback
         }
 
         this.emitters.add(emitter) // TODO
+
+        // TEST
+
+        //send("test1")
+        //send("test2")
+        //send("test3")
+
+        // TEST
 
         return emitter
     }
@@ -147,10 +168,10 @@ class ComponentAdministrationService {
 
 
     @Autowired
-    lateinit var emitters : Emitters
+    lateinit var emitterManager : EmitterManager
 
     @GetMapping("/listen/{component}", produces= [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun listenTo(@PathVariable component: String) : SseEmitter {
-        return this.emitters.listenTo(component)
+        return this.emitterManager.listenTo(component)
     }
 }

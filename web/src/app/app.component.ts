@@ -48,27 +48,97 @@ export class AppComponent implements OnInit {
   constructor(private router: Router, private zone: NgZone) {  
   }
 
-  //
+  // emitter stuff
+
+  private retryCount = 0;
+  private static readonly MAX_RETRIES = 5;
   sub: Subscription;
 
-  getUpdates(): Observable<any> {
-    return Observable.create(
-      observer => {
+  /*
+  private connectToSSE() {
+    this.eventSource = new EventSource(`http://localhost:8080/teller/subscribe/${FortuneTellerService.subscriberId}`);
+    console.log('creating event source');
+    this.eventSource.onmessage = event => {
+      console.log('received event', event)
+      this.sseDataSubject.next(JSON.parse(event.data));
+    };
 
-        let source = new EventSource("http://localhost:8080/administration/listen/TestComponent");
-        
-        source.onmessage = event => {
-          this.zone.run(() => {
-            observer.next(event.data)
-          })
-        }
-
-        source.onerror = event => {
-          this.zone.run(() => {
-            observer.error(event)
-          })
-        }
+    this.eventSource.onerror = error => {
+      console.log('error', error);
+      if (FortuneTellerService.retryCount > FortuneTellerService.MAX_RETRIES) {
+        console.log('too many retries');
+        this.sseDataSubject.error(error);
+        this.eventSource!.close();
+        return;
       }
+      FortuneTellerService.retryCount++;
+      this.sseDataSubject.error(error);
+      this.eventSource!.close();
+      this.connectToSSE();
+    };
+
+  */
+  getUpdates(): Observable<any> {
+    // local function
+
+    let connect = (observer) => {
+      console.log("connect ")
+
+      // create source
+
+      let source = new EventSource("http://localhost:8080/administration/listen/TestComponent");
+        
+      // attach callbacks
+
+      source.onopen = event => {
+        console.log("opened sse ")
+      }
+
+      /*source.onmessage = event => {
+        console.log("got sse message ")
+        this.zone.run(() => {
+          observer.next(event.data) // JSON.parse(event.data)
+        })
+      }*/
+
+      source.addEventListener('update', (event) => {
+        console.log("got sse message ")
+        this.zone.run(() => {
+          observer.next(JSON.parse(event.data))
+        })
+      })
+
+      source.onerror = event => {
+        console.log("got sse error ")
+
+        this.zone.run(() => {
+          observer.error(event)
+
+          if (this.retryCount > AppComponent.MAX_RETRIES) {
+            console.log('too many retries');
+      
+            source.close();
+            return;
+          }
+          else {
+
+          }
+          this.retryCount++;
+          
+          console.log('retry');
+
+          source.close();
+
+          connect(observer);
+        })
+      }
+
+    }
+
+    // create observable
+
+    return Observable.create(
+      observer => connect(observer)
     )
   }
 
