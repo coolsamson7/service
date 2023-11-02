@@ -34,7 +34,7 @@ data class ParameterValueDescriptor(
 
 data class PropertyDescriptor(
     val name: String,
-    val type: TypeDescriptor,
+    val type: TypeDescriptor?,
     val annotations: List<AnnotationDescriptor>
 ) : Serializable
 data class MethodDescriptor(
@@ -210,30 +210,38 @@ class InterfaceAnalyzer {
     }
 
     fun analyzeProperties(clazz: KClass<*>) :List<PropertyDescriptor> {
-        return clazz.memberProperties.map { property ->
-            var annotations : List<AnnotationDescriptor> = ArrayList<AnnotationDescriptor>()
+        if ( clazz.java.isEnum)
+            return  return clazz.java.enumConstants.map { enum  ->
+                PropertyDescriptor(
+                    enum.toString(),
+                    null,
+                    emptyList()
+                )}
+        else
+            return clazz.memberProperties.map { property ->
+                var annotations : List<AnnotationDescriptor> = ArrayList<AnnotationDescriptor>()
 
-            // field
+                // field
 
-            if ( property.javaField != null)
-                annotations = property.javaField!!.annotations.map { annotation -> annotation(annotation) }
-            else if (property.getter != null)
-                annotations = property.getter!!.annotations.map { annotation -> annotation(annotation) }
-            else
-                annotations = property.annotations.map { annotation -> annotation(annotation) }
+                if ( property.javaField != null)
+                    annotations = property.javaField!!.annotations.map { annotation -> annotation(annotation) }
+                else if (property.getter != null)
+                    annotations = property.getter!!.annotations.map { annotation -> annotation(annotation) }
+                else
+                    annotations = property.annotations.map { annotation -> annotation(annotation) }
 
-            PropertyDescriptor(
-                property.name,
-                type(property.returnType),
-                annotations
-            )}
+                PropertyDescriptor(
+                    property.name,
+                    type(property.returnType),
+                    annotations
+                )}
     }
 
     // public
 
     fun analyzeModel(clazz: KClass<*>) :InterfaceDescriptor {
         checked.add(clazz)
-
+//clazz.java.isEnum clazz.java.enumConstants[0].toString()
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
             kind(clazz),
@@ -257,6 +265,9 @@ class InterfaceAnalyzer {
 
         if ( clazz.isData)
             builder.append(" data")
+
+        if ( clazz.java.isEnum)
+            builder.append(" enum")
 
         if ( clazz.java.isInterface)
             builder.append(" interface")

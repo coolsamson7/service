@@ -2,7 +2,7 @@
     <annotation [annotation]="annotation" *ngFor="let annotation of service.annotations"/>
     
     <div>
-        <span class="keyword">{{service.kind}}</span>&nbsp;{{service.name}} 
+        <span class="keyword">{{service.kind}}</span>&nbsp;<class [class]="service.name"/> 
         <span *ngIf="inherits()"> : </span>
         <class *ngIf="superClass()" [class]="service.inherits"/>
 

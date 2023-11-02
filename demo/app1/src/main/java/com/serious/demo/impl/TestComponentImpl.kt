@@ -35,7 +35,7 @@ class TestComponentImpl : AbstractComponent(), TestComponent {
 
     // implement TestComponent
 
-    override fun hello(): String {
+    override fun hello(world: String): String {
         return "hello"
     }
 
