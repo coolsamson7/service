@@ -72,6 +72,23 @@ export class ServiceTypeComponent {
 }
 
 @Component({
+    selector: 'class',
+    templateUrl: './service-class.component.html',
+    styleUrls: ['./service-type.component.scss']
+  })
+export class ServiceClassComponent {
+    // input
+
+    @Input('class') clazz: String 
+
+    // public
+
+    format(clazz: String) {
+        return clazz.substring(clazz.lastIndexOf('.') + 1) // for now
+    }
+}
+
+@Component({
     selector: 'service',
     templateUrl: './service.component.html',
     styleUrls: ['./service.component.scss']
@@ -96,6 +113,14 @@ export class ServiceComponent implements OnInit {
         }  
     }
 
+    superClass() : Boolean{
+        return this.service.inherits != null && this.service.inherits != ""
+    }
+
+    inherits() : Boolean{
+        return this.superClass() || this.service.implements.length > 0
+    }
+
     format(o: any) {
         if ( typeof o == "string")
            return "\"" + o +  "\""
@@ -105,6 +130,10 @@ export class ServiceComponent implements OnInit {
 
     formatType(type: TypeDescriptor) {
         return type.name.substring(type.name.lastIndexOf('.') + 1)
+    }
+
+    formatClass(type: String) {
+        return type.substring(type.lastIndexOf('.') + 1)
     }
 
     // implement OnInit

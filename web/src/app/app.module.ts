@@ -14,7 +14,6 @@ import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
-import { NavigationBreadcrumbComponent } from './nodes/navigation-breadcrumb.component';
 
 
 @NgModule({

@@ -9,10 +9,7 @@ import java.io.Serializable
 import kotlin.collections.ArrayDeque
 import kotlin.collections.ArrayList
 import kotlin.reflect.*
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMembers
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaField
 
 data class TypeDescriptor(
@@ -48,6 +45,9 @@ data class MethodDescriptor(
 ): Serializable
 data class InterfaceDescriptor(
     val name: String,
+    val kind: String, // for now
+    val inherits: String?,
+    val implements: List<String>,
     val annotations: List<AnnotationDescriptor>,
     val properties: List<PropertyDescriptor>,
     val methods: List<MethodDescriptor>
@@ -71,6 +71,24 @@ class InterfaceAnalyzer {
     val ignore = arrayOf("java.", "kotlin.", "reactor.")
 
     // private
+
+    private fun checkClass(clazz: KClass<*>?) :KClass<*>? {
+        if ( clazz != null ) {
+            val qualifiedName = clazz.qualifiedName ?: ""
+
+            // ignore known types
+
+            for (prefix in ignore)
+                if (qualifiedName.startsWith(prefix))
+                    return clazz
+
+            if (!checked.contains(clazz) && !queue.contains(clazz))
+                queue.add(clazz)
+        }
+
+        return clazz;
+    }
+
     private fun checkType(type: KType) {
         val qualifiedName = type.toString()
 
@@ -115,7 +133,7 @@ class InterfaceAnalyzer {
         )
     }
 
-    // functPions
+    // functions
     fun type(type: KType) : TypeDescriptor {
         checkType(type)
 
@@ -218,6 +236,9 @@ class InterfaceAnalyzer {
 
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
+            kind(clazz),
+            superclass(clazz)?.qualifiedName,
+            implements(clazz).map { clazz -> clazz.qualifiedName!! },
             clazz.annotations.map { annotation -> annotation(annotation) },
             this.analyzeProperties(clazz),
             emptyList()
@@ -227,11 +248,47 @@ class InterfaceAnalyzer {
 
         return descriptor
     }
+
+    fun kind(clazz: KClass<*>) : String {
+        val builder = StringBuilder()
+
+        if ( clazz.isAbstract)
+            builder.append("abstract")
+
+        if ( clazz.isData)
+            builder.append(" data")
+
+        if ( clazz.java.isInterface)
+            builder.append(" interface")
+        else
+            builder.append(" class")
+
+        return builder.toString()
+    }
+
+    fun superclass(clazz: KClass<*>) : KClass<*>? {
+        val result = clazz.superclasses
+            .find { superClass -> !superClass.java.isInterface && !superClass.qualifiedName!!.startsWith("kotlin.Any") }
+
+        checkClass(result)
+
+        return result
+    }
+
+    fun implements(clazz: KClass<*>) : List<KClass<*>> {
+        return clazz.superclasses
+            .filter { superClass -> superClass.java.isInterface }
+            .map { superClass -> checkClass(superClass)!! }
+    }
+
     fun analyzeService(clazz: KClass<*>) :InterfaceDescriptor {
-        checked.add(clazz)
+        checked.add(clazz) // ((clazz.supertypes[0].javaType) as Class<*>).isInterface
 
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
+            kind(clazz),
+            superclass(clazz)?.qualifiedName,
+            implements(clazz).map { clazz -> clazz.qualifiedName!! },
             clazz.annotations.map { annotation -> annotation(annotation) },
             emptyList(),//this.analyzeProperties(clazz)
             this.analyzeMethods(clazz))
@@ -247,6 +304,9 @@ class InterfaceAnalyzer {
 
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
+            kind(clazz),
+            superclass(clazz)?.qualifiedName,
+            implements(clazz).map { clazz -> clazz.qualifiedName!! },
             clazz.annotations.map { annotation -> annotation(annotation) },
             this.analyzeProperties(clazz),
             this.analyzeMethods(clazz))

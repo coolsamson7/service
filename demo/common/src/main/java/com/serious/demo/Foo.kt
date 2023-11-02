@@ -14,9 +14,12 @@ import java.util.*
  /**
  * @author Andreas Ernst
  */
-class Foo : Serializable {
-    @NotNull()
-    var name = "name"
+ open class Base : Serializable {
+     @NotNull()
+     var name = "name"
+ }
+class Foo : Base() {
+
     @Min(0)
     @Max(100)
     var age = 10

@@ -2,7 +2,15 @@
     <annotation [annotation]="annotation" *ngFor="let annotation of service.annotations"/>
     
     <div>
-        <span class="keyword">interface</span>&nbsp;{{service.name}} 
+        <span class="keyword">{{service.kind}}</span>&nbsp;{{service.name}} 
+        <span *ngIf="inherits()"> : </span>
+        <class *ngIf="superClass()" [class]="service.inherits"/>
+
+        <span *ngFor="let interface of service.implements; let i=index">
+            <class [class]="interface"/>
+            <span *ngIf="superClass() || i > 0">, </span>
+        </span>
+
         <span *ngIf="open">&#123;</span>
     </div>
     <span *ngIf="open" class="body">

@@ -35,6 +35,9 @@ export interface PropertyDescriptor {
 
 export interface  InterfaceDescriptor {
     name: String,
+    kind: String, // for now
+    inherits: String,
+    implements: String[],
     annotations: AnnotationDescriptor[],
     properties: PropertyDescriptor[],
     methods: MethodDescriptor[]
