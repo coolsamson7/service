@@ -1,5 +1,8 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:com.serious.annotations////PointingToDeclaration/service-core/com.serious.annotations/index.html
+$dokka.location:com.serious.annotations/Description///PointingToDeclaration/service-core/com.serious.annotations/-description/index.html
+$dokka.location:com.serious.annotations/Description/value/#/PointingToDeclaration/service-core/com.serious.annotations/-description/value.html
 $dokka.location:com.serious.collections////PointingToDeclaration/service-core/com.serious.collections/index.html
 $dokka.location:com.serious.collections/Arrays///PointingToDeclaration/service-core/com.serious.collections/-arrays/index.html
 $dokka.location:com.serious.collections/Arrays/add2/#java.lang.Class[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/service-core/com.serious.collections/-arrays/add2.html
@@ -372,7 +375,7 @@ $dokka.location:com.serious.service/ParameterValueDescriptor/name/#/PointingToDe
 $dokka.location:com.serious.service/ParameterValueDescriptor/type/#/PointingToDeclaration/service-core/com.serious.service/-parameter-value-descriptor/type.html
 $dokka.location:com.serious.service/ParameterValueDescriptor/value/#/PointingToDeclaration/service-core/com.serious.service/-parameter-value-descriptor/value.html
 $dokka.location:com.serious.service/PropertyDescriptor///PointingToDeclaration/service-core/com.serious.service/-property-descriptor/index.html
-$dokka.location:com.serious.service/PropertyDescriptor/PropertyDescriptor/#kotlin.String#com.serious.service.TypeDescriptor#kotlin.collections.List[com.serious.service.AnnotationDescriptor]/PointingToDeclaration/service-core/com.serious.service/-property-descriptor/-property-descriptor.html
+$dokka.location:com.serious.service/PropertyDescriptor/PropertyDescriptor/#kotlin.String#com.serious.service.TypeDescriptor?#kotlin.collections.List[com.serious.service.AnnotationDescriptor]/PointingToDeclaration/service-core/com.serious.service/-property-descriptor/-property-descriptor.html
 $dokka.location:com.serious.service/PropertyDescriptor/annotations/#/PointingToDeclaration/service-core/com.serious.service/-property-descriptor/annotations.html
 $dokka.location:com.serious.service/PropertyDescriptor/name/#/PointingToDeclaration/service-core/com.serious.service/-property-descriptor/name.html
 $dokka.location:com.serious.service/PropertyDescriptor/type/#/PointingToDeclaration/service-core/com.serious.service/-property-descriptor/type.html
@@ -488,6 +491,7 @@ $dokka.location:com.serious.util/MethodDispatcher/getApplicableMethod/#java.lang
 $dokka.location:com.serious.util/MethodDispatcher/getApplicableMethods/#java.lang.Class[*]/PointingToDeclaration/service-core/com.serious.util/-method-dispatcher/get-applicable-methods.html
 $dokka.location:com.serious.util/MethodDispatcher/hasApplicableMethod/#java.lang.Class[*]/PointingToDeclaration/service-core/com.serious.util/-method-dispatcher/has-applicable-method.html
 $dokka.location:com.serious.util/MethodDispatcher/replaceMethods/#kotlin.Any#kotlin.String/PointingToDeclaration/service-core/com.serious.util/-method-dispatcher/replace-methods.html
+com.serious.annotations
 com.serious.collections
 com.serious.exception
 com.serious.injection
