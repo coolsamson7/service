@@ -104,7 +104,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
       next: (value: ComponentDTO) => {
         this.component = value
 
-        this.open = value.model.services.map(_ => false)
+        this.open = Array<boolean>(1 + value.model.services.length + value.model.models.length).fill(false)
 
         this.element.label = componentName
         this.element.route += componentName

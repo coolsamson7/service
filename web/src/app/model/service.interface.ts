@@ -27,8 +27,15 @@ export interface  MethodDescriptor {
     annotations: AnnotationDescriptor[]
 }
 
+export interface PropertyDescriptor {
+    name: String,
+    type: TypeDescriptor,
+    annotations: AnnotationDescriptor[]
+}
+
 export interface  InterfaceDescriptor {
     name: String,
     annotations: AnnotationDescriptor[],
+    properties: PropertyDescriptor[],
     methods: MethodDescriptor[]
 }

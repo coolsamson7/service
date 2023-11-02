@@ -13,7 +13,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
-import { ServiceAnnotationComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceTypeComponent } from "./service.component";
+import { ServiceAnnotationComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
 
 @NgModule({
     declarations: [
@@ -28,7 +28,8 @@ import { ServiceAnnotationComponent, ServiceComponent, ServiceLiteralComponent, 
         ServiceLiteralComponent,
         ServiceAnnotationComponent,
         ServiceTypeComponent,
-        ServiceMethodComponent
+        ServiceMethodComponent,
+        ServicePropertyComponent
     ],
     imports: [
       CommonModule,

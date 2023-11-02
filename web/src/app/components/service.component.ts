@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor } from "../model/service.interface";
+import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor, PropertyDescriptor } from "../model/service.interface";
 
 @Component({
     selector: 'annotation',
@@ -41,6 +41,17 @@ export class ServiceMethodComponent {
     // input
 
     @Input('method') method: MethodDescriptor 
+}
+
+@Component({
+    selector: 'property',
+    templateUrl: './service-property.component.html',
+    styleUrls: ['./service-property.component.scss']
+  })
+export class ServicePropertyComponent {
+    // input
+
+    @Input('property') property: PropertyDescriptor 
 }
 
 @Component({

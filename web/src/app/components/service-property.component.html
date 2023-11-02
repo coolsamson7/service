@@ -1,0 +1,6 @@
+<div class="property">
+    <annotation [annotation]="annotation" *ngFor="let annotation of property.annotations"/>
+    <div class="body"> 
+        <span>{{property.name}} : <type [type]="property.type"/></span>
+    </div>
+</div>

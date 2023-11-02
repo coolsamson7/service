@@ -16,9 +16,28 @@
             </mat-tab>
     
             <mat-tab label="Services">
+                <!-- component -->
+
+                <span class="bold">Component</span>
+                <span class="services">
+                    <mat-icon (click)="toggle(0)">{{open[0] ? 'expand_less' : 'expand_more'}}</mat-icon>
+                    <service [service]="component.model.component" [open]="open[0]"></service>
+                </span>
+
+                <!-- services -->
+
+                <span class="bold">Services</span>
                 <span class="services" *ngFor="let service of component.model.services; let i = index">
-                    <mat-icon (click)="toggle(i)">{{open[i] ? 'expand_less' : 'expand_more'}}</mat-icon>
-                    <service [service]="service" [open]="open[i]"></service>
+                    <mat-icon (click)="toggle(i+1)">{{open[i+1] ? 'expand_less' : 'expand_more'}}</mat-icon>
+                    <service [service]="service" [open]="open[i+1]"></service>
+                </span>
+
+                <!-- models -->
+
+                <span class="bold">Models</span>
+                <span class="services" *ngFor="let service of component.model.models; let i = index">
+                    <mat-icon (click)="toggle(i+1+component.model.services.length)">{{open[i+1+component.model.services.length] ? 'expand_less' : 'expand_more'}}</mat-icon>
+                    <service [service]="service" [open]="open[i+1+component.model.services.length]"></service>
                 </span>
             </mat-tab>
     

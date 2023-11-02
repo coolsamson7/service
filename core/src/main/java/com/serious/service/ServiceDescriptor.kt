@@ -13,6 +13,7 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
 data class TypeDescriptor(
     val name: String,
@@ -65,25 +66,35 @@ class InterfaceAnalyzer {
     val models: java.util.HashMap<String, InterfaceDescriptor> = java.util.HashMap()
     val services: java.util.HashMap<String, InterfaceDescriptor> = java.util.HashMap()
     val queue = ArrayDeque<KClass<*>>()
+    val checked = HashSet<KClass<*>>()
+
+    val ignore = arrayOf("java.", "kotlin.", "reactor.")
 
     // private
     private fun checkType(type: KType) {
         val qualifiedName = type.toString()
 
-        if ( !qualifiedName.startsWith("java.") && !qualifiedName.startsWith("kotlin.")) {
-            val clazz = type.classifier
+        // ignore known types
 
-            if ( clazz is KClass<*> ) {
-                if ( !models.containsKey(clazz.qualifiedName))
-                    queue.add(clazz)
-            }
+        for ( prefix in ignore)
+            if (qualifiedName.startsWith(prefix))
+                return
+
+        // ignore base types
+
+        val clazz = type.classifier
+
+        if ( clazz is KClass<*> ) {
+            if ( clazz != Service::class)
+            if ( !checked.contains(clazz) && !queue.contains(clazz))
+                queue.add(clazz)
         }
     }
 
     fun modelFor(componentDescriptor: ComponentDescriptor<*>) :ComponentModel {
         // component
 
-        component = analyzeService(componentDescriptor.serviceInterface.kotlin)
+        component = analyzeComponent(componentDescriptor.serviceInterface.kotlin)
 
         // services
 
@@ -104,7 +115,7 @@ class InterfaceAnalyzer {
         )
     }
 
-    // functions
+    // functPions
     fun type(type: KType) : TypeDescriptor {
         checkType(type)
 
@@ -158,11 +169,13 @@ class InterfaceAnalyzer {
         return parameter.annotations.map { annotation -> annotation(annotation) }
     }
     fun parameters(method: KFunction<*>) :List<ParameterDescriptor> {
-        val params = method.parameters.map { parameter ->
-            ParameterDescriptor(
-                parameter.name ?:"",
-                type(parameter.type),
-                annotations(parameter))
+        val params = method.parameters
+            .filter { param -> param.kind != KParameter.Kind.INSTANCE }
+            .map { parameter ->
+                ParameterDescriptor(
+                    parameter.name ?:"",
+                    type(parameter.type),
+                    annotations(parameter))
         }
 
         return params
@@ -180,17 +193,29 @@ class InterfaceAnalyzer {
 
     fun analyzeProperties(clazz: KClass<*>) :List<PropertyDescriptor> {
         return clazz.memberProperties.map { property ->
+            var annotations : List<AnnotationDescriptor> = ArrayList<AnnotationDescriptor>()
+
+            // field
+
+            if ( property.javaField != null)
+                annotations = property.javaField!!.annotations.map { annotation -> annotation(annotation) }
+            else if (property.getter != null)
+                annotations = property.getter!!.annotations.map { annotation -> annotation(annotation) }
+            else
+                annotations = property.annotations.map { annotation -> annotation(annotation) }
+
             PropertyDescriptor(
                 property.name,
                 type(property.returnType),
-                property.getter.annotations.map { annotation -> annotation(annotation) },
-                //parameters(method)
+                annotations
             )}
     }
 
     // public
 
     fun analyzeModel(clazz: KClass<*>) :InterfaceDescriptor {
+        checked.add(clazz)
+
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
             clazz.annotations.map { annotation -> annotation(annotation) },
@@ -203,6 +228,8 @@ class InterfaceAnalyzer {
         return descriptor
     }
     fun analyzeService(clazz: KClass<*>) :InterfaceDescriptor {
+        checked.add(clazz)
+
         val descriptor = InterfaceDescriptor(
             clazz.qualifiedName!!,
             clazz.annotations.map { annotation -> annotation(annotation) },
@@ -211,6 +238,18 @@ class InterfaceAnalyzer {
 
         if ( !clazz.isSubclassOf(Component::class))
             services.put(clazz.qualifiedName!!, descriptor)
+
+        return descriptor
+    }
+
+    fun analyzeComponent(clazz: KClass<*>) :InterfaceDescriptor {
+        checked.add(clazz)
+
+        val descriptor = InterfaceDescriptor(
+            clazz.qualifiedName!!,
+            clazz.annotations.map { annotation -> annotation(annotation) },
+            this.analyzeProperties(clazz),
+            this.analyzeMethods(clazz))
 
         return descriptor
     }
