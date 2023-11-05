@@ -1,11 +1,3 @@
-<!--div class="service-instances">
-    <div *ngFor="let instance of instances" class="service-instance" (click)="select(instance)">
-        Host {{instance.host}}
-        Port {{instance.port}}
-        ID {{instance.instanceId}}
-    </div>
-</div-->
-
 <mat-list navigableList class="service-instances" role="list">
     <a mat-list-item *ngFor="let instance of instances"  [routerLinkActive]="['is-active']" routerLink="{{instance.instanceId}}" role="listitem"
     [class.active-item]="instance == selected" 

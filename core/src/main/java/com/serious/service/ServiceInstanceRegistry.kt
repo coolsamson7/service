@@ -6,6 +6,7 @@ package com.serious.service
 */
 
 import com.serious.service.ChannelInvocationHandler.Companion.updateTopology
+import com.serious.service.administration.TopologyListener
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,13 +19,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
-// NEW
-
-interface TopologyListener {
-    fun update(update: ServiceInstanceRegistry.TopologyUpdate)
-}
-
-// NEW
  /**
  * `ServiceInstanceRegistry` is responsible to cache the current known service instances.
  */
@@ -36,8 +30,10 @@ class ServiceInstanceRegistry {
     class TopologyUpdate : Serializable {
         // instance data
 
-        private var deletedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
-        private var addedInstances: MutableMap<String, MutableList<ServiceInstance?>> = HashMap()
+        private var deletedServices : MutableList<String> = LinkedList()
+        private var addedServices   : MutableList<String> = LinkedList()
+        private var deletedInstances: MutableMap<String, MutableList<ServiceInstance>> = HashMap()
+        private var addedInstances  : MutableMap<String, MutableList<ServiceInstance>> = HashMap()
 
         // public
 
@@ -45,11 +41,27 @@ class ServiceInstanceRegistry {
             return deletedInstances.containsKey(service) || addedInstances.containsKey(service)
         }
 
-        fun getDeletedInstances(service: String): MutableList<ServiceInstance?> {
+        fun getDeletedServices(): List<String> {
+            return deletedServices
+        }
+        fun getAddedServices(): List<String> {
+            return addedServices
+        }
+
+        fun getAddedInstances():Map<String, List<ServiceInstance>> {
+            return addedInstances
+        }
+
+        fun getDeletedInstances():Map<String, List<ServiceInstance>> {
+            return deletedInstances
+        }
+
+
+        fun getDeletedInstances(service: String): MutableList<ServiceInstance> {
             return deletedInstances.computeIfAbsent(service) { _: String? -> LinkedList() }
         }
 
-        fun getAddedInstances(service: String): MutableList<ServiceInstance?> {
+        fun getAddedInstances(service: String): MutableList<ServiceInstance> {
             return addedInstances.computeIfAbsent(service) { _: String? -> LinkedList() }
         }
 
@@ -62,7 +74,10 @@ class ServiceInstanceRegistry {
         }
 
         fun deletedServices(service: String, instances: List<ServiceInstance>) {
-            for (serviceInstance in instances) deletedService(service, serviceInstance)
+            deletedServices.add(service)
+
+            for (serviceInstance in instances)
+                deletedService(service, serviceInstance)
         }
 
         fun deletedService(service: String, instance: ServiceInstance?) {
@@ -78,6 +93,8 @@ class ServiceInstanceRegistry {
         }
 
         fun addedServices(service: String, instances: List<ServiceInstance>) {
+            addedServices.add(service)
+
             for (serviceInstance in instances)
                 addedService(service, serviceInstance)
         }
@@ -243,13 +260,13 @@ class ServiceInstanceRegistry {
 
         serviceInstances = newMap
 
-        for ( listener in this.listener)
-            listener.update(topologyUpdate)
-        // TODO
         // check for necessary updates
 
-        if (!topologyUpdate.isEmpty) {
+        for ( listener in this.listener)
+            listener.update(topologyUpdate) // they are also interested about helath updates?
 
+        if (!topologyUpdate.isEmpty) {
+            // inform listener
 
             updateTopology(this, topologyUpdate)
         }

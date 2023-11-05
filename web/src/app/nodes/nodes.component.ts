@@ -2,7 +2,6 @@
 import { Component } from "@angular/core";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ComponentService } from "../service/component-service.service";
-import { NavigationBreadcrumbComponent } from "./navigation-breadcrumb.component";
 
 @Component({
     selector: 'nodes',
@@ -32,8 +31,8 @@ import { NavigationBreadcrumbComponent } from "./navigation-breadcrumb.component
     ngOnInit(): void {
         super.ngOnInit();
 
-        this.componentService.getNodes().subscribe( {
-            next: (response) => { this.nodes = response; }
-           });
+        //this.componentService.getNodes().subscribe( {
+        //    next: (response) => { this.nodes = response; }
+        //   });
     }
   }

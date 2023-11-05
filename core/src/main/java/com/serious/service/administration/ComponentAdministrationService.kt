@@ -16,90 +16,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.io.Serializable
 
-
-// NEW
-
-data class Update(
-    val name: String
-) : Serializable
-@Component
-class EmitterManager : TopologyListener {
-    // instance data
-
-    var emitters: ArrayList<SseEmitter> = ArrayList()
-
-    @Autowired
-    lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
-
-    // constructor
-
-    @PostConstruct
-    fun init() {
-        this.serviceInstanceRegistry.addListener(this)
-    }
-
-   // implement TopologyListener
-    override fun update(update: ServiceInstanceRegistry.TopologyUpdate) {
-       println("update")
-
-        send("update")
-    }
-
-    fun send(data: String) {
-        println("send")
-
-        val failedEmitters: MutableList<SseEmitter> = ArrayList()
-
-        for ( emitter in this.emitters)
-            try {
-                println("send to emitter")
-
-                emitter.send(
-                    SseEmitter.event()
-                        .name("update")
-                        .id("id")
-                        .data(Update(data), MediaType.APPLICATION_JSON)
-                )
-                //emitter.complete()
-            }
-            catch (e: Exception) {
-                println("emitter caught exception" + e.message)
-
-                emitter.completeWithError(e)
-                failedEmitters.add(emitter)
-            }
-
-        emitters.removeAll(failedEmitters)
-    }
-
-    fun listenTo(component: String): SseEmitter {
-        val emitter = SseEmitter(3_600_000L); // 1h
-
-        emitter.onCompletion {
-            println("emitter.onCompletion")
-            emitters.remove(emitter)
-        }
-
-        emitter.onTimeout {
-            println("emitter.onTimeout")
-            emitter.complete() // will trigger the second callback
-        }
-
-        this.emitters.add(emitter) // TODO
-
-        // TEST
-
-        //send("test1")
-        //send("test2")
-        //send("test3")
-
-        // TEST
-
-        return emitter
-    }
-}
-
-// NEW
 @RestController
 @RequestMapping("administration/")
 class ComponentAdministrationService {
@@ -109,6 +25,8 @@ class ComponentAdministrationService {
     lateinit var componentAdministration: ComponentAdministration
     @Autowired
     lateinit var serviceManager: ServiceManager
+    @Autowired
+    lateinit var emitterManager : EmitterManager
 
     // rest calls
 
@@ -165,10 +83,6 @@ class ComponentAdministrationService {
     }
 
     // SSE stuff
-
-
-    @Autowired
-    lateinit var emitterManager : EmitterManager
 
     @GetMapping("/listen/{component}", produces= [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun listenTo(@PathVariable component: String) : SseEmitter {

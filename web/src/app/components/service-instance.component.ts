@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { ComponentsComponent } from './components.component';
-import { ComponentStore } from './component-details.component';
 import { RouteElement } from '../widgets/navigation-component.component';
+import { Update, UpdateService } from '../service/update-service.service';
+import { ComponentStore } from './component-store';
 
 @Component({
   selector: 'service-instance',
@@ -15,6 +16,9 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
   // instance data
 
   subscription: Subscription
+  updateSubscription : Subscription
+  healthSubscription : Subscription
+  instanceSubscription : Subscription
   instance: ServiceInstanceDTO = {
     component: null,
     instanceId:  "",
@@ -30,10 +34,11 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
     label: "",
     route: ""
   }
+  dead = false
 
   // constructor
 
-  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent) {
+  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent, updateService: UpdateService) {
     this.element.route = componentsComponent.topRouteElement().route + "/"
 
     this.componentsComponent.pushRouteElement(this.element)
@@ -43,34 +48,49 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
           this.setInstance( params['instance'])
         }
       });
+
+      this.updateSubscription = updateService.getUpdates().subscribe({
+        next: update => {
+          this.update(update)
+        }
+      });
   }
 
   // private
 
-  setInstance(id: String) {
-    this.componentStore.getInstances().subscribe({
-        next: (instances: ServiceInstanceDTO[]) => {
-            this.instance = instances.find((instance) => instance.instanceId == id)
+  update(update: Update) {
+    
+  }
 
-            this.componentStore.getHealths().subscribe({
-                next: (value) => {this.health = value[id as string]}
-            })
+  setInstance(id: String) {
+    if ( this.instanceSubscription != null)
+       this.instanceSubscription.unsubscribe()
+
+    this.instanceSubscription = this.componentStore.getInstances().subscribe({
+        next: (instances: ServiceInstanceDTO[]) => {
+            let instance = instances.find((instance) => instance.instanceId == id)
+
+            if ( instance ) {
+               this.instance = instance
 
              // set label
 
             this.element.label = this.instance.serviceId
+
+            this.dead = false
+            }
+            else this.dead = true
         }
     })   
+
+    this.healthSubscription = this.componentStore.getHealths().subscribe({
+        next: (value) => {this.health = value[id as string]}
+    })
   }
 
   // implement OnInit
 
   ngOnInit() {
-    /*this.subscription = this.activatedRoute.params.subscribe(params => {
-        next: (params: any) => {
-          this.setInstance( params['instance'])
-        }
-      });*/
   }
 
   // implement OnDestroy
@@ -80,5 +100,12 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
       this.componentsComponent.popRouteElement(this.element);
 
     this.subscription.unsubscribe();
+    this.updateSubscription.unsubscribe();
+
+    if (this.instanceSubscription != null)
+     this.instanceSubscription.unsubscribe()
+
+     if (this.healthSubscription != null)
+     this.healthSubscription.unsubscribe()
   }
 }

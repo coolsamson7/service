@@ -1,8 +1,10 @@
 <div>
     <div  *ngIf="outlet.isActivated == false" class="left">
-        <h1>{{component.name}}</h1>
+        <h1>{{component.name}} {{this.dead ? "DEAD" : ""}}</h1>
         <hr>
         <mat-tab-group *ngIf="component.name">
+            <!-- general -->
+
             <mat-tab label="General">
                 <div class="general">
                     <mat-label>Description</mat-label>
@@ -14,6 +16,8 @@
                     </div>
                 </div>
             </mat-tab>
+
+            <!-- services -->
     
             <mat-tab label="Services">
                 <!-- component -->
@@ -40,20 +44,16 @@
                     <service [service]="service" [open]="open[i+1+component.model.services.length]"></service>
                 </span>
             </mat-tab>
+
+            <!-- instances -->
     
             <mat-tab class="instances" label="Instances">
                 <service-instance-list *ngIf="component" [component]="component"></service-instance-list>
             </mat-tab>
-    
-            <!--router-outlet></router-outlet-->
         </mat-tab-group>
     </div>
 
    <!-- router outlet -->
-
-   <!--div class="right">
-      <router-outlet  #outlet="outlet"></router-outlet>
-   </div-->
 
    <router-outlet  #outlet="outlet"></router-outlet>
 </div>

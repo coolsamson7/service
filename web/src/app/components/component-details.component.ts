@@ -1,63 +1,12 @@
-import { Component, Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, map, of, tap } from 'rxjs';
-import { ComponentService } from '../service/component-service.service';
 import { ComponentDTO } from '../model/component.interface';
 import { ComponentsComponent } from './components.component';
-import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { RouteElement } from '../widgets/navigation-component.component';
+import { Update, UpdateService } from '../service/update-service.service';
+import { ComponentStore } from './component-store';
+import { Subscription } from 'rxjs';
 
-
-@Injectable()
-export class ComponentStore {
-  // instance data
-
-  componentName: String
-  componentObservable: Observable<ComponentDTO>
-  instances: ServiceInstanceDTO[]
-  health: Map<String,String>
-
-  // constructor
-
-  constructor(private componentService: ComponentService) {
-  }
-
-  // public
-
-  getHealth(instance: ServiceInstanceDTO) : Observable<String> {
-    return this.getHealths().pipe(
-      map(healths => {return healths[instance.instanceId]})
-    )
-  }
-
- getHealths() : Observable<Map<String,String>> {
-  if ( this.health == null)
-    return this.componentService.getServiceHealths(this.componentName).pipe(
-      tap(health => {
-        this.health = health
-      })
-    )
-    else return of(this.health)
-  }
-
-  setup(componentName: String) :Observable<ComponentDTO> {
-    return this.componentObservable = this.componentService.getDetails(this.componentName = componentName)
-  }
-
-  getInstances() :Observable<ServiceInstanceDTO[]>{
-    if (this.instances == null)
-      return this.componentService.getServiceInstances(this.componentName).pipe(
-        tap(val => {
-          this.instances = val
-        }));
-    else
-       return of(this.instances)
-  }
-
-  getComponent() :Observable<ComponentDTO> {
-    return this.componentObservable
-  }
-}
 
 @Component({
   selector: 'component-details',
@@ -84,11 +33,20 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
     route: "/components/"
   }
   open: boolean[]
+  dead = false
+  
+  updateSubscription: Subscription
 
   // constructor
 
-  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent) {
+  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent, updateService: UpdateService) {
     componentsComponent.pushRouteElement(this.element)
+
+    this.updateSubscription = updateService.getUpdates().subscribe({
+        next: update => {
+          this.update(update)
+        }
+      });
   }
 
   // public
@@ -99,15 +57,40 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
   // private
 
+  private update(update: Update) {
+    this.componentStore.update(update)
+
+    if ( this.dead ) {
+      if ( update.addedServices.find(service => service == this.component.name) != null)
+        this.dead = false
+    }
+    else {
+      if ( update.deletedServices.find(service => service == this.component.name) != null)
+        this.dead = true
+    }
+  }
+
   private setComponent(componentName: string) {
-    this.componentStore.setup(componentName).subscribe({
+    this.componentStore.setup(componentName);
+    
+    // this is a stream also called after upates!
+
+    this.componentStore.getComponent().subscribe({
       next: (value: ComponentDTO) => {
-        this.component = value
+        if ( value != null) {
+          this.component = value
+          this.dead = false
 
-        this.open = Array<boolean>(1 + value.model.services.length + value.model.models.length).fill(false)
+          this.open = Array<boolean>(1 + value.model.services.length + value.model.models.length).fill(false)
 
-        this.element.label = componentName
-        this.element.route += componentName
+          if (this.element.label.length == 0) {
+            this.element.label = componentName
+            this.element.route += componentName
+          }
+        } // if
+        else {
+          this.dead = true
+        }
       }
     });
   }
@@ -127,5 +110,6 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
       this.componentsComponent.popRouteElement(this.element);
 
     this.subscription.unsubscribe();
+    this.updateSubscription.unsubscribe();
   }
 }
