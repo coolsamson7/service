@@ -157,6 +157,7 @@ $dokka.location:com.serious.service.administration/EmitterManager/EmitterManager
 $dokka.location:com.serious.service.administration/EmitterManager/emitters/#/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/emitters.html
 $dokka.location:com.serious.service.administration/EmitterManager/init/#/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/init.html
 $dokka.location:com.serious.service.administration/EmitterManager/listenTo/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/listen-to.html
+$dokka.location:com.serious.service.administration/EmitterManager/logger/#/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/logger.html
 $dokka.location:com.serious.service.administration/EmitterManager/send/#kotlin.Any/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/send.html
 $dokka.location:com.serious.service.administration/EmitterManager/serviceInstanceRegistry/#/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/service-instance-registry.html
 $dokka.location:com.serious.service.administration/EmitterManager/update/#com.serious.service.ServiceInstanceRegistry.TopologyUpdate/PointingToDeclaration/service-core/com.serious.service.administration/-emitter-manager/update.html
