@@ -12,14 +12,16 @@ const routes: Routes = [
   { 
     path: 'home', 
     data: {
-      label: "Home"
+      label: "Home",
+      icon: "home"
     },
     component: HomeComponent 
   },
   {
     path: 'components',
     data: {
-      label: "Components"
+      label: "Components",
+      icon: "folder"
     },
     component: ComponentsComponent,
     children: [
@@ -38,7 +40,8 @@ const routes: Routes = [
   {
     path: 'nodes',
     data: {
-      label: "Nodes"
+      label: "Nodes",
+      icon: "computer"
     },
     component: NodesComponent,
     children: [

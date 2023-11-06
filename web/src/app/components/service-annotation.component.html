@@ -15,10 +15,10 @@
 
     <span *ngIf=" annotation.parameters.length > 1">
         &#40;
-        <span class="parameter" *ngFor="let parameter of annotation.parameters; let i = index">
+        <ng-container class="parameter" *ngFor="let parameter of annotation.parameters; let i = index">
             <span *ngIf="i > 0">, </span>
             {{parameter.name}}=<literal [value]="parameter.value"/>
-        </span>
+        </ng-container>
         &#41;
     </span>
 </div>

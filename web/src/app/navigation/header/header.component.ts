@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
 
   @Output() public sidenavToggle = new EventEmitter();
   label = ""
+  icon = ""
   
   // constructor
 
@@ -33,10 +34,11 @@ export class HeaderComponent implements OnInit {
         map(() => this.activatedRoute),
         map(route => route.firstChild),
         switchMap(route => (route as any).data),
-        map(data => data['label'])
+        //map(data => data['label'])
          )
         .subscribe(data => {
-           this.label = data
+           this.label = data['label']
+           this.icon = data['icon']
         });
     }
   }

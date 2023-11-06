@@ -111,5 +111,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
     this.subscription.unsubscribe();
     this.updateSubscription.unsubscribe();
+
+    this.componentStore.destroy()
   }
 }

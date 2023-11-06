@@ -45,12 +45,12 @@ export class AppComponent implements OnInit {
       {
         label: "Components",
         route: "/components",
-        icon: "account_balance"      
+        icon: "folder"      
        },
        {
         label: "Nodes",
         route: "/nodes",
-        icon: "account_balance"      
+        icon: "computer"      
        }
     ]
   }
