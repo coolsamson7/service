@@ -1,13 +1,12 @@
 === TODO
 
 - logik acquire ändern ( local )
-- test wieder fixen
 - loadbalancer nach abstract
 
 === NOW
 
+- eigenes admin modul
 - NullPointerException WTF
-- locator http einbauen!
 - test fixen...
 
 === LATER
@@ -16,6 +15,7 @@
 
 === DONE
 
+- locator http einbauen!
 - update checken
 - server + slf4j
 - sse / websocket

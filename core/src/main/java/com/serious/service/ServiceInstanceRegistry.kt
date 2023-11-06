@@ -147,7 +147,11 @@ class ServiceInstanceRegistry {
             .collect(Collectors.toList())
     }
 
-    private fun getInstances(component: String): List<ServiceInstance> {
+     public fun getServices(): List<String> {
+         return ArrayList(serviceInstances.keys)
+     }
+
+    public fun getInstances(component: String): List<ServiceInstance> {
         val instances = serviceInstances[component]
 
         return instances ?: emptyList()

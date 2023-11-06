@@ -3,10 +3,7 @@
     <div class="service-instance" >
       {{instance.instanceId}}
       <mat-icon>language</mat-icon>
-      {{instance.host}}
-      <mat-icon>settings_internet</mat-icon>
-      {{instance.port}}
-      <mat-icon>settings_internet</mat-icon>
+      {{instance.host}}:{{instance.port}}
       <mat-icon class="ok" *ngIf="health[instance.instanceId] == 'PASSING'">check_circle</mat-icon>
       <mat-icon class="nok" *ngIf="health[instance.instanceId] != 'PASSING'">bug_report</mat-icon>
       {{health[instance.instanceId]}}
