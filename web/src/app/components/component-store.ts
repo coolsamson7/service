@@ -18,13 +18,27 @@ export class ComponentStore {
   instancesSubject = new BehaviorSubject<ServiceInstanceDTO[]>(this.instances)
   healthSubject    = new BehaviorSubject<Healths>(this.healths) // mapping service id -> health
   dead = false
+  timer
 
   // constructor
 
   constructor(private componentService: ComponentService) {
+    this.timer = setInterval(() => {
+      // health timer
+
+      if ( !this.dead)
+        this.componentService.getServiceHealths(this.componentName).subscribe(
+          health => this.healthSubject.next(this.healths = health)
+      )
+        },
+         10*1000)
   }
 
   // public
+
+  destroy() {
+    clearInterval(this.timer);
+  }
 
   update(update: Update) {
     console.log(update)
@@ -51,16 +65,6 @@ export class ComponentStore {
     
         this.instancesSubject.next(this.instances = newInstances)
       }
-
-    // fetch health anyway
-    
-
-    if ( this.dead)
-        console.log("kkk");//this.healthSubject.next({})
-    else
-        this.componentService.getServiceHealths(this.componentName).subscribe(
-        health => this.healthSubject.next(this.healths = health)
-     )
   }
 
   setup(componentName: string) {
