@@ -9,9 +9,18 @@ import { NodesComponent } from './nodes/nodes.component';
 import { NodeDetailsComponent } from './nodes/node-details.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent },
+  { 
+    path: 'home', 
+    data: {
+      label: "Home"
+    },
+    component: HomeComponent 
+  },
   {
     path: 'components',
+    data: {
+      label: "Components"
+    },
     component: ComponentsComponent,
     children: [
       {
@@ -28,6 +37,9 @@ const routes: Routes = [
   },
   {
     path: 'nodes',
+    data: {
+      label: "Nodes"
+    },
     component: NodesComponent,
     children: [
       {

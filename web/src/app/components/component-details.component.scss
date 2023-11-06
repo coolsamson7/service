@@ -1,3 +1,6 @@
+.error {
+    color: red($color: #000000);
+}
 .general {
     margin: 10px;
     display: flex;
@@ -12,6 +15,7 @@
     .channel {
         display: grid;
         grid-template-columns: min-content 1fr;
+        column-gap: 5px;
     }
 }
 

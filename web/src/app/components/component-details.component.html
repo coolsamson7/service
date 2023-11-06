@@ -1,6 +1,7 @@
 <div>
     <div  *ngIf="outlet.isActivated == false" class="left">
-        <h1>{{component.name}} {{this.dead ? "DEAD" : ""}}</h1>
+        <h1>{{component.name}}
+            <mat-icon class="error" *ngIf="dead">error</mat-icon></h1>
         <hr>
         <mat-tab-group *ngIf="component.name">
             <!-- general -->
@@ -10,10 +11,12 @@
                     <mat-label>Description</mat-label>
                     <div>{{component.description}}</div>
                     <mat-label>Channels</mat-label>
-                    <div class="channel" *ngFor="let channel of component.channels">
+                    <div class="channel">
+                    <ng-container *ngFor="let channel of component.channels">
                         <div class="channel-name">{{channel.name}}</div>
                         <div class="channel-uri">{{channel.uri}}</div>
-                    </div>
+                    </ng-container>
+                </div>
                 </div>
             </mat-tab>
 
