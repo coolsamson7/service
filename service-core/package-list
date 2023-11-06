@@ -438,7 +438,9 @@ $dokka.location:com.serious.service/ServiceInstanceRegistry/ServiceInstanceRegis
 $dokka.location:com.serious.service/ServiceInstanceRegistry/addListener/#com.serious.service.administration.TopologyListener/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/add-listener.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/channelManager/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/channel-manager.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/componentRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/component-registry.html
+$dokka.location:com.serious.service/ServiceInstanceRegistry/getInstances/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/get-instances.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/getServiceAddress/#kotlin.String#kotlin.String?/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/get-service-address.html
+$dokka.location:com.serious.service/ServiceInstanceRegistry/getServices/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/get-services.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/report/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/report.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/startup/#/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/startup.html
 $dokka.location:com.serious.service/ServiceInstanceRegistry/update/#kotlin.collections.MutableMap[kotlin.String,kotlin.collections.List[org.springframework.cloud.client.ServiceInstance]]/PointingToDeclaration/service-core/com.serious.service/-service-instance-registry/update.html
