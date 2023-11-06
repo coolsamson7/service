@@ -1,7 +1,30 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
+import { EndpointLocator } from './common/communication/endpoint-locator';
+
+import { environment } from '../environments/environment';
+
+@Injectable({providedIn: "root"})
+export class ApplicationEndpointLocator extends EndpointLocator {
+  // constructor
+
+  constructor() {
+    super()
+
+    let url = window.location.href;
+    console.log(url)
+  }
+  // implement 
+
+  getEndpoint(domain: string): string {
+    if ( domain == "admin")
+      return environment.adminServer//'http://localhost:8080'
+    else
+       throw new Error("unknown domain " + domain)
+  }
+}
 
 
 @Component({

@@ -9,6 +9,7 @@ import { Update, Healths } from "../service/update-service.service"
 export class ComponentStore {
   // instance data
 
+  component: ComponentDTO
   instances : ServiceInstanceDTO[] = []
   healths : Healths = {}
 
@@ -27,7 +28,6 @@ export class ComponentStore {
 
   update(update: Update) {
     console.log(update)
-
 
     if ( update.deletedServices.includes(this.componentName)) {
       this.componentSubject.next(null)
@@ -67,19 +67,19 @@ export class ComponentStore {
     // component
 
     this.componentService.getDetails(this.componentName = componentName).subscribe(
-        component => this.componentSubject.next(component)
+        component => this.componentSubject.next(this.component = component)
     )
 
     // instances
 
     this.componentService.getServiceInstances(this.componentName).subscribe(
-      instances => this.instancesSubject.next(instances)
+      instances => this.instancesSubject.next(this.instances = instances)
     )
 
     // health
 
      this.componentService.getServiceHealths(this.componentName).subscribe(
-      health => this.healthSubject.next(health)
+      health => this.healthSubject.next(this.healths = health)
      )
   }
 

@@ -9,6 +9,8 @@ import com.serious.service.ServiceInstanceRegistry
 import com.serious.service.administration.model.UpdateDTO
 import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 class EmitterManager : TopologyListener {
     // instance data
 
+    var logger : Logger = LoggerFactory.getLogger(EmitterManager::class.java)
     var emitters: ArrayList<SseEmitter> = ArrayList()
 
     @Autowired
@@ -33,7 +36,7 @@ class EmitterManager : TopologyListener {
 
     // implement TopologyListener
     override fun update(update: ServiceInstanceRegistry.TopologyUpdate) {
-        //log.info("update");
+        logger.info("update");
 
         val deletedInstances: HashMap<String, List<String>> = HashMap()
         for (entry in update.getDeletedInstances())
@@ -48,7 +51,7 @@ class EmitterManager : TopologyListener {
     }
 
     fun send(data: Any) {
-        println("send")
+        logger.debug("send event")
 
         val failedEmitters: MutableList<SseEmitter> = ArrayList()
 
@@ -62,7 +65,7 @@ class EmitterManager : TopologyListener {
                 )
             }
             catch (e: Exception) {
-                println("emitter caught exception" + e.message)
+                logger.debug("caught exception " + e.message)
 
                 emitter.completeWithError(e)
                 failedEmitters.add(emitter)
@@ -71,16 +74,17 @@ class EmitterManager : TopologyListener {
         emitters.removeAll(failedEmitters)
     }
 
-    fun listenTo(component: String): SseEmitter { // TODO
+    fun listenTo(component: String): SseEmitter { // TODO: real subscription...
         val emitter = SseEmitter(3_600_000L); // 1h
 
         emitter.onCompletion {
-            println("emitter.onCompletion")
+            logger.info("emitter.onCompletion")
             emitters.remove(emitter)
         }
 
         emitter.onTimeout {
-            println("emitter.onTimeout")
+            logger.info("emitter.onTimeout")
+
             emitter.complete() // will trigger the second callback
         }
 

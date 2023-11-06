@@ -1,8 +1,5 @@
-<mat-list navigableList class="service-instances" role="list">
-    <a mat-list-item *ngFor="let instance of instances"  [routerLinkActive]="['is-active']" routerLink="{{instance.instanceId}}" role="listitem"
-    [class.active-item]="instance == selected" 
-    [navSelected]="instance == selected"
-    [navigableListItem]="instance" >
+<mat-list class="service-instances" role="list">
+    <a mat-list-item *ngFor="let instance of instances"  [routerLinkActive]="['is-active']" routerLink="{{instance.instanceId}}" role="listitem">
     <div class="service-instance" >
       {{instance.instanceId}}
       <mat-icon>language</mat-icon>

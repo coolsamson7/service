@@ -1,35 +1,14 @@
 === TODO
 
-- sse / websocket
 - logik acquire ändern ( local )
 - test wieder fixen
 - loadbalancer nach abstract
 
 === NOW
 
-- oberklasse??
--
-
-- SSE
-
-=== LoGIK
-
-getAllNodes()
-
-name + ip
-
-ServiceInstance hat node property ( -> name )
-
-service-a-1
-service-b-1
-service-a-2
-
-
-1 -> service-a / service-b
-2 -> service a
-
-node
-
+- NullPointerException WTF
+- locator http einbauen!
+- test fixen...
 
 === LATER
 
@@ -37,6 +16,9 @@ node
 
 === DONE
 
+- update checken
+- server + slf4j
+- sse / websocket
 - method.parameters an ertser stelle this?????
 - fehler
 - keine klammern
@@ -169,3 +151,21 @@ NEU:
    das kann einer oder meherer sein!
 
 NEU: berechene serviceaddress nue und vergleiche!
+
+=== LoGIK
+
+getAllNodes()
+
+name + ip
+
+ServiceInstance hat node property ( -> name )
+
+service-a-1
+service-b-1
+service-a-2
+
+
+1 -> service-a / service-b
+2 -> service a
+
+node

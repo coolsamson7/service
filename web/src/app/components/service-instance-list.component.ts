@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { ComponentDTO } from '../model/component.interface';
-import { Update, UpdateService } from '../service/update-service.service';
 import { Subscription } from 'rxjs';
 import { ComponentStore } from './component-store';
 
@@ -25,18 +24,7 @@ export class ServiceInstanceListComponent implements OnInit, OnDestroy {
 
    // constructor
 
-   constructor(private router: Router, private route: ActivatedRoute, private componentStore: ComponentStore, updateService : UpdateService) { 
-    this.updateSubscription = updateService.getUpdates().subscribe({
-        next: update => {
-          //this.update(update)
-        }
-      });
-   }
-
-   // private
-
-   private update(update: Update) {
-
+   constructor(private router: Router, private route: ActivatedRoute, private componentStore: ComponentStore) { 
    }
 
    // public
@@ -51,14 +39,12 @@ export class ServiceInstanceListComponent implements OnInit, OnDestroy {
       // stream !
 
       this.instanceSubscription = this.componentStore.getInstances().subscribe({
-          next: (value: ServiceInstanceDTO[]) => {
-            this.instances = value
-          }
-        });
+          next: (value: ServiceInstanceDTO[]) => this.instances = value
+        })
 
-        this.healthSubscription = this.componentStore.getHealths().subscribe({
-                  next: (value) => {this.health = value}
-              })
+      this.healthSubscription = this.componentStore.getHealths().subscribe({
+          next: (value) => this.health = value
+      })
    }
 
     // implement OnDestroy
@@ -66,6 +52,5 @@ export class ServiceInstanceListComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.instanceSubscription.unsubscribe()
         this.healthSubscription.unsubscribe()
-        this.updateSubscription.unsubscribe()
     }
 }

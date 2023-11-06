@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent } from './app.component';
+import { AppComponent, ApplicationEndpointLocator } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslocoRootModule } from './transloco-root.module';
@@ -14,6 +14,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
+import { EndpointLocatorInjectionToken } from './common/communication/endpoint-locator';
 
 
 @NgModule({
@@ -35,7 +36,12 @@ import { NodesModule } from './nodes/nodes.module';
     NodesModule,
     MaterialModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: EndpointLocatorInjectionToken,
+      useValue: new ApplicationEndpointLocator()
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,6 +2,7 @@ import { Injectable, NgZone } from "@angular/core";
 import { Observable, Subject } from 'rxjs';
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
 
+import { environment } from '../../environments/environment';
 
 export interface Update {
     deletedServices : string[],
@@ -42,21 +43,22 @@ export class UpdateService {
         console.log("connect ")
   
         // create source
+
+        let url = environment.adminServer + "/administration/listen/TestComponent" // TODO component...
   
-        let source = new EventSource("http://localhost:8080/administration/listen/TestComponent"); // TODO
+        let source = new EventSource(url);
           
         // attach callbacks
   
         // open
   
         source.onopen = event => {
-          console.log("opened sse ")
+          //console.log("opened sse ")
         }
   
         // update
   
         source.addEventListener('update', (event) => {
-          console.log("got sse message ")
           this.zone.run(() => {
             this.observable.next(JSON.parse(event.data))
           })
