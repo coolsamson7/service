@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from "rxjs"
 import { ComponentDTO } from "../model/component.interface"
 import { ServiceInstanceDTO } from "../model/service-instance.interface"
 import { ComponentService } from "../service/component-service.service"
-import { Update, Healths } from "../service/update-service.service"
+import { Update, Healths, UpdateService } from "../service/update-service.service"
 
 @Injectable()
 export class ComponentStore {
@@ -22,7 +22,7 @@ export class ComponentStore {
 
   // constructor
 
-  constructor(private componentService: ComponentService) {
+  constructor(private componentService: ComponentService, private updateService : UpdateService) {
     this.timer = setInterval(() => {
       // health timer
 
@@ -85,6 +85,10 @@ export class ComponentStore {
      this.componentService.getServiceHealths(this.componentName).subscribe(
       health => this.healthSubject.next(this.healths = health)
      )
+
+     // listen
+
+     this.componentService.listenTo(this.updateService.subscriberId, componentName)
   }
 
   getInstances() :Observable<ServiceInstanceDTO[]>{

@@ -1,4 +1,9 @@
 package com.serious.demo
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.QueryParams

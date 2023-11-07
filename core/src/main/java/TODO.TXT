@@ -1,9 +1,34 @@
 === TODO
 
-
 === NOW
 
+
+private static subscriberId = uuid();
+
 - keycloak
+
+EmitterManager {
+momentan List<Emmitter>
+
++ send -> an alle!
+
+
+}
+
+NEU:
+
+listeTo(uuid, component)
+switchTo(UUID, compoennt)
+
+DATENSTRUKTUR
+
+{
+emitter: emitter
+uuid: subscriber
+compnent stri g
+}
+
+EMITTER +
 
 === LATER
 

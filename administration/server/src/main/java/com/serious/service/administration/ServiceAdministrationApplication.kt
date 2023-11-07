@@ -1,11 +1,11 @@
 package com.serious.demo
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
-import com.ecwid.consul.v1.ConsulClient
-import com.ecwid.consul.v1.QueryParams
-import com.ecwid.consul.v1.catalog.CatalogServicesRequest
-import com.ecwid.consul.v1.health.HealthChecksForServiceRequest
 import com.serious.service.ServiceConfiguration
-import com.serious.service.ServiceManager
 import lombok.extern.slf4j.Slf4j
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-
 
 // a configuration
 
@@ -46,11 +45,11 @@ open class WebConfig {
 @EnableAsync
 @Slf4j
 @Component
-open class ServiceApplication1 {
+open class AdministrationServerApplication {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplication.run(ServiceApplication1::class.java, *args)
+            SpringApplication.run(AdministrationServerApplication::class.java, *args)
         }
     }
 }

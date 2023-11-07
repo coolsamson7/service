@@ -81,8 +81,13 @@ class ComponentAdministrationService {
 
     // SSE stuff
 
-    @GetMapping("/listen/{component}", produces= [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun listenTo(@PathVariable component: String) : SseEmitter {
-        return this.emitterManager.listenTo(component)
+    @GetMapping("/listen/{subscriber}", produces= [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun connect(@PathVariable subscriber: String) : SseEmitter {
+        return this.emitterManager.connect(subscriber)
+    }
+
+    @GetMapping("/listen/component/{subscriber}/{component}")
+    fun listenTo(@PathVariable subscriber: String, @PathVariable component: String) {
+        this.emitterManager.listenTo(subscriber, component)
     }
 }

@@ -17,13 +17,18 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
+data class EmitterInfo (
+    val subscriber : String,
+    var component : String,
+    val emitter: SseEmitter
+)
 @Component
 @Slf4j
 class EmitterManager : TopologyListener {
     // instance data
 
     var logger : Logger = LoggerFactory.getLogger(EmitterManager::class.java)
-    var emitters: ArrayList<SseEmitter> = ArrayList()
+    var emitters: ArrayList<EmitterInfo> = ArrayList()
 
     @Autowired
     lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
@@ -33,6 +38,80 @@ class EmitterManager : TopologyListener {
     @PostConstruct
     fun init() {
         this.serviceInstanceRegistry.addListener(this)
+    }
+
+    // private
+
+    private fun find(subscriber: String) :EmitterInfo? {
+        return emitters.find { info -> info.subscriber == subscriber }
+    }
+
+    private fun send(update: UpdateDTO) {
+        logger.debug("send event")
+
+        val failedEmitters: MutableList<EmitterInfo> = ArrayList()
+
+        for ( info in this.emitters) {
+            val emitter = info.emitter
+
+            var interested = !update.addedServices.isEmpty() || !update.deletedServices.isEmpty()
+
+            if ( !interested ) {
+                if ( info.component.isEmpty())
+                    interested = !update.deletedInstances.isEmpty() || !update.addedInstances.isEmpty()
+                else
+                    interested = update.deletedInstances.containsKey(info.component) || update.addedInstances.containsKey(info.component)
+            }
+
+            if ( interested )
+                try {
+                    emitter.send(
+                        SseEmitter.event()
+                            .name("update")
+                            .id("id") // ??
+                            .data(update, MediaType.APPLICATION_JSON)
+                    )
+                }
+                catch (e: Exception) {
+                    logger.debug("caught exception " + e.message)
+
+                    emitter.completeWithError(e)
+                    failedEmitters.add(info)
+                }
+        } // for
+
+        emitters.removeAll(failedEmitters)
+    }
+
+    // public
+    public fun listenTo(subscriber: String, component: String) {
+        this.find(subscriber)?.component = component
+    }
+    public fun connect(subscriber: String): SseEmitter { // TODO: real subscription...
+        val emitter = SseEmitter(3_600_000L); // 1h
+
+        val info = EmitterInfo(subscriber, "", emitter)
+
+        // on completion
+
+        emitter.onCompletion {
+            logger.info("emitter.onCompletion")
+            emitters.remove(info)
+        }
+
+        // timeout
+
+        emitter.onTimeout {
+            logger.info("emitter.onTimeout")
+
+            emitter.complete() // will trigger the second callback
+        }
+
+        this.emitters.add(info)
+
+        // done
+
+        return emitter
     }
 
     // implement TopologyListener
@@ -49,48 +128,5 @@ class EmitterManager : TopologyListener {
             deletedInstances,
             update.getAddedInstances()
         ))
-    }
-
-    fun send(data: Any) {
-        logger.debug("send event")
-
-        val failedEmitters: MutableList<SseEmitter> = ArrayList()
-
-        for ( emitter in this.emitters)
-            try {
-                emitter.send(
-                    SseEmitter.event()
-                        .name("update")
-                        .id("id") // ??
-                        .data(data, MediaType.APPLICATION_JSON)
-                )
-            }
-            catch (e: Exception) {
-                logger.debug("caught exception " + e.message)
-
-                emitter.completeWithError(e)
-                failedEmitters.add(emitter)
-            }
-
-        emitters.removeAll(failedEmitters)
-    }
-
-    fun listenTo(component: String): SseEmitter { // TODO: real subscription...
-        val emitter = SseEmitter(3_600_000L); // 1h
-
-        emitter.onCompletion {
-            logger.info("emitter.onCompletion")
-            emitters.remove(emitter)
-        }
-
-        emitter.onTimeout {
-            logger.info("emitter.onTimeout")
-
-            emitter.complete() // will trigger the second callback
-        }
-
-        this.emitters.add(emitter)
-
-        return emitter
     }
 }

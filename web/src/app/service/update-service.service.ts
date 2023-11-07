@@ -21,10 +21,11 @@ export class UpdateService {
 
     private static readonly MAX_RETRIES = 5;
 
-    // instsnce data
+    // instance data
 
      private retryCount = 0;
      private observable : Subject<Update> = new Subject<Update>()
+     subscriberId = crypto.randomUUID();
 
      // constructor
 
@@ -35,16 +36,14 @@ export class UpdateService {
      // private
     
     setup() {
+      // local function
 
-
-    // local function
-
-    let connect = () => {
+      let connect = () => {
         console.log("connect ")
   
         // create source
 
-        let url = environment.adminServer + "/administration/listen/TestComponent" // TODO component...
+        let url = environment.adminServer + "/administration/listen/" + this.subscriberId
   
         let source = new EventSource(url);
           

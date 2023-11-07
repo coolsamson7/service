@@ -40,4 +40,8 @@ export class ComponentService extends AbstractService {
     public getServiceInstances(serviceName: String): Observable<ServiceInstanceDTO[]>{
       return this.http.get<ServiceInstanceDTO[]>(`${this.url}/administration/service-instances/` + serviceName);
     }
+
+    public listenTo(subscriber: String, component: String) {
+     this.http.get(`${this.url}/administration/listen/component/` + subscriber + "/" + component);
+    }
   }
