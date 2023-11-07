@@ -147,7 +147,12 @@ class ServiceManager @Autowired internal constructor(
      */
     fun <T : Service> acquireService(serviceClass: Class<T>, preferredChannel: String? = null): T {
         val descriptor = forService(serviceClass)
-        val serviceAddress = getServiceAddress(descriptor.getComponentDescriptor().name, preferredChannel)
+        var serviceAddress = getServiceAddress(descriptor.getComponentDescriptor().name, preferredChannel)
+
+        // local if available!
+
+        if ( serviceAddress == null && descriptor.hasImplementation())
+            serviceAddress = ServiceAddress.localAddress(descriptor.getComponentDescriptor())
 
         return acquireService(descriptor, preferredChannel, serviceAddress)
     }

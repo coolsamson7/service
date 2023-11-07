@@ -1,15 +1,18 @@
 === TODO
 
-- logik acquire ändern ( local )
-- loadbalancer nach abstract
 
 === NOW
+
+- keycloak
 
 === LATER
 
 - open-api...
 
 === DONE
+
+- loadbalancer nach abstract
+- logik acquire ändern ( local )
 - eigner admin server
 - health timer
 - router listener + data.label
