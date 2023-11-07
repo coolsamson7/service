@@ -4,7 +4,7 @@ import com.serious.service.Service
 import com.serious.service.ServiceInterface
 
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */

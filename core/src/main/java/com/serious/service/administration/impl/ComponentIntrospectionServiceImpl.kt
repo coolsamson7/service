@@ -1,6 +1,6 @@
 package com.serious.service.administration.impl
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
@@ -10,7 +10,6 @@ import com.serious.service.InterfaceDescriptor
 import com.serious.service.administration.ComponentIntrospectionService
 import com.serious.service.administration.model.ChannelDTO
 import com.serious.service.administration.model.ComponentDTO
-import com.serious.service.administration.model.ServiceDTO
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestParam
 

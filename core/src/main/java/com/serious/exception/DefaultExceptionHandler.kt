@@ -1,12 +1,13 @@
 package com.serious.exception
-
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.UndeclaredThrowableException
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
+
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.UndeclaredThrowableException
+
 @RegisterExceptionHandler
 class DefaultExceptionHandler : AbstractExceptionHandler() {
     fun log(e : Throwable) {

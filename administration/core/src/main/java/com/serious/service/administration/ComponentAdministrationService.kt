@@ -1,20 +1,17 @@
 package com.serious.service.administration
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
 import com.serious.service.*
 import com.serious.service.administration.model.ComponentDTO
-import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.io.Serializable
 
 @RestController
 @RequestMapping("administration/")

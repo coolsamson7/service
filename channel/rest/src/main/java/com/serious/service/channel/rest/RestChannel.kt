@@ -41,97 +41,10 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
     @Autowired
     lateinit var objectMapper  :ObjectMapper
 
-    // local interfaces
-
-    /**
-     * A [URIProviderFactory] is a factory creating [URIProvider]s
-     *
-     * @constructor Create empty U r i provider factory
-     */
-    interface URIProviderFactory {
-        /**
-         * Create and return a [URIProvider] for the given address
-         *
-         * @param address a [ServiceAddress]
-         * @return the provider
-         */
-        fun create(address :ServiceAddress) : URIProvider
-    }
-
-    /**
-     * Base class for providers based on a [ServiceAddress]
-     *
-     * @property address the [ServiceAddress]
-     */
-    abstract class URIProvider(var address :ServiceAddress) {
-        open fun update(newAddress :ServiceAddress) {
-            address = newAddress
-        }
-        abstract fun provide() : URI
-    }
-
-    /**
-     * Provider that will simply return the first uri of a [ServiceAddress]
-     *
-     * @constructor
-     *
-     * @param address the [ServiceAddress]
-     */
-    class FirstMatchURIProvider(address :ServiceAddress) : URIProvider(address) {
-        // implement URIProvider
-        override fun provide(): URI {
-            return address.uri.get(0)
-        }
-    }
-
-    /**
-     * provider that will iterate over all uris of the address
-     *
-     * @constructor
-     *
-     * @param address the [ServiceAddress]
-     */
-    class RoundRobinURIProvider(address :ServiceAddress) : URIProvider(address) {
-        // instance data
-
-        private var index = AtomicInteger(0)
-
-        // implement URIProvider
-        override fun update(newAddress: ServiceAddress) {
-            super.update(newAddress)
-
-            index.set(0)
-        }
-
-        override fun provide(): URI {
-            return address.uri.get(index.getAndUpdate { value ->  (value + 1) % address.uri.size})
-        }
-    }
-
     // instance data
 
     private var webClient: WebClient? = null
-    lateinit private var uriProvider : URIProvider
     private val requests: MutableMap<Method, Request> = ConcurrentHashMap()
-
-    // public
-
-    /**
-     * set the uri provider factory
-     *
-     * @param factory the [URIProviderFactory]
-     */
-    fun uriProvider(factory : URIProviderFactory) {
-        uriProvider = factory.create(address)
-    }
-
-    /**
-     * set a round robin uri provider factory
-     *
-     */
-    fun roundRobin() {
-        uriProvider = RoundRobinURIProvider(address)
-    }
 
     // private
 
@@ -234,14 +147,6 @@ open class RestChannel(channelManager: ChannelManager, componentDescriptor: Comp
         // done
 
         webClient = builder.build()
-    }
-
-    override fun topologyUpdate(newAddress :ServiceAddress) {
-        uriProvider.update(newAddress)
-
-        // super
-
-        super.topologyUpdate(newAddress) // for now...
     }
 
     companion object {
