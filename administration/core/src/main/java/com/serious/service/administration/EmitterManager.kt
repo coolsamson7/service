@@ -6,6 +6,7 @@ package com.serious.service.administration
  */
 
 import com.serious.service.ServiceInstanceRegistry
+import com.serious.service.TopologyListener
 import com.serious.service.administration.model.UpdateDTO
 import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j

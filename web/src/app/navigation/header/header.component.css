@@ -16,6 +16,7 @@ a:hover, a:active{
 .title {
     display: flex;
     align-items: center;
+    column-gap: 5px;
 }
  
 mat-toolbar{

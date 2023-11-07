@@ -184,6 +184,7 @@
         <module>channel</module>
         <module>registry</module>
         <module>client</module>
+        <module>administration</module>
         <module>demo</module>
         <module>test</module>
     </modules>

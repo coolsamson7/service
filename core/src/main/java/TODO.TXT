@@ -5,14 +5,12 @@
 
 === NOW
 
-- eigenes admin modul
-- NullPointerException WTF
-
 === LATER
 
 - open-api...
 
 === DONE
+- eigner admin server
 - health timer
 - router listener + data.label
 - test fixen...

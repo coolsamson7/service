@@ -6,7 +6,6 @@ package com.serious.service
 */
 
 import com.serious.service.ChannelInvocationHandler.Companion.updateTopology
-import com.serious.service.administration.TopologyListener
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

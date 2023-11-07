@@ -1,4 +1,4 @@
-package com.serious.service.administration
+package com.serious.service
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
