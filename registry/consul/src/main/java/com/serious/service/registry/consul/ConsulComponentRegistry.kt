@@ -7,6 +7,7 @@ package com.serious.service.registry.consul
 
 import com.ecwid.consul.v1.agent.model.NewService
 import com.serious.service.*
+import jakarta.annotation.PostConstruct
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -39,9 +40,27 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
     @Autowired
     lateinit var serviceInstanceRegistry: ServiceInstanceRegistry
 
-    @Autowired
-    lateinit var serviceManager: ServiceManager
     private var state: Any? = null
+
+    // private
+
+    @PostConstruct
+    fun update() {
+        val services = discoveryClient.services.stream()
+            // TODO but we want to filter components only?.filter { service: String? -> serviceManager.componentDescriptors.containsKey(service) }
+            .toList()
+
+        // create new map
+
+        val newMap: MutableMap<String, List<ServiceInstance>> = HashMap()
+
+        for (service in services)
+            newMap[service] = discoveryClient.getInstances(service)
+
+        // set
+
+        serviceInstanceRegistry.update(newMap)
+    }
 
     // override ApplicationListener
 
@@ -49,20 +68,9 @@ internal class ConsulHeartbeatListener : ApplicationListener<HeartbeatEvent> {
         if (state == null || state != event.value) {
             log.info("process consul heartbeat")
 
-            val services = discoveryClient.services.stream()
-                .filter { service: String? -> serviceManager.componentDescriptors.containsKey(service) }
-                .toList()
+            // update
 
-            // create new map
-
-            val newMap: MutableMap<String, List<ServiceInstance>> = HashMap()
-
-            for (service in services)
-                newMap[service] = discoveryClient.getInstances(service)
-
-            // set
-
-            serviceInstanceRegistry.update(newMap)
+            update()
 
             // done
 

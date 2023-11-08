@@ -123,7 +123,7 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     }
 
     val externalAddresses: List<ChannelAddress>?
-        get() = if (local != null) (local!! as Component).addresses else null
+        get() = if (local != null) (local!! as Component).addresses else emptyList()
 
     companion object {
         @JvmField

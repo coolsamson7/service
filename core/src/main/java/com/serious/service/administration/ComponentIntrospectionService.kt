@@ -10,6 +10,7 @@ import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.service.administration.model.ComponentDTO
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody
 interface ComponentIntrospectionService : Service {
     @GetMapping("component/{component}")
     @ResponseBody
-    fun fetchComponent(@RequestParam component: String) : ComponentDTO
+    fun fetchComponent(@PathVariable component: String) : ComponentDTO
 
     @GetMapping("component-services/{component}")
     @ResponseBody
-    fun listServices(@RequestParam component: String) : Collection<InterfaceDescriptor>
+    fun listServices(@PathVariable component: String) : Collection<InterfaceDescriptor>
 }

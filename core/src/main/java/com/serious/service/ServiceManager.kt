@@ -172,7 +172,7 @@ class ServiceManager @Autowired internal constructor(
         if ( preferredChannel != null ) key += ":${preferredChannel}"
 
         return proxies.computeIfAbsent(key) { _ ->
-            log.info("create proxy for {}", descriptor.name)
+            log.info("create proxy for {} at {}", descriptor.name, address.toString())
 
             if (address?.channel == "local")
                 Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass)) { _: Any?, method: Method, args: Array<Any>? ->
@@ -194,7 +194,7 @@ class ServiceManager @Autowired internal constructor(
         val address = this.getServiceAddress(component)
 
         return proxies.computeIfAbsent(key) { _ ->
-            log.info("create administrative proxy for {}", component)
+            log.info("create administrative proxy for {} at {}", component, address.toString())
 
             Proxy.newProxyInstance(clazz.getClassLoader(), arrayOf(clazz), forComponent(descriptor, "rest", address)) as T
         } as T

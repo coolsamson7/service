@@ -14,5 +14,5 @@ import java.net.URI
 @ComponentHost
 internal class AdministrationComponentImpl : AbstractComponent(), AdministrationComponent {
     override val addresses: List<ChannelAddress>
-        get() = emptyList()// listOf(ChannelAddress("rest", URI.create("http://localhost:$port"))) // TODO
+        get() = listOf(ChannelAddress("rest", URI.create("http://localhost:$port")))
 }

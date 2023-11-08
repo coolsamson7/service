@@ -2,37 +2,14 @@
 
 === NOW
 
-
-private static subscriberId = uuid();
-
+- fix admin server???
+ -> gibt ne stelle mit "local components" WTF WO ???
 - keycloak
-
-EmitterManager {
-momentan List<Emmitter>
-
-+ send -> an alle!
-
-
-}
-
-NEU:
-
-listeTo(uuid, component)
-switchTo(UUID, compoennt)
-
-DATENSTRUKTUR
-
-{
-emitter: emitter
-uuid: subscriber
-compnent stri g
-}
-
-EMITTER +
 
 === LATER
 
 - open-api...
+- d3 :-)
 
 === DONE
 

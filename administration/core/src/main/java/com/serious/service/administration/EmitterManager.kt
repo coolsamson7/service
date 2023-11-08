@@ -87,7 +87,7 @@ class EmitterManager : TopologyListener {
     public fun listenTo(subscriber: String, component: String) {
         this.find(subscriber)?.component = component
     }
-    public fun connect(subscriber: String): SseEmitter { // TODO: real subscription...
+    public fun connect(subscriber: String): SseEmitter {
         val emitter = SseEmitter(3_600_000L); // 1h
 
         val info = EmitterInfo(subscriber, "", emitter)
