@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired
  * that it delegates to
  */
 class LocalChannel  // constructor
-protected constructor(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>)
-    : AbstractChannel(channelManager, componentDescriptor, ServiceAddress(componentDescriptor.name , "local", emptyList())) {
+protected constructor(channelManager: ChannelManager, component: String)
+    : AbstractChannel(channelManager, component, ServiceAddress(component , "local", emptyList())) {
     @Autowired
     lateinit var manager : ServiceManager
 

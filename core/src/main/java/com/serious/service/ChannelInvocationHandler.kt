@@ -14,11 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
  /**
  * A special [InvocationHandler] that delegates calls to a [Channel]
  */
-class ChannelInvocationHandler private constructor(private val componentDescriptor: ComponentDescriptor<*>, private val preferredChannel: String?, private var address: ServiceAddress?) : InvocationHandler {
+class ChannelInvocationHandler private constructor( private val serviceManager : ServiceManager, private val component: String, private val preferredChannel: String?, private var address: ServiceAddress?) : InvocationHandler {
     // instance data
-
-    private val serviceManager : ServiceManager
-        get() = componentDescriptor.serviceManager!!
 
     private var channel: Channel
 
@@ -32,17 +29,17 @@ class ChannelInvocationHandler private constructor(private val componentDescript
     private fun topologyUpdate(newAddress: ServiceAddress?) {
         if (channel is MissingChannel) {
             if ( newAddress != null)
-                channel = serviceManager.getChannel(componentDescriptor, newAddress)
+                channel = serviceManager.getChannel(component, newAddress)
         }
         else {
             if ( newAddress == null) {
-                log.info("channel {} for {} is dead", channel.name, componentDescriptor.name)
+                log.info("channel {} for {} is dead", channel.name, component)
 
                 serviceManager.channelManager.removeChannel(channel)
 
                 // resolve to missing channel
 
-                channel = MissingChannel(this.serviceManager.channelManager, componentDescriptor)
+                channel = MissingChannel(this.serviceManager.channelManager, component)
             }
             else channel.topologyUpdate(newAddress)
         }
@@ -50,9 +47,9 @@ class ChannelInvocationHandler private constructor(private val componentDescript
 
     // public
     fun resolveChannel() : Channel {
-        channel = if ( address != null ) serviceManager.getChannel(componentDescriptor, address!!) else MissingChannel(this.serviceManager.channelManager, componentDescriptor)
+        channel = if ( address != null ) serviceManager.getChannel(component, address!!) else MissingChannel(this.serviceManager.channelManager, component)
 
-        log.info("resolved channel {} for component {}", channel.name, componentDescriptor)
+        log.info("resolved channel {} for component {}", channel.name, component)
 
         return channel
     }
@@ -76,11 +73,11 @@ class ChannelInvocationHandler private constructor(private val componentDescript
 
         // static methods
 
-        fun forComponent(componentDescriptor: ComponentDescriptor<*>, preferredChannel: String?, address: ServiceAddress?): ChannelInvocationHandler {
-            var key = componentDescriptor.name;
+        fun forComponent(serviceManager: ServiceManager, component: String, preferredChannel: String?, address: ServiceAddress?): ChannelInvocationHandler {
+            var key = component;
             if ( preferredChannel != null) key += ":$preferredChannel"
 
-           return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(componentDescriptor, preferredChannel, address)}
+           return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(serviceManager, component, preferredChannel, address)}
         }
 
         @JvmStatic
@@ -97,10 +94,10 @@ class ChannelInvocationHandler private constructor(private val componentDescript
             // recheck missing channels
 
             for (invocationHandler in handlers.values)
-                if (topologyUpdate.involvesService(invocationHandler.componentDescriptor.name)) {
+                if (topologyUpdate.involvesService(invocationHandler.component)) {
                     // recompute new address
 
-                    val newAddress = serviceInstanceRegistry.getServiceAddress(invocationHandler.componentDescriptor.name, invocationHandler.preferredChannel)
+                    val newAddress = serviceInstanceRegistry.getServiceAddress(invocationHandler.component, invocationHandler.preferredChannel)
 
                     if (addressChanged(invocationHandler.channel.address, newAddress))
                         invocationHandler.topologyUpdate(newAddress)

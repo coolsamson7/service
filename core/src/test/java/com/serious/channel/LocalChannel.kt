@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired
  * A <code>LocalChannel</code> is a [Channel] used for test purposed that simply assumes a local implementation
   * that it delegates to
  */
-open class LocalChannel(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>)
-     : AbstractChannel(channelManager, componentDescriptor, ServiceAddress(componentDescriptor.name, "local", emptyList())) {
+open class LocalChannel(channelManager: ChannelManager, component: String)
+     : AbstractChannel(channelManager, component, ServiceAddress(component, "local", emptyList())) {
     // instance data
 
     @Autowired

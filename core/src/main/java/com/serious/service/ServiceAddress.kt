@@ -85,8 +85,8 @@ data class ServiceAddress(var component: String, var channel: String, var servic
             return ServiceAddress(componentDescriptor.name, "local", emptyList())
         }
 
-        fun missingAddress(componentDescriptor: ComponentDescriptor<*>) : ServiceAddress {
-            return ServiceAddress(componentDescriptor.name, "missing", emptyList())
+        fun missingAddress(component: String) : ServiceAddress {
+            return ServiceAddress(component, "missing", emptyList())
         }
     }
 }

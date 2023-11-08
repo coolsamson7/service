@@ -184,19 +184,19 @@ class ServiceManager @Autowired internal constructor(
                     }
                 } as T
             else
-                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass), forComponent(descriptor.getComponentDescriptor(), preferredChannel, address)) as T
+                Proxy.newProxyInstance(serviceClass.getClassLoader(), arrayOf(serviceClass), forComponent(this, descriptor.getComponentDescriptor().name, preferredChannel, address)) as T
         } as T
     }
 
     fun <T : Service> acquireAdministrativeService(component: String, clazz: Class<T>): T {
-        val descriptor = forService(clazz).getComponentDescriptor()
-        val key = component + ":" + clazz.name
-        val address = this.getServiceAddress(component)
+        val descriptor = forService(clazz).getComponentDescriptor() // descriptor: AdministrationComponent
+        val key = "administration:" + component + ":" + clazz.name
+        val address = this.getServiceAddress(component) // address of the real component
 
         return proxies.computeIfAbsent(key) { _ ->
             log.info("create administrative proxy for {} at {}", component, address.toString())
 
-            Proxy.newProxyInstance(clazz.getClassLoader(), arrayOf(clazz), forComponent(descriptor, "rest", address)) as T
+            Proxy.newProxyInstance(clazz.getClassLoader(), arrayOf(clazz), forComponent(this, component, "rest", address)) as T
         } as T
     }
 
@@ -277,12 +277,12 @@ class ServiceManager @Autowired internal constructor(
      * @param address the [ServiceAddress]
      * @return the channel
      */
-    fun getChannel(descriptor: ComponentDescriptor<*>, address: ServiceAddress): Channel {
-        return makeChannel(descriptor.getComponentDescriptor(), address)
+    fun getChannel(component: String, address: ServiceAddress): Channel {
+        return makeChannel(component, address)
     }
 
-    private fun makeChannel(componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress): Channel {
-        return channelManager.make(componentDescriptor, address)
+    private fun makeChannel(component: String, address: ServiceAddress): Channel {
+        return channelManager.make(component, address)
     }
 
     // implement ApplicationContextAware

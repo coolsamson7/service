@@ -50,7 +50,7 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun <T : ChannelCustomizer<out Channel>> getChannelCustomizers(channel: Channel): List<T> {
-        return channelCustomizers.filter { customizer -> customizer.channelClass.isAssignableFrom(channel.javaClass) && customizer.isApplicable(channel.componentDescriptor.serviceInterface) } as List<T>
+        return channelCustomizers.filter { customizer -> customizer.channelClass.isAssignableFrom(channel.javaClass) /* TODO && customizer.isApplicable(channel.componentDescriptor.serviceInterface)*/ } as List<T>
     }
 
     @PostConstruct
@@ -86,19 +86,19 @@ class ChannelManager : ApplicationContextAware {
     }
 
     fun removeChannel(channel: Channel) {
-        val key = channel.componentDescriptor.name + ":" + channel.name
+        val key = channel.component + ":" + channel.name
         channels.remove(key)
     }
 
-    fun make(componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress) : Channel {
-        val key = componentDescriptor.name + ":" + address.channel
+    fun make(component: String, address: ServiceAddress) : Channel {
+        val key = component + ":" + address.channel
 
         var channel = channels[key]
 
         if (channel == null) {
             log.info("create channel for {}", address.toString())
 
-            channel = channelFactories[address.channel]?.makeChannel(componentDescriptor, address)
+            channel = channelFactories[address.channel]?.makeChannel(component, address)
             if (channel != null)
                 channels[key] = channel
         }

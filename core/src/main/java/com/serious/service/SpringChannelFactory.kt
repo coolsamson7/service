@@ -21,7 +21,7 @@ class SpringChannelFactory(var channelManager: ChannelManager, private val beanD
         get() = channelManager.applicationContext!! as ConfigurableApplicationContext
 
     // implement ChannelFactory
-    override fun makeChannel(descriptor: ComponentDescriptor<out Component>, addresses: ServiceAddress): Channel {
+    override fun makeChannel(component: String, addresses: ServiceAddress): Channel {
         logger.trace("make channel " + addresses.channel)
 
         val beanFactory: DefaultListableBeanFactory = ChildBeanFactory(applicationContext)
@@ -30,7 +30,7 @@ class SpringChannelFactory(var channelManager: ChannelManager, private val beanD
         val constructorArgumentValues = beanDefinition.constructorArgumentValues
 
         constructorArgumentValues.addIndexedArgumentValue(0, channelManager)
-        constructorArgumentValues.addIndexedArgumentValue(1, descriptor)
+        constructorArgumentValues.addIndexedArgumentValue(1, component)
         constructorArgumentValues.addIndexedArgumentValue(2, addresses)
 
         beanFactory.registerBeanDefinition(beanName, beanDefinition)

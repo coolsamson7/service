@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * abstract base class for [Channel]s
  */
-abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, override val componentDescriptor: ComponentDescriptor<out Component>, override var address: ServiceAddress) : Channel, InvocationHandler {
+abstract class AbstractChannel protected constructor(protected val channelManager: ChannelManager, override val component: String, override var address: ServiceAddress) : Channel, InvocationHandler {
     // local interfaces
 
     /**

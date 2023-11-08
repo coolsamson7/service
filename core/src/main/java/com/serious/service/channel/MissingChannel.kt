@@ -14,12 +14,12 @@ import org.aopalliance.intercept.MethodInvocation
 /**
  * A channel constructed for non-resolvable addresses
  */
-class MissingChannel(channelManager: ChannelManager, override val componentDescriptor: ComponentDescriptor<*>)
-    : AbstractChannel(channelManager, componentDescriptor, ServiceAddress.missingAddress(componentDescriptor)) {
+class MissingChannel(channelManager: ChannelManager, override val component: String)
+    : AbstractChannel(channelManager, component, ServiceAddress.missingAddress(component)) {
     // implement Channel
 
     @Throws(Throwable::class)
     override fun invoke(invocation: MethodInvocation): Any? {
-        throw ServiceRuntimeException("unresolved channel for component %s", componentDescriptor.name)
+        throw ServiceRuntimeException("unresolved channel for component %s", component)
     }
 }

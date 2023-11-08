@@ -15,7 +15,7 @@ interface Channel : MethodInterceptor, InvocationHandler {
      /**
       * return the supported [ComponentDescriptor]
       */
-    val componentDescriptor: ComponentDescriptor<out Component>
+    val component: String
 
      /**
       * return the channel name

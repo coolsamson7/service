@@ -35,8 +35,8 @@ data class SpringError(
  * A `RestChannel` covers the technical protocol for http rest calls via `WebClient`
  */
 @RegisterChannel("rest")
-open class RestChannel(channelManager: ChannelManager, componentDescriptor: ComponentDescriptor<out Component>, address: ServiceAddress)
-    : AbstractChannel(channelManager, componentDescriptor, address) {
+open class RestChannel(channelManager: ChannelManager, component: String, address: ServiceAddress)
+    : AbstractChannel(channelManager, component, address) {
 
     @Autowired
     lateinit var objectMapper  :ObjectMapper
