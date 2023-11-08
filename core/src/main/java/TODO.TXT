@@ -2,18 +2,8 @@
 
 === NOW
 
-- fix server NPE
 - keycloak
 
-
-wo lebt der componentdescriptor
-
-ChannelInvocationHander bekommet update!auf eine komponente die er eigneltich nicnt kennt!
-
-ich frag enach separate
-kriege channelinvocationhanlder mit pfereed=rest
-address ist aber component=CommonComponent + channel="dispatch"
-channel ist demzufolge FALSCH!
 
 === LATER
 
@@ -22,6 +12,8 @@ channel ist demzufolge FALSCH!
 
 === DONE
 
+- listen to + direkte antwort??
+- admincomponent ausblenden!
 - fix startup
 - loadbalancer nach abstract
 - logik acquire ändern ( local )

@@ -109,6 +109,18 @@ class EmitterManager : TopologyListener {
 
         this.emitters.add(info)
 
+        // acknowledge
+
+        try {
+            emitter.send(
+                SseEmitter.event()
+                    .name("connect")
+                    .id("id") // ??
+                    .data("ok")
+            )
+        }
+        catch(e: Exception) {}
+
         // done
 
         return emitter

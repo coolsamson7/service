@@ -30,7 +30,7 @@ class ComponentAdministrationService {
     @GetMapping("/services")
     @ResponseBody
     fun services(): List<String> {
-        return componentAdministration.getServices()
+        return componentAdministration.getServices().filter { service -> service != "AdministrationComponent" }
     }
 
     @GetMapping("/nodes")
