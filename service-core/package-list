@@ -150,7 +150,7 @@ $dokka.location:com.serious.service.channel/AbstractChannel.URIProviderFactory//
 $dokka.location:com.serious.service.channel/AbstractChannel.URIProviderFactory/create/#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/-u-r-i-provider-factory/create.html
 $dokka.location:com.serious.service.channel/AbstractChannel///PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/index.html
 $dokka.location:com.serious.service.channel/AbstractChannel/address/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/address.html
-$dokka.location:com.serious.service.channel/AbstractChannel/componentDescriptor/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/component-descriptor.html
+$dokka.location:com.serious.service.channel/AbstractChannel/component/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/component.html
 $dokka.location:com.serious.service.channel/AbstractChannel/invoke/#kotlin.Any#java.lang.reflect.Method#kotlin.Array[kotlin.Any]/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/invoke.html
 $dokka.location:com.serious.service.channel/AbstractChannel/name/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/name.html
 $dokka.location:com.serious.service.channel/AbstractChannel/roundRobin/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel/round-robin.html
@@ -166,8 +166,8 @@ $dokka.location:com.serious.service.channel/ChannelCustomizer/apply/#TypeParam(b
 $dokka.location:com.serious.service.channel/ChannelCustomizer/channelClass/#/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/channel-class.html
 $dokka.location:com.serious.service.channel/ChannelCustomizer/isApplicable/#java.lang.Class[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/is-applicable.html
 $dokka.location:com.serious.service.channel/MissingChannel///PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/index.html
-$dokka.location:com.serious.service.channel/MissingChannel/MissingChannel/#com.serious.service.ChannelManager#com.serious.service.ComponentDescriptor[*]/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/-missing-channel.html
-$dokka.location:com.serious.service.channel/MissingChannel/componentDescriptor/#/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/component-descriptor.html
+$dokka.location:com.serious.service.channel/MissingChannel/MissingChannel/#com.serious.service.ChannelManager#kotlin.String/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/-missing-channel.html
+$dokka.location:com.serious.service.channel/MissingChannel/component/#/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/component.html
 $dokka.location:com.serious.service.channel/MissingChannel/invoke/#org.aopalliance.intercept.MethodInvocation/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/invoke.html
 $dokka.location:com.serious.service.channel/RegisterChannelCustomizer///PointingToDeclaration/service-core/com.serious.service.channel/-register-channel-customizer/index.html
 $dokka.location:com.serious.service.channel/RegisterChannelCustomizer/channel/#/PointingToDeclaration/service-core/com.serious.service.channel/-register-channel-customizer/channel.html
@@ -224,7 +224,7 @@ $dokka.location:com.serious.service/BaseDescriptor/serviceInterface/#/PointingTo
 $dokka.location:com.serious.service/BaseDescriptor/uri/#/PointingToDeclaration/service-core/com.serious.service/-base-descriptor/uri.html
 $dokka.location:com.serious.service/Channel///PointingToDeclaration/service-core/com.serious.service/-channel/index.html
 $dokka.location:com.serious.service/Channel/address/#/PointingToDeclaration/service-core/com.serious.service/-channel/address.html
-$dokka.location:com.serious.service/Channel/componentDescriptor/#/PointingToDeclaration/service-core/com.serious.service/-channel/component-descriptor.html
+$dokka.location:com.serious.service/Channel/component/#/PointingToDeclaration/service-core/com.serious.service/-channel/component.html
 $dokka.location:com.serious.service/Channel/name/#/PointingToDeclaration/service-core/com.serious.service/-channel/name.html
 $dokka.location:com.serious.service/Channel/setup/#/PointingToDeclaration/service-core/com.serious.service/-channel/setup.html
 $dokka.location:com.serious.service/Channel/topologyUpdate/#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-channel/topology-update.html
@@ -233,10 +233,10 @@ $dokka.location:com.serious.service/ChannelAddress/ChannelAddress/#kotlin.String
 $dokka.location:com.serious.service/ChannelAddress/channel/#/PointingToDeclaration/service-core/com.serious.service/-channel-address/channel.html
 $dokka.location:com.serious.service/ChannelAddress/uri/#/PointingToDeclaration/service-core/com.serious.service/-channel-address/uri.html
 $dokka.location:com.serious.service/ChannelFactory///PointingToDeclaration/service-core/com.serious.service/-channel-factory/index.html
-$dokka.location:com.serious.service/ChannelFactory/makeChannel/#com.serious.service.ComponentDescriptor[com.serious.service.Component]#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-channel-factory/make-channel.html
+$dokka.location:com.serious.service/ChannelFactory/makeChannel/#kotlin.String#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-channel-factory/make-channel.html
 $dokka.location:com.serious.service/ChannelInvocationHandler.Companion///PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/index.html
 $dokka.location:com.serious.service/ChannelInvocationHandler.Companion/emptyArgs/#/PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/empty-args.html
-$dokka.location:com.serious.service/ChannelInvocationHandler.Companion/forComponent/#com.serious.service.ComponentDescriptor[*]#kotlin.String?#com.serious.service.ServiceAddress?/PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/for-component.html
+$dokka.location:com.serious.service/ChannelInvocationHandler.Companion/forComponent/#com.serious.service.ServiceManager#kotlin.String#kotlin.String?#com.serious.service.ServiceAddress?/PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/for-component.html
 $dokka.location:com.serious.service/ChannelInvocationHandler.Companion/log/#/PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/log.html
 $dokka.location:com.serious.service/ChannelInvocationHandler.Companion/updateTopology/#com.serious.service.ServiceInstanceRegistry#com.serious.service.ServiceInstanceRegistry.TopologyUpdate/PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/-companion/update-topology.html
 $dokka.location:com.serious.service/ChannelInvocationHandler///PointingToDeclaration/service-core/com.serious.service/-channel-invocation-handler/index.html
@@ -250,7 +250,7 @@ $dokka.location:com.serious.service/ChannelManager/applicationContext/#/Pointing
 $dokka.location:com.serious.service/ChannelManager/channelFactories/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/channel-factories.html
 $dokka.location:com.serious.service/ChannelManager/channels/#/PointingToDeclaration/service-core/com.serious.service/-channel-manager/channels.html
 $dokka.location:com.serious.service/ChannelManager/getChannelCustomizers/#com.serious.service.Channel/PointingToDeclaration/service-core/com.serious.service/-channel-manager/get-channel-customizers.html
-$dokka.location:com.serious.service/ChannelManager/make/#com.serious.service.ComponentDescriptor[com.serious.service.Component]#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-channel-manager/make.html
+$dokka.location:com.serious.service/ChannelManager/make/#kotlin.String#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-channel-manager/make.html
 $dokka.location:com.serious.service/ChannelManager/register/#org.springframework.beans.factory.config.BeanDefinition/PointingToDeclaration/service-core/com.serious.service/-channel-manager/register.html
 $dokka.location:com.serious.service/ChannelManager/registerChannelCustomizer/#com.serious.service.channel.ChannelCustomizer[com.serious.service.Channel]/PointingToDeclaration/service-core/com.serious.service/-channel-manager/register-channel-customizer.html
 $dokka.location:com.serious.service/ChannelManager/removeChannel/#com.serious.service.Channel/PointingToDeclaration/service-core/com.serious.service/-channel-manager/remove-channel.html
@@ -376,7 +376,7 @@ $dokka.location:com.serious.service/RegisterChannel/value/#/PointingToDeclaratio
 $dokka.location:com.serious.service/Service///PointingToDeclaration/service-core/com.serious.service/-service/index.html
 $dokka.location:com.serious.service/ServiceAddress.Companion///PointingToDeclaration/service-core/com.serious.service/-service-address/-companion/index.html
 $dokka.location:com.serious.service/ServiceAddress.Companion/localAddress/#com.serious.service.ComponentDescriptor[*]/PointingToDeclaration/service-core/com.serious.service/-service-address/-companion/local-address.html
-$dokka.location:com.serious.service/ServiceAddress.Companion/missingAddress/#com.serious.service.ComponentDescriptor[*]/PointingToDeclaration/service-core/com.serious.service/-service-address/-companion/missing-address.html
+$dokka.location:com.serious.service/ServiceAddress.Companion/missingAddress/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-service-address/-companion/missing-address.html
 $dokka.location:com.serious.service/ServiceAddress///PointingToDeclaration/service-core/com.serious.service/-service-address/index.html
 $dokka.location:com.serious.service/ServiceAddress/ServiceAddress/#kotlin.String#kotlin.String#kotlin.collections.List[org.springframework.cloud.client.ServiceInstance]/PointingToDeclaration/service-core/com.serious.service/-service-address/-service-address.html
 $dokka.location:com.serious.service/ServiceAddress/changed/#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-service-address/changed.html
@@ -442,7 +442,7 @@ $dokka.location:com.serious.service/ServiceManager/channelManager/#/PointingToDe
 $dokka.location:com.serious.service/ServiceManager/componentDescriptors/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/component-descriptors.html
 $dokka.location:com.serious.service/ServiceManager/componentRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/component-registry.html
 $dokka.location:com.serious.service/ServiceManager/exceptionManager/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/exception-manager.html
-$dokka.location:com.serious.service/ServiceManager/getChannel/#com.serious.service.ComponentDescriptor[*]#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-service-manager/get-channel.html
+$dokka.location:com.serious.service/ServiceManager/getChannel/#kotlin.String#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-service-manager/get-channel.html
 $dokka.location:com.serious.service/ServiceManager/handleException/#java.lang.reflect.Method#kotlin.Throwable/PointingToDeclaration/service-core/com.serious.service/-service-manager/handle-exception.html
 $dokka.location:com.serious.service/ServiceManager/proxies/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/proxies.html
 $dokka.location:com.serious.service/ServiceManager/serviceInstanceRegistry/#/PointingToDeclaration/service-core/com.serious.service/-service-manager/service-instance-registry.html
@@ -455,7 +455,7 @@ $dokka.location:com.serious.service/SpringChannelFactory.Companion/logger/#/Poin
 $dokka.location:com.serious.service/SpringChannelFactory///PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/index.html
 $dokka.location:com.serious.service/SpringChannelFactory/SpringChannelFactory/#com.serious.service.ChannelManager#org.springframework.beans.factory.config.BeanDefinition/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/-spring-channel-factory.html
 $dokka.location:com.serious.service/SpringChannelFactory/channelManager/#/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/channel-manager.html
-$dokka.location:com.serious.service/SpringChannelFactory/makeChannel/#com.serious.service.ComponentDescriptor[com.serious.service.Component]#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/make-channel.html
+$dokka.location:com.serious.service/SpringChannelFactory/makeChannel/#kotlin.String#com.serious.service.ServiceAddress/PointingToDeclaration/service-core/com.serious.service/-spring-channel-factory/make-channel.html
 $dokka.location:com.serious.service/TopologyListener///PointingToDeclaration/service-core/com.serious.service/-topology-listener/index.html
 $dokka.location:com.serious.service/TopologyListener/update/#com.serious.service.ServiceInstanceRegistry.TopologyUpdate/PointingToDeclaration/service-core/com.serious.service/-topology-listener/update.html
 $dokka.location:com.serious.service/TypeDescriptor///PointingToDeclaration/service-core/com.serious.service/-type-descriptor/index.html
