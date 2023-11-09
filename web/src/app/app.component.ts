@@ -17,14 +17,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     super()
 
     let url = window.location.href;
-    console.log(url)
+    console.log("########## STARTED " + url)
   }
 
   // implement 
 
   getEndpoint(domain: string): string {
     if ( domain == "admin")
-      return environment.adminServer//'http://localhost:8080'
+      return environment.adminServer//'http://localhost:8080' // TODO environment
     else
        throw new Error("unknown domain " + domain)
   }
@@ -59,8 +59,6 @@ export class AppComponent implements OnInit {
     ]
   }
 
-   // instance data
-
   // public
 
   navigate(element: PortalElement) {
@@ -88,10 +86,30 @@ export class AppComponent implements OnInit {
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
     this.oauthService.setupAutomaticSilentRefresh();
 
+    // subscribe to events
+
     this.oauthService.events.subscribe((e) => {
-      // tslint:disable-next-line:no-console
-      console.debug('oauth/oidc event', e);
+      switch (e.type) {
+        case "token_received":
+          this.checkRedirect();
+          break;
+
+          default:
+            ;
+      }
     });
+  }
+
+  // private
+
+  private checkRedirect() {
+    if (this.oauthService.state?.length > 0) {
+      let url = decodeURIComponent(this.oauthService.state);
+
+      this.oauthService.state = ""
+
+      this.router.navigateByUrl(url);
+    }
   }
 
   // implement OnInit

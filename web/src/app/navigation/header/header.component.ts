@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
         // console.debug('oauth/oidc event', e);
         switch ( e.type ) {
           case "discovery_document_loaded":
-            if ( this.user == undefined)
+            if ( this.user == undefined && oauthService.hasValidAccessToken())
                this.loadUser();
             break;
 

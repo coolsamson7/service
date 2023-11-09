@@ -1,8 +1,12 @@
 === TODO
 
+
+- styling
+- environment
+- maven build web
+
 === NOW
 
-- guard & redirect ?
 
 === LATER
 
@@ -10,6 +14,7 @@
 
 === DONE
 
+- guard & redirect ?
 - code checken mit claims, id, etc.
 - login / logout anschliessen
 - menu + name
