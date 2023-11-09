@@ -1,8 +1,7 @@
 import { Injectable, NgZone } from "@angular/core";
 import { Observable, Subject } from 'rxjs';
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
-
-import { environment } from '../../environments/environment';
+import { Environment } from "../common/util/environment.service";
 
 export interface Update {
     deletedServices : string[],
@@ -29,7 +28,7 @@ export class UpdateService {
 
      // constructor
 
-     constructor(private zone: NgZone) {
+     constructor(private zone: NgZone, private environment: Environment) {
         this.setup();
      }
 
@@ -43,7 +42,7 @@ export class UpdateService {
   
         // create source
 
-        let url = environment.adminServer + "/administration/listen/" + this.subscriberId
+        let url = this.environment.get<string>("administration.server" + "/administration/listen/" + this.subscriberId)
   
         let source = new EventSource(url);
           

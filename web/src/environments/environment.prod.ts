@@ -1,4 +1,7 @@
 export const environment = {
   production: true,
-  adminServer: 'http://localhost:8083' // TODO
+  // TODO
+  administration: {
+    server:'http://localhost:8083' 
+  }
 };

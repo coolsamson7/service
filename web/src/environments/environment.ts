@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  adminServer: 'http://localhost:8083'
+  administration: {
+    server:'http://localhost:8083' 
+  }
 };
 
 /*

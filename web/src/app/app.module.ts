@@ -17,7 +17,8 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { NodesModule } from './nodes/nodes.module';
 import { EndpointLocatorInjectionToken } from './common/communication/endpoint-locator';
 import { SharedModule } from './auth/auth.guard';
-
+import { environment } from "../environments/environment"
+import { EnvironmentModule } from './common/util/environment.service';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { SharedModule } from './auth/auth.guard';
     ComponentsModule,
     NodesModule,
     MaterialModule,
+    EnvironmentModule.forRoot(environment),
     SharedModule.forRoot(),
     OAuthModule.forRoot({
       resourceServer: {
@@ -45,12 +47,7 @@ import { SharedModule } from './auth/auth.guard';
       }
     })
   ],
-  providers: [
-    {
-      provide: EndpointLocatorInjectionToken,
-      useValue: new ApplicationEndpointLocator()
-    }
-  ],
+  providers: [ApplicationEndpointLocator],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

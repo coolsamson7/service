@@ -3,28 +3,25 @@ import { Component, Injectable, OnInit } from '@angular/core';
 import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
 import { EndpointLocator } from './common/communication/endpoint-locator';
-import { OAuthService, NullValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
+import { OAuthService, NullValidationHandler } from 'angular-oauth2-oidc';
 
 import { environment } from '../environments/environment';
 import { authConfig } from './auth.config';
-import { filter } from 'rxjs';
+import { Environment } from './common/util/environment.service';
 
 @Injectable({providedIn: "root"})
 export class ApplicationEndpointLocator extends EndpointLocator {
   // constructor
 
-  constructor() {
+  constructor(private environment: Environment) {
     super()
-
-    let url = window.location.href;
-    console.log("########## STARTED " + url)
   }
 
   // implement 
 
   getEndpoint(domain: string): string {
     if ( domain == "admin")
-      return environment.adminServer//'http://localhost:8080' // TODO environment
+      return this.environment.get<string>("administration.server", 'http://localhost:8080');
     else
        throw new Error("unknown domain " + domain)
   }
