@@ -42,8 +42,7 @@ export class UpdateService {
   
         // create source
 
-        let url = this.environment.get<string>("administration.server" + "/administration/listen/" + this.subscriberId)
-  
+        let url = this.environment.get<string>("administration.server") + "/administration/listen/" + this.subscriberId
         let source = new EventSource(url);
           
         // attach callbacks
