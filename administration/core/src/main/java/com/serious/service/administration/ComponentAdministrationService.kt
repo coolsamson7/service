@@ -28,6 +28,7 @@ class ComponentAdministrationService {
     // rest calls
 
     @GetMapping("/services")
+    //@RolesAllowed("service-admin-role") // TODO!
     @ResponseBody
     fun services(): List<String> {
         return componentAdministration.getServices().filter { service -> service != "AdministrationComponent" }

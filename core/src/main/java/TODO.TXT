@@ -1,13 +1,18 @@
 === TODO
 
+- rollen checken
+- menu + name
+- login / logout anschliessen
+- code checken mit claims, id, etc.
+- guard & redirect ?
+
 === NOW
 
-- keycloak
+
 
 
 === LATER
 
-- open-api...
 - d3 :-)
 
 === DONE

@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent, ApplicationEndpointLocator } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -15,6 +16,7 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
 import { EndpointLocatorInjectionToken } from './common/communication/endpoint-locator';
+import { SharedModule } from './auth/auth.guard';
 
 
 @NgModule({
@@ -34,7 +36,14 @@ import { EndpointLocatorInjectionToken } from './common/communication/endpoint-l
     AppRoutingModule, 
     ComponentsModule,
     NodesModule,
-    MaterialModule
+    MaterialModule,
+    SharedModule.forRoot(),
+    OAuthModule.forRoot({
+      resourceServer: {
+          allowedUrls: ['http://localhost:8083/administration'],
+          sendAccessToken: true
+      }
+    })
   ],
   providers: [
     {

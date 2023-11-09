@@ -7,6 +7,7 @@ import { ComponentDetailsComponent } from './components/component-details.compon
 import { ServiceInstanceComponent } from './components/service-instance.component';
 import { NodesComponent } from './nodes/nodes.component';
 import { NodeDetailsComponent } from './nodes/node-details.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   { 
@@ -24,6 +25,7 @@ const routes: Routes = [
       icon: "folder"
     },
     component: ComponentsComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: ':component',
@@ -44,6 +46,7 @@ const routes: Routes = [
       icon: "computer"
     },
     component: NodesComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: ':node',
