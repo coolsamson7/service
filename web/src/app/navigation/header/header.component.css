@@ -2,6 +2,11 @@ a {
     text-decoration: none;
     color: white;
 }
+
+.toolbar > :nth-child(2) {
+    margin-right: auto;
+}
+
  
 a:hover, a:active{
     color: lightgray;

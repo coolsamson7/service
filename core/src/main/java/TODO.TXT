@@ -1,15 +1,11 @@
 === TODO
 
-- rollen checken
-- menu + name
-- login / logout anschliessen
-- code checken mit claims, id, etc.
+
 - guard & redirect ?
 
 === NOW
 
-
-
+- code checken mit claims, id, etc.
 
 === LATER
 
@@ -17,6 +13,8 @@
 
 === DONE
 
+- login / logout anschliessen
+- menu + name
 - listen to + direkte antwort??
 - admincomponent ausblenden!
 - fix startup

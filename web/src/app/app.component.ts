@@ -4,7 +4,6 @@ import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
 import { EndpointLocator } from './common/communication/endpoint-locator';
 import { OAuthService, NullValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
-import { JwksValidationHandler } from 'angular-oauth2-oidc';
 
 import { environment } from '../environments/environment';
 import { authConfig } from './auth.config';
@@ -62,13 +61,9 @@ export class AppComponent implements OnInit {
 
    // instance data
 
-  
-  selection: PortalElement = this.portal.items[0] // home
-
   // public
 
   navigate(element: PortalElement) {
-      this.selection = element
       this.router.navigate([element.route])
   }
 
@@ -97,18 +92,6 @@ export class AppComponent implements OnInit {
       // tslint:disable-next-line:no-console
       console.debug('oauth/oidc event', e);
     });
-    
-    this.oauthService.events
-    .pipe(
-      filter((e) => e.type === 'token_received'))
-      .subscribe((_) => {
-        console.debug('state', this.oauthService.state);
-
-        this.oauthService.loadUserProfile().then(user => console.log(user));
-
-        const scopes = this.oauthService.getGrantedScopes();
-        console.debug('scopes', scopes);
-      });
   }
 
   // implement OnInit

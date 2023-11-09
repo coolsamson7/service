@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, NavigationStart, Router, RouterEvent } from '@angular/router';
-import { filter, map, switchMap, takeUntil } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { filter, map, switchMap } from 'rxjs';
 import { AppComponent } from 'src/app/app.component';
 
 @Component({
@@ -14,10 +15,63 @@ export class HeaderComponent implements OnInit {
   @Output() public sidenavToggle = new EventEmitter();
   label = ""
   icon = ""
+  loggedIn = false
+  user = undefined
   
   // constructor
 
-  constructor(public app: AppComponent, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(public app: AppComponent, private router: Router, private activatedRoute: ActivatedRoute, private oauthService: OAuthService) { 
+    // subscribe to events
+
+    oauthService.events.subscribe((e) => {
+        // console.debug('oauth/oidc event', e);
+        switch ( e.type ) {
+          case "token_received":
+            this.onTokenReceived()
+            break;
+
+          case "logout":
+            this.onLogout()
+            break;
+
+          default:
+        }
+      });
+
+      // check initial status
+
+      if ( oauthService.hasValidAccessToken()) {
+        this.onTokenReceived()
+      }  
+  }
+
+ // callbacks
+
+  onTokenReceived() {
+    this.loggedIn = true;
+
+    this.oauthService.loadUserProfile().then((user) => 
+      this.user = user['info']
+    );
+
+    //const scopes = this.oauthService.getGrantedScopes(); // see config object
+  }
+     
+  onLogout() {
+    this.loggedIn = false;
+    this.user = undefined;
+  }
+
+
+  // public
+
+  public login() {
+    this.oauthService.initLoginFlow();
+  }
+  
+  public logout() {
+    this.oauthService.logOut();
+  }
 
   // public
 
@@ -28,6 +82,8 @@ export class HeaderComponent implements OnInit {
   // implement OnInit
 
   ngOnInit(): void {
+     // listen to router events
+
       this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),

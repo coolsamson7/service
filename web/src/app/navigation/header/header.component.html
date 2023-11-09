@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar class="toolbar" color="primary">
     <!-- button -->
 
     <div fxHide.gt-xs>
@@ -13,4 +13,15 @@
         <mat-icon>{{icon}}</mat-icon>
         <span>{{label}}</span>
     </div>
+
+
+    <button *ngIf="!loggedIn" mat-button (click)="login()">Login</button>
+
+    <span *ngIf="user">
+        <button mat-button [matMenuTriggerFor]="menu">{{user.given_name}} {{user.family_name}}</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="logout()">Logout</button>
+        </mat-menu>
+    </span>
+
   </mat-toolbar>
