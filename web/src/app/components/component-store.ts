@@ -9,12 +9,21 @@ import { Update, Healths, UpdateService } from "../service/update-service.servic
 export class ComponentStore {
   // instance data
 
-  component: ComponentDTO
+  component: ComponentDTO = {
+    name: "",
+    description: "",
+    model: {
+     component: null,
+     services: [],
+     models: []
+    },
+    channels: []
+ }
   instances : ServiceInstanceDTO[] = []
   healths : Healths = {}
 
   componentName: string
-  componentSubject = new BehaviorSubject<ComponentDTO> (null)
+  componentSubject = new BehaviorSubject<ComponentDTO> (this.component)
   instancesSubject = new BehaviorSubject<ServiceInstanceDTO[]>(this.instances)
   healthSubject    = new BehaviorSubject<Healths>(this.healths) // mapping service id -> health
   dead = false

@@ -32,8 +32,9 @@ open class JWTSecurityConfig {
     @Throws(Exception::class)
     open fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http
-            .cors(Customizer.withDefaults())
-            .csrf(Customizer.withDefaults())
+            .csrf { csrf -> csrf.disable() }
+            //.cors(Customizer.withDefaults())
+            .cors { cors -> cors.disable() }
             .authorizeHttpRequests { authz ->
                 authz
                     .requestMatchers("/**").permitAll()
