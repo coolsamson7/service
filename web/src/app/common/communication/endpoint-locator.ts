@@ -1,6 +1,5 @@
 
-
-export const EndpointLocatorInjectionToken = Symbol('EndpointLocatorInjectionToken');
+//export const EndpointLocatorInjectionToken = Symbol('EndpointLocatorInjectionToken');
 
 export abstract class EndpointLocator {
     /**

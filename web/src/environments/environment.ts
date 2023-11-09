@@ -4,6 +4,11 @@
 
 export const environment = {
   production: false,
+  oauth: {
+    server: 'http://localhost:8080',
+    client: 'service',
+    scopes: ''
+  },
   administration: {
     server:'http://localhost:8083' 
   }

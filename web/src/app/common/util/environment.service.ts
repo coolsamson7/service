@@ -18,7 +18,14 @@ export class Environment {
         while (object != null && index < length)
            object = Reflect.get(object, path[index++])
 
-        return index && index == length ? <T>object : defaultValue
+        if (index && index == length)
+           return <T>object
+        else {
+         if (defaultValue == undefined)
+            throw new Error("missing environment variable '" + key + "'")
+        else
+            return defaultValue
+        } 
     }
 }
 

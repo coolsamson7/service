@@ -1,31 +1,10 @@
 
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
-import { EndpointLocator } from './common/communication/endpoint-locator';
 import { OAuthService, NullValidationHandler } from 'angular-oauth2-oidc';
-
-import { environment } from '../environments/environment';
 import { authConfig } from './auth.config';
 import { Environment } from './common/util/environment.service';
-
-@Injectable({providedIn: "root"})
-export class ApplicationEndpointLocator extends EndpointLocator {
-  // constructor
-
-  constructor(private environment: Environment) {
-    super()
-  }
-
-  // implement 
-
-  getEndpoint(domain: string): string {
-    if ( domain == "admin")
-      return this.environment.get<string>("administration.server", 'http://localhost:8080');
-    else
-       throw new Error("unknown domain " + domain)
-  }
-}
 
 
 @Component({
@@ -64,10 +43,9 @@ export class AppComponent implements OnInit {
 
   // constructor
 
-  constructor(private router: Router, private oauthService: OAuthService) {
+  constructor(private router: Router, private oauthService: OAuthService, private environment: Environment) {
     this.configure();
   }
-
 
   public login() {
     this.oauthService.initLoginFlow();
@@ -78,6 +56,13 @@ export class AppComponent implements OnInit {
   }
   
   private configure() {
+    // adjust configuration
+
+    authConfig.issuer = this.environment.get<string>("oauth.server") + '/realms/' +  this.environment.get<string>("oauth.client"),
+    authConfig.scope += " " + this.environment.get<string>("oauth.scopes", "")
+
+    // tell oauth
+
     this.oauthService.configure(authConfig);
     this.oauthService.tokenValidationHandler = new  NullValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();

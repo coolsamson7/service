@@ -2,7 +2,6 @@
 
 
 - styling
-- environment
 - maven build web
 
 === NOW
@@ -14,6 +13,7 @@
 
 === DONE
 
+- environment
 - guard & redirect ?
 - code checken mit claims, id, etc.
 - login / logout anschliessen
