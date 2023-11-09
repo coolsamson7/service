@@ -21,11 +21,20 @@ export class HeaderComponent implements OnInit {
   // constructor
 
   constructor(public app: AppComponent, private router: Router, private activatedRoute: ActivatedRoute, private oauthService: OAuthService) { 
+    // check initial status
+
+    this.loggedIn = oauthService.hasValidAccessToken()
+
     // subscribe to events
 
     oauthService.events.subscribe((e) => {
         // console.debug('oauth/oidc event', e);
         switch ( e.type ) {
+          case "discovery_document_loaded":
+            if ( this.user == undefined)
+               this.loadUser();
+            break;
+
           case "token_received":
             this.onTokenReceived()
             break;
@@ -36,23 +45,23 @@ export class HeaderComponent implements OnInit {
 
           default:
         }
-      });
-
-      // check initial status
-
-      if ( oauthService.hasValidAccessToken()) {
-        this.onTokenReceived()
-      }  
+      }); 
   }
+
+  // private
+
+   private loadUser() {
+    this.oauthService.loadUserProfile().then((user) => 
+      this.user = user['info']
+      );
+   }
 
  // callbacks
 
   onTokenReceived() {
     this.loggedIn = true;
 
-    this.oauthService.loadUserProfile().then((user) => 
-      this.user = user['info']
-    );
+    this.loadUser();
 
     //const scopes = this.oauthService.getGrantedScopes(); // see config object
   }

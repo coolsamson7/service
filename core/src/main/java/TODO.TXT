@@ -1,11 +1,8 @@
 === TODO
 
-
-- guard & redirect ?
-
 === NOW
 
-- code checken mit claims, id, etc.
+- guard & redirect ?
 
 === LATER
 
@@ -13,6 +10,7 @@
 
 === DONE
 
+- code checken mit claims, id, etc.
 - login / logout anschliessen
 - menu + name
 - listen to + direkte antwort??
