@@ -5,12 +5,15 @@ package com.serious.service.channel.rest
 * All rights reserved
 */
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.service.channel.rest.RequestBuilder.SpecOperation
 import com.serious.service.exception.ServiceRegistryException
 import com.serious.service.exception.ServiceRuntimeException
 import org.apache.logging.log4j.util.Strings
 import org.springframework.core.DefaultParameterNameDiscoverer
 import org.springframework.core.ParameterNameDiscoverer
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
@@ -20,8 +23,9 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
- /**
+/**
  * A <code>MethodAnalyzer</code> analyzes methods for spring mvc annotations and calls the appropriate webclient
   * builder methods on the fly.
  */
@@ -303,6 +307,25 @@ class MethodAnalyzer {
          }
      }
 
+    class MapTypeReference : ParameterizedTypeReference<Map<String, Object>> {
+        constructor(type: Type) {
+            field.trySetAccessible()
+            field.set(this, type)
+        }
+
+        companion object {
+            val field = ParameterizedTypeReference::class.java.getDeclaredField("type")
+        }
+    }
+
+     private fun createMapResponseHandler(method: Method) : ResponseHandler {
+         return { spec: WebClient.ResponseSpec ->
+                 spec
+                     .bodyToMono(MapTypeReference(method.genericReturnType))
+                     .block()
+         }
+     }
+
     fun request(webClient: WebClient, method: Method): Request {
         // specs
 
@@ -323,6 +346,10 @@ class MethodAnalyzer {
         }
         else if (MutableCollection::class.java.isAssignableFrom(method.returnType)) {
             createCollectionResponseHandler(method)
+        }
+
+        else if (Map::class.java.isAssignableFrom(method.returnType)) {
+            createMapResponseHandler(method)
         }
 
         else if (method.returnType == Mono::class.java) {

@@ -9,6 +9,7 @@ import com.serious.exception.ExceptionManager
 import com.serious.exception.FatalException
 import com.serious.service.BaseDescriptor.Companion.createImplementations
 import com.serious.service.BaseDescriptor.Companion.forService
+import com.serious.service.ChannelInvocationHandler.Companion.forChannel
 import com.serious.service.ChannelInvocationHandler.Companion.forComponent
 import com.serious.service.exception.ServiceRuntimeException
 import jakarta.annotation.PostConstruct
@@ -16,6 +17,8 @@ import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.DefaultServiceInstance
+import org.springframework.cloud.client.ServiceInstance
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import java.lang.reflect.InvocationTargetException
@@ -188,8 +191,34 @@ class ServiceManager @Autowired internal constructor(
         } as T
     }
 
+    fun <T : Service> acquireLocalAdministrativeService(server: Server, clazz: Class<T>): T {
+        val descriptor = forService(clazz).getComponentDescriptor()
+        val key = "administration:" + server.host + ":" + server.port + ":" + clazz.name
+        val address = ServiceAddress(
+            descriptor.name,
+            "rest",
+            listOf( DefaultServiceInstance(
+                key,// TODO instanceId,
+                descriptor.name,
+                 server.host,
+                server.port,
+                false,
+                mapOf(Pair("channels", "rest(http://" + server.host + ":" + server.port + ")"))
+            ) // TODO
+            )
+            )
+
+
+        val channel = channelManager.channelFactories[address.channel]!!.makeChannel(descriptor.name, address)
+
+        return proxies.computeIfAbsent(key) { _ ->
+            log.info("create administrative proxy for {} at {}", descriptor.name, address.toString())
+
+            Proxy.newProxyInstance(clazz.getClassLoader(), arrayOf(clazz), forChannel(this, descriptor.name, channel)) as T
+        } as T
+    }
+
     fun <T : Service> acquireAdministrativeService(component: String, clazz: Class<T>): T {
-        val descriptor = forService(clazz).getComponentDescriptor() // descriptor: AdministrationComponent
         val key = "administration:" + component + ":" + clazz.name
         val address = this.getServiceAddress(component) // address of the real component
 

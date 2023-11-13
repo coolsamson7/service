@@ -10,5 +10,5 @@ export interface ServiceInstanceDTO {
 	isSecure: boolean
 	uri : string
     scheme: string
-	//TODO Map<String, String> getMetadata();
+	metadata: {[key: string] : string }
 }

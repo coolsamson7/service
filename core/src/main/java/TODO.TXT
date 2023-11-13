@@ -1,15 +1,35 @@
 === TODO
 
-
-- styling
 - maven build web
 
 === NOW
 
+- add component services
+- nix verstehen: was ist node, instance, service id name, ...
+- cluster adresse
+
+
+== REALLY NOW
+
+- acquireAS()
+- get channels
+
+
+=== DENK NACH
+
+
+- registriert weden services unter einer id, die den haupt spring port beinhaltet
+-ALSO  <ip>:<port>:<component>
+
+die kombi
+<ip>.<port> ist die applikation ( unter der auch die introspektive dinger auggerufen werden können!
+
+besser wäre es, wenn der rest channel genutzt wird! ( nee->cluster )
+
+metada-a:introspective=rest(...)
+meta:container=rest(...)?
 
 === LATER
-
-- d3 :-)
 
 === DONE
 

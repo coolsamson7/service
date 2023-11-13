@@ -8,6 +8,10 @@ package com.serious.service.administration
 import com.serious.service.Component
 import com.serious.service.ComponentInterface
 
-@ComponentInterface(name = "AdministrationComponent", services = [ComponentIntrospectionService::class])
+@ComponentInterface(name = "AdministrationComponent",
+    services = [
+        ComponentIntrospectionService::class,
+        ApplicationIntrospectionService::class
+    ])
 interface AdministrationComponent : Component {
 }

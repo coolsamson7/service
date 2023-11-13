@@ -50,8 +50,8 @@ class ConsulComponentAdministration : ComponentAdministration {
                 serviceName,
                 catalogService.serviceAddress,
                 catalogService.servicePort,
-                false//, // TODO
-                //LinkedHashMap<>()
+                false, // TODO
+                catalogService.serviceMeta
             )
         }
     }

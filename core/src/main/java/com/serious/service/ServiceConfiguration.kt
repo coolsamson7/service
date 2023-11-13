@@ -31,7 +31,7 @@ open class ServiceConfiguration {
      }
 
     @Bean
-    public open fun serverPortListenerBean(): ApplicationListener<ServletWebServerInitializedEvent> {
+    open fun serverPortListenerBean(): ApplicationListener<ServletWebServerInitializedEvent> {
         return ApplicationListener { event: ServletWebServerInitializedEvent ->
             ServiceManager.instance?.startup( event.webServer.port)
         }

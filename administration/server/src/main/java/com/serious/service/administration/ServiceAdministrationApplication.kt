@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.scheduling.annotation.EnableAsync
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -38,7 +37,7 @@ open class JWTSecurityConfig {
             .authorizeHttpRequests { authz ->
                 authz
                     .requestMatchers("/**").permitAll()
-                    //.requestMatchers("/administration/**").hasAuthority("admin")
+                    .requestMatchers("/administration/**").hasAnyRole("service-admin-role")
                     .anyRequest()
                     .authenticated()
             }

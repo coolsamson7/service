@@ -21,6 +21,10 @@ interface ComponentIntrospectionService : Service {
     @ResponseBody
     fun fetchComponent(@PathVariable component: String) : ComponentDTO
 
+    @GetMapping("component-service/{component}")
+    @ResponseBody
+    fun fetchComponentServices(@PathVariable component: String) : List<String>
+
     @GetMapping("component-services/{component}")
     @ResponseBody
     fun listServices(@PathVariable component: String) : Collection<InterfaceDescriptor>

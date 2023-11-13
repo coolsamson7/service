@@ -14,16 +14,33 @@ import java.util.concurrent.ConcurrentHashMap
  /**
  * A special [InvocationHandler] that delegates calls to a [Channel]
  */
-class ChannelInvocationHandler private constructor( private val serviceManager : ServiceManager, private val component: String, private val preferredChannel: String?, private var address: ServiceAddress?) : InvocationHandler {
+class ChannelInvocationHandler : InvocationHandler {
     // instance data
+
+    private val serviceManager : ServiceManager
+    private val component: String
+    private val preferredChannel: String?
+    private var address: ServiceAddress?
 
     private var channel: Channel
 
     // constructor
 
-    init {
+    constructor(serviceManager : ServiceManager, component: String, preferredChannel: String?, address: ServiceAddress?) {
+        this.serviceManager = serviceManager
+        this.component = component
+        this.preferredChannel = preferredChannel
+        this.address = address
+
         channel = resolveChannel()
     }
+     constructor(serviceManager : ServiceManager, component: String, channel: Channel) {
+         this.serviceManager = serviceManager
+         this.component = component
+         this.preferredChannel = channel.name
+         this.address = channel.address
+         this.channel = channel
+     }
 
     // private
     private fun topologyUpdate(newAddress: ServiceAddress?) {
@@ -72,12 +89,15 @@ class ChannelInvocationHandler private constructor( private val serviceManager :
         private val handlers: MutableMap<String, ChannelInvocationHandler> = ConcurrentHashMap()
 
         // static methods
-
         fun forComponent(serviceManager: ServiceManager, component: String, preferredChannel: String?, address: ServiceAddress?): ChannelInvocationHandler {
             var key = component;
             if ( preferredChannel != null) key += ":$preferredChannel"
 
            return handlers.computeIfAbsent(key) {_ ->  ChannelInvocationHandler(serviceManager, component, preferredChannel, address)}
+        }
+
+        fun forChannel(serviceManager: ServiceManager, component: String, channel: Channel): ChannelInvocationHandler {
+            return ChannelInvocationHandler(serviceManager, component, channel)
         }
 
         @JvmStatic

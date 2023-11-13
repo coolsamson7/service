@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import java.io.Serializable
 import java.lang.NullPointerException
 import java.net.URI
 
-internal class Foo {
-    var id: String? = null
-}
+internal data class Foo(var id: String? = null): Serializable
 
 @Component
 internal class TestComponentComponentRegistry : LocalComponentRegistry()
@@ -109,6 +108,14 @@ internal interface BasicMethods : Service {
     @RequestMapping(path = ["get-array/{world}/{count}"], method = [RequestMethod.GET])
     @ResponseBody
     fun getArray(@PathVariable("world") world: String, @PathVariable count: Int): Array<String>
+
+    @RequestMapping(path = ["get-map/{world}/{count}"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun getMap(@PathVariable("world") world: String, @PathVariable count: Int): Map<String,Int>
+
+    @RequestMapping(path = ["get-object-map/{world}/{count}"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun getObjectMap(@PathVariable("world") world: String, @PathVariable count: Int): Map<String,Foo>
 
     @RequestMapping(path = ["get-object-array/{world}/{count}"], method = [RequestMethod.GET])
     @ResponseBody
@@ -224,6 +231,17 @@ internal class BasicMethodsImpl : BasicMethods {
         }
         return result.toTypedArray<String>()
     }
+
+    override fun getMap(@PathVariable("world") world: String, @PathVariable count: Int): Map<String,Int> {
+        return mapOf(Pair<String,Int>(world, count))
+    }
+
+    override fun getObjectMap(@PathVariable("world") world: String, @PathVariable count: Int): Map<String,Foo> {
+        val foo = Foo()
+        foo.id = world + count
+        return mapOf(Pair(world, foo))
+    }
+
 
     override fun getObjectArray(world: String, count: Int): Array<Foo> {
         val result: MutableList<Foo> = ArrayList()
@@ -350,6 +368,8 @@ internal class RestTest {
         Assertions.assertEquals(2, service.getObjectArrayList("world", 2).size)
         Assertions.assertEquals(2, service.getArray("world", 2).size)
         Assertions.assertEquals(2, service.getObjectArray("world", 2).size)
+        Assertions.assertEquals(1, service.getMap("world", 1).get("world"))
+        Assertions.assertEquals("world1", service.getObjectMap("world", 1).get("world")?.id)
     }
 
     @Test

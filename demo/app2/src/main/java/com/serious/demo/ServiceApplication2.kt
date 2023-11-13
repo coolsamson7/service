@@ -27,8 +27,7 @@ open class ServiceApplication2 {
 
             val manager = context.getBean(ServiceManager::class.java)
 
-            val commonService = manager.acquireService(CommonService::class.java)
-            commonService.hello()
+            val commonService = manager.acquireService(TestRestService::class.java)
             commonService.hello()
 
             //println(testRemoteRestService.hello())

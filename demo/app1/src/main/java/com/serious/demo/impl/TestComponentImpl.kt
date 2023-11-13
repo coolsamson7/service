@@ -1,4 +1,9 @@
 package com.serious.demo.impl
+/*
+* @COPYRIGHT (C) 2023 Andreas Ernst
+*
+* All rights reserved
+*/
 
 import com.serious.demo.TestComponent
 import com.serious.service.*
@@ -11,11 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
-/*
-* @COPYRIGHT (C) 2023 Andreas Ernst
-*
-* All rights reserved
-*/ /**
+ /**
  * @author Andreas Ernst
  */
 @ComponentHost(health = "/api/test-component/test-health")

@@ -5,6 +5,8 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
 import { Healths } from "./update-service.service";
 import { RegisterService } from "../common/communication/register-service.decorator";
 import { AbstractHTTPService } from "../common/communication/abstract-http-service";
+import { ChannelAddressDTO } from "../model/channel-address.interface";
+import { Server } from "../model/server.interface";
 
 
 @Injectable({providedIn: 'root'})
@@ -26,6 +28,10 @@ export class ComponentService extends AbstractHTTPService {
       return this.get<ComponentDTO>(`/component/${component}`);
     }
 
+    public getServices(component: String): Observable<String[]>{
+      return this.get<String[]>(`/component-services/${component}`);
+    }
+
     public getServiceHealth(serviceName: String, serviceId: String): Observable<String>{
       return this.get<String>(`/health/${serviceName}/${serviceId}`);
     }
@@ -40,5 +46,9 @@ export class ComponentService extends AbstractHTTPService {
 
     public listenTo(subscriber: String, component: String) {
       return this.get(`/listen/component/${subscriber}/${component}` + subscriber)
+    }
+
+    public getOpenChannels(server: Server): Observable<ChannelAddressDTO[]>{
+      return this.post<ChannelAddressDTO[]>(`/application-channels`, server)
     }
   }

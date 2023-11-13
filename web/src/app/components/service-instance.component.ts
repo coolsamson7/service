@@ -22,11 +22,12 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
     component: null,
     instanceId:  "",
     serviceId:  "",
-	host: "",
+	  host: "",
     port: 1,
-	isSecure: false,
-	uri : "",
-    scheme: ""
+	  isSecure: false,
+	  uri : "",
+    scheme: "",
+    metadata: {}
   }
   health : string = "unknown"
   element: RouteElement = {

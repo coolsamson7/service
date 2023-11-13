@@ -9,6 +9,6 @@ import java.io.Serializable
 import java.net.URI
 
 data class ChannelDTO(
-    val name: String,
-    val uri: URI
+    var name: String,
+    var uri: List<URI>
 ) : Serializable

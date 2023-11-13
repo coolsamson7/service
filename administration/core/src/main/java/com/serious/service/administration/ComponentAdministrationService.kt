@@ -6,6 +6,7 @@ package com.serious.service.administration
  */
 
 import com.serious.service.*
+import com.serious.service.administration.model.ChannelDTO
 import com.serious.service.administration.model.ComponentDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.ServiceInstance
@@ -70,6 +71,16 @@ class ComponentAdministrationService {
         return administration.fetchComponent(component)
     }
 
+    @GetMapping("/component-service-names/{component}")
+    @ResponseBody
+    fun fetchComponentServices(@PathVariable component: String) : List<String> {
+        val administration = serviceManager.acquireAdministrativeService(component, ComponentIntrospectionService::class.java)
+
+        // go
+
+        return administration.fetchComponentServices(component)
+    }
+
     @GetMapping("/component-services/{component}")
     @ResponseBody
     fun componentServices(@PathVariable component: String) : Collection<InterfaceDescriptor> {
@@ -78,6 +89,18 @@ class ComponentAdministrationService {
         // go
 
         return administration.listServices(component)
+    }
+
+    // application
+
+    @PostMapping("/application-channels")
+    @ResponseBody
+    fun openChannels(@RequestBody server: Server) : Map<String,ChannelDTO> {
+        val administration = serviceManager.acquireLocalAdministrativeService(server, ApplicationIntrospectionService::class.java)
+
+        // go
+
+        return administration.channels()
     }
 
     // SSE stuff

@@ -46,6 +46,32 @@ export class AbstractHTTPService {
       return this.http.get<T>(this.url + url, options)
     }
 
+  
+    /**
+     * Constructs a `POST` request that interprets the body as JSON
+     * and returns the response body as an object parsed from JSON.
+     *
+     * @param url The endpoint URL.
+     * @param body The content to replace with.
+     * @param options HTTP options
+     *
+     * @return An `Observable` of the response, with the response body as an object parsed from JSON.
+     */
+    post<T>(url: string, body: any | null, options?: {
+      headers?: HttpHeaders | {
+          [header: string]: string | string[];
+      };
+      context?: HttpContext;
+      observe?: 'body';
+      params?: HttpParams | {
+          [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+      };
+      reportProgress?: boolean;
+      responseType?: 'json';
+      withCredentials?: boolean}) : Observable<T> {
+      return this.http.post<T>(this.url + url, body, options)
+    }
+
     // TODO MORE
 
    // protected
