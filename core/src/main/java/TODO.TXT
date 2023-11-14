@@ -12,6 +12,18 @@
 === DENK NACH
 
 
+serviceinstance
+   .host=ip
+   .port=port
+   .meta.channels="rest("http://andreas-mpb:8080")
+
+channel geht auf rest("http://andreas-mpb:8080")
+
+ich muss mappen
+   rest(http://andreas-mpb:8080) -> serviceinstance
+
+
+
 - registriert weden services unter einer id, die den haupt spring port beinhaltet
 -ALSO  <ip>:<port>:<component>
 

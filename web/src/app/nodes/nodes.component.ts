@@ -1,6 +1,6 @@
 
 import { NavigationComponent } from "../widgets/navigation-component.component";
-import { ComponentService } from "../service/component-service.service";
+import { Channel, ComponentService } from "../service/component-service.service";
 import { Component, ViewChild, ElementRef, HostListener, AfterViewInit} from '@angular/core';
 
 import dagre from 'dagre';
@@ -8,7 +8,6 @@ import graphlib from 'graphlib';
 import * as joint from 'jointjs';
 import { switchMap, combineLatest, Observable, of } from "rxjs";
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
-import { ChannelAddressDTO } from "../model/channel-address.interface";
 import { InterfaceDescriptor } from "../model/service.interface";
 
 interface Result {
@@ -16,10 +15,15 @@ interface Result {
     services: String[]
     componentServices:  { [server: string] : InterfaceDescriptor[] } 
     servers: string[]
-    channels:  { [server: string] :  { [component: string] : string[]} }
-    address2instances?: { [address: string] : ServiceInstanceDTO[] } // TODO
+    channels:  { [server: string] :  { [component: string] : Channel} }
+    address2instance: { [address: string] : ServiceInstanceDTO[] }
+    links:  { [server: string] :  Link[] }
 }
 
+interface Link {
+    server: string,
+    components: string[]
+}
 
 @Component({
     selector: 'nodes',
@@ -63,8 +67,71 @@ interface Result {
             servers:[],
             channels: {},
             componentServices: {},
-            address2instances: {}
+            address2instance: {},
+            links: {}
         } 
+
+          // TEST
+
+          let str = "rest(http://localhost:8080),dispatch(http://localhost:8080)"
+          for (let address of str.split(",")) {
+              let lparen = address.indexOf("(")
+              let rparen = address.indexOf(")")
+  
+              let m = address.substring(lparen + 1, rparen)
+  
+              let url = new URL(m)
+  
+              url.host
+              url.port
+              url.protocol
+          }
+        
+        let parse = (addresses) => {
+            for (let address of addresses.split(",")) {
+                let lparen = address.indexOf("(")
+                let rparen = address.indexOf(")")
+
+                let channel = address.substring(0, lparen)
+                let url = address.substring(lparen + 1, rparen)
+            }
+        }
+
+        let computeLinks = (result: Result) => {
+            for ( let server in result.channels) { // { [server: string] :  { [component: string] : string[]} }
+                let channels = result.channels[server]
+
+                if ( Object.getOwnPropertyNames(channels).length > 0)
+                   result.links[server] = []
+
+                for ( let component in channels) {
+                    let name = channels[component].name
+                    let uris = channels[component].uri
+
+                    for ( let uri of uris ) {
+                        let address = name + "(" + uri + ")"
+
+                        let instances = result.address2instance[address]
+
+                        for ( let instance of instances) {
+                            let addr = instance.host + ":" + instance.port
+                        
+                            let link = result.links[server].find( link => link.server == addr)
+
+                            if (!link)
+                                result.links[server].push({
+                                    server: addr,
+                                    components: [instance.serviceId]
+                                })
+                            else {
+                                if (! link.components.find(component => component == instance.serviceId))
+                                    link.components.push(instance.serviceId)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         let sortResults = (instancesArray : ServiceInstanceDTO[][], result: Result) => {
             let servers = {}
@@ -72,6 +139,7 @@ interface Result {
             for ( let instances of instancesArray) 
                 for ( let instance of instances) {
                     let server = serverName(instance)
+
                     if ( !servers[server]) {
                         result.servers.push(server)
                         servers[server] = true
@@ -79,6 +147,13 @@ interface Result {
                     }
 
                     result.instances[server].push(instance)
+
+                    for ( let address of instance.metadata['channels'].split(",")) {
+                        if (!result.address2instance[address])
+                           result.address2instance[address] = []
+
+                        result.address2instance[address].push(instance)
+                    }
                 }
         }
 
@@ -108,6 +183,8 @@ interface Result {
             switchMap(channels => {
                 for ( let i = 0; i < result.servers.length; i++)
                    result.channels[result.servers[i]] = channels[i]
+
+                computeLinks(result)
 
                 return combineLatest(result.services.map(service => this.componentService.getServices(service)))
             }),
@@ -143,22 +220,6 @@ interface Result {
    ngOnInit() {
         this.namespace =  joint.shapes;
         this. graph = new joint.dia.Graph({}, { cellNamespace: this.namespace });
-
-        // TEST
-
-        let str = "rest(http://localhost:8080),dispatch(http://localhost:8080)"
-        for (let address of str.split(",")) {
-            let lparen = address.indexOf("(")
-            let rparen = address.indexOf(")")
-
-            let m = address.substring(lparen + 1, rparen)
-
-            let url = new URL(m)
-
-            url.host
-            url.port
-            url.protocol
-        }
    }
 
    // implement AfterViewInit

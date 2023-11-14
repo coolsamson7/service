@@ -5,11 +5,14 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
 import { Healths } from "./update-service.service";
 import { RegisterService } from "../common/communication/register-service.decorator";
 import { AbstractHTTPService } from "../common/communication/abstract-http-service";
-import { ChannelAddressDTO } from "../model/channel-address.interface";
 import { Server } from "../model/server.interface";
 import { InterfaceDescriptor } from "../model/service.interface";
 
-export type ApplicationChannels = {[ component: string] : string[]}
+export interface Channel { // TODO
+  name: string,
+  uri: string[]
+} 
+export type ApplicationChannels = {[ component: string] : Channel}
 
 @Injectable({providedIn: 'root'})
 @RegisterService({domain: "admin", prefix: "/administration"})
