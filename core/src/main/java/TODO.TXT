@@ -4,16 +4,10 @@
 
 === NOW
 
-- add component services
-- nix verstehen: was ist node, instance, service id name, ...
-- cluster adresse
-
-
-== REALLY NOW
-
-- acquireAS()
-- get channels
-
+- adresse ip vs name
+- secure?
+- channels aauswerten bei links
+ a -> rest(b)  referenziert component mit channels=rest(b)
 
 === DENK NACH
 

@@ -6,8 +6,20 @@ import { Component, ViewChild, ElementRef, HostListener, AfterViewInit} from '@a
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import * as joint from 'jointjs';
-import { switchMap, combineLatest } from "rxjs";
+import { switchMap, combineLatest, Observable, of } from "rxjs";
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
+import { ChannelAddressDTO } from "../model/channel-address.interface";
+import { InterfaceDescriptor } from "../model/service.interface";
+
+interface Result {
+    instances: { [component: string] : ServiceInstanceDTO[] }
+    services: String[]
+    componentServices:  { [server: string] : InterfaceDescriptor[] } 
+    servers: string[]
+    channels:  { [server: string] :  { [component: string] : string[]} }
+    address2instances?: { [address: string] : ServiceInstanceDTO[] } // TODO
+}
+
 
 @Component({
     selector: 'nodes',
@@ -44,14 +56,69 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
         })
     }
 
-    fetchData() {
+    fetchData() : Observable<Result> {
+        let result : Result = {
+            instances: {},
+            services: [],
+            servers:[],
+            channels: {},
+            componentServices: {},
+            address2instances: {}
+        } 
+
+        let sortResults = (instancesArray : ServiceInstanceDTO[][], result: Result) => {
+            let servers = {}
+
+            for ( let instances of instancesArray) 
+                for ( let instance of instances) {
+                    let server = serverName(instance)
+                    if ( !servers[server]) {
+                        result.servers.push(server)
+                        servers[server] = true
+                        result.instances[server] = []
+                    }
+
+                    result.instances[server].push(instance)
+                }
+        }
+
+        let serverName = (serviceInstance: ServiceInstanceDTO) => {
+            return  serviceInstance.instanceId.substring(0, serviceInstance.instanceId.lastIndexOf(":"))
+        }
+
         return this.componentService.listAll().pipe(
-            switchMap((services) => {
-                return combineLatest(services.map((service) =>
-                     this.componentService.getServiceInstances(service)
+            switchMap(services => {
+                result.services = services
+                return combineLatest(services.map((service) => {
+                    return this.componentService.getServiceInstances(service)
+                }
                ))
-              })
-        )
+              }),
+            switchMap(instancesArray => {
+                sortResults(instancesArray, result)
+                
+                return combineLatest(result.servers.map(server => {
+                    let i = server.lastIndexOf(':')
+                    let host = server.substring(0, i)
+                    let port = server.substring(i+1)
+
+                    return this.componentService.getOpenChannels({host: host, port: +port})
+                }))
+            }),
+            switchMap(channels => {
+                for ( let i = 0; i < result.servers.length; i++)
+                   result.channels[result.servers[i]] = channels[i]
+
+                return combineLatest(result.services.map(service => this.componentService.getServices(service)))
+            }),
+            switchMap(services => {
+                for ( let i = 0; i < result.services.length; i++) {
+                    result.componentServices[result.services[i] as string] = services[i]
+                }
+
+                return of(result)
+            })
+            )
     }
 
    // host listener
@@ -76,6 +143,22 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
    ngOnInit() {
         this.namespace =  joint.shapes;
         this. graph = new joint.dia.Graph({}, { cellNamespace: this.namespace });
+
+        // TEST
+
+        let str = "rest(http://localhost:8080),dispatch(http://localhost:8080)"
+        for (let address of str.split(",")) {
+            let lparen = address.indexOf("(")
+            let rparen = address.indexOf(")")
+
+            let m = address.substring(lparen + 1, rparen)
+
+            let url = new URL(m)
+
+            url.host
+            url.port
+            url.protocol
+        }
    }
 
    // implement AfterViewInit
@@ -98,8 +181,8 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
         }
     } as any);
 
-    this.fetchData().subscribe((instancesArray) => {
-        this.buildGraph(this.graph, instancesArray)
+    this.fetchData().subscribe((result) => {
+        this.buildGraph(this.graph, result)
 
          // resize paper
 
@@ -116,7 +199,7 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
 
   // private
 
-  private buildGraph(graph, instancesArray: ServiceInstanceDTO[][]) {
+  private buildGraph(graph, result: Result) {
     // new
 
     let merge = (obj1, obj2) => {
@@ -231,34 +314,23 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
     }
 
     let servers = {}
-    let components = {}
 
-    for ( let instances of instancesArray) {
-        for ( let serviceInstance of instances) {
-            let server = serverName(serviceInstance.instanceId)
-
-            if ( !servers[server]) {
-                this.componentService.getOpenChannels({host: serviceInstance.host, port: serviceInstance.port}).subscribe(channels => 
-                    console.log(channels)
-                    )
-                servers[server] = {
-                    server: makeRegion(server, { 
-                        attrs: {
-                            body: {
-                                fill:  'red'
-                        }}}),
-                    components: {}
-                }
-            }
+    for ( let server of result.servers) {
+        servers[server] = {
+            server: makeRegion(server, { 
+                attrs: {
+                    body: {
+                        fill:  'red'
+                }}}),
+            components: {}
         }
     }
 
-    // assign services
+    // assign components
 
-    for ( let instances of instancesArray) {
-        for ( let serviceInstance of instances) {
-            let name = serverName(serviceInstance.instanceId)
-            let server = servers[name]
+    for ( let serverName of result.servers) {
+        for ( let serviceInstance of result.instances[serverName]) {
+            let server = servers[serverName]
 
             // create component
 
@@ -268,16 +340,23 @@ import { ServiceInstanceDTO } from "../model/service-instance.interface";
                 server.components[serviceInstance.serviceId] = component
 
                 server.server.embed(component)
+
+                // services
+
+                for ( let service of result.componentServices[serviceInstance.serviceId]) {
+                    component.embed(makeText(service.name as string))
+                }
             }
         }
     }
+
+    // open channels
 
     // fit
 
     let lastServerRegion = null
 
     for ( let server in servers) {
-
         let serverRegion = servers[server].server
 
         //if ( lastServerRegion )
