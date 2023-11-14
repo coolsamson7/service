@@ -4,31 +4,9 @@
 
 === NOW
 
-- adresse ip vs name
 - secure?
-- channels aauswerten bei links
- a -> rest(b)  referenziert component mit channels=rest(b)
 
 === DENK NACH
-
-
-serviceinstance
-   .host=ip
-   .port=port
-   .meta.channels="rest("http://andreas-mpb:8080")
-
-channel geht auf rest("http://andreas-mpb:8080")
-
-ich muss mappen
-   rest(http://andreas-mpb:8080) -> serviceinstance
-
-
-
-- registriert weden services unter einer id, die den haupt spring port beinhaltet
--ALSO  <ip>:<port>:<component>
-
-die kombi
-<ip>.<port> ist die applikation ( unter der auch die introspektive dinger auggerufen werden können!
 
 besser wäre es, wenn der rest channel genutzt wird! ( nee->cluster )
 

@@ -273,7 +273,6 @@ interface Link {
         else if (typeof obj1 !== 'object' || typeof obj2 !== 'object')
            throw new TypeError('Both arguments must be objects');
 
-
         const merged = { ...obj1 };
 
         for (let key in obj2) {
@@ -292,15 +291,36 @@ interface Link {
 
     // local functions
 
-    let connect = (a, b, attributes?: any) => {
-        let vertex = new joint.shapes.fsa.Arrow(merge({
-            source: { id: a.id },
-            target: { id: b.id }
-        }, attributes || {}));
+    let connect = (a, b, labels: string[], attributes?: any) => {
+        var link = new joint.shapes.standard.Link();
+        if ( attributes )
+           link.attr(attributes)
 
-        vertex.addTo(graph)
+        let i = 0
+        let labelParam = labels.map(label => {
+            return {
+                position: {
+                     offset: {
+                            x: 0,
+                            y: 20 * i++
+                        }
+                },
+                attrs: {
+                    text: {
+                        text: label
+                    }
+                }
+            }
+        })
 
-        return vertex
+        link.source(a);
+        link.target(b);
+        link.labels(labelParam)
+        link.connector('jumpover', { size: 10 });
+           
+        link.addTo(graph);
+
+        return link
     }
 
     let makeNode = (name: string, attributes?: any) => {
@@ -359,13 +379,14 @@ interface Link {
 
         node.addTo(graph)
 
-        return node.embed(makeText("", {
+        /*return node.embed(makeText("", { TODO
             attrs: {
                 body: {
                     fillOpacity:0.0,
                     strokeWidth: 0
             }
-        }}))
+        }}))*/
+        return node
     }
 
     // collect servers & components
@@ -387,7 +408,24 @@ interface Link {
         }
     }
 
+    // links
+
+    for ( let server in result.links) {
+        for ( let link of result.links[server]) {
+           let target = link.server // link.components
+
+           if ( server != target)
+            connect(servers[server].server, servers[target].server,  link.components, {
+                    line: { // selector for the visible <path> SVGElement
+                        stroke: 'orange' // SVG attribute and value
+                    }
+                })
+        }
+    }
+
     // assign components
+
+    if ( false )
 
     for ( let serverName of result.servers) {
         for ( let serviceInstance of result.instances[serverName]) {
@@ -415,33 +453,38 @@ interface Link {
 
     // fit
 
-    let lastServerRegion = null
-
     for ( let server in servers) {
         let serverRegion = servers[server].server
 
-        //if ( lastServerRegion )
-        //   connect(lastServerRegion, serverRegion)
-
        serverRegion.fitToChildren({deep: true, padding: { top: 10}})
-
-       lastServerRegion = serverRegion
     }
   }
 
   private doLayout() {
     // auto layout
 
+    /*let layout = new joint.layout.ForceDirected({
+        graph: this.graph,
+        width: 600, height: 400,
+        gravityCenter: { x: 300, y: 200 },
+        charge: 180,
+        linkDistance: 30
+    });
+    
+    layout.start();*/
+
     joint.layout.DirectedGraph.layout(this.graph, {
         dagre: dagre,
         graphlib: graphlib,
-        setLinkVertices: false,
+        setLinkVertices: true,
         nodeSep: 10,
         edgeSep: 10,
         rankSep: 100,
         marginX: 20,
         marginY: 20,
-        rankDir: 'RL'
+        rankDir: 'RL',
+        ranker:  'longest-path',//'tight-tree', //| 'longest-path';'network-simplex',// | 
+        setLabels: true
     });
   }
 }
