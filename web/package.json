@@ -1,36 +1,21 @@
 {
-  "name": "angular-starter",
+  "name": "component-browser",
   "version": "0.0.1",
-  "description": "The Angular starter / boilerplate project to start a new enterprise project",
-  "author": "Wilfried Lucha <wilfried@lucha.at>",
-  "homepage": "https://lucha.at",
+  "description": "Component Browser for the service framework",
+  "author": "Andreas Ernst <andreas.ernst7@gmail.com>",
+  "homepage": "http://ernstandreas.de",
   "license": "MIT",
   "contributors": [
-    "Wilfried Lucha <wilfried@lucha.at>"
+    "Andreas Ernst <andreas.ernst7@gmail.com>"
   ],
   "keywords": [
-    "angular",
-    "angular 15",
-    "angular-starter",
-    "angular starter",
-    "angular-boilerplate",
-    "angular boilerplate",
-    "angular-template",
-    "angular template",
-    "jest",
-    "transloco",
-    "prettier",
-    "testcafe",
-    "compodoc",
-    "docker",
-    "eslint",
-    "storybook"
+    "angular"
   ],
-  "repository": "https://github.com/wlucha/angular-starter.git",
+  "repository": "https://github.com/coolsamson7/service.git",
   "bugs": {
-    "url": "https://github.com/wlucha/angular-starter/issues"
+    "url": "https://github.com/coolsamson7/service/issues"
   },
-  "readme": "https://github.com/wlucha/angular-starter/blob/master/README.md",
+  "readme": "https://github.com/coolsamson7/service/README.md",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

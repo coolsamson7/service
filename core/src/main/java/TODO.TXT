@@ -1,6 +1,8 @@
 === TODO
 
 - maven build web
+- paper scroll
+- resize paper
 
 === NOW
 
@@ -17,6 +19,7 @@ meta:container=rest(...)?
 
 === DONE
 
+- links...
 - environment
 - guard & redirect ?
 - code checken mit claims, id, etc.

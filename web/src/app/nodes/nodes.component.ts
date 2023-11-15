@@ -413,7 +413,7 @@ interface Link {
                         fill:  'white'
                     },
                     body: {
-                        fill:  'lightBlue'
+                        fill:  '#dbe7f2'
                 }}}),
             components: {}
         }

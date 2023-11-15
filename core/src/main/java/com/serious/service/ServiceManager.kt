@@ -193,21 +193,18 @@ class ServiceManager @Autowired internal constructor(
 
     fun <T : Service> acquireLocalAdministrativeService(server: Server, clazz: Class<T>): T {
         val descriptor = forService(clazz).getComponentDescriptor()
-        val key = "administration:" + server.host + ":" + server.port + ":" + clazz.name
+        val instanceId =  server.host + ":" + server.port + ":" + clazz.name
+        val key = "administration:" + instanceId
         val address = ServiceAddress(
             descriptor.name,
             "rest",
             listOf( DefaultServiceInstance(
-                key,// TODO instanceId,
+                instanceId,
                 descriptor.name,
                  server.host,
                 server.port,
                 false,
-                mapOf(Pair("channels", "rest(http://" + server.host + ":" + server.port + ")"))
-            ) // TODO
-            )
-            )
-
+                mapOf(Pair("channels", "rest(http://" + server.host + ":" + server.port + ")")))))
 
         val channel = channelManager.channelFactories[address.channel]!!.makeChannel(descriptor.name, address)
 

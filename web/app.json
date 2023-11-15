@@ -1,6 +1,6 @@
 {
-  "name": "Angular 14 Starter",
-  "description": "Angular 14 Starter project with Material, Transloco, Jest & Compodoc",
-  "repository": "https://github.com/wlucha/angular-starter",
-  "keywords": ["angular", "jest", "compodoc", "transloco"]
+  "name": "Component Browser",
+  "description": "Component Browser",
+  "repository": "https://github.com/coolsamson7/service",
+  "keywords": ["angular"]
 }
