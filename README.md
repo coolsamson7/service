@@ -195,6 +195,13 @@ An administration ui has been implemented in Angular that is able to
 * see the list of running components & services
 * see the service catalog of every component with respect to service interfaces and models
 * see details of the running infrastructure in terms of processes and inter-process communication
+* oidc based authentication
+
+![image](https://github.com/coolsamson7/service/assets/19403960/69c4159b-dba4-4538-a9db-23a06f130aae)
+
+![image](https://github.com/coolsamson7/service/assets/19403960/656cb434-4160-4cd6-b474-1673286f2fda)
+
+![image](https://github.com/coolsamson7/service/assets/19403960/ebb190c1-31e0-480d-85e6-592b800c4241)
 
 ## Getting started
 
