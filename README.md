@@ -6,14 +6,13 @@ A spring based framework for service discovery and transparent routing.
 ## Motivation and goals
 
 While there are already a number of - mostly spring - libraries
-available that help to solve most of the problems in  a distributed microservice based architecture like
+available that help to solve most of the lowl-level problems in  a distributed microservice based architecture like
 - registries ( consul, etc. ) and
 - loadbalancing mechanisms
 
-the result from a developer perspective in my mind is still too complicated and also has some shortcomings.
-Even if most of the technical details are nicely hidden, the programmer typically still needs to write low-level protocol agnostic code to call services.
+the result from a developer perspective in my mind is still too complicated and also has some major shortcomings.
 
-**Example:** 
+Let's look at an example ( in Java ) 
 
 ```@Configuration
 public class MyConfiguration {
@@ -37,20 +36,23 @@ public class MyClass {
 ```
 
 What's wrong?
-- the code assumes that the called service is remote in the first place
+- the code assumes that the called service is remote in the first place which sismply is a wrong assumption
 - we have to commit to a specific protocol
-- we even add technical details on protocol level ( e.g.  loadbalancing )
+- we even take care of technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
-- loadbalancing in spring cloud is done on an application and not module level!
 
 This is _clumsy_ and against some major architectural principles like separation of concern, etc.
 
-What we would like to do instead is
+Talking about modularization: Spring assumes that the granularity of building blocks which can be clustered is an application.
+This contradicts the way how teams split up work by implementing modules ( for example in from of different maven modules ) and only combining them in form of a specific deployment as a standalone application. So we bascially need a smaller building block! 
 
-- we want to program against simple interfaces
+The following design ideas or principles where the basis of the implemented architecture: 
+
+- we want to program against simple interfaces and are not interested in protocol level details
 - we don't want to care where the implementation is. It could be remote, it could be local as well.
-- depending on a specific deployment scenarios - e.g class path - different remoting situations are achieved dynamically.
-- wherever it is, we don't want to care about the technical datails, it should be completely transparent based on a central registry of running services
+- depending on a specific deployment scenarios - e.g class path - different remoting situations should be possible.
+- remote service calls are transparently routed based on a central registry that keeps track of running services ( including health checks )
+- changes in the topology should be handled transparently
 
 ## Sample
 
@@ -178,10 +180,21 @@ Channels will automatically adjust to changes in the topology which is usually d
 ## Features
 
 The framework offers the following features
+
+### Backend
+
 * first component registry implementation based on spring consul
 * rest channel based on `WebClient` supporting the _basic_ annotations
 * injection possibilities for services
 * central exception handling mechanisms
+* full introspection possibilities of the meta-data of components and services with respect to the interafces as well as model classes
+
+### Web
+
+An administration ui has been implemented in Angular that is able to
+* see the list of running components & services
+* see the service catalog of every component with respect to service interfaces and models
+* see details of the running infrastructure in terms of processes and inter-process communication
 
 ## Getting started
 
