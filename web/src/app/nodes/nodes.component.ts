@@ -314,12 +314,12 @@ interface Link {
             }
         })
 
-        link.source(a);
-        link.target(b);
-        link.labels(labelParam)
-        link.connector('jumpover', { size: 10 });
-           
-        link.addTo(graph);
+        link
+          .source(a)
+          .target(b)
+          .labels(labelParam)
+          .connector('jumpover', { size: 10 })
+          .addTo(graph)
 
         return link
     }
@@ -343,14 +343,18 @@ interface Link {
     }
 
     let makeText = (name: string, attributes?: any) => {
-        let node = new joint.shapes.standard.Rectangle(merge({   
+        let node = new joint.shapes.basic.Rect(merge({   
             size: {
                 width: 300,
                 height: 25
             },
             attrs: {
+                rect: {
+                    opacity: 0,
+                    fillOpacity: 0,
+                },
                 text: {
-                    fill: 'white',
+                    fill: 'black',
                     text: name
                 }
             }
@@ -364,8 +368,7 @@ interface Link {
     let makeRegion = (name: string, attributes?: any) => {
         let node = new joint.shapes.standard.HeaderedRectangle(merge({
             size: {
-                width: 300,
-                height: 200
+                width: 300
             },
             attrs: {
                 body: {
@@ -384,8 +387,10 @@ interface Link {
     
         node.embed(makeText("", {
             attrs: {
-                body: {
-                    fillOpacity:0.0,
+                rect: {
+                    opacity: 0,
+                    fillOpacity: 0,
+                    fill: "red",
                     strokeWidth: 0
             }
         }}))
@@ -401,8 +406,14 @@ interface Link {
         servers[server] = {
             server: makeRegion(server, { 
                 attrs: {
+                    header: {
+                        fill:  '#3f51b5'
+                    },
+                    headerText: {
+                        fill:  'white'
+                    },
                     body: {
-                        fill:  'red'
+                        fill:  'lightBlue'
                 }}}),
             components: {}
         }
@@ -432,7 +443,7 @@ interface Link {
     }
 
     let collectCells = (node: Node, result: joint.dia.Cell[]) => {
-        // local fucntion
+        // local function
 
         let collect = (node: Node) => {
             result.push(node.cell)
@@ -457,7 +468,19 @@ interface Link {
                 // create component
 
                 if (!server.components[serviceInstance.serviceId]) {
-                    let component = makeRegion(serviceInstance.serviceId)
+                    let component = makeRegion(serviceInstance.serviceId, {
+                        attrs: {
+                            header: {
+                                fill:  '#3f51b5'
+                            },
+                            headerText: {
+                                fill:  'white'
+                            },
+                            body: {
+                                fill:  'white'
+                            }
+                        }
+                    })
 
                     server.components[serviceInstance.serviceId] = component
 
@@ -511,7 +534,8 @@ interface Link {
            if ( server != target)
             connect(servers[server].server, servers[target].server,  link.components, {
                     line: {
-                        stroke: 'orange'
+                        stroke: 'black',
+                        strokeDasharray: '4 2',
                     }
                 })
         }
