@@ -20,6 +20,11 @@ interface Result {
     links:  { [server: string] :  Link[] }
 }
 
+interface Node {
+    cell: joint.dia.Cell
+    children: Node[]
+}
+
 interface Link {
     server: string,
     components: string[]
@@ -206,7 +211,7 @@ interface Link {
         this.paper.setDimensions(event.target.innerWidth, event.target.innerHeight);
         if (!this.timer) {
             this.timer = setTimeout(() => {
-                this.doLayout();
+                this.layout(false);
                 this.timer = null;
             }, 500);
         }
@@ -251,10 +256,6 @@ interface Link {
             this.wrapperElement.nativeElement.offsetWidth, 
             this.wrapperElement.nativeElement.offsetHeight
             )
-  
-         // layout
-      
-         this.doLayout();
     })
   }
 
@@ -379,13 +380,16 @@ interface Link {
 
         node.addTo(graph)
 
-        /*return node.embed(makeText("", { TODO
+        // dunno how to add padding to the first element the right way... :-(
+    
+        node.embed(makeText("", {
             attrs: {
                 body: {
                     fillOpacity:0.0,
                     strokeWidth: 0
             }
-        }}))*/
+        }}))
+
         return node
     }
 
@@ -408,7 +412,192 @@ interface Link {
         }
     }
 
-    // links
+    let saveChildren = (component: joint.dia.Cell) : Node => {
+        let result = {
+            cell: component,
+            children: []
+        }
+        //console.log(" ".repeat(level) + component.id + " at (" + component.position().x+ ", " +  component.position().y + ")")
+
+        for ( let child of component.getEmbeddedCells()) {    
+
+            // recursion
+
+            result.children.push(saveChildren(child))
+        }
+
+        //component.remove()
+
+        return result
+    }
+
+    let embed = (node: Node, parent: joint.dia.Cell) => {
+        for ( let child of node.children) {    
+
+            // recursion
+
+            embed(child, node.cell)
+        }
+
+        parent.embed(node.cell)
+    }
+
+    let embedChildren = (node: Node, parent: joint.dia.Cell) => {
+       
+        for ( let child of node.children) {    
+
+            // recursion
+
+            embed(child, parent)
+        }
+    }
+
+    let cells = (node: Node, result: joint.dia.Cell[]) => {
+
+        let collect = (node: Node) => {
+            result.push(node.cell)
+            for ( let child of node.children)  
+                collect(child)
+        }
+
+        collect(node)
+    }
+
+    let childCells = (node: Node) :  joint.dia.Cell[]  => {
+        let result = []
+
+        for ( let child of node.children)
+           cells(child, result)
+
+        return result
+    }
+
+    let traverse = (component: joint.dia.Cell, level : number = 0) => {
+        console.log(" ".repeat(level) + component.id + " at (" + component.position().x+ ", " +  component.position().y + ")")
+
+        for ( let child of component.getEmbeddedCells()) {    
+
+            // recursion
+
+            traverse(child, level + 1)
+        }
+
+    }
+    // assign components
+
+    let addComponents = (readd: boolean) => {
+        for ( let serverName of result.servers) {
+            let server = servers[serverName]
+            let serverRegion = server.server
+
+            let parent = serverRegion
+            if ( readd ) {
+                parent = makeRegion(serverName)//serverRegion.clone() //
+                //parent.addTo(this.graph)
+            }
+
+            let children = []
+
+            for ( let serviceInstance of result.instances[serverName]) {
+                // create component
+
+                if (!server.components[serviceInstance.serviceId]) {
+                    let component = makeRegion(serviceInstance.serviceId)
+
+                    children.push(component)
+
+                    server.components[serviceInstance.serviceId] = component
+
+                    parent.embed(component)
+
+                    // services
+
+                    for ( let service of result.componentServices[serviceInstance.serviceId]) {
+                        component.embed(makeText(service.name as string))
+                    }
+                } // if
+            } // for
+
+            //if ( readd ) {}
+            this.layoutCells([parent])
+
+            if ( readd ) {
+                traverse(parent, 0)
+
+                console.log("LAYOUT")
+
+                this.layoutCells(parent.getEmbeddedCells())
+
+                traverse(parent, 0)
+
+                console.log("FIT")
+
+                parent.fitToChildren({deep: true, padding: { top: 10, left: 10, right: 10, bottom: 10 }})
+
+                traverse(parent, 0)
+
+                let children =  parent.getEmbeddedCells();
+
+                var dx = serverRegion.getBBox().x - parent.getBBox().x;
+                var dy = serverRegion.getBBox().y - parent.getBBox().y;
+        
+                //for ( let child of children)
+                parent.resize(serverRegion.getBBox().width, serverRegion.getBBox().height)
+                parent.translate(dx, dy)
+
+                parent.unembed(children)
+               
+
+                
+                serverRegion.embed(children)
+                //this.layoutCells([serverRegion])
+                //serverRegion.fitEmbeds({deep: true, padding: { top: 10, left: 10, right: 10, bottom: 10 }})
+
+
+                 parent.remove()
+            }
+            else serverRegion.fitToChildren({deep: true, padding: { top: 10, left: 10, right: 10, bottom: 10 }})
+        }
+    }
+
+    // assign components, do initial layout
+
+    addComponents(false)
+
+    this.layout(true)
+
+    for ( let server in servers) {
+        let serverRegion = servers[server].server
+
+        serverRegion.fitToChildren({deep: true, padding: { top: 10, left: 10, right: 10, bottom: 10 }})
+        //serverRegion.resize(serverRegion.getBBox().width, serverRegion.getBBox().height)
+
+        console.log(server + ", w: " + serverRegion.getBBox().width + ", h: " + serverRegion.getBBox().height)
+
+        // clear components, so we can readd...
+        servers[server].components = {}
+    }
+
+    // unlink
+
+    let save = {}
+
+    for ( let server in servers) {
+        let serverRegion = servers[server].server
+    
+        let children =  saveChildren(serverRegion).children//serverRegion.getEmbeddedCells({deep: false});
+
+        save[server] = children
+        //console.log("server " + server + " has " + children.length + " children")
+        serverRegion.unembed(serverRegion.getEmbeddedCells({deep: false}))
+
+        // and delete from graph//
+
+        for ( let child of children )
+           child.cell.remove()      
+    }
+
+    // add links
 
     for ( let server in result.links) {
         for ( let link of result.links[server]) {
@@ -416,51 +605,51 @@ interface Link {
 
            if ( server != target)
             connect(servers[server].server, servers[target].server,  link.components, {
-                    line: { // selector for the visible <path> SVGElement
-                        stroke: 'orange' // SVG attribute and value
+                    line: {
+                        stroke: 'orange'
                     }
                 })
         }
     }
 
-    // assign components
+    // layout
 
-    if ( false )
+    this.layout(true)
 
-    for ( let serverName of result.servers) {
-        for ( let serviceInstance of result.instances[serverName]) {
-            let server = servers[serverName]
+    // add components again...
 
-            // create component
+    //addComponents(true)
 
-            if (!server.components[serviceInstance.serviceId]) {
-                let component = makeRegion(serviceInstance.serviceId)
-
-                server.components[serviceInstance.serviceId] = component
-
-                server.server.embed(component)
-
-                // services
-
-                for ( let service of result.componentServices[serviceInstance.serviceId]) {
-                    component.embed(makeText(service.name as string))
-                }
-            }
-        }
-    }
-
-    // open channels
-
-    // fit
-
+    if ( true )
     for ( let server in servers) {
         let serverRegion = servers[server].server
 
-       serverRegion.fitToChildren({deep: true, padding: { top: 10}})
+        let children = save[server]
+
+        let _cells = []
+        for ( let c of children)
+           cells(c, _cells)
+
+        for ( let child of _cells)
+           child.addTo(this.graph)
+
+        //this.layoutCells(cells)
+
+        var dx = serverRegion.getBBox().x - _cells[0].getBBox().x;
+        var dy = serverRegion.getBBox().y - _cells[0].getBBox().y;
+
+        for ( let child of _cells) 
+            child.translate(dx + 20, dy + 10) // the padding
+
+        for ( let child of children) 
+            embed(child, serverRegion)
+
+     
+        //serverRegion.fitToChildren({deep: true, padding: { top: 10 , left: 10, right: 10, bottom: 10}})
     }
   }
 
-  private doLayout() {
+  private layout(layoutEdges: boolean) {
     // auto layout
 
     /*let layout = new joint.layout.ForceDirected({
@@ -476,7 +665,13 @@ interface Link {
     joint.layout.DirectedGraph.layout(this.graph, {
         dagre: dagre,
         graphlib: graphlib,
-        setLinkVertices: true,
+        setLinkVertices: layoutEdges,
+        /*clusterPadding: {
+            top: 30,
+            left: 10,
+            right: 10,
+            bottom: 10
+        },*/
         nodeSep: 10,
         edgeSep: 10,
         rankSep: 100,
@@ -484,7 +679,41 @@ interface Link {
         marginY: 20,
         rankDir: 'RL',
         ranker:  'longest-path',//'tight-tree', //| 'longest-path';'network-simplex',// | 
-        setLabels: true
+        setLabels: layoutEdges
+    });
+  }
+
+  private layoutCells(cells) {
+    // auto layout
+
+    /*let layout = new joint.layout.ForceDirected({
+        graph: this.graph,
+        width: 600, height: 400,
+        gravityCenter: { x: 300, y: 200 },
+        charge: 180,
+        linkDistance: 30
+    });
+    
+    layout.start();*/
+
+    joint.layout.DirectedGraph.layout(cells, {
+        dagre: dagre,
+        graphlib: graphlib,
+        //setLinkVertices: true,
+        /*clusterPadding: {
+            top: 30,
+            left: 10,
+            right: 10,
+            bottom: 10
+        },*/
+        nodeSep: 10,
+        edgeSep: 10,
+        rankSep: 100,
+        marginX: 20,
+        marginY: 20,
+        rankDir: 'RL',
+        //ranker:  'longest-path',//'tight-tree', //| 'longest-path';'network-simplex',// | 
+        //setLabels: true
     });
   }
 }
