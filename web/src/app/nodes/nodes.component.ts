@@ -277,7 +277,7 @@ interface Link {
                 },
                 attrs: {
                     text: {
-                        text: label
+                        text: afterLastDot(label)
                     }
                 }
             }
@@ -359,7 +359,6 @@ interface Link {
                 rect: {
                     opacity: 0,
                     fillOpacity: 0,
-                    fill: "red",
                     strokeWidth: 0
             }
         }}))
@@ -388,6 +387,9 @@ interface Link {
         }
     }
 
+    // create a hioerarchical structure that references a cell hierarchy 
+    // we will use this structure to restore parent-child relationships afterwards
+
     let fetchStructure = (component: joint.dia.Cell) : Node => {
         let result = {
             cell: component,
@@ -400,6 +402,8 @@ interface Link {
         return result
     }
 
+    // restore the saved embedding information 
+
     let embed = (node: Node, parent: joint.dia.Cell) => {
         for ( let child of node.children) {    
 
@@ -411,6 +415,8 @@ interface Link {
         parent.embed(node.cell)
     }
 
+    // collect all cells of a hierarchical struture
+    
     let collectCells = (node: Node, result: joint.dia.Cell[]) => {
         // local function
 
@@ -425,6 +431,14 @@ interface Link {
 
     // assign components
 
+    let afterLastDot = (str: string) : string => {
+        let i = str.lastIndexOf('.')
+        if ( i >= 0)
+            return str.substring(i + 1)
+        else
+            return str
+    }
+
     let addComponents = () => {
         for ( let serverName of result.servers) {
             let server = servers[serverName]
@@ -437,7 +451,7 @@ interface Link {
                 // create component
 
                 if (!server.components[serviceInstance.serviceId]) {
-                    let component = makeRegion(serviceInstance.serviceId, {
+                    let component = makeRegion(afterLastDot(serviceInstance.serviceId), {
                         attrs: {
                             header: {
                                 fill:  '#3f51b5'
@@ -458,7 +472,7 @@ interface Link {
                     // services
 
                     for ( let service of result.componentServices[serviceInstance.serviceId]) {
-                        component.embed(makeText(service.name as string))
+                        component.embed(makeText(afterLastDot(service.name as string)))
                     }
                 } // if
             } // for
@@ -477,7 +491,8 @@ interface Link {
         serverRegion.fitToChildren({deep: true, padding: { top: 10, left: 10, right: 10, bottom: 10 }})
     }
 
-    // unlink
+    // we need to delet and save all embedded elements since the layout algorithm would break otherwise
+    // oh boy!
 
     let save = {}
 
@@ -514,7 +529,7 @@ interface Link {
 
     this.layout(true)
 
-    // add saved cells
+    // and restore saved elements
 
     for ( let server in servers) {
         let serverRegion = servers[server].server

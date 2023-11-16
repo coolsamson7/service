@@ -32,7 +32,7 @@ class ComponentAdministrationService {
     //@RolesAllowed("service-admin-role") // TODO!
     @ResponseBody
     fun services(): List<String> {
-        return componentAdministration.getServices()//TODO .filter { service -> service != "AdministrationComponent" }
+        return componentAdministration.getServices()
     }
 
     @GetMapping("/nodes")

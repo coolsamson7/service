@@ -1,19 +1,21 @@
 === LATER
 
-metada-a:introspective=rest(...)
+- metadata:introspective=rest(...)?
+- spring + oauth???
+- paper scroll
 
 === TODO
 
-- maven build web
-- paper scroll
+
+- docker
 
 === NOW
 
-- spring + token???
-- secure?
+- maven build web
 
 === DONE
 
+- filter only components
 - selection home?
 - icon component list
 - channels gehört da nicht hin
