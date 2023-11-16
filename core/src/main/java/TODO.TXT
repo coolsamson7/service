@@ -13,14 +13,13 @@ metada-a:introspective=rest(...)
 
 - channels gehört da nicht hin
 - general komplett weg?
-
 - komischer npe?
-- isApplicable
 - spring + token???
 - secure?
 
 === DONE
 
+- isApplicable
 - fehler admin component
 - relayout weg
 - health check administation

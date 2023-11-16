@@ -26,7 +26,7 @@ open class AbstractChannelCustomizer<T : Channel> protected constructor(channelM
 
     // implement ChannelBuilder
 
-    override fun isApplicable(component: Class<out Component>): Boolean {
+    override fun isApplicable(component: String): Boolean {
         return true
     }
 

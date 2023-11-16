@@ -128,5 +128,9 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     companion object {
         @JvmField
         var descriptors: MutableMap<String, ComponentDescriptor<*>> = HashMap()
+
+        fun forName(name: String) :ComponentDescriptor<*>? {
+            return descriptors[name]
+        }
     }
 }
