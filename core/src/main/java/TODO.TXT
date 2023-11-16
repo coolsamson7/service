@@ -2,23 +2,24 @@
 
 metada-a:introspective=rest(...)
 
-
 === TODO
 
 - maven build web
 - paper scroll
-- resize paper
 
 === NOW
 
-- channels gehört da nicht hin
-- general komplett weg?
-- komischer npe?
 - spring + token???
 - secure?
 
 === DONE
 
+- selection home?
+- icon component list
+- channels gehört da nicht hin
+- general komplett weg?
+- resize paper
+- komischer npe?
 - isApplicable
 - fehler admin component
 - relayout weg

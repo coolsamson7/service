@@ -95,7 +95,7 @@ interface Link {
                         let address = name + "(" + uri + ")"
 
                         let instances = result.address2instance[address]
-if ( instances ) // TODO
+
                         for ( let instance of instances) {
                             let addr = instance.host + ":" + instance.port
                         

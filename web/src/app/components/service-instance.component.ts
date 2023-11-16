@@ -6,6 +6,12 @@ import { ComponentsComponent } from './components.component';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { ComponentStore } from './component-store';
 
+
+interface Channel {
+  name: String,
+  uri: String
+}
+
 @Component({
   selector: 'service-instance',
   templateUrl: './service-instance.component.html',
@@ -34,6 +40,7 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
     label: "",
     route: ""
   }
+  channels: Channel[] = []
   dead = false
 
   // constructor
@@ -52,6 +59,23 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
 
   // private
 
+  private parseChannnels = (addresses: String) :Channel[] => {
+    let result = []
+
+    if ( addresses )
+      for (let address of addresses.split(",")) {
+          let lparen = address.indexOf("(")
+          let rparen = address.indexOf(")")
+
+          let channel = address.substring(0, lparen)
+          let url = address.substring(lparen + 1, rparen)
+
+          result.push({name: channel, uri: url})
+      }
+
+    return result
+  }
+
   setInstance(id: string) {
     this.instanceSubscription = this.componentStore.getInstances().subscribe({
         next: (instances: ServiceInstanceDTO[]) => {
@@ -64,9 +88,14 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
 
               this.element.label = this.instance.serviceId
 
+              this.channels = this.parseChannnels(instance.metadata['channels'])
+
               this.dead = false
             }
-            else this.dead = true
+            else {
+              this.channels = []
+              this.dead = true
+            }
         }
     })   
 
