@@ -168,11 +168,11 @@ $dokka.location:com.serious.service.channel/AbstractChannel/uriProvider/#com.ser
 $dokka.location:com.serious.service.channel/AbstractChannelCustomizer///PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-customizer/index.html
 $dokka.location:com.serious.service.channel/AbstractChannelCustomizer/apply/#TypeParam(bounds=[com.serious.service.Channel])/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-customizer/apply.html
 $dokka.location:com.serious.service.channel/AbstractChannelCustomizer/channelClass/#/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-customizer/channel-class.html
-$dokka.location:com.serious.service.channel/AbstractChannelCustomizer/isApplicable/#java.lang.Class[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-customizer/is-applicable.html
+$dokka.location:com.serious.service.channel/AbstractChannelCustomizer/isApplicable/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.channel/-abstract-channel-customizer/is-applicable.html
 $dokka.location:com.serious.service.channel/ChannelCustomizer///PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/index.html
 $dokka.location:com.serious.service.channel/ChannelCustomizer/apply/#TypeParam(bounds=[com.serious.service.Channel])/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/apply.html
 $dokka.location:com.serious.service.channel/ChannelCustomizer/channelClass/#/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/channel-class.html
-$dokka.location:com.serious.service.channel/ChannelCustomizer/isApplicable/#java.lang.Class[com.serious.service.Component]/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/is-applicable.html
+$dokka.location:com.serious.service.channel/ChannelCustomizer/isApplicable/#kotlin.String/PointingToDeclaration/service-core/com.serious.service.channel/-channel-customizer/is-applicable.html
 $dokka.location:com.serious.service.channel/MissingChannel///PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/index.html
 $dokka.location:com.serious.service.channel/MissingChannel/MissingChannel/#com.serious.service.ChannelManager#kotlin.String/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/-missing-channel.html
 $dokka.location:com.serious.service.channel/MissingChannel/component/#/PointingToDeclaration/service-core/com.serious.service.channel/-missing-channel/component.html
@@ -283,6 +283,7 @@ $dokka.location:com.serious.service/ComponentAdministration/serviceHealth/#kotli
 $dokka.location:com.serious.service/ComponentAdministration/serviceHealths/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-administration/service-healths.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/index.html
 $dokka.location:com.serious.service/ComponentDescriptor.Companion/descriptors/#/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/descriptors.html
+$dokka.location:com.serious.service/ComponentDescriptor.Companion/forName/#kotlin.String/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-companion/for-name.html
 $dokka.location:com.serious.service/ComponentDescriptor///PointingToDeclaration/service-core/com.serious.service/-component-descriptor/index.html
 $dokka.location:com.serious.service/ComponentDescriptor/ComponentDescriptor/#java.lang.Class[TypeParam(bounds=[com.serious.service.Component])]/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/-component-descriptor.html
 $dokka.location:com.serious.service/ComponentDescriptor/externalAddresses/#/PointingToDeclaration/service-core/com.serious.service/-component-descriptor/external-addresses.html
