@@ -1,3 +1,8 @@
+=== LATER
+
+metada-a:introspective=rest(...)
+
+
 === TODO
 
 - maven build web
@@ -6,19 +11,18 @@
 
 === NOW
 
+- channels gehört da nicht hin
+- general komplett weg?
+
+- komischer npe?
+- isApplicable
+- spring + token???
 - secure?
-
-=== DENK NACH
-
-besser wäre es, wenn der rest channel genutzt wird! ( nee->cluster )
-
-metada-a:introspective=rest(...)
-meta:container=rest(...)?
-
-=== LATER
 
 === DONE
 
+- relayout weg
+- health check administation
 - links...
 - environment
 - guard & redirect ?

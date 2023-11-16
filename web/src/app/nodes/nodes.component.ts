@@ -32,27 +32,18 @@ interface Link {
 
 @Component({
     selector: 'nodes',
-    //templateUrl: './nodes.component.html',
-    //styleUrls: ['./nodes.component.scss'],
     template: `<div #wrapper><div #graph></div></div>`,
     providers: []
   })
   export class NodesComponent extends NavigationComponent implements AfterViewInit{
     // instance data
 
-    nodes: String[] = []
-    selected: string
-
-    // NEW
-
     @ViewChild('wrapper') wrapperElement: ElementRef;
     @ViewChild('graph') graphElement: ElementRef;
+
     paper: any;
     graph: any;
-    timer: any = null;
-
-
-// NEW
+    namespace
 
     // constructor
 
@@ -65,6 +56,8 @@ interface Link {
         })
     }
 
+    // private
+
     fetchData() : Observable<Result> {
         let result : Result = {
             instances: {},
@@ -76,21 +69,6 @@ interface Link {
             links: {}
         } 
 
-          // TEST
-
-          let str = "rest(http://localhost:8080),dispatch(http://localhost:8080)"
-          for (let address of str.split(",")) {
-              let lparen = address.indexOf("(")
-              let rparen = address.indexOf(")")
-  
-              let m = address.substring(lparen + 1, rparen)
-  
-              let url = new URL(m)
-  
-              url.host
-              url.port
-              url.protocol
-          }
         
         let parse = (addresses) => {
             for (let address of addresses.split(",")) {
@@ -117,7 +95,7 @@ interface Link {
                         let address = name + "(" + uri + ")"
 
                         let instances = result.address2instance[address]
-
+if ( instances ) // TODO
                         for ( let instance of instances) {
                             let addr = instance.host + ":" + instance.port
                         
@@ -207,18 +185,9 @@ interface Link {
 
    @HostListener('window:resize', ['$event'])
    onResize(event) {
-      if (this.paper && this.graph) {
+      if (this.paper && this.graph)
         this.paper.setDimensions(event.target.innerWidth, event.target.innerHeight);
-        if (!this.timer) {
-            this.timer = setTimeout(() => {
-                this.layout(false);
-                this.timer = null;
-            }, 500);
-        }
-     }
    }
-
-   namespace
 
    // implement OnInit
 
@@ -413,7 +382,7 @@ interface Link {
                         fill:  'white'
                     },
                     body: {
-                        fill:  '#dbe7f2'
+                        fill:  'lightBlue'
                 }}}),
             components: {}
         }
