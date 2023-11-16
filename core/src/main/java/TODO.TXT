@@ -21,6 +21,7 @@ metada-a:introspective=rest(...)
 
 === DONE
 
+- fehler admin component
 - relayout weg
 - health check administation
 - links...

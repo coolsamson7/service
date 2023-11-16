@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 
 @ServiceInterface
 @RequestMapping("component-administration/")
+@RestController
 interface ComponentIntrospectionService : Service {
     @GetMapping("component/{component}")
     @ResponseBody

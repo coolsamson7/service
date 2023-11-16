@@ -13,12 +13,14 @@ import com.serious.service.administration.model.ComponentDTO
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @Component
+@RestController
 class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
     // implement
 
-    override fun fetchComponent(@RequestParam component: String) : ComponentDTO {
+    override fun fetchComponent(component: String) : ComponentDTO {
         val componentDescriptor = ComponentDescriptor.descriptors.get(component)!!
 
         return ComponentDTO(
@@ -28,7 +30,7 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
             componentDescriptor.externalAddresses!!.map { address ->  ChannelDTO(address.channel, listOf(address.uri)) })
     }
 
-    override fun fetchComponentServices(@PathVariable component: String) : List<String> {
+    override fun fetchComponentServices(component: String) : List<String> {
         val componentDescriptor = ComponentDescriptor.descriptors.get(component)!!
 
         return componentDescriptor.getModel().services.map { servce -> servce.name }
