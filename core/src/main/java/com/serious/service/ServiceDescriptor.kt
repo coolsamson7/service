@@ -14,6 +14,7 @@ import kotlin.reflect.jvm.javaField
 
 data class TypeDescriptor(
     val name: String,
+    val optional : Boolean,
     val parameter: List<TypeDescriptor>
 ): Serializable
 data class AnnotationDescriptor (
@@ -137,16 +138,24 @@ class InterfaceAnalyzer {
     fun type(type: KType) : TypeDescriptor {
         checkType(type)
 
+        var typeName = type.toString()
+        var optional = false
+        if ( typeName.endsWith("?")) {
+            typeName = typeName.substring(0, typeName.length - 1)
+            optional = true
+        }
+
         if (type.arguments.isEmpty())
             return TypeDescriptor(
-                type.toString(),
+                typeName,
+                optional,
                 emptyList()
             )
         else {
-            var name = type.toString();
-            name = name.substring(0, name.indexOf("<"))
+            typeName = typeName.substring(0, typeName.indexOf("<"))
             return TypeDescriptor(
-                name,
+                typeName,
+                optional,
                 type.arguments.map { param -> type(param.type!!) }
             )
         }

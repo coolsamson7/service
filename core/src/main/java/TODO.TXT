@@ -6,7 +6,8 @@
 
 === TODO
 
-
+- enum
+- min, max, ...
 - docker
 
 === NOW

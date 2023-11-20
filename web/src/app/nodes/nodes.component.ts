@@ -343,7 +343,11 @@ interface Link {
                 body: {
                     fill: 'grey'
                 },
+                header: {
+                    cursor: 'pointer'
+                },
                 headerText: {
+                    cursor: 'pointer',
                     text: name,
                     fill: 'black'
                 }
@@ -416,7 +420,7 @@ interface Link {
     }
 
     // collect all cells of a hierarchical struture
-    
+
     let collectCells = (node: Node, result: joint.dia.Cell[]) => {
         // local function
 
@@ -578,11 +582,11 @@ interface Link {
         dagre: dagre,
         graphlib: graphlib,
         setLinkVertices: layoutEdges,
-        nodeSep: 10,
+        nodeSep: 5,
         edgeSep: 10,
         rankSep: 100,
-        marginX: 20,
-        marginY: 20,
+        marginX: 10,
+        marginY: 10,
         rankDir: 'RL',
         //ranker:  'longest-path',//'tight-tree', //| 'longest-path';'network-simplex',// | 
         setLabels: layoutEdges
