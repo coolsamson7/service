@@ -476,8 +476,9 @@ $dokka.location:com.serious.service/SpringChannelFactory/makeChannel/#kotlin.Str
 $dokka.location:com.serious.service/TopologyListener///PointingToDeclaration/service-core/com.serious.service/-topology-listener/index.html
 $dokka.location:com.serious.service/TopologyListener/update/#com.serious.service.ServiceInstanceRegistry.TopologyUpdate/PointingToDeclaration/service-core/com.serious.service/-topology-listener/update.html
 $dokka.location:com.serious.service/TypeDescriptor///PointingToDeclaration/service-core/com.serious.service/-type-descriptor/index.html
-$dokka.location:com.serious.service/TypeDescriptor/TypeDescriptor/#kotlin.String#kotlin.collections.List[com.serious.service.TypeDescriptor]/PointingToDeclaration/service-core/com.serious.service/-type-descriptor/-type-descriptor.html
+$dokka.location:com.serious.service/TypeDescriptor/TypeDescriptor/#kotlin.String#kotlin.Boolean#kotlin.collections.List[com.serious.service.TypeDescriptor]/PointingToDeclaration/service-core/com.serious.service/-type-descriptor/-type-descriptor.html
 $dokka.location:com.serious.service/TypeDescriptor/name/#/PointingToDeclaration/service-core/com.serious.service/-type-descriptor/name.html
+$dokka.location:com.serious.service/TypeDescriptor/optional/#/PointingToDeclaration/service-core/com.serious.service/-type-descriptor/optional.html
 $dokka.location:com.serious.service/TypeDescriptor/parameter/#/PointingToDeclaration/service-core/com.serious.service/-type-descriptor/parameter.html
 $dokka.location:com.serious.spring////PointingToDeclaration/service-core/com.serious.spring/index.html
 $dokka.location:com.serious.spring/ChildBeanFactory///PointingToDeclaration/service-core/com.serious.spring/-child-bean-factory/index.html
