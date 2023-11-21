@@ -1,6 +1,7 @@
 <div class="method">
     <annotation [annotation]="annotation" *ngFor="let annotation of method.annotations"/>
     <div class="body"> 
+        <mat-icon (click)="toggleRun()">{{run ?  'expand_less' : 'expand_more'}}</mat-icon>
         <span class="keyword">fun</span>&nbsp;<span>{{method.name}}&#40;</span>
         <span class="parameter" *ngFor="let parameter of method.parameters; let i = index; let first = first ;let last = last;">
             <span style="display:flex;" *ngFor="let annotation of parameter.annotations">
@@ -13,4 +14,5 @@
         </span>
         <span>&#41; : <type [type]="method.returnType"/></span>
     </div>
+    <method-runner *ngIf="run" [model]="model" [service]="service" [method]="method"></method-runner>
 </div>

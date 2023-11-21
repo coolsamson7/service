@@ -12,10 +12,15 @@
 
 === NOW
 
+- editor for methode
+
+- run methode
 - maven build web
 
 === DONE
 
+- query analyzer
+- json schema
 - filter only components
 - selection home?
 - icon component list

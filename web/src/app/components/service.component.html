@@ -15,7 +15,7 @@
     </div>
     <span *ngIf="open" class="body">
         <property [property]="property" *ngFor="let property of service.properties"/>
-        <method [method]="method" *ngFor="let method of service.methods"/>
+        <method [model]="model" [service]="service" [method]="method" *ngFor="let method of service.methods"/>
         &#125;
     </span>
 </div>

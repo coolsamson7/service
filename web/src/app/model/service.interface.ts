@@ -1,5 +1,6 @@
 export interface TypeDescriptor {
     name: String,
+    optional: Boolean,
     parameter: TypeDescriptor[]
 }
    

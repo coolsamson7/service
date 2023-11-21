@@ -1,5 +1,169 @@
 import { ComponentModel } from "../model/component.interface"
-import { InterfaceDescriptor , PropertyDescriptor} from "../model/service.interface"
+import { AnnotationDescriptor, InterfaceDescriptor , MethodDescriptor, ParameterDescriptor, PropertyDescriptor, TypeDescriptor} from "../model/service.interface"
+
+
+export enum ParameterType {
+  PATH_VARIABLE,
+  REQUEST_PARAM,
+  BODY,
+}
+
+export interface QueryParameter {
+  name: string
+  description: string
+  parameterType: ParameterType
+  type: TypeDescriptor
+  value: any
+}
+
+export interface Query {
+  method: string, // get, post, put
+  url: string
+  params: QueryParameter[]
+}
+
+export class QueryAnalyzer {
+     // instance data
+
+     urlPrefix: string = ""
+
+     // constructor
+
+     constructor(private service: InterfaceDescriptor) {
+      this.urlPrefix = ""
+
+      let annotation
+      if ((annotation = service.annotations.find(annotation => annotation.name == "RequestMapping")) != undefined) {
+        this.urlPrefix = annotation.parameters.find(annotation => annotation.name == "value").value[0]
+      }
+  }
+
+
+  analyzeMethod(method: MethodDescriptor) : Query {
+    let mapping : AnnotationDescriptor
+    if (( mapping = this.findAnnotation(method, "GetMapping")) != undefined)
+      return this.analyzeGetMapping(method, mapping)
+    
+    else if (( mapping = this.findAnnotation(method, "PostMapping")) != undefined)
+      return this.analyzePostMapping(method, mapping)
+    
+    else if (( mapping = this.findAnnotation(method, "PutMapping")) != undefined)
+      return this.analyzePutMapping(method, mapping)
+
+    return undefined
+  }
+
+  findAnnotation(method: MethodDescriptor, mapping: string) :AnnotationDescriptor {
+    return method.annotations.find(annotation => annotation.name == mapping)
+  }
+
+  defaultValue4(type: TypeDescriptor) {
+    switch (type.name) {
+      case "kotlin.String":
+        return ""
+
+      case "kotlin.Int":
+          return 0
+
+      default:
+         return "" // TODO
+    }
+  }
+
+  analyzeParameters(method: MethodDescriptor, query: Query) {
+    // local functions
+
+    let findAnnotation = (parameter: ParameterDescriptor, name: string) => {
+      return parameter.annotations.find(annotation => annotation.name == name) 
+    }
+
+    let findParameter = (annotation: AnnotationDescriptor, name: string) => {
+      return annotation.parameters.find(param => param.name == name) 
+    }
+
+    // let's go
+
+    for ( let parameter of method.parameters) {
+      let annotation;
+
+      // path variable
+
+      if ((annotation = findAnnotation(parameter, "PathVariable")) != undefined) {
+         let name = parameter.name as string
+
+         let value;
+         if ((value = findParameter(annotation, "value")) != undefined) {
+            name = value.value
+         }
+
+         query.params.push({ name: name, description: "", parameterType: ParameterType.PATH_VARIABLE, type: parameter.type, value: this.defaultValue4(parameter.type) })
+      }
+
+      // request param
+
+      else if ((annotation = findAnnotation(parameter, "RequestParam")) != undefined) {
+        let name = parameter.name as string
+
+        let value;
+        if ((value = findParameter(annotation,  "value")) != undefined) {
+          name = value.value
+        }
+
+        query.params.push({ name: name, description: "", parameterType: ParameterType.REQUEST_PARAM, type: parameter.type, value: this.defaultValue4(parameter.type) })
+      }
+
+      // body
+
+      else if ((annotation = findAnnotation(parameter, "RequestBody")) != undefined) {
+        let name = parameter.name as string
+
+        let value;
+        if ((value = findParameter(annotation,  "value")) != undefined) {
+          name = value.value
+        }
+
+        query.params.push({ name: name, description: "", parameterType: ParameterType.BODY, type: parameter.type, value: this.defaultValue4(parameter.type) })
+      }
+    }
+  }
+
+  analyzeGetMapping(method: MethodDescriptor, mapping: AnnotationDescriptor) : Query {
+    let query : Query = {
+        method: "get",
+        url: this.urlPrefix + mapping.parameters.find(param => param.name == "value").value[0],
+        params: []
+    }
+
+    this.analyzeParameters(method, query)
+
+    return query
+  }
+
+  analyzePostMapping(method: MethodDescriptor, mapping: AnnotationDescriptor)  : Query {
+    let query : Query = {
+      method: "post",
+      url: this.urlPrefix + mapping.parameters.find(param => param.name == "value").value[0],
+      params: []
+  }
+
+  this.analyzeParameters(method, query)
+
+  return query
+  }
+
+
+   analyzePutMapping(method: MethodDescriptor, mapping: AnnotationDescriptor) : Query {
+    let query : Query = {
+      method: "put",
+      url: this.urlPrefix + mapping.parameters.find(param => param.name == "value").value[0],
+      params: []
+  }
+
+  this.analyzeParameters(method, query)
+
+  return query
+  }
+}
 
 export class JSONSchemaBuilder {
     // instane data

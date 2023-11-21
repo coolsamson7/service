@@ -36,7 +36,7 @@
                 <span class="bold">Services</span>
                 <span class="services" *ngFor="let service of component.model.services; let i = index">
                     <mat-icon (click)="toggle(i+1)">{{open[i+1] ? 'expand_less' : 'expand_more'}}</mat-icon>
-                    <service [service]="service" [open]="open[i+1]"></service>
+                    <service [model]="component.model" [service]="service" [open]="open[i+1]"></service>
                 </span>
 
                 <!-- models -->

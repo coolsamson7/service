@@ -7,7 +7,7 @@ import { RouteElement } from '../widgets/navigation-component.component';
 import { Update, UpdateService } from '../service/update-service.service';
 import { ComponentStore } from './component-store';
 import { Subscription } from 'rxjs';
-import { JSONSchemaBuilder } from '../json/json-schema-builder';
+import { JSONSchemaBuilder, QueryAnalyzer } from '../json/json-schema-builder';
 
 
 @Component({
@@ -75,6 +75,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
 
   // NEW
+
   extractJSONSchema(component: ComponentDTO) {
     let sample = {
       type: "object",

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 interface ComponentIntrospectionService : Service {
     @GetMapping("component/{component}")
     @ResponseBody
-    fun fetchComponent(@PathVariable component: String) : ComponentDTO
+    fun fetchComponent(@PathVariable("component") component: String) : ComponentDTO
 
     @GetMapping("component-service/{component}")
     @ResponseBody

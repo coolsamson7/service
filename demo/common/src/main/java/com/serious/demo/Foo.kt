@@ -23,7 +23,7 @@ class Foo : Base() {
     @Min(0)
     @Max(100)
     var age = 10
-    var date = Date()
+    //var date = Date()
     var data1 = "data1"
     var data2 = "data2"
     var data3 = "data3"

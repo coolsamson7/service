@@ -1,0 +1,29 @@
+<div class="method">
+   <h3>Parameters</h3>
+
+   <query-parameter  *ngFor="let param of query.params" [parameter]="param" (changed)="onChange()"></query-parameter>
+
+   <h3>Query</h3>
+
+   
+   <div class="query">
+      <mat-icon class="play" (click)="execute()">play_arrow</mat-icon>
+
+      <div class="">
+         <div class="url">
+            <span class="http-method">{{query.method}}</span>
+            <span>{{executedURL}}</span>
+         </div>
+         <div *ngIf="query.method == 'post'" class="body">
+            <textarea matInput [(ngModel)]="body.value" 
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="5"></textarea>
+         </div>
+      </div>
+   </div>
+
+   <h3>Result</h3>
+
+</div>

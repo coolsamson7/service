@@ -13,7 +13,8 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
-import { ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
+import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
     declarations: [
@@ -30,7 +31,9 @@ import { ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, Se
         ServiceTypeComponent,
         ServiceMethodComponent,
         ServicePropertyComponent,
-        ServiceClassComponent
+        ServiceClassComponent,
+        ServiceMethodRunnerComponent,
+        QueryParamComponent
     ],
     imports: [
       CommonModule,
@@ -39,7 +42,8 @@ import { ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, Se
       MatTabsModule,
       MatInputModule,
       MatFormFieldModule,
-      MatIconModule
+      MatIconModule,
+      FormsModule
     ]
   })
 export class ComponentsModule { }
