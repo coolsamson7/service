@@ -2,7 +2,7 @@
   <mat-label>{{parameter.name}}</mat-label>
   <input matInput  *ngSwitchCase="'string'" type="text" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
   <input matInput  *ngSwitchCase="'number'" type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
-  <textarea matInput  *ngSwitchCase="'number'"  [(ngModel)]="parameter.value"  (ngModelChange)='newValue($event)'
+  <textarea matInput  *ngSwitchCase="'body'"  [(ngModel)]="parameter.value"  (ngModelChange)='newValue($event)'
      cdkTextareaAutosize
      #autosize="cdkTextareaAutosize"
      cdkAutosizeMinRows="1"
