@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChil
 import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor, PropertyDescriptor } from "../model/service.interface";
 import { JSONSchemaBuilder, ParameterType, Query, QueryAnalyzer, QueryParameter } from "../json/json-schema-builder";
 import { ComponentModel } from "../model/component.interface";
+import { ComponentService } from "../service/component-service.service";
 
 @Component({
     selector: 'annotation',
@@ -110,9 +111,15 @@ export class ServiceMethodRunnerComponent implements OnInit {
     @Input('method') method: MethodDescriptor 
 
     query: Query
+    result
     executedURL = ""
     body: QueryParameter
     parameter = {}
+
+    // constructor
+
+    constructor(private componentService : ComponentService) {
+    }
 
     // private
 
@@ -155,7 +162,43 @@ export class ServiceMethodRunnerComponent implements OnInit {
    // callbacks
 
     execute() {
-        console.log("execute")
+        let afterLastDot = (name: string) => {
+            return name.substring(name.lastIndexOf(".") + 1)
+        }
+
+        let request : ServiceRequest = {
+            component: afterLastDot(this.model.component.name as string), // TODO
+            service: afterLastDot(this.service.name as string),
+            method: this.method.name as string,
+            parameters: []
+        }
+
+        for ( let param of this.query.params) {
+            if ( param === this.body) {
+                let body = JSON.parse(param.value)
+
+                request.parameters.push({
+                    name: param.name,
+                    value: body
+                })
+            }
+            else request.parameters.push({
+                name: param.name,
+                value: param.value
+            })
+        }        
+
+        let json = JSON.stringify(request, null, "\t")
+
+        this.componentService.executeMethod(request.component, json).subscribe(result => {
+            //console.log(result)
+
+            if ( typeof result === "object")
+                this.result = JSON.stringify(result, null, "\t")
+            else
+                this.result = result
+        }
+        )
     }
 
     onChange() {
@@ -220,6 +263,17 @@ export class ServiceClassComponent {
     format(clazz: String) {
         return clazz.substring(clazz.lastIndexOf('.') + 1) // for now
     }
+}
+
+export interface ServiceRequestParam {
+   name: string,
+   value: any
+}
+export interface ServiceRequest {
+    component: string,
+    service: string,
+    method: string,
+    parameters: ServiceRequestParam[]
 }
 
 @Component({

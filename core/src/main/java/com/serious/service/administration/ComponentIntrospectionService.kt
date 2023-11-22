@@ -9,11 +9,7 @@ import com.serious.service.InterfaceDescriptor
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.service.administration.model.ComponentDTO
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @ServiceInterface
 @RequestMapping("component-administration/")
@@ -30,4 +26,8 @@ interface ComponentIntrospectionService : Service {
     @GetMapping("component-services/{component}")
     @ResponseBody
     fun listServices(@PathVariable component: String) : Collection<InterfaceDescriptor>
+
+    @PostMapping("execute-method/{component}")
+    @ResponseBody
+    fun executeMethod(@PathVariable component: String, @RequestBody request: String) : String
 }

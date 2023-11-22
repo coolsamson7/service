@@ -91,6 +91,16 @@ class ComponentAdministrationService {
         return administration.listServices(component)
     }
 
+    @PostMapping("/execute-method/{component}")
+    @ResponseBody
+    fun executeMethod(@PathVariable component: String, @RequestBody request: String) : String {
+        val administration = serviceManager.acquireAdministrativeService(component, ComponentIntrospectionService::class.java)
+
+        // go
+
+        return administration.executeMethod(component, request)
+    }
+
     // application
 
     @PostMapping("/application-channels")

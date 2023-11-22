@@ -37,6 +37,10 @@ export class ComponentService extends AbstractHTTPService {
       return this.get<InterfaceDescriptor[]>(`/component-services/${component}`);
     }
 
+    public executeMethod(component: String, request: string): Observable<string>{
+      return this.post<string>(`/execute-method/${component}`, request);
+    }
+
     public getServiceHealth(serviceName: String, serviceId: String): Observable<String>{
       return this.get<String>(`/health/${serviceName}/${serviceId}`);
     }

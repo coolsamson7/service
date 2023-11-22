@@ -1,8 +1,14 @@
 <ng-container *ngIf="type != 'json'">
    <mat-form-field class="param" [ngSwitch]="type">
       <mat-label>{{parameter.name}}</mat-label>
-      <input matInput  *ngSwitchCase="'string'" type="text" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
-      <input matInput  *ngSwitchCase="'number'" type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
+      <ng-container  *ngSwitchCase="'string'" >
+         <input matInput type="text" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)' [name]="parameter.name" [id]="parameter.name"/>
+         <span *ngIf=""></span>
+      </ng-container>
+
+      <ng-container  *ngSwitchCase="'number'">
+         <input matInput  type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)' [name]="parameter.name" [id]="parameter.name"/>
+      </ng-container>
     </mat-form-field>
 </ng-container>
 

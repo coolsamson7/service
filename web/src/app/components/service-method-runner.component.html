@@ -1,7 +1,12 @@
 <div class="method">
    <h3>Parameters</h3>
 
-   <query-parameter  *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter>
+   <form #form="ngForm">
+      V{{form.form.valid}}
+      D{{form.form.dirty}}
+      T{{form.form.touched}}
+      <query-parameter  *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter>
+   </form>
 
    <h3>Query</h3>
 
@@ -25,5 +30,11 @@
    </div>
 
    <h3>Result</h3>
+
+   <textarea matInput [(ngModel)]="result"
+   cdkTextareaAutosize
+   #autosize="cdkTextareaAutosize"
+   cdkAutosizeMinRows="1"
+   cdkAutosizeMaxRows="5"></textarea>
 
 </div>
