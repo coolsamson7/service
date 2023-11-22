@@ -25,6 +25,6 @@ interface CommonService : Service {
 
     @PostMapping("post")
     @ResponseBody
-    fun post(@RequestBody() foo : Foo) : Foo
+    fun post(@RequestBody() foo : Foo, @RequestParam() times: Int) : Foo
 
 }

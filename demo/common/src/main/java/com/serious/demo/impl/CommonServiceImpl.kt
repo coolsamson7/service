@@ -24,7 +24,7 @@ class CommonServiceImpl : CommonService {
         return "hello" + world;
     }
 
-    override fun post(foo : Foo) : Foo {
+    override fun post(foo : Foo, times: Int) : Foo {
         return foo
     }
 }

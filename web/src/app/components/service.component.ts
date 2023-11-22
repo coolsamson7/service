@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor, PropertyDescriptor } from "../model/service.interface";
 import { JSONSchemaBuilder, ParameterType, Query, QueryAnalyzer, QueryParameter } from "../json/json-schema-builder";
 import { ComponentModel } from "../model/component.interface";
@@ -62,6 +62,7 @@ export class QueryParamComponent implements OnInit {
     // input
 
     @Input('parameter') parameter: QueryParameter 
+    @Input('model') model: ComponentModel 
 
     @Output() changed = new EventEmitter<any>();
 
@@ -84,7 +85,7 @@ export class QueryParamComponent implements OnInit {
                 return "number"
 
             default:
-                return "string"
+                return "json"
         }
     }
 
@@ -162,7 +163,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
     }
 
     // implement OnInit
-    
+
     ngOnInit(): void {
         this.query = new QueryAnalyzer(this.service).analyzeMethod(this.method);
 
@@ -172,37 +173,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
                 this.body = param
         }
 
-        if (this.body) {
-            let model = this.model.models.find(model => model.name == this.body.type.name)
-            let schema = new JSONSchemaBuilder(this.model).createSchema(model)
-
-            console.log(schema)
-
-            let body = {}
-
-            for (let property in schema.properties) {
-                let value
-                switch (schema.properties[property].type) {
-                    case "string":
-                        value = "";
-                        break;
-
-                    case "integer":
-                    case "number":
-                        value = 0
-                        break;
-
-                    default:
-                        value = ""
-                }
-
-                body[property] = value
-            }
-
-            this.body.value =  JSON.stringify(body)
-        }
-
-        this.updateURL()
+       this.updateURL()
     }
 }
 
@@ -305,5 +276,115 @@ export class ServiceComponent implements OnInit {
     ngOnInit(): void {
         this.toggle()
         this.toggle()
+    }
+}
+
+@Component({
+    selector: 'json-view',
+    templateUrl: './json.component.html'
+    //styleUrls: ['./json.component.scss']
+  })
+export class JSONComponent implements OnInit,  AfterViewInit {
+    // input & output
+
+    @Input('model') model: ComponentModel
+    @Input('type') type: string
+    @Input('parameter') parameter: QueryParameter 
+
+    @Output() onChange = new EventEmitter<any>();
+
+    // children
+
+    @ViewChild('editor') editor
+
+    // instance data
+
+    monaco
+    editorOptions = {theme: 'vs-dark', language: 'json'};
+    editorModel : any
+    schema : any
+    uri : any
+
+    // callback
+
+    onInit($event) {
+        if ( !this.monaco ) {
+            this.monaco = (window as any).monaco
+
+            this.computeSchema()
+            this.computeCode()
+            this.setSchema()
+            this.setModel()
+        }
+    }
+
+    // private
+
+    private computeSchema() {
+        let model   = this.model.models.find(model => model.name == this.type)
+        this.schema = new JSONSchemaBuilder(this.model).createSchema(model)
+        this.uri = this.monaco.Uri.parse('a://' + this.type + '.json')
+    }
+
+    private setSchema() {
+        this.monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+            validate: true,
+            schemas: [{
+                uri: this.uri,
+                fileMatch: [this.uri.toString()],
+                schema: this.schema
+            }]
+        })
+    }
+
+    private computeCode() {
+        let json = {}
+
+        for (let property in this.schema.properties) {
+            let value
+            switch (this.schema.properties[property].type) {
+                case "string":
+                    value = "";
+                    break;
+
+                case "integer":
+                case "number":
+                    value = 0
+                    break;
+
+                default:
+                    value = ""
+            }
+
+            json[property] = value
+        }
+
+        this.parameter.value =  JSON.stringify(json, null, "\t")
+    }
+
+    private setModel() {
+        // set model
+
+        this.editorModel = {
+            value: this.parameter.value,
+            language: 'json',
+            uri: this.uri
+        }
+    }
+
+
+     // implement OnInit
+
+     ngOnInit(): void {
+        this.type = this.parameter.type.name as string 
+     }
+
+     // implement AfterviewInit
+
+    ngAfterViewInit(): void {
+       this.editor.registerOnChange(() => {
+        this.onChange.emit(this.parameter.value = this.editor._value)
+       });
+       //this.editorComponent.registerOnTouched(this.onTouched);
     }
 }

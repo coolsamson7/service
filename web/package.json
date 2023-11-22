@@ -59,6 +59,8 @@
     "jointjs": "^3.7.7",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
+    "monaco-editor": "^0.44.0",
+    "ngx-monaco-editor-v2": "^17.0.1",
     "rxjs": "~7.8.1",
     "tslib": "^2.5.0",
     "zone.js": "~0.13.0"

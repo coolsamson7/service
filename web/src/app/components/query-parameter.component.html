@@ -1,11 +1,9 @@
-<mat-form-field class="param" [ngSwitch]="type">
-  <mat-label>{{parameter.name}}</mat-label>
-  <input matInput  *ngSwitchCase="'string'" type="text" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
-  <input matInput  *ngSwitchCase="'number'" type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
-  <textarea matInput  *ngSwitchCase="'body'"  [(ngModel)]="parameter.value"  (ngModelChange)='newValue($event)'
-     cdkTextareaAutosize
-     #autosize="cdkTextareaAutosize"
-     cdkAutosizeMinRows="1"
-     cdkAutosizeMaxRows="5">
-</textarea>
-</mat-form-field>
+<ng-container *ngIf="type != 'json'">
+   <mat-form-field class="param" [ngSwitch]="type">
+      <mat-label>{{parameter.name}}</mat-label>
+      <input matInput  *ngSwitchCase="'string'" type="text" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
+      <input matInput  *ngSwitchCase="'number'" type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)'/>
+    </mat-form-field>
+</ng-container>
+
+<json-view *ngIf="type == 'json'" [model]="model" [parameter]="parameter" (onChange)="newValue($event)"></json-view>

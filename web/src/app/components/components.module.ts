@@ -13,8 +13,9 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
-import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
+import { JSONComponent, QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { FormsModule } from "@angular/forms";
         ServicePropertyComponent,
         ServiceClassComponent,
         ServiceMethodRunnerComponent,
-        QueryParamComponent
+        QueryParamComponent,
+        JSONComponent
     ],
     imports: [
       CommonModule,
@@ -43,7 +45,8 @@ import { FormsModule } from "@angular/forms";
       MatInputModule,
       MatFormFieldModule,
       MatIconModule,
-      FormsModule
+      FormsModule,
+      MonacoEditorModule.forRoot() // use forRoot() in main app module only.
     ]
   })
 export class ComponentsModule { }

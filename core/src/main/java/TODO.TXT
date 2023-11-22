@@ -17,6 +17,33 @@
 - run methode
 - maven build web
 
+
+== DENK NACH
+
+
+data class Parameter {
+   val type // integer number json!
+   val name;
+
+   val intValue: Int?
+   val stringValue : String?
+}
+ich habe query mit
+  {name: "bla", type: "integer", value: 1}
+   {name: "blu", type: "string", value: "1"}
+ {name: "body", type: "string??", value: "{'a': 1, 'b': '2'}"}
+
+ das schicke ich auf den srever, und dann?
+
+ ich muss den objectmapper nehmen, um das originalobejckt zu rekonstruieren, oder?
+
+also body!
+parameter auch low-level ( check date! )
+
+dann SimpleMethodInvocation!
+
+
+ ich kann nciht
 === DONE
 
 - query analyzer
