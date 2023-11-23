@@ -1,3 +1,4 @@
+import { param } from "jquery"
 import { ComponentModel } from "../model/component.interface"
 import { AnnotationDescriptor, InterfaceDescriptor , MethodDescriptor, ParameterDescriptor, PropertyDescriptor, TypeDescriptor} from "../model/service.interface"
 
@@ -33,8 +34,8 @@ export class QueryAnalyzer {
       this.urlPrefix = ""
 
       let annotation
-      if ((annotation = service.annotations.find(annotation => annotation.name == "RequestMapping")) != undefined) {
-        this.urlPrefix = annotation.parameters.find(annotation => annotation.name == "value").value[0]
+      if ((annotation = service.annotations.find(annotation => annotation.name.endsWith("RequestMapping"))) != undefined) {
+        this.urlPrefix = annotation.parameters.find(param => param.name == "value").value[0]
       }
   }
 
@@ -54,7 +55,7 @@ export class QueryAnalyzer {
   }
 
   findAnnotation(method: MethodDescriptor, mapping: string) :AnnotationDescriptor {
-    return method.annotations.find(annotation => annotation.name == mapping)
+    return method.annotations.find(annotation => annotation.name.endsWith(mapping))
   }
 
   defaultValue4(type: TypeDescriptor) {
@@ -74,7 +75,7 @@ export class QueryAnalyzer {
     // local functions
 
     let findAnnotation = (parameter: ParameterDescriptor, name: string) => {
-      return parameter.annotations.find(annotation => annotation.name == name) 
+      return parameter.annotations.find(annotation => annotation.name.endsWith(name)) 
     }
 
     let findParameter = (annotation: AnnotationDescriptor, name: string) => {
@@ -89,7 +90,7 @@ export class QueryAnalyzer {
       // path variable
 
       if ((annotation = findAnnotation(parameter, "PathVariable")) != undefined) {
-         let name = parameter.name as string
+         let name = parameter.name
 
          let value;
          if ((value = findParameter(annotation, "value")) != undefined) {
@@ -102,7 +103,7 @@ export class QueryAnalyzer {
       // request param
 
       else if ((annotation = findAnnotation(parameter, "RequestParam")) != undefined) {
-        let name = parameter.name as string
+        let name = parameter.name
 
         let value;
         if ((value = findParameter(annotation,  "value")) != undefined) {
@@ -115,7 +116,7 @@ export class QueryAnalyzer {
       // body
 
       else if ((annotation = findAnnotation(parameter, "RequestBody")) != undefined) {
-        let name = parameter.name as string
+        let name = parameter.name
 
         let value;
         if ((value = findParameter(annotation,  "value")) != undefined) {
@@ -177,7 +178,7 @@ export class JSONSchemaBuilder {
         for ( let descriptor of model.models) {
             let kind = descriptor.kind.split(" ")
             if ( kind.find((kind) => kind == "class") && !kind.find((kind) => kind == "enum"))
-                this.types[descriptor.name as string] = descriptor
+                this.types[descriptor.name] = descriptor
         }
   
     }
@@ -294,7 +295,7 @@ export class JSONSchemaBuilder {
    }*/
 
    private referenceType(property: PropertyDescriptor) {
-    let propertyName = property.name as string
+    let propertyName = property.name
     let type = this.type(propertyName)
     if ( !type ) {
         this.addType(propertyName, {})
@@ -307,7 +308,7 @@ export class JSONSchemaBuilder {
    }
 
    private createType(property: PropertyDescriptor) {
-    let typeName = property.type?.name as string
+    let typeName = property.type?.name
 
     let result : any = {
       type: typeName
@@ -326,7 +327,7 @@ export class JSONSchemaBuilder {
     if ( this.isArray(typeName)) {
       result.type = "array"
 
-      let itemTypeName = property.type.parameter[0].name as string
+      let itemTypeName = property.type.parameter[0].name
 
       if ( this.isObject(itemTypeName))
         result.items = this.referenceType({name: itemTypeName, type:  this.types[itemTypeName], annotations: []}) // HACK TODO
@@ -361,7 +362,7 @@ export class JSONSchemaBuilder {
     let properties = {}
 
     for ( let property of descriptor.properties)
-      properties[property.name as string] = this.createType(property)
+      properties[property.name] = this.createType(property)
 
     return properties
    }

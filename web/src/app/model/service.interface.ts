@@ -1,44 +1,44 @@
 export interface TypeDescriptor {
-    name: String,
+    name: string,
     optional: Boolean,
     parameter: TypeDescriptor[]
 }
    
 export interface AnnotationDescriptor {
-    name: String,
+    name: string,
     parameters: ParameterValueDescriptor[]
 }
 
 export interface  ParameterDescriptor {
-    name: String,
+    name: string,
     type: TypeDescriptor,
     annotations: AnnotationDescriptor[]
 }
 
 export interface ParameterValueDescriptor {
-    name: String,
+    name: string,
     type: TypeDescriptor,
     value: any
 }
 
 export interface  MethodDescriptor {
-    name: String,
+    name: string,
     returnType: TypeDescriptor,
     parameters: ParameterDescriptor[]
     annotations: AnnotationDescriptor[]
 }
 
 export interface PropertyDescriptor {
-    name: String,
+    name: string,
     type: TypeDescriptor,
     annotations: AnnotationDescriptor[]
 }
 
 export interface  InterfaceDescriptor {
-    name: String,
-    kind: String, // for now
-    inherits: String,
-    implements: String[],
+    name: string,
+    kind: string, // for now
+    inherits: string,
+    implements: string[],
     annotations: AnnotationDescriptor[],
     properties: PropertyDescriptor[],
     methods: MethodDescriptor[]

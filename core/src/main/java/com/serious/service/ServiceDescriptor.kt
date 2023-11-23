@@ -187,7 +187,7 @@ class InterfaceAnalyzer {
         }
 
         return AnnotationDescriptor(
-            annotation.annotationClass.simpleName!!,
+            annotation.annotationClass.qualifiedName!!,
             values
         )
     }
@@ -350,7 +350,7 @@ class ServiceDescriptor<T : Service>(
     // constructor
     init {
         val annotation = this.serviceInterface.getAnnotation(ServiceInterface::class.java)
-        if (!annotation.name.isBlank()) name = annotation.name
+        if (!annotation.name.isBlank()) label = annotation.name
         if (!annotation.description.isBlank()) description = annotation.description
         this.componentDescriptor = componentDescriptor
     }

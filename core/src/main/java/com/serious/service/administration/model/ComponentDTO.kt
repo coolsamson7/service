@@ -11,6 +11,7 @@ import java.io.Serializable
 
 data class ComponentDTO (
     val name: String,
+    val label: String,
     val description: String,
     val model: ComponentModel,
     val channels: List<ChannelDTO>

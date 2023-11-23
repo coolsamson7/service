@@ -8,8 +8,9 @@ import { InterfaceDescriptor } from "./service.interface"
  }
 
 export interface ComponentDTO {
-     name: String,
-     description: String,
+     name: string,
+     label: string,
+     description: string,
      model: ComponentModel,
      channels: ChannelAddressDTO[]
 }

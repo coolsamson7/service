@@ -13,6 +13,10 @@ export class ServiceAnnotationComponent {
     // input
 
     @Input('annotation') annotation: AnnotationDescriptor 
+
+    name() {
+        return this.annotation.name.substring(this.annotation.name.lastIndexOf(".") + 1)
+    }
 }
 
 @Component({
@@ -162,14 +166,10 @@ export class ServiceMethodRunnerComponent implements OnInit {
    // callbacks
 
     execute() {
-        let afterLastDot = (name: string) => {
-            return name.substring(name.lastIndexOf(".") + 1)
-        }
-
         let request : ServiceRequest = {
-            component: afterLastDot(this.model.component.name as string), // TODO
-            service: afterLastDot(this.service.name as string),
-            method: this.method.name as string,
+            component: this.model.component.name,
+            service: this.service.name,
+            method: this.method.name,
             parameters: []
         }
 
@@ -430,7 +430,7 @@ export class JSONComponent implements OnInit,  AfterViewInit {
      // implement OnInit
 
      ngOnInit(): void {
-        this.type = this.parameter.type.name as string 
+        this.type = this.parameter.type.name 
      }
 
      // implement AfterviewInit

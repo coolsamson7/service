@@ -21,6 +21,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
   component: ComponentDTO = {
      name: null,
+     label: "",
      description: "",
      model: {
       component: null,

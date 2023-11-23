@@ -11,6 +11,7 @@ export class ComponentStore {
 
   component: ComponentDTO = {
     name: "",
+    label: "",
     description: "",
     model: {
      component: null,

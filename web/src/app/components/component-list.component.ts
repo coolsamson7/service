@@ -14,8 +14,8 @@ import { Update, UpdateService } from '../service/update-service.service';
 export class ComponentListComponent implements OnInit, OnDestroy {
    // instance data
 
-   components: String[] = []
-   selected: String
+   components: string[] = []
+   selected: string
    subscription: Subscription
 
    // constructor

@@ -19,7 +19,7 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     var health: String? = null
     @JvmField
     var serviceManager: ServiceManager? = null
-    public var services: MutableList<ServiceDescriptor<*>> = LinkedList()
+    var services: MutableList<ServiceDescriptor<*>> = LinkedList()
     @JvmField
     var model : ComponentModel? = null
 
@@ -31,6 +31,10 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
     }
 
     // public
+
+    fun findService(name :String) :ServiceDescriptor<Service>? {
+        return services.find { service -> service.name == name } as ServiceDescriptor<Service>?
+    }
 
     fun getModel() : ComponentModel {
         if ( model == null)
@@ -82,7 +86,7 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
         val annotation = serviceInterface.getAnnotation(ComponentInterface::class.java)
 
         if (!annotation.name.isBlank())
-            name = annotation.name
+            label = annotation.name
 
         if (!annotation.description.isBlank())
             description = annotation.description

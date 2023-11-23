@@ -1,4 +1,4 @@
 export interface ChannelAddressDTO {
-    name: String
-    uri: String
+    name: string
+    uri: string
 }

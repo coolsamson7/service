@@ -25,8 +25,8 @@ export class ComponentService extends AbstractHTTPService {
   
     // public
   
-    public listAll(): Observable<String[]>{
-      return this.get<String[]>(`/services`);
+    public listAll(): Observable<string[]>{
+      return this.get<string[]>(`/services`);
     }
 
     public getDetails(component: String): Observable<ComponentDTO>{
@@ -41,8 +41,8 @@ export class ComponentService extends AbstractHTTPService {
       return this.post<string>(`/execute-method/${component}`, request);
     }
 
-    public getServiceHealth(serviceName: String, serviceId: String): Observable<String>{
-      return this.get<String>(`/health/${serviceName}/${serviceId}`);
+    public getServiceHealth(serviceName: String, serviceId: String): Observable<string>{
+      return this.get<string>(`/health/${serviceName}/${serviceId}`);
     }
 
     public getServiceHealths(serviceName: String): Observable<Healths>{
@@ -53,7 +53,7 @@ export class ComponentService extends AbstractHTTPService {
       return this.get<ServiceInstanceDTO[]>(`/service-instances/${serviceName}`)
     }
 
-    public listenTo(subscriber: String, component: String) {
+    public listenTo(subscriber: string, component: string) {
       return this.get(`/listen/component/${subscriber}/${component}` + subscriber)
     }
 

@@ -1,6 +1,6 @@
 <div>
     <div  *ngIf="outlet.isActivated == false" class="left">
-        <h1>{{component.name}}
+        <h1>{{component.label}}
             <mat-icon class="error" *ngIf="dead">error</mat-icon></h1>
         <hr>
         <mat-tab-group *ngIf="component.name">

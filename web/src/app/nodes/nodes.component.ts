@@ -12,7 +12,7 @@ import { InterfaceDescriptor } from "../model/service.interface";
 
 interface Result {
     instances: { [component: string] : ServiceInstanceDTO[] }
-    services: String[]
+    services: string[]
     componentServices:  { [server: string] : InterfaceDescriptor[] } 
     servers: string[]
     channels:  { [server: string] :  { [component: string] : Channel} }
@@ -173,7 +173,7 @@ interface Link {
             }),
             switchMap(services => {
                 for ( let i = 0; i < result.services.length; i++) {
-                    result.componentServices[result.services[i] as string] = services[i]
+                    result.componentServices[result.services[i]] = services[i]
                 }
 
                 return of(result)
@@ -476,7 +476,7 @@ interface Link {
                     // services
 
                     for ( let service of result.componentServices[serviceInstance.serviceId]) {
-                        component.embed(makeText(afterLastDot(service.name as string)))
+                        component.embed(makeText(afterLastDot(service.name)))
                     }
                 } // if
             } // for

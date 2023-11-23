@@ -23,12 +23,15 @@ abstract class BaseDescriptor<T : Service> protected constructor(@JvmField var s
     var local: Service? = null
     var name: String
         protected set
+    var label: String
+        protected set
     @JvmField
     var description = ""
 
     // constructor
     init {
         name = serviceInterface.getName() // that's the default
+        label = name
         descriptors[serviceInterface] = this
     }
 
