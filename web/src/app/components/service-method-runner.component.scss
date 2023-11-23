@@ -1,35 +1,46 @@
 .method {
-    display: flex;
-    flex-direction: column;
     margin-left: 20px;
 
-    .body {
-        display: flex;
-        flex-direction: row;
+    .parameter {
+        display: grid;
+        grid-template-columns: min-content;
 
-        .parameter {
-            display: flex;
+        .error {
+            letter-spacing: 0.4px;
+            line-height: 20px;
+            font-weight: 400;
+            font-size: 12px;
+            font-family: Roboto, sans-serif;
+            color: rgb(244, 67, 54);
         }
     }
-
-    .keyword {
-        color: darkblue;
-    }
-
 
     .query {
         display: grid;
         grid-template-columns: min-content 1fr;
+        gap: 1rem;
 
         .play {
-            color: green
+            align-self: flex-start;
+            border: none;
+            .icon {
+                color: green
+            }
         }
 
-        .url {
+        .query-parameter {
             display: flex;
-            flex-direction: row;
-            column-gap: 10px;
+            flex-direction: column;
+            row-gap: 10px;
+
+            .url {
+                display: flex;
+                flex-direction: row;
+                column-gap: 10px;
+            }
         }
+
+     
     
         .http-method {
             color: white;
@@ -40,7 +51,9 @@
         }
     }
 
-    
+    .result {
+
+    }
 }
 
 

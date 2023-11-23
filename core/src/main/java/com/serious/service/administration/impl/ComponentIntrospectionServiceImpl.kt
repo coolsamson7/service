@@ -23,7 +23,7 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
     // implement
 
     override fun fetchComponent(component: String) : ComponentDTO {
-        val componentDescriptor = ComponentDescriptor.forName(component)!!
+        val componentDescriptor = ComponentDescriptor.forName(component)
 
         return ComponentDTO(
             component,
@@ -34,7 +34,7 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
     }
 
     override fun fetchComponentServices(component: String) : List<String> {
-        val componentDescriptor = ComponentDescriptor.forName(component)!!
+        val componentDescriptor = ComponentDescriptor.forName(component)
 
         return componentDescriptor.getModel().services.map { servce -> servce.name }
     }
@@ -42,7 +42,7 @@ class ComponentIntrospectionServiceImpl : ComponentIntrospectionService {
     override fun listServices(component: String): Collection<InterfaceDescriptor> {
         val componentDescriptor = ComponentDescriptor.forName(component)
 
-        return componentDescriptor!!.getModel().services
+        return componentDescriptor.getModel().services
     }
 
     override fun executeMethod(component: String, request: String) : String {

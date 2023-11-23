@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { TranslocoRootModule } from './transloco-root.module';
 import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -19,6 +19,7 @@ import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import { Environment, EnvironmentModule } from './common/util/environment.service';
 import { EndpointLocator } from './common/communication/endpoint-locator';
+import { HTTPErrorInterceptor } from './common/communication/http-error-interceptor';
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -70,7 +71,16 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       }
     })
   ],
-  providers: [{provide: EndpointLocator, useValue: new ApplicationEndpointLocator(environment)}],
+  providers: [
+    {
+      provide: EndpointLocator,
+      useValue: new ApplicationEndpointLocator(environment)
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HTTPErrorInterceptor,
+      multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

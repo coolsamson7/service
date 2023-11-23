@@ -3,6 +3,8 @@ import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescri
 import { ParameterType, Query, QueryAnalyzer, QueryParameter } from "../json/json-schema-builder";
 import { ComponentModel } from "../model/component.interface";
 import { ComponentService } from "../service/component-service.service";
+import { NgForm } from "@angular/forms";
+import { ServerError } from "../common/error/error";
 
 @Component({
     selector: 'annotation',
@@ -68,6 +70,7 @@ export class QueryParamComponent implements OnInit {
 
     @Input('parameter') parameter: QueryParameter 
     @Input('model') model: ComponentModel 
+    @Input() form: any 
 
     @Output() changed = new EventEmitter<any>();
 
@@ -114,6 +117,8 @@ export class ServiceMethodRunnerComponent implements OnInit {
     @Input('service') service: InterfaceDescriptor 
     @Input('method') method: MethodDescriptor 
 
+    @ViewChild('form') public form: NgForm
+
     query: Query
     result
     executedURL = ""
@@ -123,6 +128,39 @@ export class ServiceMethodRunnerComponent implements OnInit {
     // constructor
 
     constructor(private componentService : ComponentService) {
+    }
+
+    isError(name: string) {
+        return this.form.form.controls[name].status != "VALID"
+    }
+
+    errorMessage(name: string) {
+        let errors = this.form.form.controls[name].errors
+        for ( let error in errors) {
+            switch (error) {
+                case "required":
+                    return name + " is required"
+                case "json": 
+                    return "schema violation: " + errors[error].messages[0]
+            }
+
+            return name + " violates " + error
+        }
+
+        return "ouch"
+    }
+
+    inputType4(type: TypeDescriptor) : string {
+        switch(type.name) {
+            case "kotlin.String":
+                return "string"
+
+            case "kotlin.Int":
+                return "number"
+
+            default:
+                return "json"
+        }
     }
 
     // private
@@ -190,15 +228,22 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
         let json = JSON.stringify(request, null, "\t")
 
-        this.componentService.executeMethod(request.component, json).subscribe(result => {
-            //console.log(result)
-
-            if ( typeof result === "object")
-                this.result = JSON.stringify(result, null, "\t")
-            else
-                this.result = result
-        }
-        )
+        this.componentService.executeMethod(request.component, json).subscribe( {
+            next: (result) => {
+                if ( typeof result === "object")
+                    this.result = JSON.stringify(result, null, "\t")
+                else
+                    this.result = result
+            },
+            error: (error) => {
+               if ( error instanceof ServerError) {
+                    this.result = error.message
+               }
+               else {
+                this.result = error.message
+               }
+            }
+        } )
     }
 
     onChange() {

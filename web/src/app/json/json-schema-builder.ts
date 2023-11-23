@@ -1,4 +1,3 @@
-import { param } from "jquery"
 import { ComponentModel } from "../model/component.interface"
 import { AnnotationDescriptor, InterfaceDescriptor , MethodDescriptor, ParameterDescriptor, PropertyDescriptor, TypeDescriptor} from "../model/service.interface"
 
@@ -22,6 +21,12 @@ export interface Query {
   method: string, // get, post, put
   url: string
   params: QueryParameter[]
+}
+
+interface ConstraintHandler {
+  type: string,
+  name: string, // eg ...Min
+  apply: (annotation: AnnotationDescriptor, type: any) => void
 }
 
 export class QueryAnalyzer {
@@ -205,6 +210,26 @@ export class JSONSchemaBuilder {
     types = {}
     schema : any
 
+    constraintHandlers : ConstraintHandler[] = [
+      // Min
+      {
+        type: "integer",
+        name: "jakarta.validation.constraints.Max",
+        apply: (annotation: AnnotationDescriptor, type: any) => {
+           type.maximum = annotation.parameters[0].value
+        }
+      },
+      // Max
+      {
+       type: "integer",
+       name: "jakarta.validation.constraints.Max",
+       apply: (annotation: AnnotationDescriptor, type: any) => {
+          type.minimum = annotation.parameters[0].value
+       }
+      }
+      // TODO: more
+     ]
+
     // constructor
 
     constructor(model: ComponentModel) {
@@ -220,9 +245,9 @@ export class JSONSchemaBuilder {
     createSchema(descriptor: InterfaceDescriptor) {
         try {
          this.schema = {
-                $schema: "https://json-schema.org/draft/2020-12/schema",
-                $id: "https://example.com/" + descriptor.name + ".schema.json", // TODO
-                title: descriptor.name,
+                //$schema: "https://json-schema.org/draft/2020-12/schema",
+                //$id: "http://serious.com/" + descriptor.name + ".schema.json", // TODO
+                //title: descriptor.name,
                 description: "",
                 type: "object",
                 required: []
@@ -303,8 +328,20 @@ export class JSONSchemaBuilder {
     }
 
 
+    // todo: just a hack here
+
+    let findAndApplyHandler = (annotation: AnnotationDescriptor , type: string,  schema: any) => {
+      for ( let handler of this.constraintHandlers) {
+        if ( handler.type === type && handler.name === annotation.name) {
+          handler.apply(annotation, schema)
+          return
+        }
+      }
+    }
+
+
     for ( let annotation of property.annotations) {
-        // TODO
+      findAndApplyHandler(annotation, type.type, type)
     }
    }
 

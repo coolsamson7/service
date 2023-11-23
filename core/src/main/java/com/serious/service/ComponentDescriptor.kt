@@ -32,8 +32,12 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
 
     // public
 
-    fun findService(name :String) :ServiceDescriptor<Service>? {
-        return services.find { service -> service.name == name } as ServiceDescriptor<Service>?
+    fun findService(name :String) :ServiceDescriptor<Service> {
+        val service = services.find { service -> service.name == name } as ServiceDescriptor<Service>?
+        if ( service != null)
+            return service
+        else
+            throw RuntimeException("unknown service \"$name\"")
     }
 
     fun getModel() : ComponentModel {
@@ -133,8 +137,12 @@ class ComponentDescriptor<T : Component>(componentInterface: Class<T>) : BaseDes
         @JvmField
         var descriptors: MutableMap<String, ComponentDescriptor<*>> = HashMap()
 
-        fun forName(name: String) :ComponentDescriptor<*>? {
-            return descriptors[name]
+        fun forName(name: String) :ComponentDescriptor<*> {
+            val descriptor = descriptors[name]
+            if ( descriptor != null )
+                return descriptor
+            else
+                throw RuntimeException("unknown component \"$name\"")
         }
     }
 }

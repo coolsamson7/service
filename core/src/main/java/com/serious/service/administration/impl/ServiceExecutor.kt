@@ -57,13 +57,13 @@ class ServiceExecutor {
         // find meta data
 
         val componentDescriptor = ComponentDescriptor.forName(component)
-        val serviceDescriptor   = componentDescriptor?.findService(service)
+        val serviceDescriptor   = componentDescriptor.findService(service)
 
         // fetch model
 
-        val model = componentDescriptor?.getModel()
+        val model = componentDescriptor.getModel()
 
-        val serviceMetaData = model?.services?.find { s -> s.name == service }
+        val serviceMetaData = model.services.find { s -> s.name == service }
 
         val methodDescriptor = serviceMetaData?.methods?.find { m -> m.name == method } // TODO: no overloading possible
 
@@ -85,9 +85,9 @@ class ServiceExecutor {
 
         // create proxy
 
-        val serviceInterface: Class<out Service>? = serviceDescriptor?.serviceInterface
-        val localService = ServiceManager.instance?.acquireLocalService(serviceInterface!!)
-        val serviceMethod = serviceInterface!!.getDeclaredMethod(method, *methodParameters.map { param ->
+        val serviceInterface: Class<out Service> = serviceDescriptor.serviceInterface
+        val localService = ServiceManager.instance?.acquireLocalService(serviceInterface)
+        val serviceMethod = serviceInterface.getDeclaredMethod(method, *methodParameters.map { param ->
             when (param.type.name) {
                 "kotlin.Int" -> Int::class.java
                 "kotlin.String" -> String::class.java

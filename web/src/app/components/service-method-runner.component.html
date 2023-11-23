@@ -1,40 +1,72 @@
 <div class="method">
    <h3>Parameters</h3>
 
-   <form #form="ngForm">
-      V{{form.form.valid}}
-      D{{form.form.dirty}}
-      T{{form.form.touched}}
-      <query-parameter  *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter>
+   <form #form="ngForm" class="parameter">
+      <!--h3>Form state</h3>
+      <p>Valid: {{form.valid}}</p>
+      <p>Pristine:  {{form.pristine}}</p>
+      <p>Touched:  {{form.touched}}</p>
+      <p>Submitted: {{form.submitted}}</p-->
+
+      <!--query-parameter [form]="form" *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter-->
+
+      <ng-container *ngFor="let param of query.params">
+         <!-- string -->
+
+         <mat-form-field *ngIf="inputType4(param.type) == 'string'">
+            <mat-label>{{param.name}}</mat-label>
+            <input matInput type="text" [(ngModel)]="param.value" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
+            <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+         </mat-form-field>
+
+         <!-- number -->
+
+         <mat-form-field *ngIf="inputType4(param.type) == 'number'">
+            <mat-label>{{param.name}}</mat-label>
+            <input matInput type="number" [(ngModel)]="param.value" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
+            <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+         </mat-form-field>
+
+         <!-- json -->
+
+         <div *ngIf="inputType4(param.type) == 'json'">
+            <json-view [schema]="param.schema" [(ngModel)]="param.value" (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name"></json-view>
+            <div class="error" *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</div>
+         </div>
+      </ng-container>
    </form>
 
    <h3>Query</h3>
 
    <div class="query">
-      <mat-icon class="play" (click)="execute()">play_arrow</mat-icon>
+      <button  mat-icon-button [disabled]="!form.valid" (click)="execute()" class="play">
+         <mat-icon class="icon">play_arrow</mat-icon>
+      </button>
+    
 
-      <div class="">
+      <div class="query-parameter">
          <div class="url">
             <span class="http-method">{{query.method}}</span>
             <span>{{executedURL}}</span>
          </div>
+
          <div *ngIf="query.method == 'post'" class="body">
-            <textarea matInput [(ngModel)]="body.value"
+            <textarea matInput [ngModel]="body.value"
             cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
-            cdkAutosizeMinRows="1"
-            cdkAutosizeMaxRows="5"></textarea>
-
+            cdkAutosizeMinRows="10"
+            cdkAutosizeMaxRows="50"></textarea>
          </div>
       </div>
    </div>
 
    <h3>Result</h3>
 
-   <textarea matInput [(ngModel)]="result"
-   cdkTextareaAutosize
-   #autosize="cdkTextareaAutosize"
-   cdkAutosizeMinRows="1"
-   cdkAutosizeMaxRows="5"></textarea>
-
+   <div class=""result>
+      <textarea matInput [ngModel]="result"
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="10"
+      cdkAutosizeMaxRows="50"></textarea>
+   </div>
 </div>

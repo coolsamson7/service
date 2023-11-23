@@ -51,7 +51,9 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
         if ( !this.monaco ) {
             this.monaco = (window as any).monaco
 
-            this.setSchema()
+            if ( this.schema )
+                this.setSchema()
+
             this.writeValue(this.value)
         }
     }
@@ -102,6 +104,20 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
      validate(control: AbstractControl<any, any>): ValidationErrors | null {
         const value = control.value
 
+        if ( this.monaco != undefined) {
+            let errors = this.monaco.editor.getModelMarkers({owner: 'json'})
+
+            if ( errors.length > 0) {
+                let messages = errors.map(error => error.message)
+
+                return {
+                    json: {
+                        messages: messages
+                    }
+                }
+            }
+        }
+
         return null // for now
     }
 
@@ -112,8 +128,6 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
     // implement ControlValueAccessor
 
     writeValue(value: any): void {
-        //this.editor.writeValue(obj) // ??
-
         this.value = value
 
         if ( this.isInitialized())
