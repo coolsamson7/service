@@ -13,9 +13,10 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
-import { JSONComponent, QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
+import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { JSONComponent } from "./json.component";
 
 @NgModule({
     declarations: [

@@ -14,6 +14,7 @@ export interface QueryParameter {
   description: string
   parameterType: ParameterType
   type: TypeDescriptor
+  schema: any
   value: any
 }
 
@@ -30,7 +31,7 @@ export class QueryAnalyzer {
 
      // constructor
 
-     constructor(private service: InterfaceDescriptor) {
+     constructor(private service: InterfaceDescriptor, private model: ComponentModel) {
       this.urlPrefix = ""
 
       let annotation
@@ -38,6 +39,34 @@ export class QueryAnalyzer {
         this.urlPrefix = annotation.parameters.find(param => param.name == "value").value[0]
       }
   }
+
+  private createDefaultJSON(schema: any) : string {
+    let json = {}
+
+    for (let property in schema.properties) {
+        let value
+        switch (schema.properties[property].type) {
+            case "string":
+                value = "";
+                break;
+
+            case "integer":
+            case "number":
+                value = 0
+                break;
+
+            default:
+                value = ""
+        }
+
+        json[property] = value
+    }
+
+
+    return JSON.stringify(json, null, "\t")
+
+    //TODO this.parameter.value =  
+}
 
 
   analyzeMethod(method: MethodDescriptor) : Query {
@@ -97,7 +126,7 @@ export class QueryAnalyzer {
             name = value.value
          }
 
-         query.params.push({ name: name, description: "", parameterType: ParameterType.PATH_VARIABLE, type: parameter.type, value: this.defaultValue4(parameter.type) })
+         query.params.push({ name: name, description: "", parameterType: ParameterType.PATH_VARIABLE, type: parameter.type, schema: null, value: this.defaultValue4(parameter.type) })
       }
 
       // request param
@@ -110,7 +139,7 @@ export class QueryAnalyzer {
           name = value.value
         }
 
-        query.params.push({ name: name, description: "", parameterType: ParameterType.REQUEST_PARAM, type: parameter.type, value: this.defaultValue4(parameter.type) })
+        query.params.push({ name: name, description: "", parameterType: ParameterType.REQUEST_PARAM, type: parameter.type, schema: null, value: this.defaultValue4(parameter.type) })
       }
 
       // body
@@ -123,7 +152,11 @@ export class QueryAnalyzer {
           name = value.value
         }
 
-        query.params.push({ name: name, description: "", parameterType: ParameterType.BODY, type: parameter.type, value: this.defaultValue4(parameter.type) })
+        let descriptor =  this.model.models.find(model => model.name == parameter.type.name)
+        let schema = new JSONSchemaBuilder(this.model).createSchema(descriptor)
+        let defaultValue = this.createDefaultJSON(schema)
+
+        query.params.push({ name: name, description: "", parameterType: ParameterType.BODY, type: parameter.type, schema: schema, value: defaultValue })
       }
     }
   }
