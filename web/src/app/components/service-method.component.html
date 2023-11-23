@@ -4,13 +4,13 @@
         <mat-icon (click)="toggleRun()">{{run ?  'expand_less' : 'expand_more'}}</mat-icon>
         <span class="keyword">fun</span>&nbsp;<span>{{method.name}}&#40;</span>
         <span class="parameter" *ngFor="let parameter of method.parameters; let i = index; let first = first ;let last = last;">
+            <span *ngIf="i > 0">,&nbsp;</span>
             <span style="display:flex;" *ngFor="let annotation of parameter.annotations">
                 <annotation [annotation]="annotation"/>
                 &nbsp;
             </span>
            
             <span>{{parameter.name}} : <type [type]="parameter.type"/></span>
-            <span *ngIf="i > 0">,&nbsp;</span>
         </span>
         <span>&#41; : <type [type]="method.returnType"/></span>
     </div>

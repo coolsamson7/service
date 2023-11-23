@@ -121,6 +121,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
     query: Query
     result
+    error = false
     executedURL = ""
     body: QueryParameter
     parameter = {}
@@ -204,6 +205,8 @@ export class ServiceMethodRunnerComponent implements OnInit {
    // callbacks
 
     execute() {
+        this.error = false
+
         let request : ServiceRequest = {
             component: this.model.component.name,
             service: this.service.name,
@@ -236,6 +239,8 @@ export class ServiceMethodRunnerComponent implements OnInit {
                     this.result = result
             },
             error: (error) => {
+               this.error = true
+               
                if ( error instanceof ServerError) {
                     this.result = error.message
                }

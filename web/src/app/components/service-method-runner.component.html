@@ -15,7 +15,7 @@
 
          <mat-form-field *ngIf="inputType4(param.type) == 'string'">
             <mat-label>{{param.name}}</mat-label>
-            <input matInput type="text" [(ngModel)]="param.value" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
+            <input matInput type="text" [(ngModel)]="param.value" [validateParameter]="param" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
 
@@ -23,7 +23,7 @@
 
          <mat-form-field *ngIf="inputType4(param.type) == 'number'">
             <mat-label>{{param.name}}</mat-label>
-            <input matInput type="number" [(ngModel)]="param.value" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
+            <input matInput type="number" [(ngModel)]="param.value"  [validateParameter]="param" (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name" required/>
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
 
@@ -62,8 +62,8 @@
 
    <h3>Result</h3>
 
-   <div class=""result>
-      <textarea matInput [ngModel]="result"
+   <div class="result">
+      <textarea matInput [style]="error ? 'color:red;' : ''" [ngModel]="result"
       cdkTextareaAutosize
       #autosize="cdkTextareaAutosize"
       cdkAutosizeMinRows="10"

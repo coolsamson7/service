@@ -17,6 +17,7 @@ import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent,
 import { FormsModule } from "@angular/forms";
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { JSONComponent } from "./json.component";
+import { ParameterValidator } from "./parameter-validator";
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { JSONComponent } from "./json.component";
         ServiceClassComponent,
         ServiceMethodRunnerComponent,
         QueryParamComponent,
-        JSONComponent
+        JSONComponent,
+        ParameterValidator
     ],
     imports: [
       CommonModule,
