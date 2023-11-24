@@ -240,7 +240,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
             },
             error: (error) => {
                this.error = true
-               
+
                if ( error instanceof ServerError) {
                     this.result = error.message
                }

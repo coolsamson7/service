@@ -7,6 +7,8 @@ package com.serious.demo
 
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import org.springframework.web.bind.annotation.*
 
 /**
@@ -21,10 +23,9 @@ interface CommonService : Service {
 
     @GetMapping("hello/{world}")
     @ResponseBody
-    fun sayHello(@PathVariable() world : String, @RequestParam() times: Int) : String
+    fun sayHello(@PathVariable world : String, @RequestParam times: Int) : String
 
     @PostMapping("post")
     @ResponseBody
-    fun post(@RequestBody() foo : Foo, @RequestParam() times: Int) : Foo
-
+    fun post(@RequestBody foo : Foo, @RequestParam @Min(1) @Max(10) times: Int) : Foo
 }

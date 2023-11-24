@@ -1,41 +1,38 @@
-export interface TypeDescriptor {
+export interface NamedDescriptor {
     name: string,
+}
+
+export interface TypeDescriptor extends NamedDescriptor {
     optional: Boolean,
     parameter: TypeDescriptor[]
 }
    
-export interface AnnotationDescriptor {
-    name: string,
+export interface AnnotationDescriptor extends NamedDescriptor {
     parameters: ParameterValueDescriptor[]
 }
 
-export interface  ParameterDescriptor {
-    name: string,
+export interface  ParameterDescriptor extends NamedDescriptor {
     type: TypeDescriptor,
     annotations: AnnotationDescriptor[]
 }
 
-export interface ParameterValueDescriptor {
-    name: string,
+export interface ParameterValueDescriptor extends NamedDescriptor {
     type: TypeDescriptor,
     value: any
 }
 
-export interface  MethodDescriptor {
-    name: string,
+export interface  MethodDescriptor extends NamedDescriptor {
     returnType: TypeDescriptor,
     parameters: ParameterDescriptor[]
     annotations: AnnotationDescriptor[]
 }
 
-export interface PropertyDescriptor {
-    name: string,
+export interface PropertyDescriptor extends NamedDescriptor {
     type: TypeDescriptor,
     annotations: AnnotationDescriptor[]
 }
 
-export interface  InterfaceDescriptor {
-    name: string,
+export interface  InterfaceDescriptor extends NamedDescriptor {
     kind: string, // for now
     inherits: string,
     implements: string[],

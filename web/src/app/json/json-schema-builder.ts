@@ -33,11 +33,13 @@ export class QueryAnalyzer {
      // instance data
 
      urlPrefix: string = ""
+     schmaBuilder : JSONSchemaBuilder
 
      // constructor
 
      constructor(private service: InterfaceDescriptor, private model: ComponentModel) {
       this.urlPrefix = ""
+      this.schmaBuilder = new JSONSchemaBuilder(this.model)
 
       let annotation
       if ((annotation = service.annotations.find(annotation => annotation.name.endsWith("RequestMapping"))) != undefined) {
@@ -131,7 +133,15 @@ export class QueryAnalyzer {
             name = value.value
          }
 
-         query.params.push({ name: name, description: "", parameterType: ParameterType.PATH_VARIABLE, type: parameter.type, schema: null, value: this.defaultValue4(parameter.type) })
+         this.schmaBuilder.createSchema
+
+         query.params.push({ 
+          name: name, description: "",
+           parameterType: ParameterType.PATH_VARIABLE, 
+           type: parameter.type, 
+           schema: this.schmaBuilder.createPropertySchema(parameter.type, parameter), 
+           value: this.defaultValue4(parameter.type) 
+          })
       }
 
       // request param
@@ -144,7 +154,14 @@ export class QueryAnalyzer {
           name = value.value
         }
 
-        query.params.push({ name: name, description: "", parameterType: ParameterType.REQUEST_PARAM, type: parameter.type, schema: null, value: this.defaultValue4(parameter.type) })
+        query.params.push({
+           name: name, 
+           description: "", 
+           parameterType: ParameterType.REQUEST_PARAM, 
+           type: parameter.type, 
+           schema: this.schmaBuilder.createPropertySchema(parameter.type, parameter), 
+           value: this.defaultValue4(parameter.type) 
+          })
       }
 
       // body
@@ -158,10 +175,17 @@ export class QueryAnalyzer {
         }
 
         let descriptor =  this.model.models.find(model => model.name == parameter.type.name)
-        let schema = new JSONSchemaBuilder(this.model).createSchema(descriptor)
+        let schema = this.schmaBuilder.createSchema(descriptor)
         let defaultValue = this.createDefaultJSON(schema)
 
-        query.params.push({ name: name, description: "", parameterType: ParameterType.BODY, type: parameter.type, schema: schema, value: defaultValue })
+        query.params.push({ 
+          name: name, 
+          description: "", 
+          parameterType: ParameterType.BODY,
+          type: parameter.type, 
+          schema: schema, 
+          value: defaultValue 
+        })
       }
     }
   }
@@ -222,7 +246,7 @@ export class JSONSchemaBuilder {
       // Max
       {
        type: "integer",
-       name: "jakarta.validation.constraints.Max",
+       name: "jakarta.validation.constraints.Min",
        apply: (annotation: AnnotationDescriptor, type: any) => {
           type.minimum = annotation.parameters[0].value
        }
@@ -240,7 +264,19 @@ export class JSONSchemaBuilder {
         }
   
     }
+
     // public
+
+    createPropertySchema(type: TypeDescriptor, property: PropertyDescriptor) : any {
+    
+      let schema = {
+        required: !type.optional
+      }
+
+      this.mapLiteralType(type.name, property, schema)
+
+      return schema
+    }
 
     createSchema(descriptor: InterfaceDescriptor) {
         try {
@@ -293,7 +329,7 @@ export class JSONSchemaBuilder {
     return false // ???
   }
 
-  private mapLiteralType(typeName: string, property: PropertyDescriptor, type: any) {
+   mapLiteralType(typeName: string, property: PropertyDescriptor, type: any) {
     switch ( typeName ) {
       case  "kotlin.Any":
         type.type = "any" // TODO
