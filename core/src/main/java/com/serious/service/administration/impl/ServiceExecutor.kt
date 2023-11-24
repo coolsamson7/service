@@ -34,6 +34,9 @@ class ServiceExecutor {
             "kotlin.Int" ->
                 node.asInt()
 
+            "kotlin.Boolean" ->
+                node.asBoolean()
+
             else ->
                 if (model.models.find { model -> model.name == descriptor.type.name } != null)
                     this.convertObject(node, model.models.find { model -> model.name == descriptor.type.name })
@@ -91,6 +94,7 @@ class ServiceExecutor {
             when (param.type.name) {
                 "kotlin.Int" -> Int::class.java
                 "kotlin.String" -> String::class.java
+                "kotlin.Boolean" -> Boolean::class.java
                 else -> Class.forName(param.type.name)
             }
 

@@ -92,6 +92,9 @@ export class QueryParamComponent implements OnInit {
             case "kotlin.Int":
                 return "number"
 
+            case "kotlin.Boolean":
+                return "boolean"
+
             default:
                 return "json"
         }
@@ -158,6 +161,9 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
             case "kotlin.Int":
                 return "number"
+
+            case "kotlin.Boolean":
+                return "boolean"
 
             default:
                 return "json"

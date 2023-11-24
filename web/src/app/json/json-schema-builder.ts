@@ -62,6 +62,10 @@ export class QueryAnalyzer {
                 value = 0
                 break;
 
+            case "boolean":
+                value = false
+                break;
+
             default:
                 value = ""
         }
@@ -100,6 +104,9 @@ export class QueryAnalyzer {
         return ""
 
       case "kotlin.Int":
+          return 0
+
+      case "kotlin.Boolean":
           return 0
 
       default:

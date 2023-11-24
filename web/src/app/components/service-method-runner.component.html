@@ -27,6 +27,17 @@
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
 
+           <!-- boolean -->
+
+           <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
+            <mat-label>{{param.name}}</mat-label>
+            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'>
+               <mat-option value="false">False</mat-option>
+               <mat-option value="true">True</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+         </mat-form-field>
+
          <!-- json -->
 
          <div *ngIf="inputType4(param.type) == 'json'">

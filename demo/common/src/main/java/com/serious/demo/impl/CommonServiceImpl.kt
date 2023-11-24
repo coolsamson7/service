@@ -21,10 +21,19 @@ class CommonServiceImpl : CommonService {
     }
 
     override fun sayHello(world : String, times: Int) : String {
-        return "hello" + world;
+        val builder = StringBuilder()
+
+        for (i in 1..times)
+            builder.append("hello" + world)
+
+        return builder.toString();
     }
 
     override fun post(foo : Foo, times: Int) : Foo {
+        return foo
+    }
+
+    override fun anotherPost(foo : Foo, times: Int, really: Boolean) : Foo {
         return foo
     }
 }

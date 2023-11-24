@@ -20,10 +20,22 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
                         return throwError(new CommunicationError(error.error.message));
                     } 
                     else {
+                        // framework server error
+
                         if ( error.error['@class'] && error.status == 512)
                             return throwError(new ServerError( error.error['@class'], error.error.detailMessage));
+
+                        // framework application error
+
                         else if ( error.error['@class'] && error.status == 210)
                             return throwError(new ApplicationError( error.error['@class'],  error.error.detailMessage));
+                        
+                        // spring error
+
+                        else if ( error.error.error)
+                            return throwError(new ServerError(error.error.status,  error.error.error));
+                       
+                            // dunno...
                         else
                             return throwError(new ServerError("unknown", "error"));
                     }

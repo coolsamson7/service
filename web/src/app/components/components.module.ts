@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatSelectModule } from '@angular/material/select';
 import { ComponentsComponent } from "./components.component";
 import { ComponentListComponent } from "./component-list.component";
 import { ComponentDetailsComponent } from "./component-details.component";
@@ -49,6 +49,7 @@ import { ParameterValidator } from "./parameter-validator";
       MatFormFieldModule,
       MatIconModule,
       FormsModule,
+      MatSelectModule,
       MonacoEditorModule.forRoot() // use forRoot() in main app module only.
     ]
   })

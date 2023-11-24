@@ -28,4 +28,8 @@ interface CommonService : Service {
     @PostMapping("post")
     @ResponseBody
     fun post(@RequestBody foo : Foo, @RequestParam @Min(1) @Max(10) times: Int) : Foo
+
+    @PostMapping("another-post")
+    @ResponseBody
+    fun anotherPost(@RequestBody foo : Foo, @RequestParam @Min(1) @Max(10) times: Int, @RequestParam really: Boolean) : Foo
 }
