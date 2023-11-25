@@ -73,79 +73,6 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
-  // NEW
-
-  extractJSONSchema(component: ComponentDTO) {
-    let sample = {
-      type: "object",
-      properties: {
-        astring: {
-          type: "string",
-          pattern: "^[A-Z]{3}-\\d{3}$",
-          minLength: 2,
-          maxLength: 3,
-          format: "date-time" // time, date, duration, email, histname, uri, ipv4, ,ipv6, uuid
-        },
-        anobject: {
-          type: "object",
-          properties: {
-
-          }
-        },
-        aboolean: {
-          type: "boolean",
-      
-        },
-        anumber: {
-          type: "integer", // number = float!
-          minimum: 1, // exclusive
-          maximum: 10,
-          exlusiveMinium: true
-        },
-        anenum: {
-          enum: ["v1", 2]
-        },
-        anarray: {
-          type: "array",
-          items: {
-              type: "string"
-          }
-        }
-      },
-      required: ["astring"]
-    }
-
-
-    let builder = new JSONSchemaBuilder(component.model)
-
-    let getKind = (descriptor: InterfaceDescriptor) : string[] => {
-      return descriptor.kind.split(" ")
-    }
- 
-    let isClass = (descriptor: InterfaceDescriptor) : boolean => {
-      return getKind(descriptor).find((kind) => kind == "class") != undefined
-    }
-
-    let isEnum = (descriptor: InterfaceDescriptor) : boolean => {
-      return getKind(descriptor).find((kind) => kind == "enum") != undefined
-    }
-
-
-    // go
-
-    for ( let model of component.model.models) {
-      if ( isClass(model) && ! isEnum(model)) {
-        let schema = builder.createSchema(model)
-
-        console.log(schema.title)
-
-        console.log(schema)
-      } // if
-    } // for
-  }
-
   // network
 
 
@@ -159,8 +86,6 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
         if ( value != null) {
           this.component = value
           this.dead = false
-
-          this.extractJSONSchema(value)
 
           this.open = Array<boolean>(1 + value.model.services.length + value.model.models.length).fill(false)
 

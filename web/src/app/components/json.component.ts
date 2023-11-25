@@ -49,7 +49,7 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
         this.editorModel = {
             value: this.value,
             language: 'json',
-            uri: monaco.Uri.parse(this.uri) // TODO
+            uri: monaco.Uri.parse(this.uri)
         }
 
         if (this.schema)
@@ -146,6 +146,7 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
 export interface EditorModel {
     value: string;
     language?: string;
+    schema: any
     uri?: any;
 }
 
@@ -256,10 +257,12 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     @ViewChild('editorContainer', { static: true }) editorContainer: ElementRef;
 
     protected editor: any;
+    protected model: EditorModel;
     protected editorOptions: any;
     protected windowResizeSubscription: Subscription;
     protected modelInstance
     protected uri
+    protected value = ""
 
     // constructor
 
@@ -270,14 +273,19 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
 
     getModelMarkers() {
         return monaco.editor.getModelMarkers({
-          resource: this.editorOptions.model.uri
+          resource: this.uri
         });
     }
 
     // protected
 
     protected setupEditor() {
-        this.windowResizeSubscription = fromEvent(window, 'resize').subscribe(() => this.layout());
+        if ( this.model.schema)
+            this.setSchema()
+
+        this.windowResizeSubscription = fromEvent(window, 'resize')
+            .subscribe(() => this.layout());
+
         this.layout();
     }
 
@@ -286,11 +294,32 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     }
 
     protected getModel() {
-        return monaco.editor.getModel(this.editorOptions.model.uri || '');
+        return monaco.editor.getModel(this.uri || '');
     }
 
     protected createModel() {
-        return this.modelInstance = monaco.editor.createModel(this.editorOptions.model.value, this.editorOptions.model.language, this.editorOptions.model.uri);
+        let model = this.getModel();
+        if (!model) {
+            model = monaco.editor.createModel(
+                this.value, 
+                this.model.language,
+                this.uri);
+        }
+
+        this.editorOptions.model = model
+
+        return this.modelInstance = model
+    }
+
+    protected setSchema() {
+        monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+            validate: true,
+            schemas: [{
+                uri: this.uri,
+                fileMatch: [this.uri.toString()],
+                schema: this.model.schema
+            }]
+        })
     }
 
     // private
@@ -339,13 +368,20 @@ declare var monaco: any;
           height: 98%;
       }
   `],
-    providers: [{
+    providers: [
+        {
         provide: NG_VALUE_ACCESSOR,
         useExisting: forwardRef(() => MonacoEditorComponent),
         multi: true
-    }]
+    },
+    {
+        provide: NG_VALIDATORS,
+        multi: true,
+        useExisting: forwardRef(() => MonacoEditorComponent),
+    }
+]
 })
-export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor, OnChanges {
+export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor, Validator, OnChanges {
     // input & ouput
 
     @Input('options') 
@@ -357,17 +393,10 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         return this.editorOptions;
     }
 
-    @Input('model')
-    set model(model: EditorModel) {
-      this.editorOptions.model = model;
-      this.uri = model?.uri
-    }
-
+    @Input('model') model: EditorModel
     @Output() onInit: EventEmitter<MonacoEditorComponent> = new EventEmitter();
 
     // instance data
-
-    private value: string = '';
 
     onChange = (_: any) => { };
     onTouched = () => { };
@@ -394,31 +423,19 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     // protected
 
     protected setupEditor(): void {
-        const hasModel = !!this.editorOptions.model;
+        this.uri = monaco.Uri.parse(this.model.uri)
 
-        if (hasModel) {
-            const model = this.getModel();
+        let model = this.getModel();
+        if (!model) 
+            model = this.createModel();
 
-            if (model) {
-                this.modelInstance.setValue(this.value);
-            } 
-            else {
-                this.createModel();
-            }
-        }
+        this.createEditor()
 
-        if (true/*insideNg*/) {
-            this.createEditor();
-        } 
-        else {
-            this.zone.runOutsideAngular(() => {
-                this.editor = this.createEditor();
-            })
-        }
+        //this.editor.setModel(model)
 
-        if (!hasModel) {
-            this.editor.setValue(this.value);
-        }
+        // set initial value from the property
+
+        this.writeValue(this.value)
 
         super.setupEditor()
     }
@@ -436,8 +453,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             // value is not propagated to parent when executing outside zone.
 
             this.zone.run(() => {
-                this.onChange(value);
-                this.value = value;
+                this.onChange( this.value = value);
             });
         });
 
@@ -446,10 +462,10 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         });
       
         editor.onDidChangeModelDecorations(() => { 
+            console.log("cahnged decorators")
             const errorMessages = this.getModelMarkers().map(({ message }) => message);
     
             if (this.errorMessages.length != errorMessages.length) {
-            const errorMessages = this.getModelMarkers().map(({ message }) => message);
                 console.log(this.errorMessages);
 
                 this.errorMessages = errorMessages;
@@ -458,7 +474,6 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             }
         });
 
-        
         // trigger listener
 
         this.onInit.emit(this);
@@ -468,18 +483,43 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         return editor
     }
 
+      // implement Validator
+
+      validate(control: AbstractControl<any, any>): ValidationErrors | null {
+        const value = control.value
+
+        console.log("validate " + value)
+
+        if (this.editor) {
+            let errors = this.getModelMarkers().map(({ message }) => message);//this.getErrorMessages()
+
+            if (errors.length > 0) {
+                return {
+                    json: {
+                        messages: errors
+                    }
+                }
+            }
+        }
+
+        return null // for now
+    }
+
+
     // implement ControlValueAccessor
 
     writeValue(value: any): void {
-        this.value = value || '';
+        this.value = value || ''
 
+        this.modelInstance?.setValue(this.value)
+        
         // Fix for value change while dispose in process.
 
-        setTimeout(() => {
+        /*setTimeout(() => {
             if (this.editor && !this.options.model) {
                 this.editor.setValue(this.value);
             }
-        });
+        });*/
     }
 
     registerOnChange(fn: any): void {
@@ -514,10 +554,11 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
             if (currentUri)
               existingModel = monaco.editor.getModels().find((model) => model.uri.path === currentUri.path);
-        
 
             if ( !existingModel)
                this.createModel();
+
+            //this.modelInstance.setValue(this.value)
 
             this.editor.setModel(this.modelInstance);
           }

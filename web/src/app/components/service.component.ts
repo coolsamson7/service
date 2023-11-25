@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor, PropertyDescriptor } from "../model/service.interface";
+import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor, TypeDescriptor, PropertyDescriptor, ParameterDescriptor } from "../model/service.interface";
 import { ParameterType, Query, QueryAnalyzer, QueryParameter } from "../json/json-schema-builder";
 import { ComponentModel } from "../model/component.interface";
 import { ComponentService } from "../service/component-service.service";
 import { NgForm } from "@angular/forms";
 import { ServerError } from "../common/error/error";
+import { v4 as uuidv4 } from 'uuid';
+import { EditorModel } from "./json.component";
 
 @Component({
     selector: 'annotation',
@@ -128,10 +130,36 @@ export class ServiceMethodRunnerComponent implements OnInit {
     executedURL = ""
     body: QueryParameter
     parameter = {}
+    uuid = uuidv4()
+
+   resultModel :  EditorModel = {
+        value: '',
+        language: "json",
+        schema: null,
+        uri: uuidv4()
+    }
+
+    bodyModel :  EditorModel = {
+        value: '',
+        language: "json",
+        schema: null,
+        uri: uuidv4()
+    }
 
     // constructor
 
     constructor(private componentService : ComponentService) {
+    }
+
+    // public
+
+    paramModel(param) : EditorModel {
+        return this.bodyModel = {
+            value: 'hurz',
+            language: "json",
+            schema: param.schema,
+            uri: this.uuid
+        }
     }
 
     isError(name: string) {
@@ -200,8 +228,8 @@ export class ServiceMethodRunnerComponent implements OnInit {
             this.executedURL += "?"
             let i = 0;
             for ( let param of  this.query.params.filter(param => param.parameterType == ParameterType.REQUEST_PARAM)) {
-                if ( i > 0)
-                    this.executedURL += ";"
+                if ( i++ > 0)
+                    this.executedURL += "&"
 
                     this.executedURL += param.name + "=" + encodeURI(param.value)
             }

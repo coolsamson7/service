@@ -41,7 +41,8 @@
          <!-- json -->
 
          <div *ngIf="inputType4(param.type) == 'json'">
-            <json-view [schema]="param.schema" [(ngModel)]="param.value" (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name"></json-view>
+            <!--json-view [schema]="param.schema" [(ngModel)]="param.value" (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name"></json-view-->
+            <monaco-editor [options]="{}" [model]="paramModel(param)" [(ngModel)]="param.value"  (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name"></monaco-editor>
             <div class="error" *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</div>
          </div>
       </ng-container>
@@ -54,7 +55,6 @@
          <mat-icon class="icon">play_arrow</mat-icon>
       </button>
     
-
       <div class="query-parameter">
          <div class="url">
             <span class="http-method">{{query.method}}</span>
@@ -62,12 +62,14 @@
          </div>
 
          <div *ngIf="query.method == 'post'" class="body">
-            <json-view [schema]="{}" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></json-view>
+            <!--json-view [schema]="{}" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></json-view-->
+
+            <!--monaco-editor [options]="{}" [model]="resultModel" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></monaco-editor-->
          </div>
       </div>
    </div>
 
    <h3>Result</h3>
 
-   <json-view [schema]="{}" [(ngModel)]="result" name="result" [id]="'result'"></json-view>
+   <monaco-editor [options]="{}" [model]="resultModel" [(ngModel)]="result" name="result" [id]="'result'"></monaco-editor>
 </div>
