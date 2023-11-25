@@ -1,9 +1,8 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChild, OnDestroy, Inject, ElementRef, NgModule, ModuleWithProviders, NgZone, forwardRef, Injectable } from "@angular/core";
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChild, OnDestroy, Inject, ElementRef, NgModule, ModuleWithProviders, NgZone, forwardRef, Injectable, SimpleChanges, OnChanges } from "@angular/core";
 import { v4 as uuidv4 } from 'uuid';
 import { InjectionToken } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from "@angular/forms";
-import { InterfaceDescriptor } from "../model/service.interface";
 import { BehaviorSubject, Subscription, filter, fromEvent, take } from 'rxjs';
 
 @Component({
@@ -29,15 +28,9 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
     @Input('schema') schema: any
     @Input('name') name: string
 
-    // children
-
-    @ViewChild('editor') editor
-
     // instance data
 
-    descriptor: InterfaceDescriptor
-
-    monaco
+    editor : MonacoEditorComponent
     editorOptions = { theme: 'vs-dark', language: 'json' };
     editorModel: any
     uri: any
@@ -50,21 +43,19 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
 
     // callback from monaco editor when loaded
 
-    onInit($event) {
-        if (!this.monaco) {
-            this.monaco = (window as any).monaco
+    onInit(editor: MonacoEditorComponent) {
+        this.editor = this.editor
 
-            this.editorModel = {
-                value: this.value,
-                language: 'json',
-                uri: this.monaco.Uri.parse(this.uri)
-            }
-
-            if (this.schema)
-                this.setSchema()
-
-            this.writeValue(this.value)
+        this.editorModel = {
+            value: this.value,
+            language: 'json',
+            uri: monaco.Uri.parse(this.uri) // TODO
         }
+
+        if (this.schema)
+            this.setSchema()
+
+        this.writeValue(this.value)
     }
 
     newValue(value) {
@@ -74,11 +65,11 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
     // private
 
     private isInitialized() {
-        return this.monaco != undefined
+        return this.editor != undefined
     }
 
     private setSchema() {
-        this.monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,
             schemas: [{
                 uri: this.uri,
@@ -86,13 +77,6 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
                 schema: this.schema
             }]
         })
-    }
-
-    private markAsTouched() {
-        if (!this.touched) {
-            this.onTouched();
-            this.touched = true;
-        }
     }
 
     // implement OnInit
@@ -111,15 +95,13 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
     validate(control: AbstractControl<any, any>): ValidationErrors | null {
         const value = control.value
 
-        if (this.monaco != undefined) {
-            let errors = this.monaco.editor.getModelMarkers({ owner: 'json' })
+        if (this.isInitialized()) {
+            let errors = this.editor.getErrorMessages()//{ owner: 'json' })
 
             if (errors.length > 0) {
-                let messages = errors.map(error => error.message)
-
                 return {
                     json: {
-                        messages: messages
+                        messages: errors
                     }
                 }
             }
@@ -134,7 +116,7 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
         this.value = value
 
         if (this.isInitialized()) {
-            const model = monaco.editor.getModel(this.uri);
+            const model = monaco.editor.getModel(this.uri); // TODO
 
             if (model) {
                 model.setValue(value)
@@ -276,6 +258,8 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     protected editor: any;
     protected editorOptions: any;
     protected windowResizeSubscription: Subscription;
+    protected modelInstance
+    protected uri
 
     // constructor
 
@@ -306,7 +290,7 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     }
 
     protected createModel() {
-        return monaco.editor.createModel(this.editorOptions.model.value, this.editorOptions.model.language, this.editorOptions.model.uri);
+        return this.modelInstance = monaco.editor.createModel(this.editorOptions.model.value, this.editorOptions.model.language, this.editorOptions.model.uri);
     }
 
     // private
@@ -361,7 +345,7 @@ declare var monaco: any;
         multi: true
     }]
 })
-export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor {
+export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor, OnChanges {
     // input & ouput
 
     @Input('options') 
@@ -376,6 +360,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     @Input('model')
     set model(model: EditorModel) {
       this.editorOptions.model = model;
+      this.uri = model?.uri
     }
 
     @Output() onInit: EventEmitter<MonacoEditorComponent> = new EventEmitter();
@@ -415,11 +400,10 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             const model = this.getModel();
 
             if (model) {
-                this.editorOptions.model = model;
-                this.editorOptions.model.setValue(this.value);
+                this.modelInstance.setValue(this.value);
             } 
             else {
-                this.editorOptions.model = this.createModel();
+                this.createModel();
             }
         }
 
@@ -461,19 +445,18 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             this.onTouched();
         });
       
-        editor.onDidChangeModelDecorations(() => { if ( !this.model ) return
-                const errorMessages = this.getModelMarkers().map(({ message }) => message);
+        editor.onDidChangeModelDecorations(() => { 
+            const errorMessages = this.getModelMarkers().map(({ message }) => message);
+    
+            if (this.errorMessages.length != errorMessages.length) {
+            const errorMessages = this.getModelMarkers().map(({ message }) => message);
+                console.log(this.errorMessages);
 
-                const hasValidationStatusChanged = this.errorMessages !== errorMessages;
-      
-                if (hasValidationStatusChanged) {
-                    console.log("status change");
+                this.errorMessages = errorMessages;
 
-                    this.errorMessages = errorMessages;
-
-                    this.onErrorStatusChange();
-                }
-            });
+                this.onErrorStatusChange();
+            }
+        });
 
         
         // trigger listener
@@ -509,6 +492,36 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     registerOnValidatorChange?(fn: () => void): void {
         this.onErrorStatusChange = fn;
+    }
+
+    // implement OnChanges
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (this.editor && changes.model  && !changes.model.firstChange) {
+          const currentModel = changes.model.currentValue;
+          const previousModel = changes.model.previousValue;
+
+          const previousUri = previousModel?.uri
+          const currentUri = currentModel?.uri
+
+          if (previousUri != currentUri) {
+            const value = this.editor.getValue();
+
+            if (this.modelInstance)
+              this.modelInstance.dispose();
+
+            let existingModel;
+
+            if (currentUri)
+              existingModel = monaco.editor.getModels().find((model) => model.uri.path === currentUri.path);
+        
+
+            if ( !existingModel)
+               this.createModel();
+
+            this.editor.setModel(this.modelInstance);
+          }
+        }
     }
 }
 
