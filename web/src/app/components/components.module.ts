@@ -49,7 +49,9 @@ import { ParameterValidator } from "./parameter-validator";
       MatIconModule,
       FormsModule,
       MatSelectModule,
-      MonacoEditorModule.forRoot() // use forRoot() in main app module only.
+      MonacoEditorModule.forRoot({
+        defaultOptions:  { theme: 'vs-dark', language: 'json' }
+      }) // use forRoot() in main app module only.
     ]
   })
 export class ComponentsModule { }
