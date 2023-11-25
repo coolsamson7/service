@@ -15,8 +15,7 @@ import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
 import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { JSONComponent } from "./json.component";
+import { JSONComponent, MonacoEditorModule } from "./json.component";
 import { ParameterValidator } from "./parameter-validator";
 
 @NgModule({

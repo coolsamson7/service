@@ -32,8 +32,8 @@
            <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
             <mat-label>{{param.name}}</mat-label>
             <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'>
-               <mat-option value="false">False</mat-option>
-               <mat-option value="true">True</mat-option>
+               <mat-option [value]="false">False</mat-option>
+               <mat-option [value]="true">True</mat-option>
             </mat-select>
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
@@ -62,22 +62,12 @@
          </div>
 
          <div *ngIf="query.method == 'post'" class="body">
-            <textarea matInput [ngModel]="body.value"
-            cdkTextareaAutosize
-            #autosize="cdkTextareaAutosize"
-            cdkAutosizeMinRows="10"
-            cdkAutosizeMaxRows="50"></textarea>
+            <json-view [schema]="{}" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></json-view>
          </div>
       </div>
    </div>
 
    <h3>Result</h3>
 
-   <div class="result">
-      <textarea matInput [style]="error ? 'color:red;' : ''" [ngModel]="result"
-      cdkTextareaAutosize
-      #autosize="cdkTextareaAutosize"
-      cdkAutosizeMinRows="10"
-      cdkAutosizeMaxRows="50"></textarea>
-   </div>
+   <json-view [schema]="{}" [(ngModel)]="result" name="result" [id]="'result'"></json-view>
 </div>

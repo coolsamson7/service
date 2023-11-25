@@ -103,11 +103,11 @@ export class QueryAnalyzer {
       case "kotlin.String":
         return ""
 
-      case "kotlin.Int":
+      case "kotlin.Int": // TODO
           return 0
 
       case "kotlin.Boolean":
-          return 0
+          return false
 
       default:
          return "" // TODO
