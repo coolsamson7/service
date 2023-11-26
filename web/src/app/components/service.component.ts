@@ -125,37 +125,38 @@ export class ServiceMethodRunnerComponent implements OnInit {
     @ViewChild('form') public form: NgForm
 
     query: Query
-    result
+    result = ''
     error = false
     executedURL = ""
     body: QueryParameter
     parameter = {}
-    uuid = uuidv4()
+    uuid =  uuidv4()
 
    resultModel :  EditorModel = {
         value: '',
         language: "json",
         schema: null,
-        uri: uuidv4()
+        uri: null//'json://' + uuidv4() //  uuidv4() + '://' + "schema" + '.json'
     }
 
     bodyModel :  EditorModel = {
         value: '',
         language: "json",
         schema: null,
-        uri: uuidv4()
+        uri:  'json://' + uuidv4() + "-result.schema"
     }
 
     // constructor
 
     constructor(private componentService : ComponentService) {
+        console.log("new runner")
     }
 
     // public
 
     paramModel(param) : EditorModel {
-        return this.bodyModel = {
-            value: 'hurz',
+        return {
+            value: param.value,
             language: "json",
             schema: param.schema,
             uri: this.uuid
@@ -292,6 +293,10 @@ export class ServiceMethodRunnerComponent implements OnInit {
     // implement OnInit
 
     ngOnInit(): void {
+        let uri = "json://" + this.service.name + "/" + this.uuid + ".schema"
+
+        this.bodyModel.uri = uri
+
         this.query = new QueryAnalyzer(this.service, this.model).analyzeMethod(this.method);
 
         for ( let param of this.query.params) {

@@ -44,7 +44,7 @@ export class JSONComponent implements OnInit, AfterViewInit, ControlValueAccesso
     // callback from monaco editor when loaded
 
     onInit(editor: MonacoEditorComponent) {
-        this.editor = this.editor
+        this.editor = editor
 
         this.editorModel = {
             value: this.value,
@@ -290,6 +290,8 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     }
 
     protected createEditor() {
+        let bla = monaco.editor.getModels()
+        console.log(bla)
         return this.editor = monaco.editor.create(this.editorContainer.nativeElement, this.editorOptions);
     }
 
@@ -300,11 +302,13 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     protected createModel() {
         let model = this.getModel();
         if (!model) {
+            console.log("create new model")
             model = monaco.editor.createModel(
                 this.value, 
                 this.model.language,
                 this.uri);
         }
+        else console.log("resuse model")
 
         this.editorOptions.model = model
 
@@ -335,7 +339,7 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         this.loader.isLoaded$.pipe(
             filter(isLoaded => isLoaded),
             take(1)
-        ).subscribe(() => { this.setupEditor() })
+        ).subscribe(() => { setTimeout(() => this.setupEditor() , 0)})
     }
 
     // implement OnDestroy
@@ -345,6 +349,7 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
             this.windowResizeSubscription.unsubscribe();
 
         if (this.editor) {
+            this.editor.getModel().dispose()
             this.editor.dispose();
             this.editor = undefined;
         }
@@ -431,13 +436,13 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
         this.createEditor()
 
-        //this.editor.setModel(model)
-
-        // set initial value from the property
-
-        this.writeValue(this.value)
+        this.editor.setModel(model)
 
         super.setupEditor()
+
+         // set initial value from the property
+
+         this.writeValue(this.value)
     }
 
     // override
@@ -461,8 +466,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             this.onTouched();
         });
       
-        editor.onDidChangeModelDecorations(() => { 
-            console.log("cahnged decorators")
+       /* doesnt't work editor.onDidChangeModelDecorations(() => { 
             const errorMessages = this.getModelMarkers().map(({ message }) => message);
     
             if (this.errorMessages.length != errorMessages.length) {
@@ -472,7 +476,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
                 this.onErrorStatusChange();
             }
-        });
+        });*/
 
         // trigger listener
 
@@ -487,8 +491,6 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
       validate(control: AbstractControl<any, any>): ValidationErrors | null {
         const value = control.value
-
-        console.log("validate " + value)
 
         if (this.editor) {
             let errors = this.getModelMarkers().map(({ message }) => message);//this.getErrorMessages()
@@ -510,6 +512,12 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     writeValue(value: any): void {
         this.value = value || ''
+
+        if (   this.modelInstance) {
+            console.log("set value: " + this.value) 
+        }
+
+        this.editor?.setValue(this.value)
 
         this.modelInstance?.setValue(this.value)
         
