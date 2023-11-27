@@ -34,7 +34,13 @@ export class QueryParamComponent implements OnInit {
            case "kotlin.String":
                return "string"
 
+           case "kotlin.Short":
            case "kotlin.Int":
+           case "kotlin.Long":
+               return "integer"
+
+           case "kotlin.Double":
+           case "kotlin.Float":
                return "number"
 
            case "kotlin.Boolean":

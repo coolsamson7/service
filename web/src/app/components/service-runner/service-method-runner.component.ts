@@ -73,6 +73,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
             switch (error) {
                 case "required":
                     return name + " is required"
+
                 case "json": 
                     return "schema violation: " + errors[error].messages[0]
             }
@@ -83,19 +84,31 @@ export class ServiceMethodRunnerComponent implements OnInit {
         return "ouch"
     }
 
+    enumValues(type: TypeDescriptor) {
+        return this.model.models.find(descriptor => descriptor.name == type.name).properties.map(property => property.name)
+    }
+
     inputType4(type: TypeDescriptor) : string {
         switch(type.name) {
             case "kotlin.String":
                 return "string"
 
+            case "kotlin.Short":
             case "kotlin.Int":
+            case "kotlin.Long":
+            case "kotlin.Float":
+            case "kotlin.Double":
                 return "number"
 
             case "kotlin.Boolean":
                 return "boolean"
 
             default:
-                return "json"
+                let model = this.model.models.find(model => model.name == type.name)
+                if ( model?.kind.includes("enum"))
+                    return "enum"
+                else
+                    return "json"
         }
     }
 

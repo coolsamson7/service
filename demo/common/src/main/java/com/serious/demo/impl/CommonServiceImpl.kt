@@ -7,6 +7,7 @@ package com.serious.demo.impl
 
 import com.serious.demo.CommonService
 import com.serious.demo.Foo
+import com.serious.demo.RGB
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 @Component
 @RestController
 class CommonServiceImpl : CommonService {
-    override fun hello(): String {
-        return "hello"
+    override fun hello(color: RGB): String {
+        return color.toString()
     }
 
     override fun sayHello(world : String, times: Int) : String {

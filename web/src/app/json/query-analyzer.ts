@@ -60,6 +60,10 @@ export class QueryAnalyzer {
                value = false
                break;
 
+            case undefined: // enum!
+               value = schema.properties[property].enum[0]
+               break;
+
            default:
                value = ""
        }
@@ -97,14 +101,27 @@ export class QueryAnalyzer {
      case "kotlin.String":
        return ""
 
-     case "kotlin.Int": // TODO
+
+    case "kotlin.Short":
+    case "kotlin.Int":
+    case "kotlin.Long":
          return 0
+
+    case "kotlin.Float":
+    case "kotlin.Double":
+         return 0.0
 
      case "kotlin.Boolean":
          return false
 
      default:
-        return "" // TODO
+        let model = this.model.models.find(model => model.name == type.name)
+        if ( model?.kind.includes("enum"))
+            return model.properties[0].name
+        else
+            console.log("strange type " +type.name )
+
+        return ""
    }
  }
 

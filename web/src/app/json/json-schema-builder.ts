@@ -94,7 +94,7 @@ export class JSONSchemaBuilder {
     constructor(model: ComponentModel) {
         for ( let descriptor of model.models) {
             let kind = descriptor.kind.split(" ")
-            if ( kind.find((kind) => kind == "class") && !kind.find((kind) => kind == "enum"))
+            if ( kind.find((kind) => kind == "class") /*&& !kind.find((kind) => kind == "enum")*/)
                 this.types[descriptor.name] = descriptor
         }
   
@@ -152,16 +152,21 @@ export class JSONSchemaBuilder {
 
     private isLiteral(type: string) : boolean {
      if (this.types[type])
-        return false
+        return this.types[type].kind.includes("enum")
 
-      return true // ???
+      return true
    }
 
    private isObject(type: string) : boolean {
-    if (this.types[type])
-       return true
+    let model = this.types[type]
 
-    return false // ???
+    return (model != undefined && !model.kind.includes("enum"))
+  }
+
+  private isEnum(type: string) : boolean {
+    let model = this.types[type]
+
+    return (model != undefined && !model.kind.includes("enum"))
   }
 
    mapLiteralType(typeName: string, property: PropertyDescriptor, type: any) {
@@ -195,7 +200,12 @@ export class JSONSchemaBuilder {
             break;
 
       default:
-        console.log("strange type " + typeName)
+           let model = this.types[typeName]
+           if ( model && model.kind.includes("enum")) {
+              type.enum = model.properties.map(property => property.name)
+           }
+           else
+            console.log("strange type " + typeName) // TODO
     }
 
 
@@ -252,7 +262,7 @@ export class JSONSchemaBuilder {
     let typeName = property.type?.name
 
     let result : any = {
-      type: typeName
+
     }
 
     // object
@@ -272,19 +282,18 @@ export class JSONSchemaBuilder {
 
       if ( this.isObject(itemTypeName))
         result.items = this.referenceType({name: itemTypeName, type:  this.types[itemTypeName], annotations: []}) // HACK TODO
-    else {
-        result.items = {}
-        this.mapLiteralType(itemTypeName, {name: itemTypeName, type: null, annotations: []},  result.items)
-         }
-    }
+      
+        else {
+          result.items = {}
+          this.mapLiteralType(itemTypeName, {name: itemTypeName, type: null, annotations: []},  result.items)
+          }
+      }
 
     // literal
 
     else if (this.isLiteral(typeName)) {
       this.mapLiteralType(typeName, property, result)
     }
-
-    // TODO: enum
 
     // done
 

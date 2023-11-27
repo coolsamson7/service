@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 interface CommonService : Service {
     @GetMapping("hello")
     @ResponseBody
-    fun hello(): String
+    fun hello(@RequestParam color: RGB): String
 
     @Description(
         "super"

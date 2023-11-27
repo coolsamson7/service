@@ -2,19 +2,6 @@ import { AbstractControl, ValidatorFn, NG_VALIDATORS, Validator, FormControl, Va
 import { Directive, Input } from '@angular/core';
 import { ParameterDescriptor } from '../../model/service.interface';
 
-// validation function
-
-function validateParameter(validator: ParameterValidator): ValidatorFn {
-    return (control: AbstractControl) => {
-        let parameter = validator.parameter
-        let value = control.value
-
-        //console.log(minValue); 
-        return null;
-    }
-}
-
-
 let constraintHandlers =  [
     // required
 
@@ -86,7 +73,7 @@ let constraintHandlers =  [
         }
     }
 ]
-class ConstaintValidator {
+class ConstraintValidator {
    // instance data
 
    handlers = []
@@ -161,7 +148,7 @@ export class ParameterValidator implements Validator {
 
     // instance data
 
-    validator: ConstaintValidator;
+    validator: ConstraintValidator;
 
     // constructor
 
@@ -172,7 +159,7 @@ export class ParameterValidator implements Validator {
 
     validate(control: FormControl) : ValidationErrors | null {
         if ( !this.validator)
-            this.validator = new ConstaintValidator(this.parameter['schema'])
+            this.validator = new ConstraintValidator(this.parameter['schema'])
         
         return this.validator.validate(control.value);
     }

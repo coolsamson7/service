@@ -32,6 +32,16 @@
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
 
+         <!-- enum -->
+
+         <mat-form-field *ngIf="inputType4(param.type) == 'enum'">
+            <mat-label>{{param.name}}</mat-label>
+            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'>
+               <mat-option *ngFor="let value of enumValues(param.type)" [value]="value">{{value}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+         </mat-form-field>
+
          <!-- json -->
 
          <div *ngIf="inputType4(param.type) == 'json'">
