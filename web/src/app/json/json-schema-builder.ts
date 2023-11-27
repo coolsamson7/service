@@ -3,7 +3,7 @@ import { AnnotationDescriptor, InterfaceDescriptor, PropertyDescriptor, TypeDesc
 
 
 interface ConstraintHandler {
-  type: string,
+  type: string[],
   name: string, // eg ...Min
   apply: (annotation: AnnotationDescriptor, type: any) => void
 }
@@ -17,7 +17,7 @@ export class JSONSchemaBuilder {
     constraintHandlers : ConstraintHandler[] = [
       // Min
       {
-        type: "integer",
+        type: ["integer", "number"],
         name: "jakarta.validation.constraints.Max",
         apply: (annotation: AnnotationDescriptor, type: any) => {
            type.maximum = annotation.parameters[0].value
@@ -25,22 +25,68 @@ export class JSONSchemaBuilder {
       },
       // Max
       {
-       type: "integer",
+       type: ["integer", "number"],
        name: "jakarta.validation.constraints.Min",
        apply: (annotation: AnnotationDescriptor, type: any) => {
           type.minimum = annotation.parameters[0].value
        }
       },
+       // DecimalMax
+       {
+          type: ["integer", "number"],
+          name: "jakarta.validation.constraints.DecimalMax",
+          apply: (annotation: AnnotationDescriptor, type: any) => {
+            if (annotation.parameters[1].value) // inclusive
+               type.maximum = annotation.parameters[0].value
+            else
+              type.exclusiveMaximum = annotation.parameters[0].value
+          }
+       },
+         // DecimalMin
+         {
+          type: ["integer", "number"],
+          name: "jakarta.validation.constraints.DecimalMin",
+          apply: (annotation: AnnotationDescriptor, type: any) => {
+            if (annotation.parameters[1].value) // inclusive
+              type.minimum = annotation.parameters[0].value
+            else
+              type.minimumMinimum = annotation.parameters[0].value
+          }
+       },
+      // Positive
+      {
+          type: ["integer", "number"],
+          name: "jakarta.validation.constraints.Positive",
+          apply: (annotation: AnnotationDescriptor, type: any) => {
+             type.minimum = 1
+          }
+         },
+      // PositiveOrZero
+      {
+        type: ["integer", "number"],
+        name: "jakarta.validation.constraints.PositiveOrZero",
+        apply: (annotation: AnnotationDescriptor, type: any) => {
+           type.minimum = 0
+        }
+      },
       // Size
       {
-        type: "string",
+        type: ["string"],
         name: "jakarta.validation.constraints.Size",
         apply: (annotation: AnnotationDescriptor, type: any) => {
           type.minLength = annotation.parameters[0].value
           type.maxLength = annotation.parameters[1].value
         }
+      },
+      // Email
+      {
+          type: ["string"],
+          name: "jakarta.validation.constraints.Email",
+          apply: (annotation: AnnotationDescriptor, type: any) => {
+            type.format = "email"
+          }
         }
-      // TODO: more
+
      ]
 
     // constructor
@@ -157,7 +203,7 @@ export class JSONSchemaBuilder {
 
     let findAndApplyHandler = (annotation: AnnotationDescriptor , type: string,  schema: any) => {
       for ( let handler of this.constraintHandlers) {
-        if ( handler.type === type && handler.name === annotation.name) {
+        if ( handler.type.includes( type ) && handler.name === annotation.name) {
           handler.apply(annotation, schema)
           return
         }
