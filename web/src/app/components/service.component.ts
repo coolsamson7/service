@@ -240,6 +240,12 @@ export class ServiceMethodRunnerComponent implements OnInit {
    // callbacks
 
     execute() {
+        if (!this.form.valid) {
+            this.form.control.updateValueAndValidity()
+            this.form.control.markAllAsTouched()
+            return
+        }
+
         this.error = false
 
         let request : ServiceRequest = {

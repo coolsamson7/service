@@ -2,12 +2,6 @@
    <h3>Parameters</h3>
 
    <form #form="ngForm" class="parameter">
-      <!--h3>Form state</h3>
-      <p>Valid: {{form.valid}}</p>
-      <p>Pristine:  {{form.pristine}}</p>
-      <p>Touched:  {{form.touched}}</p>
-      <p>Submitted: {{form.submitted}}</p-->
-
       <!--query-parameter [form]="form" *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter-->
 
       <ng-container *ngFor="let param of query.params">
@@ -41,7 +35,6 @@
          <!-- json -->
 
          <div *ngIf="inputType4(param.type) == 'json'">
-            <!--json-view [schema]="param.schema" [(ngModel)]="param.value" (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name"></json-view-->
             <monaco-editor [options]="{}" [model]="paramModel(param)" [(ngModel)]="param.value"  (ngModelChange)='onChange()' name="{{param.name}}" [id]="param.name"></monaco-editor>
             <div class="error" *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</div>
          </div>
@@ -51,7 +44,8 @@
    <h3>Query</h3>
 
    <div class="query">
-      <button  mat-icon-button [disabled]="!form.valid" (click)="execute()" class="play">
+      <!-- [disabled]="!form.valid" -->
+      <button  mat-icon-button  (click)="execute()" class="play">
          <mat-icon class="icon">play_arrow</mat-icon>
       </button>
     
@@ -62,9 +56,7 @@
          </div>
 
          <div *ngIf="query.method == 'post'" class="body">
-            <!--json-view [schema]="{}" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></json-view-->
-
-            <!--monaco-editor [options]="{}" [model]="resultModel" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></monaco-editor-->
+            <monaco-editor [options]="{}" [model]="resultModel" [(ngModel)]="body.value" name="body_value" [id]="'body_value'"></monaco-editor>
          </div>
       </div>
    </div>

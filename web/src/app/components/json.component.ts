@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChild, OnDestroy, Inject, ElementRef, NgModule, ModuleWithProviders, NgZone, forwardRef, Injectable, SimpleChanges, OnChanges } from "@angular/core";
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChild, OnDestroy, Inject, ElementRef, NgModule, ModuleWithProviders, NgZone, forwardRef, Injectable, SimpleChanges, OnChanges, Injector } from "@angular/core";
 import { v4 as uuidv4 } from 'uuid';
 import { InjectionToken } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from "@angular/forms";
+import { AbstractControl, ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, NgControl, ValidationErrors, Validator } from "@angular/forms";
 import { BehaviorSubject, Subscription, filter, fromEvent, take } from 'rxjs';
 
 @Component({
@@ -290,8 +290,6 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     }
 
     protected createEditor() {
-        let bla = monaco.editor.getModels()
-        console.log(bla)
         return this.editor = monaco.editor.create(this.editorContainer.nativeElement, this.editorOptions);
     }
 
@@ -302,14 +300,12 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     protected createModel() {
         let model = this.getModel();
         if (!model) {
-            console.log("create new model")
             model = monaco.editor.createModel(
                 this.value, 
                 this.model.language,
                 this.uri);
         }
-        else console.log("resuse model")
-
+    
         this.editorOptions.model = model
 
         return this.modelInstance = model
@@ -349,7 +345,7 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
             this.windowResizeSubscription.unsubscribe();
 
         if (this.editor) {
-            this.editor.getModel().dispose()
+            this.editor.getModel()?.dispose()
             this.editor.dispose();
             this.editor = undefined;
         }
@@ -387,6 +383,7 @@ declare var monaco: any;
 ]
 })
 export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor, Validator, OnChanges {
+
     // input & ouput
 
     @Input('options') 
@@ -409,11 +406,24 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     errorMessages : string[] = []
 
+    control: FormControl
+
     // constructor
 
-    constructor(private zone: NgZone, loader: MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config: MonacoEditorConfig) {
+    constructor(private zone: NgZone, loader: MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config: MonacoEditorConfig, private injector: Injector) {
         super(loader)
     }
+
+      // implement AfterViewInit
+
+      ngAfterViewInit(): void {
+        super.ngAfterViewInit()
+        
+        const ngControl: NgControl = this.injector.get(NgControl, null);
+        if (ngControl) 
+          this.control = ngControl.control as FormControl;
+       
+     } 
 
     // public
 
@@ -457,26 +467,26 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
             // value is not propagated to parent when executing outside zone.
 
-            this.zone.run(() => {
-                this.onChange( this.value = value);
-            });
+           this.zone.run(() => this.onChange( this.value = value) );
         });
 
         editor.onDidBlurEditorWidget(() => {
             this.onTouched();
         });
       
-       /* doesnt't work editor.onDidChangeModelDecorations(() => { 
+       // doesnt't work 
+       
+       editor.onDidChangeModelDecorations(() => { 
             const errorMessages = this.getModelMarkers().map(({ message }) => message);
     
             if (this.errorMessages.length != errorMessages.length) {
-                console.log(this.errorMessages);
-
                 this.errorMessages = errorMessages;
+
+                this.control?.updateValueAndValidity()
 
                 this.onErrorStatusChange();
             }
-        });*/
+        });
 
         // trigger listener
 
@@ -513,21 +523,9 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     writeValue(value: any): void {
         this.value = value || ''
 
-        if (   this.modelInstance) {
-            console.log("set value: " + this.value) 
-        }
-
-        this.editor?.setValue(this.value)
+        //this.editor?.setValue(this.value)
 
         this.modelInstance?.setValue(this.value)
-        
-        // Fix for value change while dispose in process.
-
-        /*setTimeout(() => {
-            if (this.editor && !this.options.model) {
-                this.editor.setValue(this.value);
-            }
-        });*/
     }
 
     registerOnChange(fn: any): void {
