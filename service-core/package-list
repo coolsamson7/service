@@ -2,7 +2,11 @@ $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:com.serious.annotations////PointingToDeclaration/service-core/com.serious.annotations/index.html
 $dokka.location:com.serious.annotations/Description///PointingToDeclaration/service-core/com.serious.annotations/-description/index.html
+$dokka.location:com.serious.annotations/Description/parameters/#/PointingToDeclaration/service-core/com.serious.annotations/-description/parameters.html
 $dokka.location:com.serious.annotations/Description/value/#/PointingToDeclaration/service-core/com.serious.annotations/-description/value.html
+$dokka.location:com.serious.annotations/Parameter///PointingToDeclaration/service-core/com.serious.annotations/-parameter/index.html
+$dokka.location:com.serious.annotations/Parameter/description/#/PointingToDeclaration/service-core/com.serious.annotations/-parameter/description.html
+$dokka.location:com.serious.annotations/Parameter/name/#/PointingToDeclaration/service-core/com.serious.annotations/-parameter/name.html
 $dokka.location:com.serious.collections////PointingToDeclaration/service-core/com.serious.collections/index.html
 $dokka.location:com.serious.collections/Arrays///PointingToDeclaration/service-core/com.serious.collections/-arrays/index.html
 $dokka.location:com.serious.collections/Arrays/add2/#java.lang.Class[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/service-core/com.serious.collections/-arrays/add2.html
