@@ -1,6 +1,6 @@
 import { AbstractControl, ValidatorFn, NG_VALIDATORS, Validator, FormControl, ValidationErrors } from '@angular/forms';
 import { Directive, Input } from '@angular/core';
-import { ParameterDescriptor } from '../model/service.interface';
+import { ParameterDescriptor } from '../../model/service.interface';
 
 // validation function
 

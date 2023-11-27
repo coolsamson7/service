@@ -13,10 +13,18 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
-import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
+import { ServiceComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
-import { ParameterValidator } from "./parameter-validator";
+import { ParameterValidator } from "./service-runner/parameter-validator";
 import { MonacoEditorModule } from "../widgets/monaco-editor/monaco-editor.module";
+import { ServiceMethodRunnerComponent } from "./service-runner/service-method-runner.component";
+import { ServiceAnnotationComponent } from "./service/service-annotation.component";
+import { ServiceClassComponent } from "./service/service-class.component";
+import { ServiceLiteralComponent } from "./service/service-literal.component";
+import { ServiceMethodComponent } from "./service/service-method.component";
+import { ServicePropertyComponent } from "./service/service-property.component";
+import { ServiceTypeComponent } from "./service/service-type.component";
+import { QueryParamComponent } from "./service-runner/query-parameter.component";
 
 @NgModule({
     declarations: [
