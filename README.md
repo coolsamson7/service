@@ -43,7 +43,7 @@ What's wrong?
 This is _clumsy_ and against some major architectural principles like separation of concern, etc.
 
 Talking about modularization: Spring assumes that the basis for clustering services is an application which is wrong in my mind. Teams split up work
-by workin on different mopdules. It should be a deployment aspect at the very end how modules are mapped to processes. So we bascially need a smaller building block! 
+by working on different modules. It should be a deployment aspect at the very end how modules are mapped to processes. So we bascially need a smaller building block! 
 
 The following design ideas or principles where the basis of the implemented architecture: 
 
@@ -51,7 +51,7 @@ The following design ideas or principles where the basis of the implemented arch
 - we don't want to care where the implementation is. It could be remote, it could be local as well.
 - depending on a specific deployment scenarios - e.g class path - different remoting situations should be possible.
 - remote service calls are transparently routed based on a central registry that keeps track of running services
-- services allow different protocols for remoting, whoich they expose as meta-data
+- services allow different protocols for remoting, which they expose as meta-data
 - typical health checks are executed in order to valdidate the health of individual services
 - changes in the topology - due to died or newly started services - should be handled transparently
 - every component is able to compute and return the full meta-data concerning its hosted services ( service-signatures, model-information, etc. )
