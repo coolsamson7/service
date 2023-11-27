@@ -1,16 +1,16 @@
 [![Java CI with Maven](https://github.com/coolsamson7/service/actions/workflows/maven.yml/badge.svg)](https://github.com/coolsamson7/service/actions/workflows/maven.yml)
 # Service
 
-A spring based framework for service discovery and transparent routing.
+This library is based upon spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to find and communicate with each other in a dynamic environment.
 
 ## Motivation and goals
 
-While there are already a number of - mostly spring - libraries
+While there are a number of - mostly spring - libraries
 available that help to solve most of the lowl-level problems in  a distributed microservice based architecture like
 - registries ( consul, etc. ) and
 - loadbalancing mechanisms
 
-the result from a developer perspective in my mind is still too complicated and also has some major shortcomings.
+the result from a developer perspective in my mind is still too poor and also has some major shortcomings.
 
 Let's look at an example ( in Java ) 
 
@@ -36,27 +36,29 @@ public class MyClass {
 ```
 
 What's wrong?
-- the code assumes that the called service is remote in the first place which sismply is a wrong assumption
-- we have to commit to a specific protocol
-- we even take care of technical details on protocol level ( e.g.  loadbalancing )
+- the code assumes that the called service is remote in the first place which simply is a wrong assumption
+- we have to commit to a specific protocol and take care of technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
 
 This is _clumsy_ and against some major architectural principles like separation of concern, etc.
 
-Talking about modularization: Spring assumes that the granularity of building blocks which can be clustered is an application.
-This contradicts the way how teams split up work by implementing modules ( for example in from of different maven modules ) and only combining them in form of a specific deployment as a standalone application. So we bascially need a smaller building block! 
+Talking about modularization: Spring assumes that the basis for clustering services is an application which is wrong in my mind. Teams split up work
+by workin on different mopdules. It should be a deployment aspect at the very end how modules are mapped to processes. So we bascially need a smaller building block! 
 
 The following design ideas or principles where the basis of the implemented architecture: 
 
 - we want to program against simple interfaces and are not interested in protocol level details
 - we don't want to care where the implementation is. It could be remote, it could be local as well.
 - depending on a specific deployment scenarios - e.g class path - different remoting situations should be possible.
-- remote service calls are transparently routed based on a central registry that keeps track of running services ( including health checks )
-- changes in the topology should be handled transparently
+- remote service calls are transparently routed based on a central registry that keeps track of running services
+- services allow different protocols for remoting, whoich they expose as meta-data
+- typical health checks are executed in order to valdidate the health of individual services
+- changes in the topology - due to died or newly started services - should be handled transparently
+- every component is able to compute and return the full meta-data concerning its hosted services ( service-signatures, model-information, etc. )
 
 ## Sample
 
-Let's look at a simple example. Let's declare a service interface first
+Let's look at a simple example at a final result. Let's declare a service interface first
 ```
 @ServiceInterface(name = "TestService")
 interface TestService : Service {
@@ -65,7 +67,7 @@ interface TestService : Service {
     fun hello(): String
 }
 ```
-By coincidence, it declares all the necessary annotations for spring!
+By coincidence, it declares all the necessary annotations for spring! The framework onyl cares abou the - tagging - interface and the annotation.
 
 Services are bundled by a _component_
 ```
@@ -194,12 +196,26 @@ The framework offers the following features
 An administration ui has been implemented in Angular that is able to
 * see the list of running components & services
 * see the service catalog of every component with respect to service interfaces and models
-* see details of the running infrastructure in terms of processes and inter-process communication
-* oidc based authentication
+* see details of the running infrastructure in terms of processes and the current inter-process communication flows
+* run service methods
+
+The ui is secured by an OpenID Connect mechanism in combiantion with an external server ( e.g. Keycloak ) 
+
+Let's look at some screenshots
+
+Here you see the registered instances for a particular component including the current health state
 
 ![image](https://github.com/coolsamson7/service/assets/19403960/69c4159b-dba4-4538-a9db-23a06f130aae)
 
+All aspects of a component can be viewed here. 
+
 ![image](https://github.com/coolsamson7/service/assets/19403960/656cb434-4160-4cd6-b474-1673286f2fda)
+
+In addition to simply viewing, executing services is supported as well. As the meta-data is available all input parameters are validated.
+
+![image](https://github.com/coolsamson7/service/assets/19403960/9e8256cd-4e4b-4f93-a842-c9fcf5f46cb9)
+
+The current state of the infrastructure can be vieweed in form of a graph that shows running processes, the hosted components, and the current communciaiton flows.
 
 ![image](https://github.com/coolsamson7/service/assets/19403960/ebb190c1-31e0-480d-85e6-592b800c4241)
 
