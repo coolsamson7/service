@@ -64,6 +64,26 @@ let constraintHandlers =  [
         check: (constraint, value) => {
             return value <= constraint
         }
+    },
+
+    // minLength
+
+      {
+        type: ["string"],
+        constraint: "minLength",
+        check: (constraint, value) => {
+            return value.length >= constraint
+        }
+    },
+
+    // maxLength
+
+    {
+        type: ["string"],
+        constraint: "maxLength",
+        check: (constraint, value) => {
+            return value.length <= constraint
+        }
     }
 ]
 class ConstaintValidator {

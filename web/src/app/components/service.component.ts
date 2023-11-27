@@ -6,7 +6,7 @@ import { ComponentService } from "../service/component-service.service";
 import { NgForm } from "@angular/forms";
 import { ServerError } from "../common/error/error";
 import { v4 as uuidv4 } from 'uuid';
-import { EditorModel } from "./json.component";
+import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 
 @Component({
     selector: 'annotation',
@@ -136,20 +136,19 @@ export class ServiceMethodRunnerComponent implements OnInit {
         value: '',
         language: "json",
         schema: null,
-        uri: null//'json://' + uuidv4() //  uuidv4() + '://' + "schema" + '.json'
+        uri: 'json://' + uuidv4() + '.schema'
     }
 
     bodyModel :  EditorModel = {
         value: '',
         language: "json",
         schema: null,
-        uri:  'json://' + uuidv4() + "-result.schema"
+        uri: null // will be set in onInit
     }
 
     // constructor
 
     constructor(private componentService : ComponentService) {
-        console.log("new runner")
     }
 
     // public

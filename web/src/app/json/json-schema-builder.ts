@@ -257,7 +257,16 @@ export class JSONSchemaBuilder {
        apply: (annotation: AnnotationDescriptor, type: any) => {
           type.minimum = annotation.parameters[0].value
        }
-      }
+      },
+      // Size
+      {
+        type: "string",
+        name: "jakarta.validation.constraints.Size",
+        apply: (annotation: AnnotationDescriptor, type: any) => {
+          type.minLength = annotation.parameters[0].value
+          type.maxLength = annotation.parameters[1].value
+        }
+        }
       // TODO: more
      ]
 

@@ -15,8 +15,8 @@ import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
 import { QueryParamComponent, ServiceAnnotationComponent, ServiceClassComponent, ServiceComponent, ServiceLiteralComponent, ServiceMethodComponent, ServiceMethodRunnerComponent, ServicePropertyComponent, ServiceTypeComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
-import { JSONComponent, MonacoEditorModule } from "./json.component";
 import { ParameterValidator } from "./parameter-validator";
+import { MonacoEditorModule } from "../widgets/monaco-editor/monaco-editor.module";
 
 @NgModule({
     declarations: [
@@ -36,7 +36,6 @@ import { ParameterValidator } from "./parameter-validator";
         ServiceClassComponent,
         ServiceMethodRunnerComponent,
         QueryParamComponent,
-        JSONComponent,
         ParameterValidator
     ],
     imports: [
