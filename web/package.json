@@ -32,7 +32,7 @@
     "compodoc": "npx compodoc -p tsconfig.app.json",
     "analyze": "source-map-explorer dist/angular-starter/**/*.js",
     "prettier": "prettier --write \"src/app/**/*.{js,json,css,scss,less,md,ts,html,component.html}\"",
-    "prepare": "husky install",
+    "xxxprepare": "husky install",
     "audit": "auditjs ossi",
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
