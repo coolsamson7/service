@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.service.*
 import org.springframework.stereotype.Component
+import java.time.Instant
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
@@ -31,11 +33,26 @@ class ServiceExecutor {
             "kotlin.String" ->
                 node.asText()
 
+            "kotlin.Short" ->
+                node.asInt().toShort()
+
             "kotlin.Int" ->
                 node.asInt()
 
+            "kotlin.Long" ->
+                node.asLong()
+
+            "kotlin.Double" ->
+                node.asDouble()
+
+            "kotlin.Float" ->
+                node.asDouble().toFloat()
+
             "kotlin.Boolean" ->
                 node.asBoolean()
+
+            "java.util.Date" ->
+                Date.from(Instant.parse(node.asText()))
 
             else ->
                 if (model.models.find { model -> model.name == descriptor.type.name } != null)

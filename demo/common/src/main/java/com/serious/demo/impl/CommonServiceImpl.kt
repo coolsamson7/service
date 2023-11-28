@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 @Component
 @RestController
 class CommonServiceImpl : CommonService {
-    override fun hello(color: RGB): String {
+    override fun hello(color: RGB, date: Date): String {
         return color.toString()
     }
 

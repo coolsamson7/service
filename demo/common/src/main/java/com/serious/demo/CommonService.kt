@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Size
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 /**
  * @author Andreas Ernst
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*
 interface CommonService : Service {
     @GetMapping("hello")
     @ResponseBody
-    fun hello(@RequestParam color: RGB): String
+    fun hello(@RequestParam color: RGB, @RequestParam date: Date): String
 
     @Description(
         "super"
