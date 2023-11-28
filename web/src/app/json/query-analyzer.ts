@@ -111,10 +111,13 @@ export class QueryAnalyzer {
     case "kotlin.Double":
          return 0.0
 
-     case "kotlin.Boolean":
+    case "kotlin.Boolean":
          return false
 
-     default:
+    case "java.util.Date":
+         return "" // TODO date
+
+    default:
         let model = this.model.models.find(model => model.name == type.name)
         if ( model?.kind.includes("enum"))
             return model.properties[0].name

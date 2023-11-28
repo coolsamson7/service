@@ -25,7 +25,7 @@
 
            <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
             <mat-label>{{param.name}}</mat-label>
-            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'>
+            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name">
                <mat-option [value]="false">False</mat-option>
                <mat-option [value]="true">True</mat-option>
             </mat-select>
@@ -36,11 +36,21 @@
 
          <mat-form-field *ngIf="inputType4(param.type) == 'enum'">
             <mat-label>{{param.name}}</mat-label>
-            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'>
+            <mat-select required name="{{param.name}}" [(ngModel)]="param.value"  (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name">
                <mat-option *ngFor="let value of enumValues(param.type)" [value]="value">{{value}}</mat-option>
             </mat-select>
             <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
          </mat-form-field>
+
+         <!-- date -->
+
+         <mat-form-field *ngIf="inputType4(param.type) == 'date'">
+            <mat-label>>{{param.name}}e</mat-label>
+            <input matInput [matDatepicker]="picker"  [(ngModel)]="param.value"  (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
 
          <!-- json -->
 

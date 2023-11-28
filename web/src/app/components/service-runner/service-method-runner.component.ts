@@ -103,6 +103,9 @@ export class ServiceMethodRunnerComponent implements OnInit {
             case "kotlin.Boolean":
                 return "boolean"
 
+            case "java.util.Date":
+                    return "date"
+
             default:
                 let model = this.model.models.find(model => model.name == type.name)
                 if ( model?.kind.includes("enum"))

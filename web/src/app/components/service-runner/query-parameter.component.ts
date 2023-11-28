@@ -46,6 +46,9 @@ export class QueryParamComponent implements OnInit {
            case "kotlin.Boolean":
                return "boolean"
 
+            case "java.util.Date":
+               return "date";
+
            default:
                return "json"
        }

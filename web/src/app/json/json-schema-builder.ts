@@ -194,6 +194,11 @@ export class JSONSchemaBuilder {
         type.type = "number"
         break;
 
+      case  "java.util.Date":
+            type.type = "string"
+            type.format = "date-time"
+            break;
+
       case  "java.net.URI":
             type.type = "string"
             type.format = "uri"

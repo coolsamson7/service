@@ -25,6 +25,8 @@ import { ServiceMethodComponent } from "./service/service-method.component";
 import { ServicePropertyComponent } from "./service/service-property.component";
 import { ServiceTypeComponent } from "./service/service-type.component";
 import { QueryParamComponent } from "./service-runner/query-parameter.component";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
     declarations: [
@@ -56,6 +58,8 @@ import { QueryParamComponent } from "./service-runner/query-parameter.component"
       MatIconModule,
       FormsModule,
       MatSelectModule,
+      MatDatepickerModule,
+      MatNativeDateModule,
       MonacoEditorModule.forRoot({
         defaultOptions:  { theme: 'vs-dark', language: 'json' }
       }) // use forRoot() in main app module only.
