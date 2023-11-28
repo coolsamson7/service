@@ -180,6 +180,7 @@
     <!-- modules -->
 
     <modules>
+        <module>web</module>
         <module>core</module>
         <module>channel</module>
         <module>registry</module>
