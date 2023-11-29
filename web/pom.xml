@@ -11,7 +11,6 @@
   <artifactId>service-web</artifactId>
   <name>service-web</name>
   <description>web</description>
-  <packaging>pom</packaging>
 
   <build>
     <plugins>
@@ -46,10 +45,9 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <!-- arguments>run-script build</arguments-->
+              <arguments>run-script build:prod</arguments>
             </configuration>
           </execution>
-
         </executions>
 
         <configuration>
