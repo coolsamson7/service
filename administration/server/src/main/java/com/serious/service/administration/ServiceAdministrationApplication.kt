@@ -7,6 +7,7 @@ package com.serious.demo
 
 import com.serious.service.ServiceConfiguration
 import lombok.extern.slf4j.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -14,15 +15,30 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.resource.PathResourceResolver
+import java.io.IOException
+
+
+@Controller
+class IndexController {
+    @get:RequestMapping(value = ["/", ""])
+    val index: String
+        get() = "index.html"
+}
 
 @Configuration
 @EnableWebSecurity
@@ -59,11 +75,29 @@ open class WebConfig {
     @Bean
     open fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
+            override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+                registry.addResourceHandler("/**")
+                    .addResourceLocations("classpath:/static/")
+                    .resourceChain(true)
+                    .addResolver(object : PathResourceResolver() {
+                        @Throws(IOException::class)
+                        override fun getResource(resourcePath: String, location: Resource): Resource {
+                            val requestedResource = location.createRelative(resourcePath)
+                            return if (requestedResource.exists() && requestedResource.isReadable) requestedResource
+                            else ClassPathResource(
+                                "/static/index.html"
+                            )
+                        }
+                    })
+            }
+
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**").allowedOrigins("http://localhost:4200")
             }
         }
     }
+
+
 }
 
 // main application
