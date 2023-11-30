@@ -165,10 +165,10 @@ class InterfaceAnalyzer {
         val values = ArrayList<ParameterValueDescriptor>()
         for ( method in annotation.annotationClass.declaredMembers) {
             val def = annotation.annotationClass.java.getMethod(method.name).defaultValue//method.defaultValue
-            val value = method.call(annotation)
+            var value = method.call(annotation)
 
             var different = def != value
-            if ( different && def != null && value != null &&  value!!.javaClass.isArray) {
+            if ( different && def != null && value != null &&  value.javaClass.isArray) {
                 if (java.lang.reflect.Array.getLength(value) == java.lang.reflect.Array.getLength(def)) {
                     different = false
                     for ( i in 0..java.lang.reflect.Array.getLength(value)-1)
@@ -177,14 +177,25 @@ class InterfaceAnalyzer {
                 }
             }
 
-            if ( different ) {
+
+
+            if ( different && value != null ) {
+                // transform annotation parameters
+
+                if (value.javaClass.isArray && value.javaClass.componentType.isAnnotation) {
+                    val arrayValue = value as Array<Annotation>
+                    value = arrayValue.map { element -> annotation(element) }
+                }
+                else if ( value.javaClass.isAnnotation )
+                    value = annotation(value as Annotation)
+
                 values.add(ParameterValueDescriptor(
                     method.name,
                     type(method.returnType),
                     value
                 ))
-            }
-        }
+            } // if
+        } // for
 
         return AnnotationDescriptor(
             annotation.annotationClass.qualifiedName!!,

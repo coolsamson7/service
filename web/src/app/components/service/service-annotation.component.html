@@ -17,7 +17,21 @@
         &#40;
         <ng-container class="parameter" *ngFor="let parameter of annotation.parameters; let i = index">
             <span *ngIf="i > 0">, </span>
-            {{parameter.name}}=<literal [value]="parameter.value"/>
+            {{parameter.name}}=
+            <span *ngIf="!isArray(parameter.value)">
+                <literal *ngIf="!isAnnotation(parameter.value)" [value]="parameter.value"/>
+                <annotation  *ngIf="isAnnotation(parameter.value)" [annotation]="parameter.value"/>
+            </span>
+            <span *ngIf="isArray(parameter.value)">
+                [
+                <span *ngFor="let element of parameter.value;  let j = index">
+                    <span *ngIf="j > 0">, </span>
+                    <literal *ngIf="!isAnnotation(element)" [value]="element"/>
+                    <annotation  *ngIf="isAnnotation(element)" [annotation]="element"/>
+                </span>
+                ]
+            </span>
+         
         </ng-container>
         &#41;
     </span>

@@ -6,16 +6,70 @@
 
 === TODO
 
-- enum
 - docker
-- maven build web
 
 === NOW
 
-== DENK NACH
+== denkl naCh
+
+  @Description(
+        value = "super",
+        parameters = [
+            Parameter(name = "foo", description = "a foo"),
+            Parameter(name = "times", description = "a times")
+        ]
+    )
+
+    // rsult
+
+    AnnotationDescriptor {
+    name:Description
+    parameters: [
+        ParameterValueDescriptor(
+            name: "value",
+            type: TypeDescriptor(Parameter),
+            value: "super"
+            ),
+        ParameterValueDescriptor(
+             name: "parameters",
+             type: TypeDescriptor(Parameter[]),
+             value: [
+                 AnnotationDescriptor {
+                    name: "...parameter"
+                    parameters:[ParameterValueDescriptor(
+                                             name: "name",
+                                             type: TypeDescriptor(Parameter[]),
+                                             value: "foo")
+                                             ...]
+                 }
+             ]
+        )
+            ...
+    ]
+    }
+
+   // model
+
+    data class AnnotationDescriptor (
+        val name: String,
+        val parameters: List<ParameterValueDescriptor>
+    ): Serializable
+
+    data class ParameterValueDescriptor(
+        val name: String,
+        val type: TypeDescriptor,
+        val value: Any?
+    ): Serializable
+
+data class TypeDescriptor(
+    val name: String,
+    val optional : Boolean,
+    val parameter: List<TypeDescriptor> // generics
+): Serializable
 
 === DONE
 
+- maven build web
 - query analyzer
 - json schema
 - filter only components

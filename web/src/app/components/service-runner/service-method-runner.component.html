@@ -45,7 +45,7 @@
          <!-- date -->
 
          <mat-form-field *ngIf="inputType4(param.type) == 'date'">
-            <mat-label>>{{param.name}}e</mat-label>
+            <mat-label>>{{param.name}}</mat-label>
             <input matInput [matDatepicker]="picker"  [(ngModel)]="param.value"  (ngModelChange)='onChange()'  name="{{param.name}}" [id]="param.name">
             <mat-hint>MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
