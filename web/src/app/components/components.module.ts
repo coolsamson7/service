@@ -27,6 +27,7 @@ import { ServiceTypeComponent } from "./service/service-type.component";
 import { QueryParamComponent } from "./service-runner/query-parameter.component";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DescriptionComponent } from "./service/description.component";
 
 @NgModule({
     declarations: [
@@ -46,7 +47,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
         ServiceClassComponent,
         ServiceMethodRunnerComponent,
         QueryParamComponent,
-        ParameterValidator
+        ParameterValidator,
+        DescriptionComponent
     ],
     imports: [
       CommonModule,

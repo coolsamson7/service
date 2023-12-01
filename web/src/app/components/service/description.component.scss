@@ -1,0 +1,37 @@
+.description {
+    font-style: normal;
+    color: green;
+
+
+   
+     & > * {
+        //border: 2px solid orange;
+
+        padding-left: 1em;
+
+        before {
+            content: "\00a0"; 
+            padding-left: 1em;
+        }
+  }
+
+
+    .parameter {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        column-gap: 10px;
+
+        .param_name {
+            display: flex;
+            column-gap: 10px;
+
+            .param {
+                color: rgb(120, 120, 10);;
+            }
+    
+            .name {
+                color: black;
+            }
+        }
+    }
+}

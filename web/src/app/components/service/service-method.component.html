@@ -1,5 +1,6 @@
 <div class="method">
-    <annotation [annotation]="annotation" *ngFor="let annotation of method.annotations"/>
+    <description *ngIf="description" [annotation]="description"></description>
+    <annotation [annotation]="annotation" *ngFor="let annotation of annotations"/>
     <div class="body"> 
         <mat-icon (click)="toggleRun()">{{run ?  'expand_less' : 'expand_more'}}</mat-icon>
         <span class="keyword">fun</span>&nbsp;<span>{{method.name}}&#40;</span>

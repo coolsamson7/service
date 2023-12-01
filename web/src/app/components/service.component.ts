@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { InterfaceDescriptor, TypeDescriptor } from "../model/service.interface";
+import { AnnotationDescriptor, InterfaceDescriptor, TypeDescriptor } from "../model/service.interface";
 import { ComponentModel } from "../model/component.interface";
 
 
@@ -26,6 +26,9 @@ export class ServiceComponent implements OnInit {
     @Input('service') service: InterfaceDescriptor 
     @Input('open') open = false
     icon = "expand_more"
+
+    description : AnnotationDescriptor = null
+    annotations: AnnotationDescriptor[]
 
     // public
 
@@ -68,5 +71,10 @@ export class ServiceComponent implements OnInit {
     ngOnInit(): void {
         this.toggle()
         this.toggle()
+
+        this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
+        this.annotations =  this.service.annotations
+        if ( this.description )
+            this.annotations = this.service.annotations.filter(annotation => annotation !== this.description)
     }
 }
