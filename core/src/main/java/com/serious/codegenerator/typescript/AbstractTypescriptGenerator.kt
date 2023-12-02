@@ -166,7 +166,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
         else
             result += "." +  target.substring(check.length)
 
-        return result
+        return result + separator
     }
 
     protected fun fileName4Model(clazz: String, addTs : Boolean = true ) : String {
@@ -223,7 +223,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
         }
     }
     protected fun addImportFrom(element: String, source: String) {
-        this.imports.computeIfAbsent(source) {_ -> HashSet() } .add(element)
+        this.imports.computeIfAbsent(source.replace("//", "/")) {_ -> HashSet() } .add(element)
     }
 
     protected fun writeImports() {

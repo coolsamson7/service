@@ -119,9 +119,11 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         // collect imports
 
-        for ( property in clazz.properties) {
+        if ( clazz.inherits != null)
+            type(TypeDescriptor(clazz.inherits, false, emptyList()))
+
+        for ( property in clazz.properties)
             type(property.type!!)
-        }
 
         this.writeImports()
 
