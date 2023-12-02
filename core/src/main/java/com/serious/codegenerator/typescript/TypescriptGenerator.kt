@@ -162,7 +162,9 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
                 "kotlin.Int" -> "number"
                 "kotlin.Long" -> "number"
                 "kotlin.String" -> "string"
+                "kotlin.Boolean" -> "boolean"
                 "kotlin.Unit" -> "void"
+                "kotlin.Any" -> "any"
 
                 else -> { // Note the block
                     typeName
@@ -172,7 +174,7 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
         else {
             val typeFolder = folderFor(typeName)
 
-            this.addImport(simpleName(typeName), this.relativeImport(currentFolder, typeFolder) + "/"+  fileName4Model(typeName, false))
+            this.addImport(simpleName(typeName), this.relativeImport(currentFolder, typeFolder) +  fileName4Model(typeName, false))
 
             return simpleName(typeName)
         }
@@ -184,7 +186,8 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
         val typeName = type.name
 
         return when ( typeName ) {
-            "kotlin.collections.List" -> type(type.parameter[0]) + "[]" // ???
+            "kotlin.collections.List" -> type(type.parameter[0]) + "[]"
+            "kotlin.collections.Collection" -> type(type.parameter[0]) + "[]"
             "kotlin.Array" -> type(type.parameter[0]) + "[]"
 
             else -> mapType(typeName)

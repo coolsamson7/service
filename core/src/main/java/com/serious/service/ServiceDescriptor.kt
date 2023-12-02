@@ -122,8 +122,7 @@ class InterfaceAnalyzer {
 
         // finish queue
 
-        while (!queue.isEmpty())
-            analyzeModel(queue.removeFirst())
+        finalize()
 
         // done
 
@@ -132,6 +131,11 @@ class InterfaceAnalyzer {
             ArrayList(services.values),
             ArrayList(models.values)
         )
+    }
+
+    fun finalize() {
+        while (!queue.isEmpty())
+            analyzeModel(queue.removeFirst())
     }
 
     // functions
@@ -238,7 +242,7 @@ class InterfaceAnalyzer {
                     emptyList()
                 )}
         else
-            return clazz.memberProperties.map { property ->
+            return clazz.declaredMemberProperties.map { property ->
                 var annotations : List<AnnotationDescriptor> = ArrayList<AnnotationDescriptor>()
 
                 // field

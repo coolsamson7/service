@@ -5,7 +5,10 @@ package com.serious.service
  * All rights reserved
  */
 
+import com.serious.annotations.Description
+
 /**
  * Tagging interface for services.
  */
+@Description("Tagging interface for services")
 interface Service

@@ -5,6 +5,7 @@ package com.serious.demo
 * All rights reserved
 */
 
+import com.serious.annotations.Description
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
@@ -27,11 +28,14 @@ enum class RGB {
     GREEN,
     BLUE
 }
+@Description("a foo")
 class Foo : Base() {
 
     @Min(0)
     @Max(100)
+    @Description("the age")
     var age = 10
+    @Description("the weight")
     var weight = 10.0
     var color = RGB.RED
     var single = false
