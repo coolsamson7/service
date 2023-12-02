@@ -129,6 +129,8 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
         currentClass = clazz
         currentFolder = folderFor(clazz.name)
         touchedFolder.add(currentFolder)
+
+        reset()
     }
 
     protected fun getMapping(packageName: String) : PackageMapping {
@@ -150,7 +152,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
 
     fun generateIndex() {
         for ( folder in touchedFolder) {
-            setFileWriter(File(folder + "/index.ts"))
+            setFileWriter(File("$folder/index.ts"))
 
             val dir = File(folder)
 
@@ -220,7 +222,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
         var isLower = true
 
         val c = str[0]
-        result = result + c.lowercaseChar()
+        result += c.lowercaseChar()
 
         // traverse the string
 
@@ -306,7 +308,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
                         val description =
                             annotation.parameters.find { annotation -> annotation.name == "description" }!!.value
 
-                        writer.indent().println(" * @param " + name + " " + description)
+                        writer.indent().println(" * @param $name $description")
                     }
                 }
             }
@@ -352,7 +354,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
                 writer.print(import)
             }
 
-            writer.println(" } from \"" + source + "\"")
+            writer.println(" } from \"$source\"")
         }
 
         for (source in absoluteImports)

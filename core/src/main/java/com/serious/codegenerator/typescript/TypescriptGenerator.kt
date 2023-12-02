@@ -8,7 +8,7 @@ package com.serious.codegenerator.typescript
 import com.serious.service.*
 
 class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
-    // not here
+    // instance data
 
     val analyzer = options.analyzer
 
@@ -17,13 +17,13 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     fun generate() {
         // models
 
-        for ((name, clazz) in analyzer.models)
+        for ((_, clazz) in analyzer.models)
             if (clazz.kind.contains("class"))
                 generateClass(clazz)
 
         // services
 
-        for ((name, clazz) in analyzer.services)
+        for ((_, clazz) in analyzer.services)
             generateService(clazz)
 
         // how about index.ts
@@ -32,13 +32,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     }
 
     fun generateClass(clazz: InterfaceDescriptor) {
-        reset()
-
         setClass(clazz)
-        currentMapping = getMapping(packageName(clazz.name))
-        currentClass = clazz
-        currentFolder = folderFor(clazz.name)
-        touchedFolder.add(currentFolder)
 
         setFileWriter(outputFile(currentFolder, fileName4Model(clazz.name)))
 
@@ -63,7 +57,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         writeDocumentation(findDocumentation(clazz.annotations))
         this.writer
-            .print("export interface " + simpleName(clazz.name))// + " {")
+            .print("export interface ${simpleName(clazz.name)}")
 
         if ( clazz.inherits != null)
             writer.print(" extends ").print(simpleName(clazz.inherits!!)).println(" {")
@@ -94,13 +88,13 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     // here?
 
     fun mapType(typeName: String) : String {
-        var typescriptType : String
+        val typescriptType : String
         if (  options.language.isNativeType(typeName))
             typescriptType = options.language.mapType(typeName)
 
         else {
             if ( currentClass?.name != typeName) {
-                var mapping = getMapping(packageName(typeName))
+                val mapping = getMapping(packageName(typeName))
                 val typeFolder = folderFor(typeName)
 
                 if ( mapping !== currentMapping) {
@@ -125,10 +119,10 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     fun type(type: TypeDescriptor) : String {
         val typeName = type.name
 
-        if ( options.language.isArray(typeName))
-            return type(type.parameter[0]) + "[]"
+        return if ( options.language.isArray(typeName))
+            type(type.parameter[0]) + "[]"
         else
-            return mapType(typeName)
+            mapType(typeName)
     }
 
 
@@ -165,15 +159,11 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     }
 
     fun generateService(clazz: InterfaceDescriptor) {
-        reset()
-
-        currentMapping = getMapping(packageName(clazz.name))
-        currentFolder = folderFor(clazz.name)
-        touchedFolder.add(currentFolder)
+        setClass(clazz)
 
         setFileWriter(outputFile(currentFolder, fileName4Service(clazz.name)))
 
-        println("generate service " + clazz.name + " file = " + currentFolder + fileName4Service(clazz.name))
+        println("generate service ${clazz.name} file = $currentFolder${fileName4Service(clazz.name)}")
 
         // write header
 
@@ -184,19 +174,18 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         // add imports
 
-        this.addImport("Injectable", "Injector","Observable", "RegisterService", "AbstractHTTPService")
+        this.addImport("Injectable", "Injector", "Observable", "RegisterService", "AbstractHTTPService")
 
         // collect method imports
 
         for ( method in clazz.methods) {
             type(method.returnType)
 
-            for (parameter in method.parameters) {
+            for (parameter in method.parameters)
                 type(parameter.type)
-            }
         }
 
-        // look for requestmapping at class level
+        // look for request mapping at class level
 
         var prefix : String? = null
         val requestMapping = clazz.annotations.find { annotation -> annotation.name == "org.springframework.web.bind.annotation.RequestMapping" }
@@ -208,10 +197,11 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         // header
 
-        var domain = options.domain
-        var register = "@RegisterService({domain: \"" + domain + "\""
+        val domain = options.domain
+        var register = "@RegisterService({domain: \"$domain\""
         if (prefix != null)
-            register += ", prefix: \"" + prefix + "\""
+            register += ", prefix: \"$prefix\""
+
         register += "})"
 
         // write imports
@@ -225,7 +215,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         this.writer
             .println("@Injectable({providedIn: 'root'})")
             .println(register)
-            .println("export class " + simpleName(clazz.name) + " extends AbstractHTTPService {")
+            .println("export class ${simpleName(clazz.name)} extends AbstractHTTPService {")
             .tab(1)
             .indent().println("// constructor")
             .println()
@@ -315,7 +305,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
                     var name = param.name
 
                     val annotation = param.annotations.find { param -> param.name == "org.springframework.web.bind.annotation.RequestParam"}
-                    if ( !annotation!!.parameters.isEmpty())
+                    if (annotation!!.parameters.isNotEmpty())
                         name = annotation.parameters[0].value as String
 
                     writer.print(name).print(": ").print(param.name)
