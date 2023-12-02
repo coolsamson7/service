@@ -10,29 +10,9 @@ import com.serious.service.*
 class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
     // not here
 
-    var currentClass: InterfaceDescriptor? = null
     val analyzer = options.analyzer
 
-    // package "com.
-
-    private fun getMapping(packageName: String) : PackageMapping {
-        // get mapping with longest match
-
-        return options.mappings
-            .filter { mapping -> packageName.startsWith(mapping.packageName) }
-            .sortedWith { m1: PackageMapping, m2: PackageMapping ->
-                m2.packageName.length - m1.packageName.length
-            }
-            .first()
-    }
-    fun folderFor(clazz: String) : String {
-        val clazzPackage = packageName(clazz)
-        val mapping = getMapping(clazzPackage)
-
-        return mapping.folder + clazzPackage.substring(mapping.packageName.length).replace(".", "/")
-    }
-
-    // not here
+    // public
 
     fun generate() {
         // models
@@ -54,6 +34,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     fun generateClass(clazz: InterfaceDescriptor) {
         reset()
 
+        setClass(clazz)
         currentMapping = getMapping(packageName(clazz.name))
         currentClass = clazz
         currentFolder = folderFor(clazz.name)

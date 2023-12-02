@@ -9,6 +9,7 @@ import com.serious.service.AnnotationDescriptor
 import com.serious.service.InterfaceAnalyzer
 import com.serious.codegenerator.AbstractCodeGenerator
 import com.serious.codegenerator.LanguageSupport
+import com.serious.service.InterfaceDescriptor
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -116,11 +117,36 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
     // instance data
 
     private val imports = HashMap<String, MutableSet<String>>()
+    protected var currentClass: InterfaceDescriptor? = null
     protected var currentFolder = ""
     protected var currentMapping : PackageMapping? = null
     protected var touchedFolder = HashSet<String>()
 
     // protected
+
+    protected fun setClass(clazz: InterfaceDescriptor) {
+        currentMapping = getMapping(packageName(clazz.name))
+        currentClass = clazz
+        currentFolder = folderFor(clazz.name)
+        touchedFolder.add(currentFolder)
+    }
+
+    protected fun getMapping(packageName: String) : PackageMapping {
+        // get mapping with longest match
+
+        return options.mappings
+            .filter { mapping -> packageName.startsWith(mapping.packageName) }
+            .sortedWith { m1: PackageMapping, m2: PackageMapping ->
+                m2.packageName.length - m1.packageName.length
+            }
+            .first()
+    }
+    protected fun folderFor(clazz: String) : String {
+        val clazzPackage = packageName(clazz)
+        val mapping = getMapping(clazzPackage)
+
+        return mapping.folder + clazzPackage.substring(mapping.packageName.length).replace(".", "/")
+    }
 
     fun generateIndex() {
         for ( folder in touchedFolder) {
