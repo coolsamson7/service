@@ -85,7 +85,11 @@ open class AbstractCodeGenerator(protected val name: String, protected val versi
         return "generated at " + timestamp + " with " + name + " V" + version
     }
 
-    fun simpleName(fqn: String) : String {
+    protected fun simpleName(fqn: String) : String {
         return fqn.substring(fqn.lastIndexOf(".") + 1)
+    }
+
+    protected fun packageName(fqn: String) : String {
+        return fqn.substring(0, fqn.lastIndexOf("."))
     }
 }

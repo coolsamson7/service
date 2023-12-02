@@ -6,28 +6,30 @@ package com.serious.codegenerator.typescript
  */
 
 import com.serious.service.*
-import java.io.File
 
 class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
     // not here
 
-    var currentFolder = ""
-    var touchedFolder = HashSet<String>()
     var currentClass: InterfaceDescriptor? = null
     val analyzer = options.analyzer
 
     // package "com.
 
-    fun folderFor(clazz: String) : String {
-        val clazzPackage = clazz.substring(0, clazz.lastIndexOf("."))
+    private fun getMapping(packageName: String) : PackageMapping {
+        // get mapping with longest match
 
-        for ((packageName, folder) in options.packageFolder ) {
-            if (clazz.startsWith(packageName)) {
-                return folder + clazzPackage.substring(packageName.length).replace(".", "/")
+        return options.mappings
+            .filter { mapping -> packageName.startsWith(mapping.packageName) }
+            .sortedWith { m1: PackageMapping, m2: PackageMapping ->
+                m2.packageName.length - m1.packageName.length
             }
-        }
+            .first()
+    }
+    fun folderFor(clazz: String) : String {
+        val clazzPackage = packageName(clazz)
+        val mapping = getMapping(clazzPackage)
 
-        return clazz
+        return mapping.folder + clazzPackage.substring(mapping.packageName.length).replace(".", "/")
     }
 
     // not here
@@ -49,32 +51,10 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         generateIndex()
     }
 
-    fun generateIndex() {
-        for ( folder in touchedFolder) {
-            setFileWriter(File(folder + "/index.ts"))
-
-            val dir = File(folder)
-
-            fun withoutTS(file: String) : String {
-                return file.substring(0,  file.lastIndexOf("."))
-            }
-
-            val files = dir.listFiles()
-                .filter { file ->file.isFile }
-                .filter { file -> file.name != "index.ts" }
-                .map { file -> withoutTS(file.name) }
-                .sorted()
-
-            for (file in files)
-                writer.println("export * from '" + file + "'")
-
-            writer.close()
-        } // for
-    }
-
     fun generateClass(clazz: InterfaceDescriptor) {
         reset()
 
+        currentMapping = getMapping(packageName(clazz.name))
         currentClass = clazz
         currentFolder = folderFor(clazz.name)
         touchedFolder.add(currentFolder)
@@ -86,7 +66,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         if ( options.header.isBlank())
             writeHeader(header())
         else
-            writeHeader(header() + "\n" + options.header)
+            writeHeader( options.header + "\n" + header())
 
         // collect imports
 
@@ -139,9 +119,17 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         else {
             if ( currentClass?.name != typeName) {
+                var mapping = getMapping(packageName(typeName))
                 val typeFolder = folderFor(typeName)
 
-                this.addImportFrom(
+                if ( mapping !== currentMapping) {
+                    this.addImportFrom(
+                        simpleName(typeName),
+                        mapping.importName
+                    )
+                }
+
+                else this.addImportFrom(
                     simpleName(typeName),
                     this.relativeImport(currentFolder, typeFolder) + fileName4Model(typeName, false)
                 )
@@ -189,7 +177,6 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
                     if (annotation.parameters[0].value == pathVariable)
                         return parameter
                 }
-
             }
         }
 
@@ -199,6 +186,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     fun generateService(clazz: InterfaceDescriptor) {
         reset()
 
+        currentMapping = getMapping(packageName(clazz.name))
         currentFolder = folderFor(clazz.name)
         touchedFolder.add(currentFolder)
 
@@ -211,7 +199,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         if ( options.header.isBlank())
             writeHeader(header())
         else
-            writeHeader(header() + "\n" + options.header)
+            writeHeader( options.header + "\n" + header())
 
         // add imports
 

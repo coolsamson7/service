@@ -12,12 +12,15 @@ import com.serious.codegenerator.LanguageSupport
 import java.io.File
 import kotlin.reflect.KClass
 
+class PackageMapping(val packageName: String, val folder: String, val importName: String) {
+
+}
 data class
 TypescriptOptions(
     val analyzer : InterfaceAnalyzer,
     val language: LanguageSupport,
     val header: String,
-    val packageFolder : HashMap<String,String>,
+    val mappings : MutableList<PackageMapping>,
     val domain: String,
     val filePerService : Boolean,
     val filePerModel : Boolean,
@@ -28,7 +31,7 @@ TypescriptOptions(
     class Builder {
         // instance data
 
-        var packageFolder = HashMap<String,String>()
+        var mappings : MutableList<PackageMapping> = ArrayList()
         var filePerService = true
         var filePerModel = true
         var header = ""
@@ -64,8 +67,8 @@ TypescriptOptions(
             return this
         }
 
-        fun setPackageFolder(packageName: String, folder: String) : Builder {
-            packageFolder.put(packageName, folder)
+        fun mapPackage(packageName: String, folder: String, libraryName: String) : Builder {
+            mappings.add(PackageMapping(packageName, folder, libraryName))
 
             return this
         }
@@ -97,7 +100,7 @@ TypescriptOptions(
                 analyzer,
                 language!!,
                 header,
-                packageFolder,
+                mappings,
                 domain,
                 filePerService,
                 filePerModel,
@@ -113,8 +116,34 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
     // instance data
 
     private val imports = HashMap<String, MutableSet<String>>()
+    protected var currentFolder = ""
+    protected var currentMapping : PackageMapping? = null
+    protected var touchedFolder = HashSet<String>()
 
     // protected
+
+    fun generateIndex() {
+        for ( folder in touchedFolder) {
+            setFileWriter(File(folder + "/index.ts"))
+
+            val dir = File(folder)
+
+            fun withoutTS(file: String) : String {
+                return file.substring(0,  file.lastIndexOf("."))
+            }
+
+            val files = dir.listFiles()
+                .filter { file ->file.isFile }
+                .filter { file -> file.name != "index.ts" }
+                .map { file -> withoutTS(file.name) }
+                .sorted()
+
+            for (file in files)
+                writer.println("export * from '" + file + "'")
+
+            writer.close()
+        } // for
+    }
 
     protected fun outputFile(folder: String, fileName: String): File {
         createDirectories(folder)
