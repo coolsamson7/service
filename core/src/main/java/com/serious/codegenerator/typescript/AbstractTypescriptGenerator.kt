@@ -1,6 +1,6 @@
 package com.serious.codegenerator.typescript
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
@@ -8,11 +8,14 @@ package com.serious.codegenerator.typescript
 import com.serious.service.AnnotationDescriptor
 import com.serious.service.InterfaceAnalyzer
 import com.serious.codegenerator.AbstractCodeGenerator
+import com.serious.codegenerator.LanguageSupport
+import java.io.File
 import kotlin.reflect.KClass
 
 data class
 TypescriptOptions(
     val analyzer : InterfaceAnalyzer,
+    val language: LanguageSupport,
     val header: String,
     val packageFolder : HashMap<String,String>,
     val domain: String,
@@ -30,6 +33,7 @@ TypescriptOptions(
         var filePerModel = true
         var header = ""
         var domain: String = ""
+        var language: LanguageSupport? = null
         val analyzer = InterfaceAnalyzer()
         val imports = HashMap<String,String>() // element -> source
 
@@ -53,6 +57,13 @@ TypescriptOptions(
 
             return this
         }
+
+        fun setLanguage(language : LanguageSupport) : Builder{
+            this.language = language
+
+            return this
+        }
+
         fun setPackageFolder(packageName: String, folder: String) : Builder {
             packageFolder.put(packageName, folder)
 
@@ -84,6 +95,7 @@ TypescriptOptions(
 
             val options = TypescriptOptions(
                 analyzer,
+                language!!,
                 header,
                 packageFolder,
                 domain,
@@ -102,10 +114,43 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
 
     private val imports = HashMap<String, MutableSet<String>>()
 
-    // private
+    // protected
 
-    protected fun header() : String {
-        return "generated at " + timestamp + " with " + name + " V" + version
+    protected fun outputFile(folder: String, fileName: String): File {
+        createDirectories(folder)
+
+        return File(folder + '/' + fileName)
+    }
+
+    private fun createDirectory(dir: String) {
+        if (!File(dir).exists())
+            if (File(dir).mkdir())
+                println("created $dir")
+    }
+
+    private fun createDirectories(folder: String): String { // /Users/user/asd
+        val currentDirectory: StringBuilder = StringBuilder("/")
+
+        // split package name
+
+        var start = 1 // we know it starts with a /!
+        var dot = folder.indexOf('/', start)
+        val len = folder.length
+        while (start < len && dot >= 0) {
+            currentDirectory.append('/').append(folder.substring(start, dot))
+            createDirectory(currentDirectory.toString())
+            start = dot + 1
+            dot = folder.indexOf('/', start)
+        } // while
+
+        if (start < len) {
+            currentDirectory.append('/').append(folder.substring(start))
+            createDirectory(currentDirectory.toString())
+        } // if
+
+        currentDirectory.append('/')
+
+        return currentDirectory.toString()
     }
 
     protected fun reset() {

@@ -1,16 +1,12 @@
 package com.serious.codegenerator.typescript
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
-import com.serious.codegenerator.AbstractCodeGenerator
 import com.serious.service.*
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
 
 class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
     // not here
@@ -20,48 +16,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     var currentClass: InterfaceDescriptor? = null
     val analyzer = options.analyzer
 
-    private fun outputFile(folder: String, fileName: String): File {
-        createDirectories(folder)
-
-        return File(folder + '/' + fileName)
-    }
-
-    private fun createDirectory(dir: String) {
-        if (!File(dir).exists())
-            if (File(dir).mkdir())
-                println("created $dir")
-    }
-
-    private fun createDirectories(folder: String): String { // /Users/user/asd
-        val currentDirectory: StringBuilder = StringBuilder("/")
-
-        // split package name
-
-        var start = 1 // we know it starts with a /!
-        var dot = folder.indexOf('/', start)
-        val len = folder.length
-        while (start < len && dot >= 0) {
-            currentDirectory.append('/').append(folder.substring(start, dot))
-            createDirectory(currentDirectory.toString())
-            start = dot + 1
-            dot = folder.indexOf('/', start)
-        } // while
-
-        if (start < len) {
-            currentDirectory.append('/').append(folder.substring(start))
-            createDirectory(currentDirectory.toString())
-        } // if
-
-        currentDirectory.append('/')
-
-        return currentDirectory.toString()
-    }
-
     // package "com.
-
-    fun packageName(clazz: String) : String {
-        return clazz.substring(0, clazz.lastIndexOf("."))
-    }
 
     fun folderFor(clazz: String) : String {
         val clazzPackage = clazz.substring(0, clazz.lastIndexOf("."))
@@ -73,18 +28,6 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         }
 
         return clazz
-    }
-
-    fun file4Service(clazz: String) : String {
-        return folderFor(clazz) + "/" + fileName4Service(clazz)
-    }
-
-    fun file4Model(clazz: String) : String {
-        return folderFor(clazz) + "/" + fileName4Model(clazz)
-    }
-
-    fun setFileWriter(file: File) {
-        writer = AbstractCodeGenerator.Writer(PrintWriter(BufferedWriter(FileWriter(file, false))))
     }
 
     // not here
@@ -189,25 +132,11 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
     // here?
 
-    // TODO this language specific stuff sucks badly...at least we need a dynamic registry...
     fun mapType(typeName: String) : String {
-        var typescriptType : String = typeName
-        if ( typeName.startsWith("kotlin.") || typeName.startsWith("java.")) {
-            typescriptType = when (typeName) {
-                "kotlin.Short" -> "number"
-                "kotlin.Int" -> "number"
-                "kotlin.Long" -> "number"
-                "kotlin.String" -> "string"
-                "kotlin.Boolean" -> "boolean"
-                "kotlin.Unit" -> "void"
-                "kotlin.Any" -> "any"
-                "java.net.URI" -> "string"
+        var typescriptType : String
+        if (  options.language.isNativeType(typeName))
+            typescriptType = options.language.mapType(typeName)
 
-                else -> { // Note the block
-                    typeName
-                }
-            }
-        }
         else {
             if ( currentClass?.name != typeName) {
                 val typeFolder = folderFor(typeName)
@@ -227,13 +156,10 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     fun type(type: TypeDescriptor) : String {
         val typeName = type.name
 
-        return when ( typeName ) {
-            "kotlin.collections.List" -> type(type.parameter[0]) + "[]"
-            "kotlin.collections.Collection" -> type(type.parameter[0]) + "[]"
-            "kotlin.Array" -> type(type.parameter[0]) + "[]"
-
-            else -> mapType(typeName)
-        }
+        if ( options.language.isArray(typeName))
+            return type(type.parameter[0]) + "[]"
+        else
+            return mapType(typeName)
     }
 
 

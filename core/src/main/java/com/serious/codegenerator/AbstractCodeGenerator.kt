@@ -1,10 +1,13 @@
 package com.serious.codegenerator
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import java.io.PrintWriter
 import java.util.*
 
@@ -73,6 +76,14 @@ open class AbstractCodeGenerator(protected val name: String, protected val versi
     protected var timestamp = Date().toString()
 
     // protected
+
+    fun setFileWriter(file: File) {
+        writer = Writer(PrintWriter(BufferedWriter(FileWriter(file, false))))
+    }
+
+    protected fun header() : String {
+        return "generated at " + timestamp + " with " + name + " V" + version
+    }
 
     fun simpleName(fqn: String) : String {
         return fqn.substring(fqn.lastIndexOf(".") + 1)
