@@ -7,6 +7,63 @@ $dokka.location:com.serious.annotations/Description/value/#/PointingToDeclaratio
 $dokka.location:com.serious.annotations/Parameter///PointingToDeclaration/service-core/com.serious.annotations/-parameter/index.html
 $dokka.location:com.serious.annotations/Parameter/description/#/PointingToDeclaration/service-core/com.serious.annotations/-parameter/description.html
 $dokka.location:com.serious.annotations/Parameter/name/#/PointingToDeclaration/service-core/com.serious.annotations/-parameter/name.html
+$dokka.location:com.serious.codegenerator.typescript////PointingToDeclaration/service-core/com.serious.codegenerator.typescript/index.html
+$dokka.location:com.serious.codegenerator.typescript/AbstractTypescriptGenerator///PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-abstract-typescript-generator/index.html
+$dokka.location:com.serious.codegenerator.typescript/AbstractTypescriptGenerator/AbstractTypescriptGenerator/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-abstract-typescript-generator/-abstract-typescript-generator.html
+$dokka.location:com.serious.codegenerator.typescript/AbstractTypescriptGenerator/camelToSnake/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-abstract-typescript-generator/camel-to-snake.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator.Companion///PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/-companion/index.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator.Companion/options/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/-companion/options.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator///PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/index.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/TypescriptGenerator/#com.serious.codegenerator.typescript.TypescriptOptions/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/-typescript-generator.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/analyzer/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/analyzer.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/currentFolder/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/current-folder.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/file4Model/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/file4-model.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/file4Service/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/file4-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/findParameter4Path/#com.serious.service.MethodDescriptor#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/find-parameter4-path.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/folderFor/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/folder-for.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/generate/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/generate.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/generateClass/#com.serious.service.InterfaceDescriptor/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/generate-class.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/generateService/#com.serious.service.InterfaceDescriptor/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/generate-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/getMapping/#com.serious.service.MethodDescriptor/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/get-mapping.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/mapType/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/map-type.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/options/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/options.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/packageName/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/package-name.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/setFileWriter/#java.io.File/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/set-file-writer.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptGenerator/type/#com.serious.service.TypeDescriptor/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-generator/type.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder///PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/index.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/Builder/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/-builder.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/addService/#kotlin.reflect.KClass[*]/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/add-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/analyzer/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/analyzer.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/build/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/build.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/filePerModel/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/file-per-model.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/filePerService/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/file-per-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/header/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/header.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/packageFolder/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/package-folder.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/setFilePerModel/#kotlin.Boolean/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/set-file-per-model.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/setFilePerService/#kotlin.Boolean/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/set-file-per-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/setHeader/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/set-header.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions.Builder/setPackageFolder/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-builder/set-package-folder.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions///PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/index.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/TypescriptOptions/#com.serious.service.InterfaceAnalyzer#kotlin.String#java.util.HashMap[kotlin.String,kotlin.String]#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/-typescript-options.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/analyzer/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/analyzer.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/filePerModel/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/file-per-model.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/filePerService/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/file-per-service.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/header/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/header.html
+$dokka.location:com.serious.codegenerator.typescript/TypescriptOptions/packageFolder/#/PointingToDeclaration/service-core/com.serious.codegenerator.typescript/-typescript-options/package-folder.html
+$dokka.location:com.serious.codegenerator////PointingToDeclaration/service-core/com.serious.codegenerator/index.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer///PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/index.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/Writer/#java.io.PrintWriter/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/-writer.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/close/#/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/close.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/flush/#/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/flush.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/indent/#/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/indent.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/indentation/#/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/indentation.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/print/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/print.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/println/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/println.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/splitLines/#kotlin.String#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/split-lines.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator.Writer/tab/#kotlin.Int/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-writer/tab.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator///PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/index.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator/AbstractCodeGenerator/#/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/-abstract-code-generator.html
+$dokka.location:com.serious.codegenerator/AbstractCodeGenerator/simpleName/#kotlin.String/PointingToDeclaration/service-core/com.serious.codegenerator/-abstract-code-generator/simple-name.html
 $dokka.location:com.serious.collections////PointingToDeclaration/service-core/com.serious.collections/index.html
 $dokka.location:com.serious.collections/Arrays///PointingToDeclaration/service-core/com.serious.collections/-arrays/index.html
 $dokka.location:com.serious.collections/Arrays/add2/#java.lang.Class[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]#kotlin.Array[TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/service-core/com.serious.collections/-arrays/add2.html
@@ -520,6 +577,8 @@ $dokka.location:com.serious.util/MethodDispatcher/getApplicableMethods/#java.lan
 $dokka.location:com.serious.util/MethodDispatcher/hasApplicableMethod/#java.lang.Class[*]/PointingToDeclaration/service-core/com.serious.util/-method-dispatcher/has-applicable-method.html
 $dokka.location:com.serious.util/MethodDispatcher/replaceMethods/#kotlin.Any#kotlin.String/PointingToDeclaration/service-core/com.serious.util/-method-dispatcher/replace-methods.html
 com.serious.annotations
+com.serious.codegenerator
+com.serious.codegenerator.typescript
 com.serious.collections
 com.serious.exception
 com.serious.injection
