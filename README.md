@@ -1,12 +1,12 @@
 [![Java CI with Maven](https://github.com/coolsamson7/service/actions/workflows/maven.yml/badge.svg)](https://github.com/coolsamson7/service/actions/workflows/maven.yml)
 # Service
 
-This library is based upon spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to find and communicate with each other in a dynamic environment.
+This library is based upon spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
 
 ## Motivation and goals
 
 While there are a number of - mostly spring - libraries
-available that help to solve most of the lowl-level problems in  a distributed microservice based architecture like
+available that help to solve most of the low-level problems in a distributed microservice based architecture like
 - registries ( consul, etc. ) and
 - loadbalancing mechanisms
 
@@ -36,7 +36,7 @@ public class MyClass {
 ```
 
 What's wrong?
-- the code assumes that the called service is remote in the first place which simply is a wrong assumption
+- the code assumes that the called service is remote in the first place which is a totally unnecessary restriction
 - we have to commit to a specific protocol and take care of technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
 
@@ -152,9 +152,9 @@ As we have already seen, there are four different basic building blocks
 
 A service is represented by an annotated ( in order to be scanned by spring ) interface extending the tagging interface `Service` . 
 There are no other restrictions except that it should contain all the necessary information so that the communication channels are able to do the remoting.
-In our example we simply added the spring mvc annotations.
+In our example we simply added the spring mvc annotations knowing that spring will take care of the rest.
 
-The service implementation is any spring bean ( that a channel can connect to ) 
+The service implementation is any spring bean. 
 
 ### Component
 
@@ -163,7 +163,7 @@ The purpose of a component interface is to bundle a list of services that share 
 The implementation takes care of
 * lifecycle of the component ( e.g. startup and shutdown methods )
 * registration with a component registry
-* health endpoint
+* providing a health endpoint
 
 ### Component Registry
 
@@ -177,7 +177,7 @@ which return a list of service instances and supported channels.
 
 It is up to a concrete channel if ( client side ) loadbalancing is supported or not.
 
-Channels will automatically adjust to changes in the topology which is usually detected by failing heartbeats.
+Channels will automatically adjust to changes in the topology which is detected by failing heartbeats.
 
 ## Features
 
@@ -189,7 +189,7 @@ The framework offers the following features
 * rest channel based on `WebClient` supporting the _basic_ annotations
 * injection possibilities for services
 * central exception handling mechanisms
-* full introspection possibilities of the meta-data of components and services with respect to the interafces as well as model classes
+* full introspection possibilities of the meta-data of components and services with respect to the interfaces as well as model classes
 
 ### Web
 
@@ -199,7 +199,7 @@ An administration ui has been implemented in Angular that is able to
 * see details of the running infrastructure in terms of processes and the current inter-process communication flows
 * run service methods
 
-The ui is secured by an OpenID Connect mechanism in combiantion with an external server ( e.g. Keycloak ) 
+The ui is secured by an OpenID Connect mechanism in combination with an external server ( e.g. Keycloak ) 
 
 Let's look at some screenshots
 
@@ -215,7 +215,7 @@ In addition to simply viewing, executing services is supported as well. As the m
 
 ![image](https://github.com/coolsamson7/service/assets/19403960/9e8256cd-4e4b-4f93-a842-c9fcf5f46cb9)
 
-The current state of the infrastructure can be vieweed in form of a graph that shows running processes, the hosted components, and the current communciaiton flows.
+The current state of the infrastructure can be viewed in form of a graph that shows running processes, the hosted components, and the current communication flows.
 
 ![image](https://github.com/coolsamson7/service/assets/19403960/ebb190c1-31e0-480d-85e6-592b800c4241)
 
