@@ -412,6 +412,7 @@ $dokka.location:com.serious.service/InterfaceAnalyzer/annotation/#kotlin.Annotat
 $dokka.location:com.serious.service/InterfaceAnalyzer/annotations/#kotlin.reflect.KParameter/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/annotations.html
 $dokka.location:com.serious.service/InterfaceAnalyzer/checked/#/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/checked.html
 $dokka.location:com.serious.service/InterfaceAnalyzer/component/#/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/component.html
+$dokka.location:com.serious.service/InterfaceAnalyzer/finalize/#/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/finalize.html
 $dokka.location:com.serious.service/InterfaceAnalyzer/ignore/#/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/ignore.html
 $dokka.location:com.serious.service/InterfaceAnalyzer/implements/#kotlin.reflect.KClass[*]/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/implements.html
 $dokka.location:com.serious.service/InterfaceAnalyzer/kind/#kotlin.reflect.KClass[*]/PointingToDeclaration/service-core/com.serious.service/-interface-analyzer/kind.html
