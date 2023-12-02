@@ -16,6 +16,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     // not here
 
     var currentFolder = ""
+    var touchedFolder = HashSet<String>()
     var currentClass: InterfaceDescriptor? = null
     val analyzer = options.analyzer
 
@@ -99,14 +100,41 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         for ((name, clazz) in analyzer.services)
             generateService(clazz)
+
+        // how about index.ts
+
+        generateIndex()
     }
 
+    fun generateIndex() {
+        for ( folder in touchedFolder) {
+            setFileWriter(File(folder + "/index.ts"))
+
+            val dir = File(folder)
+
+            fun withoutTS(file: String) : String {
+                return file.substring(0,  file.lastIndexOf("."))
+            }
+
+            val files = dir.listFiles()
+                .filter { file ->file.isFile }
+                .filter { file -> file.name != "index.ts" }
+                .map { file -> withoutTS(file.name) }
+                .sorted()
+
+            for (file in files)
+                writer.println("export * from '" + file + "'")
+
+            writer.close()
+        } // for
+    }
 
     fun generateClass(clazz: InterfaceDescriptor) {
         reset()
 
         currentClass = clazz
         currentFolder = folderFor(clazz.name)
+        touchedFolder.add(currentFolder)
 
         setFileWriter(outputFile(currentFolder, fileName4Model(clazz.name)))
 
@@ -161,9 +189,10 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
     // here?
 
+    // TODO this language specific stuff sucks badly...at least we need a dynamic registry...
     fun mapType(typeName: String) : String {
         var typescriptType : String = typeName
-        if ( typeName.startsWith("kotlin.")) {
+        if ( typeName.startsWith("kotlin.") || typeName.startsWith("java.")) {
             typescriptType = when (typeName) {
                 "kotlin.Short" -> "number"
                 "kotlin.Int" -> "number"
@@ -172,6 +201,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
                 "kotlin.Boolean" -> "boolean"
                 "kotlin.Unit" -> "void"
                 "kotlin.Any" -> "any"
+                "java.net.URI" -> "string"
 
                 else -> { // Note the block
                     typeName
@@ -244,6 +274,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         reset()
 
         currentFolder = folderFor(clazz.name)
+        touchedFolder.add(currentFolder)
 
         setFileWriter(outputFile(currentFolder, fileName4Service(clazz.name)))
 
