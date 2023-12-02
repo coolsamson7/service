@@ -105,7 +105,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
     // private
 
     protected fun header() : String {
-        return "generated at " + timestamp + " with " + name + "V" + version
+        return "generated at " + timestamp + " with " + name + " V" + version
     }
 
     protected fun reset() {
@@ -117,6 +117,8 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
 
         // first character(in lower case)
 
+        var isLower = true
+
         val c = str[0]
         result = result + c.lowercaseChar()
 
@@ -126,10 +128,16 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
             val ch = str[i]
 
             if (Character.isUpperCase(ch)) {
-                result += '-'
+                if ( isLower )
+                    result += '-'
+
                 result += ch.lowercaseChar()
+                isLower = false
             }
-            else result += ch
+            else {
+                isLower = true
+                result += ch
+            }
         }
 
         return result
@@ -207,28 +215,51 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
         }
     }
 
-    protected fun addImport(element: String) {
-        val source = this.options.imports[element]
+    protected fun addImport(vararg elements: String) {
+        for ( element in elements) {
+            val source = this.options.imports[element]
 
-        this.addImportFrom(element, source!!)
+            this.addImportFrom(element, source!!)
+        }
     }
     protected fun addImportFrom(element: String, source: String) {
         this.imports.computeIfAbsent(source) {_ -> HashSet() } .add(element)
     }
 
     protected fun writeImports() {
-        for ( (source, imports) in imports) {
+        // sort imports alphabetically
+        // relative imports last...
+
+        val absoluteImports = ArrayList<String>()
+        val relativeImports = ArrayList<String>()
+
+        for ( (source, imports) in imports)
+            if ( source.startsWith("."))
+                relativeImports.add(source)
+             else
+                absoluteImports.add(source)
+
+        relativeImports.sort()
+        absoluteImports.sort()
+
+        fun writeImport(source: String, imports: MutableSet<String>) {
             writer.print("import { ")
 
             var index = 0
-            for ( import in imports ) {
-                if ( index++ > 0)
+            for (import in imports) {
+                if (index++ > 0)
                     writer.print(", ")
                 writer.print(import)
             }
 
             writer.println(" } from \"" + source + "\"")
-        } // for
+        }
+
+        for (source in absoluteImports)
+            writeImport(source, imports.get(source)!!)
+
+        for (source in relativeImports)
+            writeImport(source, imports.get(source)!!)
 
         writer.println("")
     }

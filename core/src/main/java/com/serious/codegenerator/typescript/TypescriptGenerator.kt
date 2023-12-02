@@ -249,16 +249,14 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
 
         // write header
 
-        this.writeHeader(this.options.header)
+        if ( options.header.isBlank())
+            writeHeader(header())
+        else
+            writeHeader(header() + "\n" + options.header)
 
         // add imports
 
-        this.addImport("Injectable")
-        this.addImport("Injector")
-        this.addImport("Observable")
-
-        this.addImport("RegisterService")
-        this.addImport("AbstractHTTPService")
+        this.addImport("Injectable", "Injector","Observable", "RegisterService", "AbstractHTTPService")
 
         // collect method imports
 
