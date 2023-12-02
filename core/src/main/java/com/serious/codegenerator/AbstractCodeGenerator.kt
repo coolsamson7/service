@@ -6,8 +6,9 @@ package com.serious.codegenerator
  */
 
 import java.io.PrintWriter
+import java.util.*
 
-open class AbstractCodeGenerator {
+open class AbstractCodeGenerator(protected val name: String, protected val version: String) {
     // local class
 
     class Writer(protected val writer: PrintWriter) {
@@ -69,12 +70,7 @@ open class AbstractCodeGenerator {
     // instance data
 
     protected var writer = Writer(PrintWriter(System.out))
-
-    // constructor
-
-    constructor() {
-        //this.writer = Writer(writer)
-    }
+    protected var timestamp = Date().toString()
 
     // protected
 

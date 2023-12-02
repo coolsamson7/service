@@ -10,12 +10,15 @@ import com.serious.service.InterfaceAnalyzer
 import com.serious.codegenerator.AbstractCodeGenerator
 import kotlin.reflect.KClass
 
-data class TypescriptOptions(
+data class
+TypescriptOptions(
     val analyzer : InterfaceAnalyzer,
     val header: String,
     val packageFolder : HashMap<String,String>,
+    val domain: String,
     val filePerService : Boolean,
-    val filePerModel : Boolean
+    val filePerModel : Boolean,
+    val imports : HashMap<String,String> // element -> source
 ) {
     // local classes
 
@@ -26,9 +29,18 @@ data class TypescriptOptions(
         var filePerService = true
         var filePerModel = true
         var header = ""
+        var domain: String = ""
         val analyzer = InterfaceAnalyzer()
+        val imports = HashMap<String,String>() // element -> source
 
         // fluent
+
+        fun addImports(source: String, vararg imports: String) : Builder {
+            for ( import in imports)
+                this.imports.put(import, source)
+
+            return this
+        }
 
         fun addService(clazz: KClass<*>) : Builder {
             analyzer.analyzeService(clazz)
@@ -36,6 +48,11 @@ data class TypescriptOptions(
             return this
         }
 
+        fun setDomain(domain: String) : Builder {
+            this.domain = domain
+
+            return this
+        }
         fun setPackageFolder(packageName: String, folder: String) : Builder {
             packageFolder.put(packageName, folder)
 
@@ -69,8 +86,10 @@ data class TypescriptOptions(
                 analyzer,
                 header,
                 packageFolder,
+                domain,
                 filePerService,
-                filePerModel
+                filePerModel,
+                imports
             )
 
             return options
@@ -78,12 +97,16 @@ data class TypescriptOptions(
     }
 }
 
-open class AbstractTypescriptGenerator() : AbstractCodeGenerator() {
+open class AbstractTypescriptGenerator(protected val options: TypescriptOptions, name: String, version: String) : AbstractCodeGenerator(name, version) {
     // instance data
 
     private val imports = HashMap<String, MutableSet<String>>()
 
     // private
+
+    protected fun header() : String {
+        return "generated at " + timestamp + " with " + name + "V" + version
+    }
 
     protected fun reset() {
         imports.clear()
@@ -184,7 +207,12 @@ open class AbstractTypescriptGenerator() : AbstractCodeGenerator() {
         }
     }
 
-    protected fun addImport(element: String, source: String) {
+    protected fun addImport(element: String) {
+        val source = this.options.imports[element]
+
+        this.addImportFrom(element, source!!)
+    }
+    protected fun addImportFrom(element: String, source: String) {
         this.imports.computeIfAbsent(source) {_ -> HashSet() } .add(element)
     }
 

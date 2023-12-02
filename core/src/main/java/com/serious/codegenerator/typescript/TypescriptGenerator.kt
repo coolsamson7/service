@@ -12,12 +12,11 @@ import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
 
-
-
-class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGenerator() {
+class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
     // not here
 
     var currentFolder = ""
+    var currentClass: InterfaceDescriptor? = null
     val analyzer = options.analyzer
 
     private fun outputFile(folder: String, fileName: String): File {
@@ -106,13 +105,17 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
     fun generateClass(clazz: InterfaceDescriptor) {
         reset()
 
+        currentClass = clazz
         currentFolder = folderFor(clazz.name)
 
         setFileWriter(outputFile(currentFolder, fileName4Model(clazz.name)))
 
         println("generate class " + clazz.name + " file = " + currentFolder + fileName4Model(clazz.name))
 
-        writeHeader(options.header)
+        if ( options.header.isBlank())
+            writeHeader(header())
+        else
+            writeHeader(header() + "\n" + options.header)
 
         // collect imports
 
@@ -145,6 +148,8 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
             writeDocumentation(findDocumentation(property.annotations))
 
             writer.indent().print(property.name).print(" : ").print(type(property.type!!))
+            if ( property.type.optional)
+                writer.print(" | undefined")
         }
 
         // done
@@ -172,9 +177,14 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
             }
         }
         else {
-            val typeFolder = folderFor(typeName)
+            if ( currentClass?.name != typeName) {
+                val typeFolder = folderFor(typeName)
 
-            this.addImport(simpleName(typeName), this.relativeImport(currentFolder, typeFolder) +  fileName4Model(typeName, false))
+                this.addImportFrom(
+                    simpleName(typeName),
+                    this.relativeImport(currentFolder, typeFolder) + fileName4Model(typeName, false)
+                )
+            }
 
             return simpleName(typeName)
         }
@@ -243,12 +253,12 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
 
         // add imports
 
-        this.addImport("Injectable", "@angular/core")
-        this.addImport("Injector", "@angular/core")
-        this.addImport("Observable", "rxjs")
+        this.addImport("Injectable")
+        this.addImport("Injector")
+        this.addImport("Observable")
 
-        this.addImport("RegisterService", "service")
-        this.addImport("AbstractHTTPService", "service")
+        this.addImport("RegisterService")
+        this.addImport("AbstractHTTPService")
 
         // collect method imports
 
@@ -272,7 +282,7 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
 
         // header
 
-        var domain = "domain"
+        var domain = options.domain
         var register = "@RegisterService({domain: \"" + domain + "\""
         if (prefix != null)
             register += ", prefix: \"" + prefix + "\""
@@ -292,21 +302,24 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
             .println("export class " + simpleName(clazz.name) + " extends AbstractHTTPService {")
             .tab(1)
             .indent().println("// constructor")
-            .println("")
+            .println()
             .indent().println("constructor(injector: Injector) {")
             .tab(1)
             .indent().println("super(injector)")
             .tab(-1)
             .indent().println("}")
-            .println("")
+            .println()
+            .indent().println("// public methods" )
 
         // methods
 
         for ( method in clazz.methods) {
+            writer.println()
+
             writeDocumentation(findDocumentation(method.annotations))
 
             writer
-                .indent().print("fun " + method.name + "(")
+                .indent().print("public " + method.name + "(")
 
             var index = 0
             for (parameter in method.parameters) {
@@ -394,8 +407,7 @@ class TypescriptGenerator(val options: TypescriptOptions) : AbstractTypescriptGe
             writer
                 .tab(-1)
                 .indent().println("}")
-                .println("")
-
+                //.println("")
         }
 
         // done
