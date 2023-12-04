@@ -1,13 +1,15 @@
-package com.serious.codegenerator.typescript
+package com.serious.codegenerator.service
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
 
+import com.serious.codegenerator.typescript.AbstractTypescriptGenerator
+import com.serious.codegenerator.typescript.TypescriptOptions
 import com.serious.service.*
 
-class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
+class TypescriptServiceGenerator(options: TypescriptOptions) : AbstractTypescriptGenerator(options,"typescript", "1.0") {
     // instance data
 
     val analyzer = options.analyzer
@@ -159,6 +161,21 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
     }
 
     fun generateService(clazz: InterfaceDescriptor) {
+        // convenience functions
+
+        fun annotation(annotations: List<AnnotationDescriptor>, name: String) : AnnotationDescriptor? {
+            return annotations.find { annotation -> annotation.name == name }
+        }
+
+        fun parameter(parameters: List<ParameterValueDescriptor>, name: String) : ParameterValueDescriptor? {
+            return parameters.find { parameter -> parameter.name == name }
+        }
+
+        fun <T> parameterValue(parameters: List<ParameterValueDescriptor>, name: String) : T {
+            return parameters.find { parameter -> parameter.name == name }?.value as T
+        }
+
+        //
         setClass(clazz)
 
         setFileWriter(outputFile(currentFolder, fileName4Service(clazz.name)))
@@ -188,9 +205,9 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
         // look for request mapping at class level
 
         var prefix : String? = null
-        val requestMapping = clazz.annotations.find { annotation -> annotation.name == "org.springframework.web.bind.annotation.RequestMapping" }
+        val requestMapping = annotation(clazz.annotations, "org.springframework.web.bind.annotation.RequestMapping")
         if ( requestMapping != null) {
-            val param = requestMapping.parameters.find { parameterValueDescriptor -> parameterValueDescriptor.name == "value" }
+            val param = parameter(requestMapping.parameters, "value")
             if (param != null)
                 prefix = (param.value as Array<String>)[0]
         }
@@ -251,14 +268,14 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
                 .println("> {")
 
             val mapping = getMapping(method)!!
-            val func = mapping.name.substring(mapping.name.lastIndexOf(".") + 1, mapping.name.indexOf("Mapping")).toLowerCase()
+            val func = mapping.name.substring(mapping.name.lastIndexOf(".") + 1, mapping.name.indexOf("Mapping")).lowercase()
 
             writer
                 .tab(1)
                 .indent().print("return this." + func + "<" + type(method.returnType) + ">(")
 
-            val uris = mapping.parameters.find { param -> param.name == "value" }?.value as Array<String>
-            val uri = uris[0]
+            val uri = parameterValue<Array<String>>(mapping.parameters, "value")[0]
+
             writer.print("`")
 
             var start = 0
@@ -273,9 +290,7 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
                 val rBrace = uri.indexOf("}", lBrace)
                 val param = uri.substring(lBrace + 1, rBrace)
 
-                val p = findParameter4Path(method, param)
-
-                writer.print("\${").print(p!!.name).print("}")
+                writer.print("\${").print(findParameter4Path(method, param)!!.name).print("}")
 
                 start = rBrace + 1
                 lBrace =  uri.indexOf("{", start)
@@ -289,22 +304,22 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
             writer.print("`")
 
             if ( func == "post") {
-                val body = method.parameters.find { param -> param.annotations.find { annotation -> annotation.name == "org.springframework.web.bind.annotation.RequestBody"} != null }!!.name
+                val body = method.parameters.find { param -> annotation(param.annotations, "org.springframework.web.bind.annotation.RequestBody") != null }!!.name
 
                 writer.print(", ").print(body)
             }
 
             // params
 
-            if ( method.parameters.find { param -> param.annotations.find { annotation -> annotation.name == "org.springframework.web.bind.annotation.RequestParam" } != null} != null) {
+            if ( method.parameters.find { param -> annotation(param.annotations, "org.springframework.web.bind.annotation.RequestParam") != null} != null) {
                 writer.print(", { params: {")
 
-                val requestParams = method.parameters.filter { param -> param.annotations.find { annotation -> annotation.name == "org.springframework.web.bind.annotation.RequestParam" } != null }
+                val requestParams = method.parameters.filter { param -> annotation(param.annotations, "org.springframework.web.bind.annotation.RequestParam") != null }
 
                 for ( param in requestParams) {
                     var name = param.name
 
-                    val annotation = param.annotations.find { param -> param.name == "org.springframework.web.bind.annotation.RequestParam"}
+                    val annotation = annotation(param.annotations, "org.springframework.web.bind.annotation.RequestParam")
                     if (annotation!!.parameters.isNotEmpty())
                         name = annotation.parameters[0].value as String
 
@@ -323,7 +338,6 @@ class TypescriptGenerator(options: TypescriptOptions) : AbstractTypescriptGenera
             writer
                 .tab(-1)
                 .indent().println("}")
-                //.println("")
         }
 
         // done

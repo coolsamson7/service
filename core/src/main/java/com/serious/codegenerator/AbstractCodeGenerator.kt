@@ -82,7 +82,7 @@ open class AbstractCodeGenerator(protected val name: String, protected val versi
     }
 
     protected fun header() : String {
-        return "generated at " + timestamp + " with " + name + " V" + version
+        return "generated at $timestamp with $name V$version"
     }
 
     protected fun simpleName(fqn: String) : String {

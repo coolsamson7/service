@@ -185,7 +185,7 @@ open class AbstractTypescriptGenerator(protected val options: TypescriptOptions,
                 println("created $dir")
     }
 
-    private fun createDirectories(folder: String): String { // /Users/user/asd
+    private fun createDirectories(folder: String): String {
         val currentDirectory: StringBuilder = StringBuilder("/")
 
         // split package name
