@@ -9,6 +9,7 @@ import { ManifestGenerator } from "./manifest/manifest-generator"
 import { ManifestWriter } from "./manifest/manifest-writer";
 import { RouteModuleWriter } from "./router-module/route-module-writer";
 import { WebpackWriter } from "./webpack/webpack-writer";
+import { RoutesWriter } from "./routes/routes-writer";
 
 /**
  * main function
@@ -28,13 +29,17 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   await new ManifestWriter(project).write(host, manifest)
 
-  // write router module
+  // write router module or routes
 
-  await new RouteModuleWriter(project).write(host, manifest)
+  if ( schema.type == "shell")
+     await new RoutesWriter(project).write(host, manifest)
+  else
+    await new RouteModuleWriter(project).write(host, manifest)
 
-  // write webpack configuration
+  // webpack
 
-  await new WebpackWriter(project, schema.projectName).write(host, manifest)
+  if ( schema.type != "shell")
+    await new WebpackWriter(project, schema.projectName).write(host, manifest)
 
   // format all files which were created / updated in this schematic
 

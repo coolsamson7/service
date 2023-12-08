@@ -1,0 +1,4 @@
+ import { <%= feature.component %> } from '<%= feature.relative + feature.file.file.substring(0, feature.file.file.length - 3) %>'
+ <% for (let child of feature.children || [] ) { -%>
+           <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/import.tmpl', { feature: child }) -%>
+ <% } %>

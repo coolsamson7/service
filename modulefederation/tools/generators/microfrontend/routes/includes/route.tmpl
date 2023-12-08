@@ -1,0 +1,9 @@
+ {
+      path: '<%= feature.name %>',
+      component: <%= feature.component %>,
+      children: [
+        <% for (let child of (feature.children || [])) { %>
+          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/route.tmpl', { feature: child }) -%>
+        <% } %>
+      ]
+  },

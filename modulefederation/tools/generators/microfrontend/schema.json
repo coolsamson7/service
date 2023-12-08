@@ -8,6 +8,26 @@
       "description": "Project Name",
       "$default": {
         "$source": "projectName"
+      },
+      "x-prompt": "Which project will this generator take care of?",
+      "x-dropdown": "projects"
+    },
+    "type": {
+      "type": "string",
+      "description": "Provide the project type",
+      "x-prompt": {
+        "message": "What kind of project is it?",
+        "type": "list",
+        "items": [
+          {
+            "value": "shell",
+            "label": "Shell"
+          },
+          {
+            "value": "microfrontend",
+            "label": "Microfrontend"
+          }
+        ]
       }
     }
   },

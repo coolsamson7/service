@@ -1,5 +1,4 @@
 import { setRemoteDefinitions } from '@nrwl/angular/mf';
-import {ModuleConfig} from "@modulefederation/portal";
 
 interface DeploymentConfig {
    name: string
@@ -52,5 +51,5 @@ class LocalDeploymentLoader implements DeploymentLoader {
 
 new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202")
   .load()
-  .then((deployment) => {console.log(deployment); setRemoteDefinitions(deployment.remotes)})
+  .then((deployment) => setRemoteDefinitions(deployment.remotes))
   .then(() => import('./bootstrap').catch((err) => console.error(err)));
