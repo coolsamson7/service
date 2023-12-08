@@ -4,7 +4,7 @@
 import { Routes, RouterModule } from '@angular/router'
 
  <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/import.tmpl', { feature: feature }) -%>
+          <%- include(process.cwd() + '/tools/generators/microfrontend/routes/includes/import.tmpl', { feature: feature }) -%>
      <% } %>
 
 export const localRoutes: Routes = [
@@ -14,6 +14,6 @@ export const localRoutes: Routes = [
       pathMatch: 'full'
     },
      <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/route.tmpl', { feature: feature }) -%>
+          <%- include(process.cwd() + '/tools/generators/microfrontend/routes/includes/route.tmpl', { feature: feature }) -%>
      <% } %>
 ]

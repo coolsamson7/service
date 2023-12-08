@@ -4,39 +4,27 @@
 - spring + oauth???
 - paper scroll
 
-
 === MFE
 
-- in dynamic anwenden
-- vergleichen metadaten cgm
-- meyer checken: shared lib...
-- buch runterladen
-
-- deployment.json
+wepack.config erzeugen
 
 === MFE NOW
 
-- features aufsammeln und printen
-- überlegen wie manifest aussieht?
-
-
 === MFE DONE
+
+- in dynamic anwenden
+- überlegen wie manifest aussieht?
+- features aufsammeln und printen
 - im lokalen rp eine lib bauen und checken, wo die bleibt...
 - im lokalen repo ein tool basteln
 - anschliessend scanner ( check iteratec ) einbauen
 - github dynamic... auschecken & laufen lassen
 
 
-511  ng g workspace-schematic microfrontend
-  512  npm i @angular-devkit/schematics
   513  ng g workspace-schematic microfrontend
   514  npm install @nrwl/devkit --save-dev
-  515  npx g workspace-schematic interface
-  516  npx nx workspace-schematic interface
-  5
-  524  npx nx workspace-schematic microfrontend --projectName=shell
   525  npm install find-in-files --save-dev
-  526  npx nx workspace-schematic microfrontend -projectName=shell
+  526  npx nx workspace-schematic microfrontend --projectName=shell
 
 
 === TODO

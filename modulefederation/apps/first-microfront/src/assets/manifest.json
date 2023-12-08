@@ -4,7 +4,7 @@
   "commitHash": "45bf793e02aeb2d42f1817e04686115bb73af5c6",
   "module": {
     "name": "first-microfront",
-    "component": "RemoteEntryModule",
+    "ngModule": "RemoteEntryModule",
     "file": "apps/first-microfront/src/app/remote-entry/entry.module.ts"
   },
   "features": [

@@ -22,6 +22,7 @@ export function RegisterFeature(config: FeatureConfig) {
 
 export interface ModuleConfig {
   name: string
+  //component: string
   description?: string
 }
 

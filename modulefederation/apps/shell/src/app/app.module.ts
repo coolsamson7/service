@@ -4,10 +4,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { appRoutes } from './app.routes';
 import { NavbarModule } from './navbar/navbar.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
+
+import { localRoutes } from "./local.routes";
 import { RegisterModule } from "@modulefederation/portal";
+import {Deployment} from "./deployment";
 
 @RegisterModule({
   name: 'app'
@@ -19,7 +21,7 @@ import { RegisterModule } from "@modulefederation/portal";
     BrowserAnimationsModule,
     NavbarModule,
     MatSidenavModule, // <-- Add this line because of app.component.html
-    RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
+    RouterModule.forRoot(Deployment.instance.buildRoutes(localRoutes), { initialNavigation: 'enabledBlocking' }),
   ],
   providers: [],
   bootstrap: [AppComponent],
