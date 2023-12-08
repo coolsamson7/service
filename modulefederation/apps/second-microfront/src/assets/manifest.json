@@ -1,0 +1,26 @@
+{
+  "name": "modulefederation",
+  "version": "0.0.0",
+  "commitHash": "a0c89c330879930da2cbec013eb35add5859874e",
+  "module": {
+    "component": "RemoteEntryModule",
+    "file": "apps/second-microfront/src/app/remote-entry/entry.module.ts"
+  },
+  "features": [
+    {
+      "name": "second-microfrontend",
+      "label": "second-microfrontend",
+      "component": "RemoteEntryComponent",
+      "tags": [],
+      "categories": [],
+      "visibility": [],
+      "permissions": [],
+      "featureToggles": [],
+      "file": {
+        "file": "entry.component.ts",
+        "path": "apps/second-microfront/src/app/remote-entry"
+      },
+      "relative": "./"
+    }
+  ]
+}

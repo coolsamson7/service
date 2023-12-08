@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-
 import { RemoteEntryComponent } from './entry.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
-import { remoteRoutes } from './entry.routes';
+import { RegisterModule } from "@modulefederation/portal";
+import {RemoteEntryRouterModule} from "./remote-entry-router-module.module";
 
+@RegisterModule({name: 'first-microfrontend'})
 @NgModule({
-  declarations: [RemoteEntryComponent, NxWelcomeComponent],
-  imports: [CommonModule, RouterModule.forChild(remoteRoutes)],
+  declarations: [RemoteEntryComponent],
+  imports: [CommonModule, RemoteEntryRouterModule],
   providers: [],
 })
 export class RemoteEntryModule {}

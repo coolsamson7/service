@@ -1,0 +1,26 @@
+{
+  "name": "modulefederation",
+  "version": "0.0.0",
+  "commitHash": "a0c89c330879930da2cbec013eb35add5859874e",
+  "module": {
+    "component": "AppModule",
+    "file": "apps/shell/src/app/app.module.ts"
+  },
+  "features": [
+    {
+      "name": "home",
+      "label": "home",
+      "component": "HomeComponent",
+      "tags": [],
+      "categories": [],
+      "visibility": [],
+      "permissions": [],
+      "featureToggles": [],
+      "file": {
+        "file": "home.component.ts",
+        "path": "apps/shell/src/app/home/components/home"
+      },
+      "relative": "./home/components/home/"
+    }
+  ]
+}

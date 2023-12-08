@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { RegisterFeature } from "@modulefederation/portal";
 
+@RegisterFeature({
+  name: 'second-microfrontend'
+})
 @Component({
-  selector: 'modulefederation-second-microfront-entry',
-  template: `<modulefederation-nx-welcome></modulefederation-nx-welcome>`,
+  selector: 'second-microfront',
+  template: `<div>Second MFE</div>`,
 })
 export class RemoteEntryComponent {}
