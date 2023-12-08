@@ -6,7 +6,7 @@ import {RemoteEntryRouterModule} from "./remote-entry-router-module.module";
 
 
 @RegisterModule({
-  name: 'second-microfrontend'
+  name: 'second-microfront'
 })
 @NgModule({
   declarations: [RemoteEntryComponent],

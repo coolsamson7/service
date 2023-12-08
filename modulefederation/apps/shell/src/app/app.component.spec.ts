@@ -1,18 +1,18 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
+import {HomeComponent} from "./home/components/home/home.component";
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([
-          { path: '', component: NxWelcomeComponent },
+          { path: '', component: HomeComponent },
         ]),
       ],
-      declarations: [AppComponent, NxWelcomeComponent],
+      declarations: [AppComponent, HomeComponent],
     }).compileComponents();
   });
 

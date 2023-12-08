@@ -106,7 +106,7 @@ export class ManifestGenerator {
         // done
 
         return {
-            name: module.name,
+            name: module.data.name,
             component: module.decorates,
             file: module.file, // TODO
             //relative: this.relativeImport(modulePath, this.path( data.file))

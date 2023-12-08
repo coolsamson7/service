@@ -1,8 +1,9 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "a0c89c330879930da2cbec013eb35add5859874e",
+  "commitHash": "fdb77a0716568882e228f992a87bf1ad29b38bbe",
   "module": {
+    "name": "first-microfront",
     "component": "RemoteEntryModule",
     "file": "apps/first-microfront/src/app/remote-entry/entry.module.ts"
   },
