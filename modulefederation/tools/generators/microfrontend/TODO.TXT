@@ -1,0 +1,29 @@
+== AUFRUF
+
+nx workspace-schematic microfrontend --projectName=my-app
+
+=== TODO
+
+- PortalManager -> cretaeRoutes / check steyer & cgm )
+- Einbauen
+
+== LATER
+
+- route Args?
+- Lazy
+
+=== NOW
+
+- Aufruf Package
+
+=== DONE
+
+- Webpack
+- Name Modul
+- schema aufräumen
+- moudle name
+- refactor
+- Isdefazult
+- restlichen Argumente
+- children
+- Relative

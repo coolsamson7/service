@@ -1,0 +1,20 @@
+<mat-toolbar color = "primary">
+    <div fxHide.gt-xs>
+      <button mat-icon-button (click) = "onToggleSidenav()" class="menuButton">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+    <div>
+      <a routerLink = "/">Home</a>
+    </div>
+    <div fxFlex fxLayout fxLayoutAlign = "end" fxHide.xs>
+      <ul fxLayout fxLayoutGap = "15px" class = "navigation-items">
+        <li>
+          <a routerLink = "/first-microfront">Microfront 1</a>
+        </li>
+        <li>
+          <a routerLink = "/second-microfront">Microfront 2</a>
+        </li>
+      </ul>
+    </div>
+  </mat-toolbar>
