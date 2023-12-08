@@ -1,6 +1,6 @@
 package com.serious.service.administration.impl
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */

@@ -29,6 +29,11 @@ export class ComponentService extends AbstractHTTPService {
       return this.get<string[]>(`/services`);
     }
 
+    /**
+     * 
+     * @param component 
+     * @returns 
+     */
     public getDetails(component: String): Observable<ComponentDTO>{
       return this.get<ComponentDTO>(`/component/${component}`);
     }
