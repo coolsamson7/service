@@ -1,3 +1,8 @@
 const { withModuleFederation } = require('@nrwl/angular/module-federation');
-const config = require('./module-federation.config');
-module.exports = withModuleFederation(config);
+
+module.exports = withModuleFederation({
+  name: 'first-microfront',
+  exposes: {
+    './Module': 'apps/first-microfront/src/app/remote-entry/entry.module.ts',
+  },
+});

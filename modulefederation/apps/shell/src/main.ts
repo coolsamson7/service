@@ -31,13 +31,16 @@ class LocalDeploymentLoader implements DeploymentLoader {
       remotes: {}
     }
 
-    let responses = await Promise.all<Response>(promises)
+    let responses = await Promise.allSettled<Response>(promises)
     let index = 0
     for ( let response of responses) {
-      if (response.ok) {
-        let json = await response.json()
+      if (response.status == "fulfilled") {
+        let json = await response.value.json()
 
         result.remotes[json.module.name] = this.urls[index]
+      }
+      else {
+        console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)
       }
 
       index++;

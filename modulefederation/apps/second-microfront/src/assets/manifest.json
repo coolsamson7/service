@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "fdb77a0716568882e228f992a87bf1ad29b38bbe",
+  "commitHash": "45bf793e02aeb2d42f1817e04686115bb73af5c6",
   "module": {
     "name": "second-microfront",
     "component": "RemoteEntryModule",

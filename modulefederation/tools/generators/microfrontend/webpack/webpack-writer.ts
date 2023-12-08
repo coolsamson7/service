@@ -15,7 +15,6 @@ export class WebpackWriter {
 
     // generate files
 
-    if ( false )
     generateFiles(host, webpackTemplatePath, this.project.root, {
       manifest,
       projectName: this.projectName,
