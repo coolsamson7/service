@@ -1,19 +1,17 @@
 import { loadRemoteModule, setRemoteDefinitions} from '@nrwl/angular/mf';
 
 import { Routes } from "@angular/router";
-import {Manifest} from "./manifest";
+import { Manifest } from "./manifest";
 
 export class Deployment {
   // static data
 
   static instance : Deployment
 
-  // instance data
-
-  private localRoutes: Routes = []
-
   constructor(private config: DeploymentConfig) {
     Deployment.instance = this
+
+    console.log(this)
   }
 
   // public
@@ -21,26 +19,16 @@ export class Deployment {
   buildRoutes(localRoutes: Routes) : Routes {
     const modules = this.config.modules
     const lazyRoutes: Routes = Object.keys(modules).map(key => {
-     const entry = modules[key];
+      const module = modules[key];
 
-      /*path: 'second-microfront',
-        loadChildren: () =>
-        loadRemoteModule('second-microfront', './Module').then(
-          (m) => m.RemoteEntryModule
-        ),*/
-
-     return {
-       path: key,
-       loadChildren: () => loadRemoteModule(key, './Module')
-         .then((m) => m[entry.module.ngModule])
-     }
-   });
+      return {
+        path: key,
+        loadChildren: () => loadRemoteModule(key, './Module')
+          .then((m) => m[module.module.ngModule]) //
+      }
+    });
 
     return [...localRoutes, ...lazyRoutes]
-  }
-
-  setLocalRoutes(localRoutes: Routes){
-    this.localRoutes = localRoutes
   }
 
   setRemoteDefinitions(){
@@ -53,11 +41,11 @@ export interface DeploymentConfig {
   modules: { [name: string] : Manifest }
 }
 
-export interface DeploymentLoader {
-  load() : Promise<Deployment>
+export abstract class DeploymentLoader {
+  abstract load() : Promise<Deployment>
 }
 
-export class LocalDeploymentLoader implements DeploymentLoader {
+export class LocalDeploymentLoader extends DeploymentLoader {
   // instance data
 
   private urls: string[]
@@ -65,6 +53,8 @@ export class LocalDeploymentLoader implements DeploymentLoader {
   // constructor
 
   constructor(...urls: string[]) {
+    super()
+
     this.urls = urls
   }
   // implement DeploymentLoader
@@ -79,14 +69,16 @@ export class LocalDeploymentLoader implements DeploymentLoader {
       modules: {}
     }
 
+    //TODO result.modules[this.localManifest.module.name] = this.localManifest
+
     let responses = await Promise.allSettled<Response>(promises)
     let index = 0
     for ( let response of responses) {
       if (response.status == "fulfilled") {
-        let json = await response.value.json()
+        let manifest = await response.value.json()
 
-        result.remotes[json.module.name] = this.urls[index]
-        result.modules[json.module.name] = json
+        result.remotes[manifest.module.name] = this.urls[index]
+        result.modules[manifest.module.name] = manifest
       }
       else {
         console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)

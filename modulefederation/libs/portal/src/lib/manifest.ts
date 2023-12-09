@@ -8,7 +8,6 @@ export interface ModuleData {
 }
 
 
-
 export interface Manifest {
   name : string,
   version : string,

@@ -3,13 +3,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { RouterModule } from '@angular/router';
 import { NavbarModule } from './navbar/navbar.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
-import { RegisterModule } from "@modulefederation/portal";
-import {Deployment} from "../portal/deployment";
+import { LocalDeploymentLoader, PortalModule, RegisterModule} from "@modulefederation/portal";
+import {RouterModule} from "@angular/router";
+
+@NgModule({
+  imports: [RouterModule.forRoot(localRoutes)],
+  exports: [RouterModule],
+})
+export class AppComponentRouterModule {}
 
 @RegisterModule({
   name: 'app'
@@ -21,7 +26,12 @@ import {Deployment} from "../portal/deployment";
     BrowserAnimationsModule,
     NavbarModule,
     MatSidenavModule,
-    RouterModule.forRoot(Deployment.instance.buildRoutes(localRoutes), { initialNavigation: 'enabledBlocking' }),
+    //RouterModule,
+    AppComponentRouterModule,
+    PortalModule.forRoot({
+      loader: new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202"),
+      localRoutes: localRoutes
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
