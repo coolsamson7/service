@@ -8,12 +8,10 @@ export class Deployment {
 
   static instance : Deployment
 
-  // instance data
-
-  private localRoutes: Routes = []
-
   constructor(private config: DeploymentConfig) {
     Deployment.instance = this
+
+    console.log(this)
   }
 
   // public
@@ -31,10 +29,6 @@ export class Deployment {
    });
 
     return [...localRoutes, ...lazyRoutes]
-  }
-
-  setLocalRoutes(localRoutes: Routes){
-    this.localRoutes = localRoutes
   }
 
   setRemoteDefinitions(){
@@ -58,7 +52,7 @@ export class LocalDeploymentLoader implements DeploymentLoader {
 
   // constructor
 
-  constructor(...urls: string[]) {
+  constructor(private localManifest: Manifest, ...urls: string[]) {
     this.urls = urls
   }
   // implement DeploymentLoader
@@ -73,14 +67,16 @@ export class LocalDeploymentLoader implements DeploymentLoader {
       modules: {}
     }
 
+    result.modules[this.localManifest.module.name] = this.localManifest
+
     let responses = await Promise.allSettled<Response>(promises)
     let index = 0
     for ( let response of responses) {
       if (response.status == "fulfilled") {
-        let json = await response.value.json()
+        let manifest = await response.value.json()
 
-        result.remotes[json.module.name] = this.urls[index]
-        result.modules[json.module.name] = json
+        result.remotes[manifest.module.name] = this.urls[index]
+        result.modules[manifest.module.name] = manifest
       }
       else {
         console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)

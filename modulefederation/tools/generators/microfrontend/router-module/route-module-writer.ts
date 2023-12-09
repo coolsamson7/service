@@ -10,7 +10,8 @@ export class RouteModuleWriter {
 
     const routesTemplatePath = 'tools/generators/microfrontend/router-module/templates';
 
-    let moduleName = manifest.module.component
+    console.log(manifest)
+    let moduleName = manifest.module.ngModule
     if ( moduleName.endsWith("Module"))
       moduleName = moduleName.substring(0, moduleName.length - "Module".length) + "RouterModule"
 

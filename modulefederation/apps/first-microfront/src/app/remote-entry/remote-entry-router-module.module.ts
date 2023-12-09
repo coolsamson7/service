@@ -4,17 +4,19 @@
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
-import { RemoteEntryComponent } from './entry.component';
+import { RemoteEntryComponent } from './remote-entry.component';
+
+import { RemoteEntryChildComponent } from './remote-entry.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'first-microfrontend',
-    pathMatch: 'full',
+    component: RemoteEntryComponent,
+    children: [],
   },
   {
-    path: 'first-microfrontend',
-    component: RemoteEntryComponent,
+    path: 'child',
+    component: RemoteEntryChildComponent,
     children: [],
   },
 ];

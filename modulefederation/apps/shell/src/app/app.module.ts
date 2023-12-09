@@ -9,7 +9,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
 import { RegisterModule } from "@modulefederation/portal";
-import {Deployment} from "./deployment";
+import {Deployment} from "../portal/deployment";
 
 @RegisterModule({
   name: 'app'
@@ -20,7 +20,7 @@ import {Deployment} from "./deployment";
     BrowserModule,
     BrowserAnimationsModule,
     NavbarModule,
-    MatSidenavModule, // <-- Add this line because of app.component.html
+    MatSidenavModule,
     RouterModule.forRoot(Deployment.instance.buildRoutes(localRoutes), { initialNavigation: 'enabledBlocking' }),
   ],
   providers: [],

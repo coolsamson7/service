@@ -1,16 +1,16 @@
 {
-  "name": "modulefederation",
-  "version": "0.0.0",
-  "commitHash": "45bf793e02aeb2d42f1817e04686115bb73af5c6",
+  "name": "first-microfront",
+  "version": "0.1",
+  "commitHash": "dae15fee2caedf7471e2ea6d87f6fd3493adee17",
   "module": {
     "name": "first-microfront",
     "ngModule": "RemoteEntryModule",
-    "file": "apps/first-microfront/src/app/remote-entry/entry.module.ts"
+    "file": "apps/first-microfront/src/app/remote-entry/remote-entry.module.ts"
   },
   "features": [
     {
-      "name": "first-microfrontend",
-      "label": "first-microfrontend",
+      "name": "",
+      "label": "",
       "component": "RemoteEntryComponent",
       "tags": [],
       "categories": [],
@@ -18,7 +18,22 @@
       "permissions": [],
       "featureToggles": [],
       "file": {
-        "file": "entry.component.ts",
+        "file": "remote-entry.component.ts",
+        "path": "apps/first-microfront/src/app/remote-entry"
+      },
+      "relative": "./"
+    },
+    {
+      "name": "child",
+      "label": "child",
+      "component": "RemoteEntryChildComponent",
+      "tags": [],
+      "categories": [],
+      "visibility": [],
+      "permissions": [],
+      "featureToggles": [],
+      "file": {
+        "file": "remote-entry.component.ts",
         "path": "apps/first-microfront/src/app/remote-entry"
       },
       "relative": "./"
