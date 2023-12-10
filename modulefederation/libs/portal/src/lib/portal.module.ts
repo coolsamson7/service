@@ -9,10 +9,12 @@ import {
 import { Routes} from "@angular/router";
 import {DeploymentLoader} from "./deployment-loader";
 import {PortalConfigurationService} from "./portal-configuration-service";
+import {Manifest} from "./manifest";
 
 export type PortalModuleConfig = {
   loader: DeploymentLoader,
-  localRoutes: Routes
+  localRoutes: Routes,
+  localManifest: Manifest
 }
 
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');

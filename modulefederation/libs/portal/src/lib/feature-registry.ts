@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { filter, map, Observable, ReplaySubject, take, tap } from "rxjs";
-import { Router } from "@angular/router";
 import {FeatureConfig} from "./feature-config";
 
 @Injectable({ providedIn: 'root' })
@@ -13,25 +12,9 @@ export class FeatureRegistry {
 
   // constructor
 
-  constructor(private router : Router) {
-    this.importDeployment()
+  constructor() {
   }
 
-  /*
-  const modules = this.config.modules
-  const lazyRoutes: Routes = Object.keys(modules).map(key => {
-    const module = modules[key];
-
-    return {
-      path: key,
-      loadChildren: () => loadRemoteModule(key, './Module')
-        .then((m) => m[module.module.ngModule]) //
-    }
-  });
-  */
-  importDeployment() {
-    //Deployment.instance.buildRoutes()
-  }
   // public
 
   register(...features: FeatureConfig[]) {

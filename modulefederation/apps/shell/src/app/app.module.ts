@@ -10,6 +10,8 @@ import { localRoutes } from "./local.routes";
 import { LocalDeploymentLoader, PortalModule, RegisterModule} from "@modulefederation/portal";
 import {RouterModule} from "@angular/router";
 
+import * as localManifest from "../assets/manifest.json"
+
 @NgModule({
   imports: [RouterModule.forRoot(localRoutes)],
   exports: [RouterModule],
@@ -26,11 +28,11 @@ export class AppComponentRouterModule {}
     BrowserAnimationsModule,
     NavbarModule,
     MatSidenavModule,
-    //RouterModule,
     AppComponentRouterModule,
     PortalModule.forRoot({
       loader: new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202"),
-      localRoutes: localRoutes
+      localRoutes: localRoutes,
+      localManifest: localManifest
     }),
   ],
   providers: [],

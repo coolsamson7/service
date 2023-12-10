@@ -34,14 +34,28 @@ export class PortalConfigurationService {
     return [...localRoutes, ...lazyRoutes]
   }
 
+  private fillFeatureRegistry(deployment: DeploymentConfig) {
+    for ( let module in deployment.modules) {
+      let manifest = deployment.modules[module]
+
+      // TODO: names, etc.
+
+      this.featureRegistry.register(...manifest.features)
+    }
+  }
+
   private setupDeployment(deployment: DeploymentConfig) {
     // add local manifest
 
-    //TODO result.modules[this.localManifest.module.name] = this.localManifest
+    deployment.modules[this.portalConfig.localManifest.module.name] = this.portalConfig.localManifest
 
     // set remote definitions
 
     setRemoteDefinitions(deployment.remotes)
+
+    // fill feature registry
+
+    this.fillFeatureRegistry(deployment)
 
     // setup routes
 
