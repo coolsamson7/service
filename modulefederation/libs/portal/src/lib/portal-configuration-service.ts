@@ -4,7 +4,7 @@ import {Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
-import { DeploymentConfig } from "./deployment";
+import {DeploymentConfig} from "./deployment/deployment-model";
 
 @Injectable({ providedIn: 'root' })
 export class PortalConfigurationService {
@@ -31,6 +31,8 @@ export class PortalConfigurationService {
       }
     });
 
+    console.log([...localRoutes, ...lazyRoutes])
+
     return [...localRoutes, ...lazyRoutes]
   }
 
@@ -42,9 +44,15 @@ export class PortalConfigurationService {
 
       this.featureRegistry.register(...manifest.features)
     }
+
+    this.featureRegistry.ready()
   }
 
   private setupDeployment(deployment: DeploymentConfig) {
+    ;(window as any)["deployment"] = () => {
+      console.log(deployment)
+    }
+
     // add local manifest
 
     deployment.modules[this.portalConfig.localManifest.module.name] = this.portalConfig.localManifest
@@ -59,13 +67,17 @@ export class PortalConfigurationService {
 
     // setup routes
 
+    console.log("reset routes ")
+
     this.router.resetConfig(this.buildRoutes(deployment, this.portalConfig.localRoutes))
   }
 
   // public
 
-  async load(): Promise<void> {
-    this.portalConfig.loader.load()
+  load(): Promise<void> {
+    console.log("load")
+    return this.portalConfig.loader
+      .load()
       .then((deployment) => this.setupDeployment(deployment))
   }
 }

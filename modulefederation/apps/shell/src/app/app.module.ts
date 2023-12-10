@@ -7,7 +7,7 @@ import { NavbarModule } from './navbar/navbar.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
-import { LocalDeploymentLoader, PortalModule, RegisterModule} from "@modulefederation/portal";
+import {LocalDeploymentLoader, PortalModule, RegisterShell} from "@modulefederation/portal";
 import {RouterModule} from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
@@ -18,7 +18,7 @@ import * as localManifest from "../assets/manifest.json"
 })
 export class AppComponentRouterModule {}
 
-@RegisterModule({
+@RegisterShell({
   name: 'app'
 })
 @NgModule({

@@ -13,19 +13,24 @@ export class FeatureRegistry {
   // constructor
 
   constructor() {
+    ;(window as any)["features"] = () => {
+      this.report()
+    }
   }
 
   // public
 
-  register(...features: FeatureConfig[]) {
-    // register
+  report() {
+    console.table(Object.values(this.features))
+  }
 
+  ready() {
+    this.registry$.next(this);
+  }
+
+  register(...features: FeatureConfig[]) {
     for ( let feature of features)
         this.features[feature.name] = feature
-
-    // call subscribers
-
-    this.registry$.next(this);
   }
 
   getFeature(id: string) : FeatureConfig {

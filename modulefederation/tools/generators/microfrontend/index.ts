@@ -23,7 +23,7 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   // create manifest
 
-  const manifest = await new ManifestGenerator(project.sourceRoot).generate()
+  const manifest = await new ManifestGenerator(project.sourceRoot, schema.type == "shell").generate()
 
   // write manifest
 

@@ -7,9 +7,11 @@ import {
   NgModule
 } from "@angular/core";
 import { Routes} from "@angular/router";
-import {DeploymentLoader} from "./deployment-loader";
+import {DeploymentLoader} from "./deployment/deployment-loader";
 import {PortalConfigurationService} from "./portal-configuration-service";
-import {Manifest} from "./manifest";
+import {Manifest} from "./deployment/deployment-model";
+import {ModulesModule} from "./modules";
+import { FeatureOutletDirective } from "./components/feature-outlet.component";
 
 export type PortalModuleConfig = {
   loader: DeploymentLoader,
@@ -20,12 +22,12 @@ export type PortalModuleConfig = {
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');
 
 
-function loadPortalConfiguration(configurationService: PortalConfigurationService) {
+function loadPortalConfiguration(configurationService: PortalConfigurationService) : () => Promise<void> {
   return () => configurationService.load();
 }
 
 @NgModule({
-  imports: [],
+  imports: [ModulesModule],
   providers: [
     {
       provide: APP_INITIALIZER,
@@ -34,8 +36,8 @@ function loadPortalConfiguration(configurationService: PortalConfigurationServic
       deps: [PortalConfigurationService]
     },
   ],
-  declarations: [/*FeatureOutletDirective*/],
-  exports: [/*FeatureOutletDirective*/]
+  declarations: [FeatureOutletDirective],
+  exports: [FeatureOutletDirective]
 })
 export class PortalModule {
   static injector = new ReplaySubject<Injector>(1);

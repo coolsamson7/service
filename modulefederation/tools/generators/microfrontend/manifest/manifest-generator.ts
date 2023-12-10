@@ -20,7 +20,7 @@ export type ApplyDecorator = (decorator: DecoratorData) => void;
 export class ManifestGenerator {
     // constructor
 
-    constructor(private dir: string) {
+    constructor(private dir: string, private shell: boolean) {
     }
 
     // private
@@ -72,7 +72,6 @@ export class ManifestGenerator {
         return result + separator
     }
 
-
     private file(fileName: string) {
       let index = fileName.lastIndexOf("/")
 
@@ -83,7 +82,7 @@ export class ManifestGenerator {
     }
 
     private async readModule() : Promise<any> {
-        const decorator = "RegisterModule"
+        const decorator = this.shell ?  "RegisterShell" : "RegisterMicrofrontend"
         const files = await this.findDecorators(decorator , this.dir)
 
         // validate

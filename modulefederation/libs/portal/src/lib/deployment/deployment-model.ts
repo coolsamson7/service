@@ -1,4 +1,4 @@
-import {FeatureConfig} from "./feature-config";
+import {FeatureConfig} from "../feature-config";
 
 export interface ModuleData {
   name: string
@@ -7,7 +7,6 @@ export interface ModuleData {
   description?: string
 }
 
-
 export interface Manifest {
   name : string,
   version : string,
@@ -15,3 +14,10 @@ export interface Manifest {
   module : ModuleData,
   features : FeatureConfig[]
 }
+
+export interface DeploymentConfig {
+  name: string
+  remotes: { [name: string] : string } // name -> url
+  modules: { [name: string] : Manifest }
+}
+

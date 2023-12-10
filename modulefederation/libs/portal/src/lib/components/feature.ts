@@ -1,4 +1,4 @@
-import {FeatureConfig} from "./feature-config";
+import {FeatureConfig} from "../feature-config";
 
 export class Feature {
   // instance data

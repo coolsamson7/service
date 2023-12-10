@@ -1,10 +1,9 @@
 import { FeatureRegistry } from './feature-registry';
 import {FeatureConfig} from "./feature-config";
+import {map} from "rxjs";
 
 export function RegisterFeature(config : FeatureConfig) {
   return (ctor : Function) => {
-    console.log("RegisterFeature: " + config.name);
-
     import('./portal.module')
       .then((m) => {
         m.PortalModule.injector.subscribe((injector) => {
@@ -16,17 +15,22 @@ export function RegisterFeature(config : FeatureConfig) {
             return;
           }
 
+          console.log("RegisterFeature: " + config.name);
+
           // get registry
 
           const registry = injector.get(FeatureRegistry)
 
-          // they should both point to the same object!
+          registry.registry$.subscribe((_) => {
+            console.log("really register" + config?.name)
+              // they should both point to the same object!
 
-          config = registry.getFeature(config.name);
+              config = registry.getFeature(config.name);
 
-          (ctor as any).$$feature = config
+              (ctor as any).$$feature = config
 
-          //TODO config.ngComponent = ctor
+              config.ngComponent = ctor
+          })
         });
       })
   }

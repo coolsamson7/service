@@ -1,5 +1,6 @@
-import { DeploymentConfig } from "./deployment";
+
 import {DeploymentLoader} from "./deployment-loader";
+import {DeploymentConfig} from "./deployment-model";
 
 export class LocalDeploymentLoader extends DeploymentLoader {
   // instance data
@@ -25,7 +26,11 @@ export class LocalDeploymentLoader extends DeploymentLoader {
       modules: {}
     }
 
+    console.log("load...wait for promises ")
+
     let responses = await Promise.allSettled<Response>(promises)
+    console.log("\"load...wait for promises returns")
+
     let index = 0
     for ( let response of responses) {
       if (response.status == "fulfilled") {
