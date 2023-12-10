@@ -1,13 +1,7 @@
 import { Injectable } from "@angular/core";
 import { filter, map, Observable, ReplaySubject, take, tap } from "rxjs";
 import { Router } from "@angular/router";
-import { FeatureConfig } from "./portal-decorators";
-
-// obsolete?
-interface FeatureMetaData extends FeatureConfig {
-  ngComponent: any
-  load?: () => Observable<any>
-}
+import {FeatureConfig} from "./feature-config";
 
 @Injectable({ providedIn: 'root' })
 export class FeatureRegistry {

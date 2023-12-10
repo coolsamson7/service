@@ -1,22 +1,5 @@
-import {Observable} from "rxjs";
-import {FeatureRegistry} from "./feature-registry";
-
-export interface FeatureConfig {
-  parent?: string
-  name: string
-  description?: string
-  isDefault?: boolean
-  label?: string
-  component?: string
-  tags?: string[]
-  categories?: string[]
-  visibility?:string[]
-  permissions?: string[]
-  featureToggles?: string[]
-
-  ngComponent?: any
-  load?: () => Observable<any>
-}
+import { FeatureRegistry } from './feature-registry';
+import {FeatureConfig} from "./feature-config";
 
 export function RegisterFeature(config : FeatureConfig) {
   return (ctor : Function) => {
@@ -46,19 +29,5 @@ export function RegisterFeature(config : FeatureConfig) {
           //TODO config.ngComponent = ctor
         });
       })
-  }
-}
-
-
-export interface ModuleConfig {
-  name: string
-  //component: string
-  description?: string
-}
-
-export function RegisterModule(config: ModuleConfig) {
-  console.log(config)
-  return (ctor: Function) => {
-    console.log("RegisterModule: " + config.name);
   }
 }

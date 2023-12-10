@@ -1,16 +1,14 @@
 import {ReplaySubject} from "rxjs";
 import {
-  APP_INITIALIZER, Inject,
-  Injectable,
+  APP_INITIALIZER,
   InjectionToken,
   Injector,
   ModuleWithProviders,
-  NgModule,
-  Type
+  NgModule
 } from "@angular/core";
-import {Router, Routes} from "@angular/router";
-import {FeatureRegistry} from "./feature-registry";
-import {Deployment, DeploymentLoader} from "./deployment";
+import { Routes} from "@angular/router";
+import {DeploymentLoader} from "./deployment-loader";
+import {PortalConfigurationService} from "./portal-configuration-service";
 
 export type PortalModuleConfig = {
   loader: DeploymentLoader,
@@ -19,36 +17,7 @@ export type PortalModuleConfig = {
 
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');
 
-@Injectable({ providedIn: 'root' })
-export class PortalConfigurationService {
-  // constructor
 
-  constructor(
-    @Inject(PortalModuleConfigToken) private portalConfig: PortalModuleConfig,
-    private featureRegistry : FeatureRegistry,
-    private router : Router
-  ) {
-  }
-
-  // private
-
-  private setupDeployment(deployment: Deployment) {
-    // set remote definitions
-
-    deployment.setRemoteDefinitions()
-
-    // setup routes
-
-    this.router.resetConfig(deployment.buildRoutes(this.portalConfig.localRoutes))
-  }
-
-  // public
-
-  async load(): Promise<void> {
-    this.portalConfig.loader.load()
-      .then((deployment) => this.setupDeployment(deployment))
-  }
-}
 function loadPortalConfiguration(configurationService: PortalConfigurationService) {
   return () => configurationService.load();
 }

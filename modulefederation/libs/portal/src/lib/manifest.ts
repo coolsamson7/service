@@ -1,4 +1,4 @@
-import {FeatureConfig} from "./portal-decorators";
+import {FeatureConfig} from "./feature-config";
 
 export interface ModuleData {
   name: string
