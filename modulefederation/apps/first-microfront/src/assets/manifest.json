@@ -1,7 +1,7 @@
 {
   "name": "first-microfront",
   "version": "0.1",
-  "commitHash": "dae15fee2caedf7471e2ea6d87f6fd3493adee17",
+  "commitHash": "4827900ef9f476fe5136110bd566325d70975b88",
   "module": {
     "name": "first-microfront",
     "ngModule": "RemoteEntryModule",
@@ -33,10 +33,18 @@
       "permissions": [],
       "featureToggles": [],
       "file": {
-        "file": "remote-entry.component.ts",
-        "path": "apps/first-microfront/src/app/remote-entry"
+        "file": "child-component.ts",
+        "path": "apps/first-microfront/src/app/remote-entry/child"
       },
-      "relative": "./"
+      "relative": "./",
+      "module": {
+        "name": "RemoteEntryChildModule",
+        "file": {
+          "file": "child-module.ts",
+          "path": "apps/first-microfront/src/app/remote-entry/child"
+        },
+        "relative": "./child/"
+      }
     }
   ]
 }

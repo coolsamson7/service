@@ -12,6 +12,7 @@ export const routes: Routes = [
     redirectTo: 'second-microfrontend',
     pathMatch: 'full',
   },
+
   {
     path: 'second-microfrontend',
     component: RemoteEntryComponent,

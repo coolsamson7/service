@@ -11,12 +11,3 @@ import {RegisterFeature} from "@modulefederation/portal";
   </div>`,
 })
 export class RemoteEntryComponent {}
-
-@RegisterFeature({
-  name: 'child'
-})
-@Component({
-  selector: 'first-microfrontend-child',
-  template: `<div>First Microfrontend Child</div>`,
-})
-export class RemoteEntryChildComponent {}

@@ -4,18 +4,11 @@
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
-import { RemoteEntryComponent } from './remote-entry.component';
-
-import { RemoteEntryChildComponent } from './remote-entry.component';
+import { RemoteEntryChildComponent } from './child-component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: RemoteEntryComponent,
-    children: [],
-  },
-  {
-    path: 'child',
     component: RemoteEntryChildComponent,
     children: [],
   },
@@ -25,4 +18,4 @@ export const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class RemoteEntryRouterModule {}
+export class RemoteEntryChildRouterModule {}

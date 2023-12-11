@@ -5,17 +5,19 @@ import { Routes, RouterModule } from '@angular/router'
 import { NgModule } from '@angular/core'
 
  <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/import.tmpl', { feature: feature }) -%>
+          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/import.tmpl', { feature: feature }) -%>
      <% } %>
 
 export const routes: Routes = [
+ <% if (!isChild) { %>
    {
       path: '',
       redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].name %>',
       pathMatch: 'full'
     },
+     <% } %>
      <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/snippets/route.tmpl', { feature: feature }) -%>
+          <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: feature, isChild: isChild }) -%>
      <% } %>
 ]
 

@@ -1,5 +1,6 @@
 import { DecoratorReader } from "./decorator-reader"
 import { execSync } from "child_process"
+import {ModuleReader, Modules} from "./module-reader";
 const { find } = require("find-in-files")
 const { findNearestPackageJsonSync } = require("find-nearest-package-json")
 
@@ -18,12 +19,20 @@ export type ApplyDecorator = (decorator: DecoratorData) => void;
 // main class
 
 export class ManifestGenerator {
+    // instance data
+
+   modules?: Modules
+
     // constructor
 
     constructor(private dir: string, private shell: boolean) {
     }
 
     // private
+
+    private findFile4Module(module: string) :string {
+      return  this.modules[module]
+    }
 
     private generateManifest(packageJson : any, commitHash: string, module: any, features: any[]): any {
         // done
@@ -155,6 +164,8 @@ export class ManifestGenerator {
 
         let decorator = data.data
 
+        // create feature
+
         feature = {
             name: decorator.name,
             label: decorator.label || decorator.name,
@@ -169,7 +180,24 @@ export class ManifestGenerator {
             relative: this.relativeImport(modulePath, this.path( data.file))
          }
 
-         result[feature.name] = feature
+        // check for lazy modules
+
+        if ( decorator.router?.lazyModule) {
+          let lazyModuleFile = this.findFile4Module(decorator.router?.lazyModule)
+
+          let file = this.file(lazyModuleFile)
+          feature.module = {
+             name: decorator.router?.lazyModule,
+             file: file,
+             relative:  this.relativeImport(modulePath, this.path( lazyModuleFile ))
+          }
+
+          // relative is now relative to the specified lazy module
+
+          feature.relative = this.relativeImport(this.path(lazyModuleFile), this.path( data.file))
+        }
+
+        result[feature.name] = feature
 
          // link to parent
 
@@ -200,6 +228,10 @@ export class ManifestGenerator {
     // public
 
     async generate() {
+        // read module locations
+
+        this.modules = await new ModuleReader().readModules(this.dir)
+
         // read package.json
 
         const packageJson = findNearestPackageJsonSync(this.dir).data

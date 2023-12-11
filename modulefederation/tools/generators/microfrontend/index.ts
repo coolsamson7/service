@@ -31,10 +31,14 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   // write router module or routes
 
+  let path = (fileName: string) : string => {
+    return fileName.substring(0, fileName.lastIndexOf("/"))
+  }
+
   if ( schema.type == "shell")
      await new RoutesWriter(project).write(host, manifest)
   else
-    await new RouteModuleWriter(project).write(host, manifest)
+    await new RouteModuleWriter(project).write(host, manifest.module.ngModule, path(manifest.module.file), manifest.features, false)
 
   // webpack
 
