@@ -33,8 +33,6 @@ export class PortalConfigurationService {
       }
     });
 
-    console.log([...localRoutes, ...lazyRoutes])
-
     return [...localRoutes, ...lazyRoutes]
   }
 
@@ -90,15 +88,12 @@ export class PortalConfigurationService {
 
     // setup routes
 
-    console.log("reset routes ")
-
     this.router.resetConfig(this.buildRoutes(deployment, this.portalConfig.localRoutes))
   }
 
   // public
 
   load(): Promise<void> {
-    console.log("load")
     return this.portalConfig.loader
       .load()
       .then((deployment) => this.setupDeployment(deployment))

@@ -15,14 +15,11 @@ export function RegisterFeature(config : FeatureConfig) {
             return;
           }
 
-          console.log("RegisterFeature: " + config.name);
-
           // get registry
 
           const registry = injector.get(FeatureRegistry)
 
           registry.registry$.subscribe((_) => {
-            console.log("really register" + config?.name)
               // they should both point to the same object!
 
               config = registry.getFeature(config.name);

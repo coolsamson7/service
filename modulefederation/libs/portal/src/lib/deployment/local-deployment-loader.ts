@@ -24,10 +24,7 @@ export class LocalDeploymentLoader extends DeploymentLoader {
       modules: {}
     }
 
-    console.log("load...wait for promises ")
-
     let responses = await Promise.allSettled<Response>(promises)
-    console.log("\"load...wait for promises returns")
 
     let index = 0
     for ( let response of responses) {
