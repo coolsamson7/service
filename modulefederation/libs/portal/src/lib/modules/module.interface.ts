@@ -14,4 +14,14 @@ export type ModuleMetadata = {
    * the module version
    */
   version?: string;
+
+  /**
+   * the commit hash
+   */
+  commitHash? : string,
+
+  /**
+   * if true, the code is loaded
+   */
+  isLoaded?: boolean
 };

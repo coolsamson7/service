@@ -5,6 +5,7 @@ import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
 import {DeploymentConfig} from "./deployment/deployment-model";
+import {ModuleRegistry} from "./modules";
 
 @Injectable({ providedIn: 'root' })
 export class PortalConfigurationService {
@@ -13,6 +14,7 @@ export class PortalConfigurationService {
   constructor(
     @Inject(PortalModuleConfigToken) private portalConfig: PortalModuleConfig,
     private featureRegistry : FeatureRegistry,
+    private moduleRegistry: ModuleRegistry,
     private router : Router
   ) {
   }
@@ -55,15 +57,30 @@ export class PortalConfigurationService {
 
     // add local manifest
 
+    this.portalConfig.localManifest.type = "shell"
+
     deployment.modules[this.portalConfig.localManifest.module.name] = this.portalConfig.localManifest
 
     // set remote definitions
 
     let remotes : any = {}
 
-    for ( let module in deployment.modules)
-      if (deployment.modules[module].remoteEntry)
-        remotes[module] =  deployment.modules[module].remoteEntry
+    for (let moduleName in deployment.modules) {
+      let module = deployment.modules[moduleName]
+
+      module.isLoaded = false
+
+      this.moduleRegistry.register(module)
+
+      if (module.remoteEntry) {
+        module.type = "microfrontend"
+
+        remotes[moduleName] = module.remoteEntry
+      }
+      else {
+        module.isLoaded = true
+      }
+  }
 
     setRemoteDefinitions(remotes)
 

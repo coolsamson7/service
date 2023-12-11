@@ -1,4 +1,5 @@
 import {FeatureConfig} from "../feature-config";
+import {ModuleMetadata} from "../modules";
 
 export interface ModuleData {
   name: string
@@ -7,13 +8,13 @@ export interface ModuleData {
   description?: string
 }
 
-export interface Manifest {
-  name : string,
-  version : string,
-  commitHash : string,
+export interface Manifest extends ModuleMetadata {
+  //name : string,
+  //version : string,
+  //commitHash : string,
   remoteEntry?: string,
   module : ModuleData,
-  features : FeatureConfig[]
+  features : FeatureConfig[],
 }
 
 export interface DeploymentConfig {
