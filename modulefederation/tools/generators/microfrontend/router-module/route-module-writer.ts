@@ -15,18 +15,22 @@ export class RouteModuleWriter {
     if ( moduleName.endsWith("Module"))
       moduleName = moduleName.substring(0, moduleName.length - "Module".length) + "RouterModule"
 
-    let fileName = manifest.module.file
-    fileName = fileName.substring(0, fileName.lastIndexOf("/") + 1)
+    let folder = manifest.module.file
+    folder = folder.substring(0, folder.lastIndexOf("/") + 1)
 
     // generate files
 
     let moduleNames = names(moduleName)
 
-    generateFiles(host, routesTemplatePath, fileName, {
+    let fileName = moduleNames.fileName
+    if ( fileName.endsWith("-module"))
+      fileName = fileName.substring(0, fileName.length - "-module".length)
+
+    generateFiles(host, routesTemplatePath, folder, {
       manifest,
       moduleName: moduleNames.className,
       features: manifest.features,
-      fileName:  moduleNames.fileName,
+      fileName:  fileName,
       tmpl: '', // remove __tmpl__ from file endings
     });
   }
