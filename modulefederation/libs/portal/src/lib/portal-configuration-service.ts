@@ -59,7 +59,13 @@ export class PortalConfigurationService {
 
     // set remote definitions
 
-    setRemoteDefinitions(deployment.remotes)
+    let remotes : any = {}
+
+    for ( let module in deployment.modules)
+      if (deployment.modules[module].remoteEntry)
+        remotes[module] =  deployment.modules[module].remoteEntry
+
+    setRemoteDefinitions(remotes)
 
     // fill feature registry
 

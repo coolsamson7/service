@@ -21,8 +21,6 @@ export class LocalDeploymentLoader extends DeploymentLoader {
     })
 
     let deployment: DeploymentConfig = {
-      name: "deployment",
-      remotes: {},
       modules: {}
     }
 
@@ -36,7 +34,8 @@ export class LocalDeploymentLoader extends DeploymentLoader {
       if (response.status == "fulfilled") {
         let manifest = await response.value.json()
 
-        deployment.remotes[manifest.module.name] = this.urls[index]
+        manifest.remoteEntry = this.urls[index]
+
         deployment.modules[manifest.module.name] = manifest
       }
       else {

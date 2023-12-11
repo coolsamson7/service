@@ -11,13 +11,12 @@ export interface Manifest {
   name : string,
   version : string,
   commitHash : string,
+  remoteEntry?: string,
   module : ModuleData,
   features : FeatureConfig[]
 }
 
 export interface DeploymentConfig {
-  name: string
-  remotes: { [name: string] : string } // name -> url
   modules: { [name: string] : Manifest }
 }
 
