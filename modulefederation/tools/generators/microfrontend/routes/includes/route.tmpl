@@ -1,6 +1,6 @@
  {
   <% if (feature.module && !isChild) { %>
-      path: '<%- feature.name -%>',
+      path: '<%- feature.router?.path || feature.name -%>',
       loadChildren: () => import('<%= feature.module.relative %><%= feature.module.file.file.substring(0, feature.module.file.file.indexOf(".")) %>').then(m => m.<%= feature.module.name %> )
   <% } else { %>
          path: '<%- isChild ? "" : feature.name -%>',
