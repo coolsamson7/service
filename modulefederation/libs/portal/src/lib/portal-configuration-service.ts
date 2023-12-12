@@ -68,7 +68,10 @@ export class PortalConfigurationService {
 
     if ( route.component ) {
       feature.ngComponent = route.component
-      //TODO (feature.ngComponent as any)['$$feature'] = feature
+
+      let componentType : any =  route.component
+
+      componentType['$$feature'] = feature
     }
 
     // remember load function

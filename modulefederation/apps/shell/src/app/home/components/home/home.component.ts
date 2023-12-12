@@ -14,6 +14,8 @@ export class HomeComponent extends Feature implements OnInit {
 
   constructor() {
     super();
+
+    console.log(this.getName())
   }
 
   // implement OnInit

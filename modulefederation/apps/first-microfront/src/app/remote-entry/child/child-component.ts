@@ -1,4 +1,4 @@
-import {RegisterFeature} from "@modulefederation/portal";
+import {Feature, RegisterFeature} from "@modulefederation/portal";
 import {Component} from "@angular/core";
 
 @RegisterFeature({
@@ -11,4 +11,10 @@ import {Component} from "@angular/core";
   selector: 'first-microfrontend-child',
   template: `<div>First Microfrontend Child</div>`,
 })
-export class RemoteEntryChildComponent {}
+export class RemoteEntryChildComponent extends Feature {
+  constructor() {
+    super();
+
+    console.log(this.getName())
+  }
+}
