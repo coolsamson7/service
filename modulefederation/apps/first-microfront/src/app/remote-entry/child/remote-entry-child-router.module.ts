@@ -3,7 +3,7 @@
 
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { PortalConfigurationService } from '@modulefederation/portal';
+import { PortalManager } from '@modulefederation/portal';
 
 import { RemoteEntryChildComponent } from './child-component';
 
@@ -18,10 +18,7 @@ export const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forChild(
-      PortalConfigurationService.registerLazyRoutes(
-        'first-microfront.child',
-        routes
-      )
+      PortalManager.registerLazyRoutes('first-microfront.child', routes)
     ),
   ],
 

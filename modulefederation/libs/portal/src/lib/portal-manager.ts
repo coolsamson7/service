@@ -9,13 +9,13 @@ import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
 
 @Injectable({ providedIn: 'root' })
-export class PortalConfigurationService {
+export class PortalManager {
   // static
 
-  static instance : PortalConfigurationService
+  static instance : PortalManager
 
   static registerLazyRoutes(feature: string, routes: Routes) : Routes {
-    PortalConfigurationService.instance.registerLazyRoutes(feature, routes)
+    PortalManager.instance.registerLazyRoutes(feature, routes)
 
     return routes
   }
@@ -43,7 +43,7 @@ export class PortalConfigurationService {
     private moduleRegistry: ModuleRegistry,
     private router : Router
   ) {
-    PortalConfigurationService.instance = this
+    PortalManager.instance = this
   }
 
   // private
@@ -99,7 +99,6 @@ export class PortalConfigurationService {
       }
     }
   }
-
 
   private buildRoutes(deployment: DeploymentConfig, localRoutes: Routes) : Routes {
     const modules = deployment.modules

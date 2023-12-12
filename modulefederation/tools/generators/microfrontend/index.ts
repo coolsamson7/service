@@ -25,10 +25,6 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   const manifest = await new ManifestGenerator(project.sourceRoot, schema.type == "shell").generate()
 
-  // write manifest
-
-  await new ManifestWriter(project).write(host, manifest)
-
   // write router module or routes
 
   let path = (fileName: string) : string => {
@@ -44,6 +40,10 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   if ( schema.type != "shell")
     await new WebpackWriter(project, schema.projectName).write(host, manifest)
+
+  // write manifest
+
+  await new ManifestWriter(project).write(host, manifest)
 
   // format all files which were created / updated in this schematic
 

@@ -7,7 +7,7 @@ import {
   NgModule
 } from "@angular/core";
 import {Route, Routes} from "@angular/router";
-import {PortalConfigurationService} from "./portal-configuration-service";
+import {PortalManager} from "./portal-manager";
 import {Manifest, DeploymentLoader} from "./deployment";
 import {ModulesModule} from "./modules";
 import {FeatureOutletDirective} from "./components";
@@ -24,7 +24,7 @@ export type RouteDecorator = (route: Route) => void
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');
 
 
-function loadPortalConfiguration(configurationService: PortalConfigurationService) : () => Promise<void> {
+function loadPortalConfiguration(configurationService: PortalManager) : () => Promise<void> {
   return () => configurationService.load();
 }
 
@@ -35,7 +35,7 @@ function loadPortalConfiguration(configurationService: PortalConfigurationServic
       provide: APP_INITIALIZER,
       useFactory: loadPortalConfiguration,
       multi: true,
-      deps: [PortalConfigurationService]
+      deps: [PortalManager]
     },
   ],
   declarations: [FeatureOutletDirective],

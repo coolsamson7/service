@@ -1,7 +1,7 @@
 {
   "name": "shell",
   "version": "0.1",
-  "commitHash": "248b26802b5436faa58ae3fd37ea536144012f40",
+  "commitHash": "878f387a5b6ea9ab6163724470bf073056241c53",
   "module": {
     "name": "app",
     "ngModule": "AppModule",
@@ -11,17 +11,7 @@
     {
       "name": "home",
       "label": "home",
-      "component": "HomeComponent",
-      "tags": [],
-      "categories": [],
-      "visibility": [],
-      "permissions": [],
-      "featureToggles": [],
-      "file": {
-        "file": "home.component.ts",
-        "path": "apps/shell/src/app/home/components/home"
-      },
-      "relative": "./home/components/home/"
+      "component": "HomeComponent"
     }
   ]
 }
