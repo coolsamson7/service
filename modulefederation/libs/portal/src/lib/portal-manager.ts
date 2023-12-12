@@ -4,9 +4,10 @@ import {Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
-import {DeploymentConfig} from "./deployment/deployment-model";
+import {DeploymentConfig, Manifest} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
+import {ManifestDecorator} from "./deployment";
 
 @Injectable({ providedIn: 'root' })
 export class PortalManager {
@@ -155,6 +156,8 @@ export class PortalManager {
     // add local manifest
 
     let localModule =  this.portalConfig.localManifest
+
+    ManifestDecorator.decorate(localModule)
 
     localModule.type = "shell"
     localModule.isLoaded = true

@@ -1,6 +1,7 @@
 
 import {DeploymentLoader} from "./deployment-loader";
 import {DeploymentConfig} from "./deployment-model";
+import {ManifestDecorator} from "./manifest-decorator";
 
 export class LocalDeploymentLoader extends DeploymentLoader {
   // instance data
@@ -8,7 +9,6 @@ export class LocalDeploymentLoader extends DeploymentLoader {
   private urls: string[]
 
   // constructor
-
   constructor(...urls: string[]) {
     super()
 
@@ -30,6 +30,8 @@ export class LocalDeploymentLoader extends DeploymentLoader {
     for ( let response of responses) {
       if (response.status == "fulfilled") {
         let manifest = await response.value.json()
+
+        ManifestDecorator.decorate(manifest)
 
         manifest.remoteEntry = this.urls[index]
 
