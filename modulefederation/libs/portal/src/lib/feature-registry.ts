@@ -25,7 +25,6 @@ export class FeatureRegistry {
     for ( let key in this.features)
       table.push( {
           name: key,
-          loadFunction: this.features[key].load != undefined ? "(...)" : "",
           component: this.features[key].component,
           loaded: this.features[key].ngComponent !== undefined
         })
@@ -47,11 +46,15 @@ export class FeatureRegistry {
         return path + name
     }
 
-    // go
+    // add
 
-    this.features[key(feature.name, path)] = feature
+    let name = key(feature.name, path)
 
-    // link
+    this.features[name] = feature
+
+    feature.path = name.replace(".", "/")
+
+    // link parent & child
 
     if (parent ) {
       if ( parent.children == undefined)
@@ -84,7 +87,13 @@ export class FeatureRegistry {
         this.registerFeature(feature, rootFeature, microfrontend + ".")
   }
 
+  // public
+
   getFeature(id: string) : FeatureConfig {
     return this.features[id]
+  }
+
+  findFeatures(filter: (feature: FeatureConfig) => boolean) : FeatureConfig[] {
+    return Object.values(this.features).filter(filter)
   }
 }

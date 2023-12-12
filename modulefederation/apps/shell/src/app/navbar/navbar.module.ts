@@ -13,17 +13,16 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [NavbarComponent, SidenavComponent ],
-  imports: [CommonModule,
-            NavbarRoutingModule,
-            MatIconModule,
-            MatToolbarModule,
-            MatMenuModule,
-            MatListModule,
-            MatSidenavModule,
-            FlexLayoutModule,
-            
+  imports: [
+    CommonModule,
+    NavbarRoutingModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatListModule,
+    MatSidenavModule,
+    FlexLayoutModule,
   ],
-  exports: [NavbarComponent,
-            SidenavComponent],
+  exports: [NavbarComponent, SidenavComponent],
 })
 export class NavbarModule {}

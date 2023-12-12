@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import {RegisterFeature} from "@modulefederation/portal";
 
 @RegisterFeature({
-  name: ''
+  name: '',
+  label: "Microfrontend 1",
+  tags: ["navigation"],
+  visibility: ["public", "private"]
 })
 @Component({
   selector: 'first-microfrontend',

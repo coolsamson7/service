@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {FeatureConfig, FeatureRegistry} from "@modulefederation/portal";
 
 @Component({
   selector: 'modulefederation-navbar',
@@ -6,15 +7,32 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  
+  // output
+
   @Output() public sidenavToggle = new EventEmitter();
 
-  constructor() { }
+  // instance data
 
-  ngOnInit() {
+  features: FeatureConfig[] = []
+
+  // constructor
+
+  constructor(private featureRegistry: FeatureRegistry) {
+    this.features = featureRegistry.findFeatures((feature) => feature.tags!!.includes("navigation"))
   }
 
+  // callbacks
+
+  public path(feature: FeatureConfig) {
+    console.log( "/" + feature.name)
+    return "/" + feature.path
+  }
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
+  }
+
+  // implement OnInit
+
+  ngOnInit() {
   }
 }

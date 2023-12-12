@@ -15,16 +15,19 @@ export type RouterConfig = {
   lazyModule: string;
 };
 
+export type Visibility = "public" | "private"
+
 export interface FeatureConfig {
   parent?: string
   name: string // TODO id?
+  path?: string // this is computed!!!
   description?: string
   isDefault?: boolean
   label?: string
   component?: string
   tags?: string[]
   categories?: string[]
-  visibility?:string[]
+  visibility?:Visibility[]
   permissions?: string[]
   featureToggles?: string[]
   router?: RouterConfig
