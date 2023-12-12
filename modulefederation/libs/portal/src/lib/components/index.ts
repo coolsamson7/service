@@ -1,2 +1,2 @@
 export * from "./feature"
-export * from "./feature-outlet.component"
+export * from "./feature-outlet.directive"

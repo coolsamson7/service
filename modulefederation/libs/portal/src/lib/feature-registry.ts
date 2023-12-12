@@ -20,7 +20,16 @@ export class FeatureRegistry {
   // public
 
   report() {
-    console.table(Object.values(this.features))
+    let table = []
+
+    for ( let key in this.features)
+      table.push( {
+          name: key,
+          component: this.features[key].component,
+          loaded: this.features[key].ngComponent !== undefined
+        })
+
+    console.table(table)
   }
 
   ready() {

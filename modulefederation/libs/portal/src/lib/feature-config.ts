@@ -1,4 +1,3 @@
-import {Observable} from "rxjs";
 import {LoadChildrenCallback} from "@angular/router";
 
 export type RouterConfig = {

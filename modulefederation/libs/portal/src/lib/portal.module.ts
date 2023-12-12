@@ -7,11 +7,10 @@ import {
   NgModule
 } from "@angular/core";
 import {Route, Routes} from "@angular/router";
-import {DeploymentLoader} from "./deployment/deployment-loader";
 import {PortalConfigurationService} from "./portal-configuration-service";
-import {Manifest} from "./deployment/deployment-model";
+import {Manifest, DeploymentLoader} from "./deployment";
 import {ModulesModule} from "./modules";
-import { FeatureOutletDirective } from "./components/feature-outlet.component";
+import {FeatureOutletDirective} from "./components";
 
 export type PortalModuleConfig = {
   loader: DeploymentLoader,
