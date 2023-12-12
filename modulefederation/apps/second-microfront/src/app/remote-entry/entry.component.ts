@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RegisterFeature } from "@modulefederation/portal";
 
 @RegisterFeature({
-  name: 'second-microfrontend'
+  name: ''
 })
 @Component({
   selector: 'second-microfront',

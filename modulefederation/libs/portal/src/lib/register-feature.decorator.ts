@@ -1,6 +1,8 @@
 import { FeatureRegistry } from './feature-registry';
 import {FeatureConfig} from "./feature-config";
 import {map} from "rxjs";
+import {MicrofrontendMetadata} from "./register-microfrontend.decorator";
+import {inject, InjectFlags} from "@angular/core";
 
 export function RegisterFeature(config : FeatureConfig) {
   return (ctor : Function) => {
@@ -17,16 +19,28 @@ export function RegisterFeature(config : FeatureConfig) {
 
           // get registry
 
+          try {
+            let foo = inject(MicrofrontendMetadata, InjectFlags.Optional)
+
+            console.log(foo)
+          }
+          catch (e) {
+
+          }
+
           const registry = injector.get(FeatureRegistry)
 
           registry.registry$.subscribe((_) => {
               // they should both point to the same object!
 
-              config = registry.getFeature(config.name);
+            //console.log("register " + config.name)
+            //console.log("register " + config.name + " in " + foo.name);
+
+              //TODO config = registry.getFeature(config.name);
 
               (ctor as any).$$feature = config
 
-              config.ngComponent = ctor
+              //TODO config.ngComponent = ctor
           })
         });
       })

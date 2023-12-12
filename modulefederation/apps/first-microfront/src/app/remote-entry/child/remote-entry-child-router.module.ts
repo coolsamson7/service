@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import { RemoteEntryChildComponent } from './child-component';
+import {PortalConfigurationService} from "@modulefederation/portal";
 
 export const routes: Routes = [
   {
@@ -15,7 +16,7 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(PortalConfigurationService.registerLazyRoutes("first-microfront.child", routes))],
   exports: [RouterModule],
 })
 export class RemoteEntryChildRouterModule {}

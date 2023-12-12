@@ -8,7 +8,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
 import {LocalDeploymentLoader, PortalModule, RegisterShell} from "@modulefederation/portal";
-import {RouterModule} from "@angular/router";
+import {Route, RouterModule} from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
 
@@ -32,7 +32,10 @@ export class AppComponentRouterModule {}
     PortalModule.forRoot({
       loader: new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202"),
       localRoutes: localRoutes,
-      localManifest: localManifest
+      localManifest: localManifest,
+      decorateRoutes: (route: Route) => {
+        console.log("decorate route " + route.path);
+      }
     }),
   ],
   providers: [],

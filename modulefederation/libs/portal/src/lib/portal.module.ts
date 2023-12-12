@@ -6,7 +6,7 @@ import {
   ModuleWithProviders,
   NgModule
 } from "@angular/core";
-import { Routes} from "@angular/router";
+import {Route, Routes} from "@angular/router";
 import {DeploymentLoader} from "./deployment/deployment-loader";
 import {PortalConfigurationService} from "./portal-configuration-service";
 import {Manifest} from "./deployment/deployment-model";
@@ -16,8 +16,11 @@ import { FeatureOutletDirective } from "./components/feature-outlet.component";
 export type PortalModuleConfig = {
   loader: DeploymentLoader,
   localRoutes: Routes,
-  localManifest: Manifest
+  localManifest: Manifest,
+  decorateRoutes?: RouteDecorator
 }
+
+export type RouteDecorator = (route: Route) => void
 
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');
 

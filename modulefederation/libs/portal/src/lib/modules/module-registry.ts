@@ -31,7 +31,7 @@ export class ModuleRegistry {
   // public
 
   report() {
-    console.table(this.modules)
+    console.table(this.modules, ["name", "type", "version", "isLoaded"])
   }
 
   /**

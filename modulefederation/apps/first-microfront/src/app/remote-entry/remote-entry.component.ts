@@ -7,7 +7,7 @@ import {RegisterFeature} from "@modulefederation/portal";
 @Component({
   selector: 'first-microfrontend',
   template: `<div>First Microfrontend
-    <feature-outlet feature='child'></feature-outlet>
+    <!--feature-outlet feature='child'></feature-outlet-->
   </div>`,
 })
 export class RemoteEntryComponent {}

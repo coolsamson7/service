@@ -131,7 +131,7 @@ export class ManifestGenerator {
 
         // read
 
-        const features : any[] = []
+        let features : any[] = []
         const map : { [key: string] :DecoratorData} = {}
 
         for ( const file of files)
@@ -222,7 +222,17 @@ export class ManifestGenerator {
 
         // done
 
-        return features.filter(data => !data.data.parent).map(data => result[data.data.name])
+        features = features.filter(data => !data.data.parent).map(data => result[data.data.name])
+      // make sure the "" feature comes first since it will get a special handling
+
+       let index = features.find(feature => feature.name == "")
+      if ( index > 0) {
+        let tmp = features[0]
+        features[0] = features[index]
+        features[index] = tmp
+      }
+
+        return features
        }
 
     // public

@@ -5,23 +5,23 @@ import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import { RemoteEntryComponent } from './entry.component';
+import {PortalConfigurationService} from "@modulefederation/portal";
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'second-microfrontend',
-    pathMatch: 'full',
-  },
-
-  {
-    path: 'second-microfrontend',
     component: RemoteEntryComponent,
     children: [],
   },
 ];
 
+class Bla {
+  static register(mfe: string, routes: Routes) {
+    return PortalConfigurationService.registerMicrofrontendRoutes(mfe, routes)
+  }
+}
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(Bla.register("second-microfront", routes))],
   exports: [RouterModule],
 })
-export class RemoteEntryRouterModule {}
+export class RemoteEntryRouterModule extends Bla  {}

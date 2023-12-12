@@ -31,6 +31,8 @@ export interface FeatureConfig {
 
   // TODO: maybe spit in two interfaces...
 
+  children?: FeatureConfig[]
+  $parent?: FeatureConfig
   ngComponent?: any
-  load?: () => Observable<any>
+  load?: () => Promise<any>
 }

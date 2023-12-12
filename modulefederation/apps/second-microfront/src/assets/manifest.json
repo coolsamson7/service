@@ -1,7 +1,7 @@
 {
   "name": "second-microfront",
   "version": "0.1",
-  "commitHash": "4827900ef9f476fe5136110bd566325d70975b88",
+  "commitHash": "a2606fdda2e25554a2d0be264e2467d6024618b8",
   "module": {
     "name": "second-microfront",
     "ngModule": "RemoteEntryModule",
@@ -9,8 +9,8 @@
   },
   "features": [
     {
-      "name": "second-microfrontend",
-      "label": "second-microfrontend",
+      "name": "",
+      "label": "",
       "component": "RemoteEntryComponent",
       "tags": [],
       "categories": [],

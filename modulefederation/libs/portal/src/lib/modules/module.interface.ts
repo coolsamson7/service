@@ -5,7 +5,7 @@ export type ModuleMetadata = {
   /**
    * the module tye
    */
-  type?: 'shell' | 'library' | 'microfrontend';
+  type?: 'shell' | 'microfrontend';
   /**
    * the module name
    */
@@ -21,7 +21,7 @@ export type ModuleMetadata = {
   commitHash? : string,
 
   /**
-   * if true, the code is loaded
+   * if true, the module is loaded
    */
   isLoaded?: boolean
 };

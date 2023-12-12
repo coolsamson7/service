@@ -9,9 +9,6 @@ export interface ModuleData {
 }
 
 export interface Manifest extends ModuleMetadata {
-  //name : string,
-  //version : string,
-  //commitHash : string,
   remoteEntry?: string,
   module : ModuleData,
   features : FeatureConfig[],
