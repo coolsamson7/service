@@ -96,13 +96,8 @@ export class FeatureRegistry {
     }
 
     let rootFeature = features.find(feature => feature.name == "")
-    if ( rootFeature ) {
-      // set name to microfrontend name
-
-      //rootFeature.name = microfrontend
-
+    if ( rootFeature )
       register(rootFeature, undefined, microfrontend)
-    }
 
     for ( let feature of features)
       if (feature !== rootFeature && !feature.$parent)

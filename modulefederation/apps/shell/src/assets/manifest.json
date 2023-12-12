@@ -1,7 +1,7 @@
 {
   "name": "shell",
   "version": "0.1",
-  "commitHash": "4827900ef9f476fe5136110bd566325d70975b88",
+  "commitHash": "248b26802b5436faa58ae3fd37ea536144012f40",
   "module": {
     "name": "app",
     "ngModule": "AppModule",

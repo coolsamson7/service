@@ -1,6 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 
-import {Router, Routes} from "@angular/router";
+import {Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
@@ -15,98 +15,26 @@ export class PortalConfigurationService {
   static instance : PortalConfigurationService
 
   static registerMicrofrontendRoutes(mfe: string, routes: Routes) : Routes {
-    PortalConfigurationService.instance.handleMicrofrontendRoutes(mfe, routes)
+    PortalConfigurationService.instance.registerLazyRoutes(mfe, routes)
 
     return routes
   }
 
   static registerLazyRoutes(feature: string, routes: Routes) : Routes {
-    // TODO
-    PortalConfigurationService.instance.handleLazyRoutes(feature, routes)
+    PortalConfigurationService.instance.registerLazyRoutes(feature, routes)
 
     return routes
   }
 
-  private handleLazyRoutes(mfe: string, routes: Routes) {
-    let linkRoutes = (routes: Routes, features: FeatureConfig[]) => {
-      let index = 0
-      for (let route of routes) {
-        if ( !route.redirectTo ) {
-          route.data = {
-            feature: features[index]
-          }
+  private registerLazyRoutes(feature: string, routes: Routes) {
+    // local functions
 
-          // recursion
-
-          if ( route.children && route.children.length > 0)
-            linkRoutes(route.children, features[index].children!!)
-
-          // decorate
-
-          if ( this.portalConfig.decorateRoutes)
-            this.portalConfig.decorateRoutes(route)
-
-          // next
-
-          index++
-        }
-      }
-    }
-
-    let rootFeature = this.featureRegistry.getFeature(mfe)
+    let rootFeature = this.featureRegistry.getFeature(feature)
     let rootRoute = routes.find(route => route.redirectTo == undefined )
 
-    if ( this.portalConfig.decorateRoutes)
-      this.portalConfig.decorateRoutes(rootRoute!!)
-
-    rootRoute!!.data = {
-      feature: rootFeature
-    }
+    this.link(rootRoute!!, rootFeature)
 
     //linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo !== undefined), rootFeature.children || [])
-  }
-
-  private handleMicrofrontendRoutes(mfe: string, routes: Routes) {
-    let linkRoutes = (routes: Routes, features: FeatureConfig[]) => {
-      let index = 0
-      for (let route of routes) {
-        if ( !route.redirectTo ) {
-          route.data = {
-            feature: features[index]
-          }
-
-          if ( route.loadChildren)
-            route.data['feature'].load = route.loadChildren
-
-          // recursion
-
-          if ( route.children && route.children.length > 0)
-            linkRoutes(route.children, features[index].children!!)
-
-          // decorate
-
-          if ( this.portalConfig.decorateRoutes)
-            this.portalConfig.decorateRoutes(route)
-
-
-          // next
-
-          index++
-        }
-      }
-    }
-
-    let rootFeature = this.featureRegistry.getFeature(mfe)
-    let rootRoute = routes.find(route => route.redirectTo == undefined )
-
-    if ( this.portalConfig.decorateRoutes)
-      this.portalConfig.decorateRoutes(rootRoute!!)
-
-    rootRoute!!.data = {
-      feature: rootFeature
-    }
-
-    linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo !== undefined), rootFeature.children || [])
   }
 
   // constructor
@@ -121,6 +49,54 @@ export class PortalConfigurationService {
   }
 
   // private
+
+  private decorateRoute(route: Route) {
+    if (this.portalConfig.decorateRoutes)
+      this.portalConfig.decorateRoutes(route)
+  }
+
+  private link(route: Route, feature: FeatureConfig) {
+    // let the portal do some stuff
+
+    this.decorateRoute(route)
+
+    // set  feature as data
+
+    route.data = {
+      feature: feature
+    }
+
+    // remember component
+
+    if ( route.component )
+      feature.ngComponent = route.component
+
+    // remember load function
+
+    if ( route.loadChildren )
+      feature.load = route.loadChildren
+  }
+
+  private linkRoutes(routes: Routes, features: FeatureConfig[]) {
+    let index = 0
+    for (let route of routes) {
+      if ( !route.redirectTo ) {
+        let feature = features[index]
+
+        this.link(route, feature)
+
+        // recursion
+
+        if ( route.children && route.children.length > 0)
+          this.linkRoutes(route.children, features[index].children!!)
+
+        // next
+
+        index++
+      }
+    }
+  }
+
 
   private buildRoutes(deployment: DeploymentConfig, localRoutes: Routes) : Routes {
     const modules = deployment.modules
@@ -137,15 +113,9 @@ export class PortalConfigurationService {
           path: key,
           loadChildren: () => loadRemoteModule(key, './Module')
             .then((m) => m[module.module.ngModule]),
-          data: {
-            feature:feature
-          }
         }
 
-        feature.load = route.loadChildren
-
-        if ( this.portalConfig.decorateRoutes)
-          this.portalConfig.decorateRoutes(route)
+        this.link(route, feature)
 
         return route
       });
@@ -155,35 +125,7 @@ export class PortalConfigurationService {
     let localModule = Object.values(modules).find(module => module.remoteEntry == undefined )
     let localFeatures = localModule!!.features
 
-    let linkRoutes = (routes: Routes, features: FeatureConfig[]) => {
-      let index = 0
-      for (let route of routes) {
-        if ( !route.redirectTo ) {
-          route.data = {
-            feature: features[index]
-          }
-
-          if ( route.loadChildren)
-            route.data['feature'].load = route.loadChildren
-
-          // recursion
-
-          if ( route.children && route.children.length > 0)
-            linkRoutes(route.children, features[index].children!!)
-
-          // decorate
-
-          if ( this.portalConfig.decorateRoutes)
-            this.portalConfig.decorateRoutes(route)
-
-          // next
-
-          index++
-        }
-      }
-    }
-
-    linkRoutes(localRoutes, localFeatures)
+    this.linkRoutes(localRoutes, localFeatures)
 
     // done
 

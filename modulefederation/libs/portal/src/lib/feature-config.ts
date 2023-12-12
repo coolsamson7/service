@@ -1,4 +1,5 @@
 import {Observable} from "rxjs";
+import {LoadChildrenCallback} from "@angular/router";
 
 export type RouterConfig = {
   /**
@@ -34,5 +35,5 @@ export interface FeatureConfig {
   children?: FeatureConfig[]
   $parent?: FeatureConfig
   ngComponent?: any
-  load?: () => Promise<any>
+  load?: LoadChildrenCallback
 }
