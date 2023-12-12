@@ -14,12 +14,6 @@ export class PortalConfigurationService {
 
   static instance : PortalConfigurationService
 
-  static registerMicrofrontendRoutes(mfe: string, routes: Routes) : Routes {
-    PortalConfigurationService.instance.registerLazyRoutes(mfe, routes)
-
-    return routes
-  }
-
   static registerLazyRoutes(feature: string, routes: Routes) : Routes {
     PortalConfigurationService.instance.registerLazyRoutes(feature, routes)
 
@@ -32,9 +26,13 @@ export class PortalConfigurationService {
     let rootFeature = this.featureRegistry.getFeature(feature)
     let rootRoute = routes.find(route => route.redirectTo == undefined )
 
+    // we just loaded it, so set it to undefined
+
+    rootFeature.load = undefined
+
     this.link(rootRoute!!, rootFeature)
 
-    //linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo !== undefined), rootFeature.children || [])
+    this.linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo == undefined), rootFeature.children || [])
   }
 
   // constructor
@@ -68,8 +66,10 @@ export class PortalConfigurationService {
 
     // remember component
 
-    if ( route.component )
+    if ( route.component ) {
       feature.ngComponent = route.component
+      //TODO (feature.ngComponent as any)['$$feature'] = feature
+    }
 
     // remember load function
 
@@ -88,7 +88,7 @@ export class PortalConfigurationService {
         // recursion
 
         if ( route.children && route.children.length > 0)
-          this.linkRoutes(route.children, features[index].children!!)
+          this.linkRoutes(route.children, feature.children!!)
 
         // next
 

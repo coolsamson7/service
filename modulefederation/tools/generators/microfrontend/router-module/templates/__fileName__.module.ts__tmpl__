@@ -24,7 +24,7 @@ export const routes: Routes = [
 
 @NgModule({
 <% if (!isChild) { %>
-  imports: [RouterModule.forChild(PortalConfigurationService.registerMicrofrontendRoutes( '<%= manifest.module.name %>', routes))],
+  imports: [RouterModule.forChild(PortalConfigurationService.registerLazyRoutes( '<%= manifest.module.name %>', routes))],
 <% } else { %>
   imports: [RouterModule.forChild(PortalConfigurationService.registerLazyRoutes('<%= featureName %>', routes))],
 <% } %>

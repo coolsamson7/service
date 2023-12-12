@@ -23,7 +23,7 @@ export const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forChild(
-      PortalConfigurationService.registerMicrofrontendRoutes(
+      PortalConfigurationService.registerLazyRoutes(
         'first-microfront',
         routes
       )

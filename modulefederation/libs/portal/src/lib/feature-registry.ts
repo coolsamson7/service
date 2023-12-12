@@ -25,6 +25,7 @@ export class FeatureRegistry {
     for ( let key in this.features)
       table.push( {
           name: key,
+          loadFunction: this.features[key].load != undefined ? "(...)" : "",
           component: this.features[key].component,
           loaded: this.features[key].ngComponent !== undefined
         })
@@ -36,7 +37,7 @@ export class FeatureRegistry {
     this.registry$.next(this);
   }
 
-  register(...features: FeatureConfig[]) {
+  private registerFeature(feature: FeatureConfig, parent?: FeatureConfig, path = "") {
     // local function
 
     let key = (name: string, path: string) => {
@@ -46,85 +47,44 @@ export class FeatureRegistry {
         return path + name
     }
 
-    let register = (feature: FeatureConfig, parent?: FeatureConfig, path = "") => {
-      this.features[key(feature.name, path)] = feature
+    // go
 
-      // link
+    this.features[key(feature.name, path)] = feature
 
-      if (parent ) {
-        if ( parent.children == undefined)
-          parent.children = [feature]
-        else
-          parent.children.push(feature)
+    // link
 
-        feature.$parent = parent
-      }
+    if (parent ) {
+      if ( parent.children == undefined)
+        parent.children = [feature]
+      else
+        parent.children.push(feature)
 
-      // recursion
-
-      for ( let child of feature.children || []) {
-        register(child, feature, (path == "" ? feature.name : path + "." + feature.name) + ".");
-      }
+      feature.$parent = parent
     }
 
-    // start with top level features
+    // recursion
 
+    for ( let child of feature.children || [])
+        this.registerFeature(child, feature, (path == "" ? feature.name : path + "." + feature.name) + ".");
+  }
+
+  register(...features: FeatureConfig[]) {
     for ( let feature of features)
       if (!feature.$parent)
-        register(feature, undefined, "")
+        this.registerFeature(feature, undefined, "")
   }
 
   registerRemote(microfrontend: string,...features: FeatureConfig[]) {
-    // local function
-
-    let key = (name: string, path: string) => {
-      if ( path.length == 0)
-        return name
-      else
-        return path + name
-    }
-
-    let register = (feature: FeatureConfig, parent?: FeatureConfig, path = "") => {
-      this.features[key(feature.name, path)] = feature
-
-      // link
-
-      if (parent ) {
-        if ( parent.children == undefined)
-          parent.children = [feature]
-        else
-          parent.children.push(feature)
-
-        feature.$parent = parent
-      }
-
-      // recursion
-
-      for ( let child of feature.children || [])
-        register(child, feature, (path == "" ? feature.name : path + "." + feature.name) + ".");
-    }
-
     let rootFeature = features.find(feature => feature.name == "")
     if ( rootFeature )
-      register(rootFeature, undefined, microfrontend)
+      this.registerFeature(rootFeature, undefined, microfrontend)
 
     for ( let feature of features)
       if (feature !== rootFeature && !feature.$parent)
-        register(feature, rootFeature, microfrontend + ".")
+        this.registerFeature(feature, rootFeature, microfrontend + ".")
   }
 
   getFeature(id: string) : FeatureConfig {
     return this.features[id]
-  }
-
-  getFeatureComponent$(id: string): Observable<any> {
-    // TODO. feature.load + auf undefined setzen
-    return this.registry$.pipe(
-      map((registry) => registry.getFeature(id)),
-      tap((feature) => {if ( !feature.ngComponent ) feature.load?.()}),
-      filter((feature) => !!feature?.ngComponent),
-      map((feature) => feature.ngComponent),
-      take(1)
-    );
   }
 }

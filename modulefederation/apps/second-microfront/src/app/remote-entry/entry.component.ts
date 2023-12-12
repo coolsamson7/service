@@ -6,6 +6,8 @@ import { RegisterFeature } from "@modulefederation/portal";
 })
 @Component({
   selector: 'second-microfront',
-  template: `<div>Second MFE</div>`,
+  template: `<div>Second MFE
+    <feature-outlet feature='first-microfront.child'></feature-outlet>
+  </div>`,
 })
 export class RemoteEntryComponent {}
