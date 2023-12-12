@@ -36,9 +36,9 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
   }
 
   if ( schema.type == "shell")
-     await new RoutesWriter(project).write(host, manifest)
+     await new RoutesWriter().write(host, manifest)
   else
-    await new RouteModuleWriter(project).write(host, manifest.module.ngModule, path(manifest.module.file), manifest.features, false)
+     await new RouteModuleWriter().write(host, manifest, manifest.module.ngModule, path(manifest.module.file), manifest.features, false)
 
   // webpack
 

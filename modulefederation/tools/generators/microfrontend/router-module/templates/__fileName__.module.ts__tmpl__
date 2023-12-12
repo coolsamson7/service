@@ -3,13 +3,14 @@
 
 import { Routes, RouterModule } from '@angular/router'
 import { NgModule } from '@angular/core'
+import { PortalConfigurationService } from "@modulefederation/portal";
 
- <% for (let feature of features ) { -%>
+<% for (let feature of features ) { -%>
           <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/import.tmpl', { feature: feature }) -%>
-     <% } %>
+<% } %>
 
 export const routes: Routes = [
- <% if (!isChild) { %>
+ <% if (requiresRedirect) { %>
    {
       path: '',
       redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].name %>',
@@ -22,7 +23,11 @@ export const routes: Routes = [
 ]
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+<% if (!isChild) { %>
+  imports: [RouterModule.forChild(PortalConfigurationService.registerMicrofrontendRoutes( '<%= manifest.module.name %>', routes))],
+<% } else { %>
+  imports: [RouterModule.forChild(PortalConfigurationService.registerLazyRoutes('<%= featureName %>', routes))],
+<% } %>
   exports: [RouterModule]
 })
 export class <%= moduleName %> { }

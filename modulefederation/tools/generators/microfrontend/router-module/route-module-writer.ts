@@ -1,12 +1,11 @@
 
-import {generateFiles, names, ProjectConfiguration, Tree} from "@nrwl/devkit";
+import {generateFiles, names, Tree} from "@nrwl/devkit";
 
 export class RouteModuleWriter {
-  constructor(private project: ProjectConfiguration) {
+  constructor() {
   }
 
-  async write(host: Tree, forModule: string, inFolder: string, features: any[], isChild: boolean) {
-    console.log("create router module for moudle" + forModule + " in " + inFolder)
+  async write(host: Tree, manifest: any, forModule: string, inFolder: string, features: any[], isChild: boolean) {
     // write router module
 
     const routesTemplatePath = 'tools/generators/microfrontend/router-module/templates';
@@ -23,8 +22,19 @@ export class RouteModuleWriter {
     if ( fileName.endsWith("-module"))
       fileName = fileName.substring(0, fileName.length - "-module".length)
 
+    let featureName
+    if ( isChild )
+      featureName = manifest.module.name + "." + features[0].name
+
+    let requiresRedirect = !isChild
+    for ( let feature of features )
+      if ( feature.name == "" || feature.router?.path == "")
+        requiresRedirect = false
+
     generateFiles(host, routesTemplatePath, inFolder, {
-      //manifest,
+      manifest,
+      requiresRedirect,
+      featureName,
       isChild,
       moduleName: moduleNames.className,
       features: features,
@@ -36,9 +46,10 @@ export class RouteModuleWriter {
 
     if ( !isChild )
       for ( let feature of features)
-        if ( feature.module)
+        if ( feature.module )
           this.write(
             host,
+            manifest,
             feature.module.name,
             feature.module.file.path,
             [feature],

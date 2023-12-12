@@ -3,9 +3,9 @@
 
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
+import { PortalConfigurationService } from '@modulefederation/portal';
 
 import { RemoteEntryComponent } from './remote-entry.component';
-import {PortalConfigurationService} from "@modulefederation/portal";
 
 export const routes: Routes = [
   {
@@ -21,7 +21,15 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(PortalConfigurationService.registerMicrofrontendRoutes("first-microfront", routes))],
+  imports: [
+    RouterModule.forChild(
+      PortalConfigurationService.registerMicrofrontendRoutes(
+        'first-microfront',
+        routes
+      )
+    ),
+  ],
+
   exports: [RouterModule],
 })
 export class RemoteEntryRouterModule {}

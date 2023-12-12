@@ -21,6 +21,7 @@ export class ModuleReader {
   }
 
   private parseFile(file: string, matches: Modules) {
+    console.log("parse " + file)
     const sourceCode = readFileSync(file, "utf-8")
     const sourceFile = createSourceFile(file, sourceCode, ScriptTarget.Latest, true)
 
@@ -29,9 +30,10 @@ export class ModuleReader {
     const visit = (node: Node) => {
       if (this.isDecoratorWithName(node)) {
         const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
-        const componentName = (<any>node).parent.name.escapedText
 
-        //console.log(`${sourceFile.fileName} line ${line + 1}: @NgModule for ${componentName}`)
+        //console.log(`${sourceFile.fileName} line ${line + 1}: @NgModule`)
+
+        const componentName = (<any>node).parent.name.escapedText
 
         matches[componentName] = sourceFile.fileName
       }
