@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RemoteEntryComponent } from './entry.component';
-import {PortalModule, RegisterMicrofrontend} from "@modulefederation/portal";
+import {PortalModule, Microfrontend} from "@modulefederation/portal";
 import {RemoteEntryRouterModule} from "./remote-entry-router.module";
 
 
-@RegisterMicrofrontend({
+@Microfrontend({
   name: 'second-microfront'
 })
 @NgModule({

@@ -19,8 +19,7 @@ export type Visibility = "public" | "private"
 
 export interface FeatureConfig {
   parent?: string
-  name: string // TODO id?
-  path?: string // this is computed!!!
+  id: string
   description?: string
   isDefault?: boolean
   label?: string
@@ -31,6 +30,8 @@ export interface FeatureConfig {
   permissions?: string[]
   featureToggles?: string[]
   router?: RouterConfig
+
+  path?: string // this is computed!!!
 
   // TODO: maybe spit in two interfaces...
 

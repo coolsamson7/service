@@ -9,7 +9,7 @@
   },
   "features": [
     {
-      "name": "home",
+      "id": "home",
       "label": "home",
       "component": "HomeComponent"
     }

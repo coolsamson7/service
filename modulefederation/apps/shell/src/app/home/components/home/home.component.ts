@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {Feature, RegisterFeature} from "@modulefederation/portal";
+import {AbstractFeature, Feature} from "@modulefederation/portal";
 
-@RegisterFeature({
-  name: 'home'
+@Feature({
+  id: 'home'
 })
 @Component({
   selector: 'modulefederation-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent extends Feature implements OnInit {
+export class HomeComponent extends AbstractFeature implements OnInit {
   // constructor
 
   constructor() {

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { RegisterFeature } from "@modulefederation/portal";
+import { Feature } from "@modulefederation/portal";
 
-@RegisterFeature({
-  name: '',
+@Feature({
+  id: '',
   label: "Microfrontend 2",
   tags: ["navigation"],
   visibility: ["public", "private"]

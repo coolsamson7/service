@@ -10,7 +10,7 @@ export type ShellMetadata = ModuleMetadata & {
 
 export const ShellMetadata = new InjectionToken<ShellMetadata>('ShellMetadata');
 
-export function RegisterShell(metadata: ShellMetadata) {
+export function Shell(metadata: ShellMetadata) {
   metadata.type = 'shell';
 
   return (componentClass: Type<any>) => Module(metadata, ShellMetadata)(componentClass);

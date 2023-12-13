@@ -1,6 +1,6 @@
 import {FeatureConfig} from "../feature-config";
 
-export class Feature {
+export class AbstractFeature {
   // instance data
 
   config: FeatureConfig
@@ -14,7 +14,7 @@ export class Feature {
   // protected
 
   getName() : string {
-    return this.config.name
+    return this.config.id
   }
 
   // ...

@@ -7,7 +7,7 @@ import { NavbarModule } from './navbar/navbar.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
-import {LocalDeploymentLoader, PortalModule, RegisterShell} from "@modulefederation/portal";
+import {LocalDeploymentLoader, PortalModule, Shell} from "@modulefederation/portal";
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -95,7 +95,7 @@ export class I18nResolver implements Resolve<Observable<any>> {
 }
 
 // TEST
-@RegisterShell({
+@Shell({
   name: 'app'
 })
 @NgModule({

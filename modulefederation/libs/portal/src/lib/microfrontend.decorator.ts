@@ -11,7 +11,7 @@ export type MicrofrontendMetadata = ModuleMetadata & {
 export const MicrofrontendMetadata = new InjectionToken<MicrofrontendMetadata>('MicrofrontendMetadata');
 
 
-export function RegisterMicrofrontend(metadata: MicrofrontendMetadata) {
+export function Microfrontend(metadata: MicrofrontendMetadata) {
   metadata.type = 'microfrontend';
 
   return (componentClass: Type<any>) => Module(metadata, MicrofrontendMetadata)(componentClass);

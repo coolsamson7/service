@@ -1,2 +1,2 @@
-export * from "./feature"
+export * from "./abstract-feature"
 export * from "./feature-outlet.directive"

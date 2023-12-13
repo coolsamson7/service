@@ -9,7 +9,7 @@
   },
   "features": [
     {
-      "name": "",
+      "id": "",
       "label": "Microfrontend 2",
       "component": "RemoteEntryComponent",
       "tags": ["navigation"],

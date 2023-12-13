@@ -48,7 +48,7 @@ export class FeatureRegistry {
 
     // add
 
-    let name = key(feature.name, path)
+    let name = key(feature.id, path)
 
     this.features[name] = feature
 
@@ -68,7 +68,7 @@ export class FeatureRegistry {
     // recursion
 
     for ( let child of feature.children || [])
-        this.registerFeature(child, feature, (path == "" ? feature.name : path + "." + feature.name) + ".");
+        this.registerFeature(child, feature, (path == "" ? feature.id : path + "." + feature.id) + ".");
   }
 
   register(...features: FeatureConfig[]) {
@@ -78,7 +78,7 @@ export class FeatureRegistry {
   }
 
   registerRemote(microfrontend: string,...features: FeatureConfig[]) {
-    let rootFeature = features.find(feature => feature.name == "")
+    let rootFeature = features.find(feature => feature.id == "")
     if ( rootFeature )
       this.registerFeature(rootFeature, undefined, microfrontend)
 

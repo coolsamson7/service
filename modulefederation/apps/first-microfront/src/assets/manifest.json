@@ -9,14 +9,14 @@
   },
   "features": [
     {
-      "name": "",
+      "id": "",
       "label": "Microfrontend 1",
       "component": "RemoteEntryComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"]
     },
     {
-      "name": "child",
+      "id": "child",
       "label": "child",
       "component": "RemoteEntryChildComponent",
       "module": {
