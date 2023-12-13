@@ -4,7 +4,7 @@ import {Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
-import {DeploymentConfig, Manifest} from "./deployment/deployment-model";
+import {DeploymentConfig} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
 import {ManifestDecorator} from "./deployment";
@@ -77,8 +77,11 @@ export class PortalManager {
 
     // remember load function
 
-    if ( route.loadChildren )
-      feature.load = route.loadChildren
+    if ( route.loadChildren ) {
+        feature.load = route.loadChildren
+        if ( !feature.origin)
+            feature.origin = feature.module.name
+    }
   }
 
   private linkRoutes(routes: Routes, features: FeatureConfig[]) {
@@ -117,6 +120,8 @@ export class PortalManager {
           loadChildren: () => loadRemoteModule(key, './Module')
             .then((m) => m[module.module.ngModule]),
         }
+
+        feature.origin = module.remoteEntry
 
         this.link(route, feature)
 

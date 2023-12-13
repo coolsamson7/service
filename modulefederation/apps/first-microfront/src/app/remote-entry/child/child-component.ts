@@ -14,7 +14,5 @@ import {Component} from "@angular/core";
 export class RemoteEntryChildComponent extends AbstractFeature {
   constructor() {
     super();
-
-    console.log(this.getName())
   }
 }

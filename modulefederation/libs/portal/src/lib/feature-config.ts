@@ -31,9 +31,13 @@ export interface FeatureConfig {
   featureToggles?: string[]
   router?: RouterConfig
 
+  // computed
+
+  module?: any
+  origin?: string
   path?: string // this is computed!!!
 
-  // TODO: maybe spit in two interfaces...
+  // TODO: maybe split in two interfaces...
 
   children?: FeatureConfig[]
   $parent?: FeatureConfig

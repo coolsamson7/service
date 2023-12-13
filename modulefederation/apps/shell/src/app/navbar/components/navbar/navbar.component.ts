@@ -24,7 +24,6 @@ export class NavbarComponent implements OnInit {
   // callbacks
 
   public path(feature: FeatureConfig) {
-    console.log( "/" + feature.id)
     return "/" + feature.path
   }
   public onToggleSidenav = () => {
