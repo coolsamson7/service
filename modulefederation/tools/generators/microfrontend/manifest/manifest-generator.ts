@@ -56,8 +56,8 @@ export class ManifestGenerator {
         return execSync("git rev-parse HEAD").toString().trim()
     }
 
-    private async findDecorators(text: string, folder: string): Promise<string[]> {
-        return Object.keys(await find(text, folder, ".ts$")).filter((file) => !file.includes(".test")) // no test files!
+    private async findDecorators(decoratorName: string, folder: string): Promise<string[]> {
+        return Object.keys(await find("@" + decoratorName, folder, ".ts$")).filter((file) => !file.includes(".test")) // no test files!
     }
 
     protected relativeImport(current: string, target: string, separator: string = "/") : string {
@@ -91,16 +91,18 @@ export class ManifestGenerator {
     }
 
     private async readModule() : Promise<any> {
-        const decorator = this.shell ?  "RegisterShell" : "RegisterMicrofrontend"
+        const decorator = this.shell ?  "Shell" : "Microfrontend"
         const files = await this.findDecorators(decorator , this.dir)
 
         // validate
 
         if (files.length != 1) {
             if ( files.length == 0)
-                throw new Error(`expected one ${decorator}`)
-            else if ( files.length > 1)
-                throw new Error(`expected at most one ${decorator}`)
+                throw new Error(`expected one @${decorator}`)
+            else if ( files.length > 1) {
+                console.log(files)
+                throw new Error(`expected at most one @${decorator}`)
+            }
         }
 
         // read
@@ -126,7 +128,7 @@ export class ManifestGenerator {
     }
 
     private async readFeatures(modulePath: string) : Promise<any> {
-        const decorator = "RegisterFeature"
+        const decorator = "Feature"
         const files = await this.findDecorators(decorator , this.dir)
 
         // read
@@ -157,7 +159,7 @@ export class ManifestGenerator {
       const mapFeature = (data: DecoratorData) : any => {
         let feature
 
-        if ((feature = findFeature(data.data.name)) !== undefined)
+        if ((feature = findFeature(data.data.id)) !== undefined)
            return feature
 
         // create
@@ -167,8 +169,8 @@ export class ManifestGenerator {
         // create feature
 
         feature = {
-            name: decorator.name,
-            label: decorator.label || decorator.name,
+            id: decorator.id,
+            label: decorator.label || decorator.id,
             component: data.decorates,
             tags: decorator.tags || [], // portal
             categories: decorator.categories || [],
@@ -197,7 +199,7 @@ export class ManifestGenerator {
           feature.relative = this.relativeImport(this.path(lazyModuleFile), this.path( data.file))
         }
 
-        result[feature.name] = feature
+        result[feature.id] = feature
 
          // link to parent
 
@@ -222,10 +224,10 @@ export class ManifestGenerator {
 
         // done
 
-        features = features.filter(data => !data.data.parent).map(data => result[data.data.name])
+        features = features.filter(data => !data.data.parent).map(data => result[data.data.id])
       // make sure the "" feature comes first since it will get a special handling
 
-       let index = features.find(feature => feature.name == "")
+       let index = features.find(feature => feature.id == "")
       if ( index > 0) {
         let tmp = features[0]
         features[0] = features[index]

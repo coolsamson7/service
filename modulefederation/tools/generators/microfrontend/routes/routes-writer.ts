@@ -18,7 +18,7 @@ export class RoutesWriter {
 
     let requiresRedirect = true
     for ( let feature of manifest.features )
-      if ( feature.name == "" || feature.router?.path == "")
+      if ( feature.id == "" || feature.router?.path == "")
         requiresRedirect = false
 
     generateFiles(host, routesTemplatePath, fileName, {

@@ -1,7 +1,7 @@
 {
   "name": "second-microfront",
   "version": "0.1",
-  "commitHash": "9e6cef690a48ecc601e604b363648dccb58b89b3",
+  "commitHash": "8d6330e55db0f9699f9a5e6b7f041ea928eebec2",
   "module": {
     "name": "second-microfront",
     "ngModule": "RemoteEntryModule",

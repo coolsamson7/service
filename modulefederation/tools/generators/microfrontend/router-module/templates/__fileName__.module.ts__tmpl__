@@ -13,7 +13,7 @@ export const routes: Routes = [
  <% if (requiresRedirect) { %>
    {
       path: '',
-      redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].name %>',
+      redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].id %>',
       pathMatch: 'full'
     },
      <% } %>

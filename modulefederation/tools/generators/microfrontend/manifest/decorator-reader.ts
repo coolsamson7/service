@@ -36,7 +36,7 @@ export class DecoratorReader {
                 const data = { ...eval(`(${output})`) }
 
                 if ( match && !this.multiple)
-                   throw new Error(`expected ${this.decoratorName} only once`)
+                   throw new Error(`expected @${this.decoratorName} only once`)
 
                 match = true
 

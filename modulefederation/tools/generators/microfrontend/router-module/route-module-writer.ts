@@ -24,11 +24,11 @@ export class RouteModuleWriter {
 
     let featureName
     if ( isChild )
-      featureName = manifest.module.name + "." + features[0].name
+      featureName = manifest.module.name + "." + features[0].id
 
     let requiresRedirect = !isChild
     for ( let feature of features )
-      if ( feature.name == "" || feature.router?.path == "")
+      if ( feature.id == "" || feature.router?.path == "")
         requiresRedirect = false
 
     generateFiles(host, routesTemplatePath, inFolder, {
