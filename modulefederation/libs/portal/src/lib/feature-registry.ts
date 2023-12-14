@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { filter, map, Observable, ReplaySubject, take, tap } from "rxjs";
 import {FeatureConfig} from "./feature-config";
+import {FeatureData} from "./portal-manager";
 
 @Injectable({ providedIn: 'root' })
 export class FeatureRegistry {
   // instance data
 
-  features : {[name: string] : FeatureConfig } = {};
+  features : {[name: string] : FeatureData } = {};
   registry$ = new ReplaySubject<FeatureRegistry>(1);
 
   // constructor
@@ -40,7 +41,7 @@ export class FeatureRegistry {
     this.registry$.next(this);
   }
 
-  private registerFeature(feature: FeatureConfig, parent?: FeatureConfig, path = "") {
+  private registerFeature(featureConfig: FeatureConfig, parent?: FeatureData, path = "") {
     // local function
 
     let key = (name: string, path: string) => {
@@ -49,6 +50,8 @@ export class FeatureRegistry {
       else
         return path + name
     }
+
+    let feature = featureConfig as FeatureData
 
     // add
 
@@ -77,7 +80,7 @@ export class FeatureRegistry {
 
   register(...features: FeatureConfig[]) {
     for ( let feature of features)
-      if (!feature.$parent)
+      if (!(feature as FeatureData).$parent)
         this.registerFeature(feature, undefined, "")
   }
 
@@ -87,17 +90,17 @@ export class FeatureRegistry {
       this.registerFeature(rootFeature, undefined, microfrontend)
 
     for ( let feature of features)
-      if (feature !== rootFeature && !feature.$parent)
+      if (feature !== rootFeature && !(feature as FeatureData).$parent)
         this.registerFeature(feature, rootFeature, microfrontend + ".")
   }
 
   // public
 
-  getFeature(id: string) : FeatureConfig {
+  getFeature(id: string) : FeatureData {
     return this.features[id]
   }
 
-  findFeatures(filter: (feature: FeatureConfig) => boolean) : FeatureConfig[] {
+  findFeatures(filter: (feature: FeatureConfig) => boolean) : FeatureData[] {
     return Object.values(this.features).filter(filter)
   }
 }

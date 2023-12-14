@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {FeatureConfig, FeatureRegistry} from "@modulefederation/portal";
+import {FeatureConfig, FeatureData, FeatureRegistry} from "@modulefederation/portal";
 
 @Component({
   selector: 'modulefederation-navbar',
@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
 
   // instance data
 
-  features: FeatureConfig[] = []
+  features: FeatureData[] = []
 
   // constructor
 
@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit {
 
   // callbacks
 
-  public path(feature: FeatureConfig) {
+  public path(feature: FeatureData) {
     return "/" + feature.path
   }
   public onToggleSidenav = () => {

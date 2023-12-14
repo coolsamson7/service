@@ -2,6 +2,7 @@ import { ComponentRef, Directive, Input, OnDestroy, OnInit, ViewContainerRef } f
 import { FeatureRegistry } from '../feature-registry';
 import {FeatureConfig} from "../feature-config";
 import {LoadChildrenCallback} from "@angular/router";
+import {FeatureData} from "../portal-manager";
 
 /**
  * this directive is able to render the specified feature in the surrounding container
@@ -19,7 +20,7 @@ export class FeatureOutletDirective implements OnInit, OnDestroy {
 
   // instance data
 
-  featureConfig: FeatureConfig | undefined
+  featureData: FeatureData | undefined
   component?: ComponentRef<any> = undefined
 
   // constructor
@@ -29,14 +30,14 @@ export class FeatureOutletDirective implements OnInit, OnDestroy {
   // implement OnInit
 
   ngOnInit() {
-    this.featureConfig = this.featureRegistry.getFeature(this.feature)
+    this.featureData = this.featureRegistry.getFeature(this.feature)
 
     this.load()
   }
 
   private async load() {
     // local function
-    let nextLoader = (feature?: FeatureConfig) : FeatureConfig | undefined => {
+    let nextLoader = (feature?: FeatureData) : FeatureData | undefined => {
       while ( feature) {
         if ( feature.load )
           return feature
@@ -47,11 +48,11 @@ export class FeatureOutletDirective implements OnInit, OnDestroy {
       return undefined
     }
 
-    let next : FeatureConfig | undefined
-    while ((next = nextLoader(this.featureConfig)) != undefined)
+    let next : FeatureData | undefined
+    while ((next = nextLoader(this.featureData)) != undefined)
       await next.load!!() // will set load to undefined in registerLazyRoutes
 
-    this.component = this.container.createComponent(this.featureConfig?.ngComponent);
+    this.component = this.container.createComponent(this.featureData?.ngComponent);
   }
 
   // implement OnDestroy

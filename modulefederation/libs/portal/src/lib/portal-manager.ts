@@ -1,6 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 
-import {Route, Router, Routes} from "@angular/router";
+import {LoadChildrenCallback, Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
@@ -8,6 +8,23 @@ import {Deployment} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
 import {ManifestDecorator} from "./deployment";
+
+/**
+ * the runtime data of feature
+ */
+export interface FeatureData extends FeatureConfig {
+  // computed
+
+  module?: any
+  origin?: string
+  path?: string
+
+  children?: FeatureConfig[]
+  $parent?: FeatureConfig
+
+  ngComponent?: any
+  load?: LoadChildrenCallback
+}
 
 @Injectable({ providedIn: 'root' })
 export class PortalManager {
@@ -54,7 +71,7 @@ export class PortalManager {
       this.portalConfig.decorateRoutes(route)
   }
 
-  private link(route: Route, feature: FeatureConfig) {
+  private link(route: Route, feature: FeatureData) {
     // let the portal do some stuff
 
     this.decorateRoute(route)
@@ -84,7 +101,7 @@ export class PortalManager {
     }
   }
 
-  private linkRoutes(routes: Routes, features: FeatureConfig[]) {
+  private linkRoutes(routes: Routes, features: FeatureData[]) {
     let index = 0
     for (let route of routes) {
       if ( !route.redirectTo ) {
