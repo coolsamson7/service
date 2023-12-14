@@ -3,11 +3,12 @@ import {Inject, Injectable} from "@angular/core";
 import {LoadChildrenCallback, Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
-import { FeatureRegistry } from "./feature-registry";
+import {FeatureRegistry} from "./feature-registry";
 import {Deployment} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
 import {ManifestDecorator} from "./deployment";
+import {TraceLevel, Tracer} from "./tracer";
 
 /**
  * the runtime data of feature
@@ -39,6 +40,9 @@ export class PortalManager {
   }
 
   private registerLazyRoutes(feature: string, routes: Routes) {
+      if ( Tracer.ENABLED )
+          Tracer.Trace("portal", TraceLevel.FULL, "register lazy routes for {0}", feature)
+
     // local functions
 
     let rootFeature = this.featureRegistry.getFeature(feature)
@@ -122,7 +126,10 @@ export class PortalManager {
   }
 
   private buildRoutes(deployment: Deployment, localRoutes: Routes) : Routes {
-    const modules = deployment.modules
+      if ( Tracer.ENABLED )
+          Tracer.Trace("portal", TraceLevel.FULL, "build routes")
+
+      const modules = deployment.modules
 
     // construct lazy routes
 

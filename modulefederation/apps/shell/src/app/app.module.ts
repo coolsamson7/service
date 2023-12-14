@@ -7,7 +7,7 @@ import { NavbarModule } from './navbar/navbar.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { localRoutes } from "./local.routes";
-import {LocalDeploymentLoader, PortalModule, Shell} from "@modulefederation/portal";
+import {LocalDeploymentLoader, PortalModule, Shell, TraceLevel, ConsoleTrace, TracerModule} from "@modulefederation/portal";
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -106,6 +106,13 @@ export class I18nResolver implements Resolve<Observable<any>> {
     NavbarModule,
     MatSidenavModule,
     AppComponentRouterModule,
+    TracerModule.forRoot({
+        enabled: true, //TODO !environment.production,
+        trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
+        paths: {
+            "portal": TraceLevel.FULL,
+        }
+    }),
     PortalModule.forRoot({
       loader: new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202"),
       localRoutes: localRoutes,
