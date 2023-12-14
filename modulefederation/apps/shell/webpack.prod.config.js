@@ -1,32 +1,32 @@
-const { withModuleFederation } = require('@nrwl/angular/module-federation');
+const {withModuleFederation} = require('@nrwl/angular/module-federation');
 
 const coreLibraries = new Set([
-  "@angular/core",
-  "@angular/common",
-  "@angular/common/http",
-  "@angular/router",
+    "@angular/core",
+    "@angular/common",
+    "@angular/common/http",
+    "@angular/router",
 
-  // A workspace library
+    // A workspace library
 
-  '@modulefederation/portal',
+    '@modulefederation/portal',
 ]);
 
 module.exports = withModuleFederation({
-    name: 'shell',
-    exposes: {
-      './Module': 'apps/shell/src/app/app.module.ts',
-    },
-    shared: (libraryName, defaultConfig) => {
-      if (coreLibraries.has(libraryName)) {
-        console.log("shell share " + libraryName)
-        console.log(defaultConfig)
+        name: 'shell',
+        exposes: {
+            './Module': 'apps/shell/src/app/app.module.ts',
+        },
+        shared: (libraryName, defaultConfig) => {
+            if (coreLibraries.has(libraryName)) {
+                console.log("shell share " + libraryName)
+                console.log(defaultConfig)
 
-        return defaultConfig;
-      }
+                return defaultConfig;
+            }
 
-      // Returning false means the library is not shared.
+            // Returning false means the library is not shared.
 
-      return false;
+            return false;
+        }
     }
-  }
 );

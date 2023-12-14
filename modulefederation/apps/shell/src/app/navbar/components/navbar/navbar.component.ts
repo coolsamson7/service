@@ -1,37 +1,38 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {FeatureConfig, FeatureData, FeatureRegistry} from "@modulefederation/portal";
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {FeatureData, FeatureRegistry} from "@modulefederation/portal";
 
 @Component({
-  selector: 'modulefederation-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
+    selector: 'modulefederation-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  // output
+    // output
 
-  @Output() public sidenavToggle = new EventEmitter();
+    @Output() public sidenavToggle = new EventEmitter();
 
-  // instance data
+    // instance data
 
-  features: FeatureData[] = []
+    features : FeatureData[] = []
 
-  // constructor
+    // constructor
 
-  constructor(featureRegistry: FeatureRegistry) {
-    this.features = featureRegistry.finder().withTag("navigation").find()
-  }
+    constructor(featureRegistry : FeatureRegistry) {
+        this.features = featureRegistry.finder().withTag("navigation").find()
+    }
 
-  // callbacks
+    // callbacks
 
-  public path(feature: FeatureData) {
-    return "/" + feature.path
-  }
-  public onToggleSidenav = () => {
-    this.sidenavToggle.emit();
-  }
+    public path(feature : FeatureData) {
+        return "/" + feature.path
+    }
 
-  // implement OnInit
+    public onToggleSidenav = () => {
+        this.sidenavToggle.emit();
+    }
 
-  ngOnInit() {
-  }
+    // implement OnInit
+
+    ngOnInit() {
+    }
 }

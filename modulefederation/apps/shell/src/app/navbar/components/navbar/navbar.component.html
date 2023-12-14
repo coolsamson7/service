@@ -1,17 +1,17 @@
-<mat-toolbar color = "primary">
+<mat-toolbar color="primary">
     <div fxHide.gt-xs>
-      <button mat-icon-button (click) = "onToggleSidenav()" class="menuButton">
-        <mat-icon>menu</mat-icon>
-      </button>
+        <button (click)="onToggleSidenav()" class="menuButton" mat-icon-button>
+            <mat-icon>menu</mat-icon>
+        </button>
     </div>
     <div>
-      <a routerLink = "/">Home</a>
+        <a routerLink="/">Home</a>
     </div>
-    <div fxFlex fxLayout fxLayoutAlign = "end" fxHide.xs>
-      <ul fxLayout fxLayoutGap = "15px" class = "navigation-items">
-        <li *ngFor="let feature of features">
-          <a [routerLink]="path(feature)">{{feature.label}}</a>
-        </li>
-      </ul>
+    <div fxFlex fxHide.xs fxLayout fxLayoutAlign="end">
+        <ul class="navigation-items" fxLayout fxLayoutGap="15px">
+            <li *ngFor="let feature of features">
+                <a [routerLink]="path(feature)">{{feature.label}}</a>
+            </li>
+        </ul>
     </div>
-  </mat-toolbar>
+</mat-toolbar>

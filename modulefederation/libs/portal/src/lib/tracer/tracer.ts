@@ -1,8 +1,8 @@
-import { TraceLevel } from'./trace-level.enum';
-import { TracerConfiguration, TracerConfigurationInjectionToken } from'./tracer-configuration';
-import { Trace } from'./trace';
-import { TraceEntry } from'./trace-entry';
-import { ConsoleTrace} from "./traces/console-trace";
+import {TraceLevel} from './trace-level.enum';
+import {TracerConfiguration, TracerConfigurationInjectionToken} from './tracer-configuration';
+import {Trace} from './trace';
+import {TraceEntry} from './trace-entry';
+import {ConsoleTrace} from "./traces/console-trace";
 import {Inject, Injectable, Optional} from "@angular/core";
 
 /**
@@ -17,33 +17,15 @@ export class Tracer {
 
     public static ENABLED = true
 
-    private static This: Tracer
-
-    static getSingleton() {
-        if (!Tracer.This)
-            new Tracer({
-                enabled: true,
-                trace: new ConsoleTrace("%d [%p]: %m\n"),
-                paths: {
-                    "": TraceLevel.FULL,
-                },
-            })
-
-        return Tracer.This
-    }
-
-    public static Trace(path: string, level: TraceLevel, message: string, ...args: any[]) {
-        Tracer.getSingleton().trace(path, level, message, ...args)
-    }
+    private static This : Tracer
+    private traceLevels : { [path : string] : TraceLevel } = {}
+    private cachedTraceLevels : { [path : string] : TraceLevel } = {}
 
     // instance data
-
-    private traceLevels: { [path: string]: TraceLevel } = {}
-    private cachedTraceLevels: { [path: string]: TraceLevel } = {}
     private modifications = 0
-    private sink: Trace | undefined
+    private sink : Trace | undefined
 
-    constructor(@Optional() @Inject(TracerConfigurationInjectionToken) tracerConfiguration: TracerConfiguration) {
+    constructor(@Optional() @Inject(TracerConfigurationInjectionToken) tracerConfiguration : TracerConfiguration) {
         if (tracerConfiguration) {
             // enabled
 
@@ -63,13 +45,30 @@ export class Tracer {
         Tracer.This = this
     }
 
+    static getSingleton() {
+        if (!Tracer.This)
+            new Tracer({
+                enabled: true,
+                trace: new ConsoleTrace("%d [%p]: %m\n"),
+                paths: {
+                    "": TraceLevel.FULL,
+                },
+            })
+
+        return Tracer.This
+    }
+
+    public static Trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
+        Tracer.getSingleton().trace(path, level, message, ...args)
+    }
+
     // public
 
-    public isTraced(path: string, level: TraceLevel): boolean {
+    public isTraced(path : string, level : TraceLevel) : boolean {
         return this.getTraceLevel(path) >= level
     }
 
-    public trace(path: string, level: TraceLevel, message: string, ...args: any[]) {
+    public trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
         if (Tracer.ENABLED && this.getTraceLevel(path) >= level) {
             // format
 
@@ -90,7 +89,7 @@ export class Tracer {
 
     // private
 
-    private getTraceLevel(path: string): TraceLevel {
+    private getTraceLevel(path : string) : TraceLevel {
         // check dirty state
 
         if (this.modifications > 0) {
@@ -115,7 +114,7 @@ export class Tracer {
         return level
     }
 
-    private setTraceLevel(path: string, level: TraceLevel): void {
+    private setTraceLevel(path : string, level : TraceLevel) : void {
         this.traceLevels[path] = level
         this.modifications++
     }

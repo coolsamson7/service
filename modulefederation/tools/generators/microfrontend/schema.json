@@ -31,5 +31,7 @@
       }
     }
   },
-  "required": ["projectName"]
+  "required": [
+    "projectName"
+  ]
 }

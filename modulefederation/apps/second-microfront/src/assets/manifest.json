@@ -11,8 +11,13 @@
       "id": "",
       "label": "Microfrontend 2",
       "component": "RemoteEntryComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ]
     }
   ]
 }

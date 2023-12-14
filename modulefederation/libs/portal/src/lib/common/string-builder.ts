@@ -4,7 +4,7 @@
 export class StringBuilder {
     // instance data
 
-    private values: string[] = [];
+    private values : string[] = [];
 
     // public
 
@@ -12,7 +12,7 @@ export class StringBuilder {
      * append the passed value to this builder and return this
      * @param value a string value
      */
-    public append(value: string): StringBuilder {
+    public append(value : string) : StringBuilder {
         this.values.push(value);
 
         return this;
@@ -21,7 +21,7 @@ export class StringBuilder {
     /**
      * clear the contents
      */
-    public clear(): StringBuilder {
+    public clear() : StringBuilder {
         this.values.length = 1;
 
         return this;
@@ -30,7 +30,7 @@ export class StringBuilder {
     /**
      * return the concatenated string according to the current collected values.
      */
-    public toString(): string {
+    public toString() : string {
         return this.values.join('');
     }
 }

@@ -1,21 +1,21 @@
 import {FeatureConfig} from "../feature-config";
 
 export class AbstractFeature {
-  // instance data
+    // instance data
 
-  protected config: FeatureConfig
+    protected config : FeatureConfig
 
-  // constructor
+    // constructor
 
-  constructor() {
-    this.config = (this.constructor as any).$$feature;
-  }
+    constructor() {
+        this.config = (this.constructor as any).$$feature;
+    }
 
-  // protected
+    // protected
 
-  getName() : string {
-    return this.config.id
-  }
+    getName() : string {
+        return this.config.id
+    }
 
-  // ...
+    // ...
 }

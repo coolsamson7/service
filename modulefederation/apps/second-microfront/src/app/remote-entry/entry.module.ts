@@ -1,16 +1,17 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RemoteEntryComponent } from './entry.component';
-import {PortalModule, Microfrontend} from "@modulefederation/portal";
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {RemoteEntryComponent} from './entry.component';
+import {Microfrontend, PortalModule} from "@modulefederation/portal";
 import {RemoteEntryRouterModule} from "./remote-entry-router.module";
 
 
 @Microfrontend({
-  name: 'second-microfront'
+    name: 'second-microfront'
 })
 @NgModule({
-  declarations: [RemoteEntryComponent],
+    declarations: [RemoteEntryComponent],
     imports: [CommonModule, RemoteEntryRouterModule, PortalModule],
-  providers: [],
+    providers: [],
 })
-export class RemoteEntryModule {}
+export class RemoteEntryModule {
+}

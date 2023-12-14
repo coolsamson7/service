@@ -1,25 +1,25 @@
-import { StringBuilder } from "../common";
-import { TraceEntry } from "./trace-entry";
-import { TraceLevel } from "./trace-level.enum";
+import {StringBuilder} from "../common";
+import {TraceEntry} from "./trace-entry";
+import {TraceLevel} from "./trace-level.enum";
 
 /**
  * @ignore
  */
-declare type renderer = (builder: StringBuilder, model: TraceModel) => void;
+declare type renderer = (builder : StringBuilder, model : TraceModel) => void;
 
 interface TraceModel {
-    p: string;
-    d: string;
-    l: string;
-    m: string;
+    p : string;
+    d : string;
+    l : string;
+    m : string;
 }
 
 interface Callbacks {
-    string: (value: string) => void;
-    d: () => void;
-    l: () => void;
-    p: () => void;
-    m: () => void;
+    string : (value : string) => void;
+    d : () => void;
+    l : () => void;
+    p : () => void;
+    m : () => void;
 }
 
 /**
@@ -28,17 +28,26 @@ interface Callbacks {
 export class TraceFormatter {
     // instance data
 
-    private readonly renderer: renderer[];
+    private readonly renderer : renderer[];
 
     // constructor
 
-    constructor(format: string) {
+    constructor(format : string) {
         this.renderer = this.parse(format);
     }
 
     // private
 
-    private level(level: TraceLevel): string {
+    format(entry : TraceEntry) : string {
+        return this.build({
+            p: entry.path,
+            d: entry.timestamp.toDateString(),
+            l: this.level(entry.level),
+            m: entry.message,
+        });
+    }
+
+    private level(level : TraceLevel) : string {
         switch (level) {
             case TraceLevel.OFF:
                 return "OFF";
@@ -53,7 +62,7 @@ export class TraceFormatter {
         }
     }
 
-    private scan(format: string, callbacks: Callbacks) {
+    private scan(format : string, callbacks : Callbacks) {
         // go
 
         let start = 0;
@@ -78,15 +87,15 @@ export class TraceFormatter {
         if (start < format.length) callbacks.string(format.substring(start));
     }
 
-    private parse(format: string): renderer[] {
-        const result: renderer[] = []; // array of strings or functions
+    private parse(format : string) : renderer[] {
+        const result : renderer[] = []; // array of strings or functions
 
         this.scan(format, {
             // string literal
 
-            string: (value: string) => {
+            string: (value : string) => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                result.push((builder: StringBuilder, model: TraceModel) =>
+                result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(value)
                 );
             },
@@ -95,25 +104,25 @@ export class TraceFormatter {
 
             d: () => {
                 // date
-                result.push((builder: StringBuilder, model: TraceModel) =>
+                result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(model.d)
                 );
             },
             l: () => {
                 // level
-                result.push((builder: StringBuilder, model: TraceModel) =>
+                result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(model.l)
                 );
             },
             p: () => {
                 // path
-                result.push((builder: StringBuilder, model: TraceModel) =>
+                result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(model.p)
                 );
             },
             m: () => {
                 // message
-                result.push((builder: StringBuilder, model: TraceModel) =>
+                result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(model.m)
                 );
             },
@@ -123,20 +132,11 @@ export class TraceFormatter {
     }
 
     // '%d [%l] %p: %m', // d(ate), l(evel), p(ath), m(message)
-    private build(args: TraceModel): string {
+    private build(args : TraceModel) : string {
         const builder = new StringBuilder();
 
         for (const render of this.renderer) render(builder, args);
 
         return builder.toString();
-    }
-
-    format(entry: TraceEntry): string {
-        return this.build({
-            p: entry.path,
-            d: entry.timestamp.toDateString(),
-            l: this.level(entry.level),
-            m: entry.message,
-        });
     }
 }

@@ -5,8 +5,9 @@ import {RemoteEntryChildComponent} from "./child-component";
 import {RemoteEntryChildRouterModule} from "./remote-entry-child-router.module";
 
 @NgModule({
-  declarations: [RemoteEntryChildComponent],
-  imports: [CommonModule, PortalModule, RemoteEntryChildRouterModule],
-  providers: [],
+    declarations: [RemoteEntryChildComponent],
+    imports: [CommonModule, PortalModule, RemoteEntryChildRouterModule],
+    providers: [],
 })
-export class RemoteEntryChildModule {}
+export class RemoteEntryChildModule {
+}

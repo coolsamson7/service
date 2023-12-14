@@ -1,58 +1,57 @@
 import {readFileSync} from "fs"
 import {createSourceFile, isDecorator, Node, ScriptTarget} from "typescript"
 
-const { find } = require("find-in-files")
+const {find} = require("find-in-files")
 
-export type Modules = {[module: string] : string }
+export type Modules = { [module : string] : string }
 
 export class ModuleReader {
 
-  // private
+    // private
 
-  private async findDecorators(text: string, folder: string): Promise<string[]> {
-    let matches = await find(text, folder, ".ts$")
-      //.filter((file) => !file.includes(".test"))
+    async readModules(folder : string) : Promise<Modules> {
+        let result = {}
 
-    return Object.keys(matches)
-  }
+        for (let file of await this.findDecorators("NgModule", folder))
+            this.parseFile(file, result)
 
-  private isDecoratorWithName(node: any) {
-    return isDecorator(node) && (<any>node.expression).expression.escapedText === "NgModule"
-  }
-
-  private parseFile(file: string, matches: Modules) {
-    console.log("parse " + file)
-    const sourceCode = readFileSync(file, "utf-8")
-    const sourceFile = createSourceFile(file, sourceCode, ScriptTarget.Latest, true)
-
-    // local function
-
-    const visit = (node: Node) => {
-      if (this.isDecoratorWithName(node)) {
-        const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
-
-        //console.log(`${sourceFile.fileName} line ${line + 1}: @NgModule`)
-
-        const componentName = (<any>node).parent.name.escapedText
-
-        matches[componentName] = sourceFile.fileName
-      }
-      else node.forEachChild(visit)
+        return result
     }
 
-    // start traversal
+    private async findDecorators(text : string, folder : string) : Promise<string[]> {
+        let matches = await find(text, folder, ".ts$")
+        //.filter((file) => !file.includes(".test"))
 
-    visit(sourceFile)
-  }
+        return Object.keys(matches)
+    }
 
-  // public
+    private isDecoratorWithName(node : any) {
+        return isDecorator(node) && (<any>node.expression).expression.escapedText === "NgModule"
+    }
 
-  async readModules(folder: string) :Promise<Modules> {
-    let result = {}
+    // public
 
-    for (let file of await this.findDecorators("NgModule", folder))
-      this.parseFile(file, result)
+    private parseFile(file : string, matches : Modules) {
+        console.log("parse " + file)
+        const sourceCode = readFileSync(file, "utf-8")
+        const sourceFile = createSourceFile(file, sourceCode, ScriptTarget.Latest, true)
 
-    return result
-  }
+        // local function
+
+        const visit = (node : Node) => {
+            if (this.isDecoratorWithName(node)) {
+                const {line} = sourceFile.getLineAndCharacterOfPosition(node.getStart());
+
+                //console.log(`${sourceFile.fileName} line ${line + 1}: @NgModule`)
+
+                const componentName = (<any>node).parent.name.escapedText
+
+                matches[componentName] = sourceFile.fileName
+            } else node.forEachChild(visit)
+        }
+
+        // start traversal
+
+        visit(sourceFile)
+    }
 }

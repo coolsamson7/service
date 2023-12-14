@@ -1,18 +1,18 @@
 import {InjectionToken, Type} from "@angular/core";
-import { ModuleMetadata, Module } from "./modules";
+import {Module, ModuleMetadata} from "./modules";
 
 /**
  * @ignore
  */
 export type MicrofrontendMetadata = ModuleMetadata & {
-  type?: 'microfrontend';
+    type? : 'microfrontend';
 };
 
 export const MicrofrontendMetadata = new InjectionToken<MicrofrontendMetadata>('MicrofrontendMetadata');
 
 
-export function Microfrontend(metadata: MicrofrontendMetadata) {
-  metadata.type = 'microfrontend';
+export function Microfrontend(metadata : MicrofrontendMetadata) {
+    metadata.type = 'microfrontend';
 
-  return (componentClass: Type<any>) => Module(metadata, MicrofrontendMetadata)(componentClass);
+    return (componentClass : Type<any>) => Module(metadata, MicrofrontendMetadata)(componentClass);
 }
