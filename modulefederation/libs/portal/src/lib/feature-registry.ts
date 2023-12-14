@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
 import { filter, map, Observable, ReplaySubject, take, tap } from "rxjs";
-import {FeatureConfig} from "./feature-config";
+import {FeatureConfig, Visibility} from "./feature-config";
 import {FeatureData} from "./portal-manager";
+
+export type FeatureFilter = (feature: FeatureConfig) => boolean
 
 @Injectable({ providedIn: 'root' })
 export class FeatureRegistry {
@@ -103,4 +105,57 @@ export class FeatureRegistry {
   findFeatures(filter: (feature: FeatureConfig) => boolean) : FeatureData[] {
     return Object.values(this.features).filter(filter)
   }
+
+  finder() : FeatureFinder {
+      return new FeatureFinder(this)
+  }
+}
+
+export class FeatureFinder {
+    // instance data
+
+    private filters : FeatureFilter[] = []
+
+    // constructor
+
+    constructor(private featureRegistry: FeatureRegistry) {}
+
+    // fluent
+
+    withId(id: string) : FeatureFinder {
+        this.filters.push((feature) => feature.id == id)
+        return this
+    }
+
+    withVisibility(visibility: Visibility) : FeatureFinder {
+        this.filters.push((feature) => feature.visibility!!.includes(visibility))
+        return this
+    }
+
+    withTag(tag: string) : FeatureFinder {
+        this.filters.push((feature) => feature.tags!!.includes(tag))
+        return this
+    }
+
+    withPermission(permission: string) : FeatureFinder {
+        this.filters.push((feature) => feature.permissions!!.includes(permission))
+        return this
+    }
+
+    withCategory(category: string) : FeatureFinder {
+        this.filters.push((feature) => feature.categories!!.includes(category))
+        return this
+    }
+
+    // public
+
+    find() :FeatureData[] {
+        return this.featureRegistry.findFeatures((feature) => {
+            for ( let filter of this.filters)
+                if ( !filter(feature))
+                    return false
+
+            return true
+        })
+    }
 }

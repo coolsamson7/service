@@ -17,8 +17,8 @@ export class NavbarComponent implements OnInit {
 
   // constructor
 
-  constructor(private featureRegistry: FeatureRegistry) {
-    this.features = featureRegistry.findFeatures((feature) => feature.tags!!.includes("navigation"))
+  constructor(featureRegistry: FeatureRegistry) {
+    this.features = featureRegistry.finder().withTag("navigation").find()
   }
 
   // callbacks
