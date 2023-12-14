@@ -4,7 +4,7 @@ import {Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
 import {PortalModuleConfig, PortalModuleConfigToken} from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
-import {DeploymentConfig} from "./deployment/deployment-model";
+import {Deployment} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
 import {ManifestDecorator} from "./deployment";
@@ -104,7 +104,7 @@ export class PortalManager {
     }
   }
 
-  private buildRoutes(deployment: DeploymentConfig, localRoutes: Routes) : Routes {
+  private buildRoutes(deployment: Deployment, localRoutes: Routes) : Routes {
     const modules = deployment.modules
 
     // construct lazy routes
@@ -140,7 +140,7 @@ export class PortalManager {
     return [...localRoutes, ...lazyRoutes]
   }
 
-  private fillFeatureRegistry(deployment: DeploymentConfig) {
+  private fillFeatureRegistry(deployment: Deployment) {
     for ( let module in deployment.modules) {
       let manifest = deployment.modules[module]
 
@@ -153,7 +153,7 @@ export class PortalManager {
     this.featureRegistry.ready()
   }
 
-  private setupDeployment(deployment: DeploymentConfig) {
+  private setupDeployment(deployment: Deployment) {
     ;(window as any)["deployment"] = () => {
       console.log(deployment)
     }

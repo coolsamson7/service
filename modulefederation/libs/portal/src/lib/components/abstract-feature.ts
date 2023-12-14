@@ -3,7 +3,7 @@ import {FeatureConfig} from "../feature-config";
 export class AbstractFeature {
   // instance data
 
-  config: FeatureConfig
+  protected config: FeatureConfig
 
   // constructor
 

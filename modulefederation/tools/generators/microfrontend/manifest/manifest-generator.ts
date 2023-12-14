@@ -118,8 +118,7 @@ export class ManifestGenerator {
         return {
             name: module.data.name,
             ngModule: module.decorates,
-            file: module.file, // TODO
-            //relative: this.relativeImport(modulePath, this.path( data.file))
+            file: module.file
         }
     }
 

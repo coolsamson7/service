@@ -14,7 +14,7 @@ export interface Manifest extends ModuleMetadata {
   features : FeatureConfig[],
 }
 
-export interface DeploymentConfig {
+export interface Deployment {
   modules: { [name: string] : Manifest }
 }
 

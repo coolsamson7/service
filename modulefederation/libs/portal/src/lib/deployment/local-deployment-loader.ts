@@ -1,6 +1,6 @@
 
 import {DeploymentLoader} from "./deployment-loader";
-import {DeploymentConfig} from "./deployment-model";
+import {Deployment} from "./deployment-model";
 import {ManifestDecorator} from "./manifest-decorator";
 
 export class LocalDeploymentLoader extends DeploymentLoader {
@@ -15,12 +15,12 @@ export class LocalDeploymentLoader extends DeploymentLoader {
     this.urls = urls
   }
   // implement DeploymentLoader
-  async load() : Promise<DeploymentConfig> {
+  async load() : Promise<Deployment> {
     const promises = this.urls.map(url => {
       return fetch(url + "/assets/manifest.json")
     })
 
-    let deployment: DeploymentConfig = {
+    let deployment: Deployment = {
       modules: {}
     }
 
