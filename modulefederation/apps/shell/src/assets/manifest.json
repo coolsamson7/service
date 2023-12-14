@@ -1,11 +1,10 @@
 {
   "name": "shell",
   "version": "0.1",
-  "commitHash": "8d6330e55db0f9699f9a5e6b7f041ea928eebec2",
+  "commitHash": "4fdf681d91714f293de194e424e9c9aadf8c0477",
   "module": {
     "name": "app",
-    "ngModule": "AppModule",
-    "file": "apps/shell/src/app/app.module.ts"
+    "ngModule": "AppModule"
   },
   "features": [
     {

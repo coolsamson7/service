@@ -64,7 +64,7 @@ export class ManifestWriter {
   static ModuleClass = new Class()
     .required("name")
     .required("ngModule")
-    //.remove("file")
+    .remove("file")
     .remove("relative")
 
   static FeatureClass = new Class()
