@@ -10,10 +10,12 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MirofrontendsComponent } from "./microfrontends.component";
+import { MicrofrontendDetailsComponent } from "./microfrontend-details.component";
 
 @NgModule({
   declarations: [
-    MirofrontendsComponent
+    MirofrontendsComponent,
+    MicrofrontendDetailsComponent
   ],
   imports: [
     CommonModule,

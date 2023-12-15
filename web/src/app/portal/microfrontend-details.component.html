@@ -1,0 +1,22 @@
+<div>
+  <div *ngIf="outlet.isActivated == false" class="left">
+
+    <h1>{{manifest.name}}</h1>
+    <hr/>
+    <mat-tab-group *ngIf="manifest.name">
+      <!-- services -->
+
+      <mat-tab label="General">
+        <!-- component -->
+
+        {{manifest.name}}
+
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- router outlet -->
+
+  <router-outlet  #outlet="outlet"></router-outlet>
+</div>
+

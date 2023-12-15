@@ -9,6 +9,7 @@ import { NodesComponent } from './nodes/nodes.component';
 import { NodeDetailsComponent } from './nodes/node-details.component';
 import { AuthGuard } from './auth/auth.guard';
 import { MirofrontendsComponent } from "./portal/microfrontends.component";
+import { MicrofrontendDetailsComponent } from "./portal/microfrontend-details.component";
 
 const routes: Routes = [
   {
@@ -25,7 +26,12 @@ const routes: Routes = [
       label: "Microfrontends",
       icon: "folder"
     },
-    component: MirofrontendsComponent
+    component: MirofrontendsComponent,
+    children: [
+      {
+        path: ':microfrontend',
+        component: MicrofrontendDetailsComponent
+      }]
   },
   {
     path: 'components',

@@ -1,5 +1,29 @@
-<div>
-    <div *ngFor="let manifest of manifests">
-        <p>{{manifest.name}}</p>
-    </div>
+<div class="container">
+  <!-- breadcrumb -->
+
+  <div *ngIf="outlet.isActivated == true" class="breadcrumb">
+    <ng-container *ngFor="let route of routes; let i = index; let first = first ;let last = last;">
+      <ng-container *ngIf="i > 0 && i < routes.length">
+        /
+      </ng-container>
+
+      <a routerLink="{{route.route}}"> {{route.label}}</a>
+    </ng-container>
+  </div>
+
+  <!-- manifest list -->
+
+  <div  *ngIf="outlet.isActivated == false" class="left">
+    <mat-list role="list">
+      <a mat-list-item *ngFor="let manifest of manifests"  [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem">
+        <mat-icon>language</mat-icon>
+        {{manifest.name}}
+      </a>
+    </mat-list>
+  </div>
+
+  <!-- router outlet -->
+
+  <router-outlet  #outlet="outlet"></router-outlet>
 </div>
+

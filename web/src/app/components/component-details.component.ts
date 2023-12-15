@@ -7,7 +7,6 @@ import { RouteElement } from '../widgets/navigation-component.component';
 import { Update, UpdateService } from '../service/update-service.service';
 import { ComponentStore } from './component-store';
 import { Subscription } from 'rxjs';
-import { JSONSchemaBuilder } from '../json/json-schema-builder';
 
 
 @Component({
@@ -37,7 +36,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
   }
   open: boolean[]
   dead = false
-  
+
   updateSubscription: Subscription
 
   // constructor
@@ -78,7 +77,7 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
   private setComponent(componentName: string) {
     this.componentStore.setup(componentName);
-    
+
     // this is a stream also called after upates!
 
     this.componentStore.getComponent().subscribe({
