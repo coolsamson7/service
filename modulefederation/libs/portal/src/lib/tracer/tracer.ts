@@ -22,8 +22,11 @@ export class Tracer {
     private cachedTraceLevels : { [path : string] : TraceLevel } = {}
 
     // instance data
+
     private modifications = 0
     private sink : Trace | undefined
+
+    // constructor
 
     constructor(@Optional() @Inject(TracerConfigurationInjectionToken) tracerConfiguration : TracerConfiguration) {
         if (tracerConfiguration) {
@@ -58,6 +61,8 @@ export class Tracer {
         return Tracer.This
     }
 
+    // public
+
     public static Trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
         Tracer.getSingleton().trace(path, level, message, ...args)
     }
@@ -65,11 +70,11 @@ export class Tracer {
     // public
 
     public isTraced(path : string, level : TraceLevel) : boolean {
-        return this.getTraceLevel(path) >= level
+        return Tracer.ENABLED && this.getTraceLevel(path) >= level
     }
 
     public trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
-        if (Tracer.ENABLED && this.getTraceLevel(path) >= level) {
+        if (this.isTraced(path, level)) {
             // format
 
             const formattedMessage = message.replace(/{(\d+)}/g, function (match, number) {

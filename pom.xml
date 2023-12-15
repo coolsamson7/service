@@ -182,6 +182,7 @@
     <modules>
         <module>web</module>
         <module>core</module>
+        <module>portal</module>
         <module>channel</module>
         <module>registry</module>
         <module>client</module>

@@ -1,4 +1,4 @@
-import {Inject, Injectable} from "@angular/core";
+import { Inject, Injectable, Injector } from "@angular/core";
 
 import {LoadChildrenCallback, Route, Router, Routes} from "@angular/router";
 import {loadRemoteModule, setRemoteDefinitions} from "@nrwl/angular/mf";
@@ -7,7 +7,7 @@ import {FeatureRegistry} from "./feature-registry";
 import {Deployment} from "./deployment/deployment-model";
 import {ModuleRegistry} from "./modules";
 import {FeatureConfig} from "./feature-config";
-import {ManifestDecorator} from "./deployment";
+import { DeploymentLoader, HTTPDeploymentLoader, LocalDeploymentLoader, ManifestDecorator } from "./deployment";
 import {TraceLevel, Tracer} from "./tracer";
 
 /**
@@ -37,7 +37,8 @@ export class PortalManager {
         @Inject(PortalModuleConfigToken) private portalConfig : PortalModuleConfig,
         private featureRegistry : FeatureRegistry,
         private moduleRegistry : ModuleRegistry,
-        private router : Router
+        private router : Router,
+        private injector: Injector
     ) {
         PortalManager.instance = this
     }
@@ -51,7 +52,14 @@ export class PortalManager {
     // constructor
 
     load() : Promise<void> {
-        return this.portalConfig.loader
+      let loader : DeploymentLoader
+
+      if ( this.portalConfig.loader.server)
+         loader = this.injector.get(HTTPDeploymentLoader)
+      else
+         loader = new LocalDeploymentLoader(...this.portalConfig.loader.remotes!!)
+
+        return loader
             .load()
             .then((deployment) => this.setupDeployment(deployment))
     }
@@ -190,16 +198,17 @@ export class PortalManager {
             console.log(deployment)
         }
 
+
         // add local manifest
 
-        let localModule = this.portalConfig.localManifest
+        let localManifest = this.portalConfig.localManifest
 
-        ManifestDecorator.decorate(localModule)
+        ManifestDecorator.decorate(localManifest)
 
-        localModule.type = "shell"
-        localModule.isLoaded = true
+        localManifest.type = "shell"
+        localManifest.isLoaded = true
 
-        deployment.modules[localModule.module.name] = localModule
+        deployment.modules[localManifest.module.name] = localManifest
 
         // set remote definitions
 
@@ -207,6 +216,10 @@ export class PortalManager {
 
         for (let moduleName in deployment.modules) {
             let module = deployment.modules[moduleName]
+
+            ManifestDecorator.decorate(module)
+
+          console.log(JSON.stringify(module, null, 2))
 
             module.isLoaded = false
 

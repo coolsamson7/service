@@ -8,12 +8,13 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 
 import {localRoutes} from "./local.routes";
 import {
-    ConsoleTrace,
-    LocalDeploymentLoader,
-    PortalModule,
-    Shell,
-    TraceLevel,
-    TracerModule
+  ConsoleTrace, EndpointLocator, Environment, EnvironmentModule,
+  HTTPDeploymentLoader,
+  LocalDeploymentLoader,
+  PortalModule,
+  Shell,
+  TraceLevel,
+  TracerModule
 } from "@modulefederation/portal";
 import {
     ActivatedRouteSnapshot,
@@ -29,6 +30,7 @@ import {
 
 import * as localManifest from "../assets/manifest.json"
 import {Observable, of} from "rxjs";
+import { environment } from "../environments/environment";
 
 @NgModule({
     imports: [RouterModule.forRoot(localRoutes)],
@@ -104,6 +106,30 @@ export class I18nResolver implements Resolve<Observable<any>> {
     }
 }
 
+export class ApplicationEndpointLocator extends EndpointLocator {
+  // instance data
+
+  private environment: Environment
+
+  // constructor
+
+  constructor(environment: any) {
+    super()
+
+    this.environment = new Environment(environment)
+  }
+
+  // implement
+
+  getEndpoint(domain: string): string {
+    if ( domain == "admin")
+      return this.environment.get<string>("administration.server")!!
+    else
+      throw new Error("unknown domain " + domain)
+  }
+}
+
+
 // TEST
 @Shell({
     name: 'app'
@@ -116,15 +142,22 @@ export class I18nResolver implements Resolve<Observable<any>> {
         NavbarModule,
         MatSidenavModule,
         AppComponentRouterModule,
+
+        EnvironmentModule.forRoot(environment),
+
         TracerModule.forRoot({
-            enabled: true, //TODO !environment.production,
+            enabled: !environment.production,
             trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
             paths: {
                 "portal": TraceLevel.FULL,
             }
         }),
+
         PortalModule.forRoot({
-            loader: new LocalDeploymentLoader("http://localhost:4201", "http://localhost:4202"),
+            loader: {
+              server: true,
+              //remotes: ["http://localhost:4201", "http://localhost:4202"]
+            },
             localRoutes: localRoutes,
             localManifest: localManifest,
             decorateRoutes: (route : Route) => {
@@ -134,7 +167,12 @@ export class I18nResolver implements Resolve<Observable<any>> {
             }
         }),
     ],
-    providers: [],
+    providers: [
+      {
+        provide: EndpointLocator,
+        useValue: new ApplicationEndpointLocator(environment)
+      },
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {

@@ -1,13 +1,18 @@
 import {ReplaySubject} from "rxjs";
-import {APP_INITIALIZER, InjectionToken, Injector, ModuleWithProviders, NgModule} from "@angular/core";
+import { APP_INITIALIZER, InjectionToken, Injector, ModuleWithProviders, NgModule, Type } from "@angular/core";
 import {Route, Routes} from "@angular/router";
 import {PortalManager} from "./portal-manager";
 import {DeploymentLoader, Manifest} from "./deployment";
 import {ModulesModule} from "./modules";
 import {FeatureOutletDirective} from "./components";
+import { HttpClientModule } from "@angular/common/http";
 
+export type LoaderConfig = {
+    remotes?: string[],
+    server?: boolean
+}
 export type PortalModuleConfig = {
-    loader : DeploymentLoader,
+    loader : LoaderConfig,
     localRoutes : Routes,
     localManifest : Manifest,
     decorateRoutes? : RouteDecorator
@@ -23,7 +28,7 @@ function loadPortalConfiguration(configurationService : PortalManager) : () => P
 }
 
 @NgModule({
-    imports: [ModulesModule],
+    imports: [ModulesModule, HttpClientModule],
     providers: [
         {
             provide: APP_INITIALIZER,
@@ -37,7 +42,6 @@ function loadPortalConfiguration(configurationService : PortalManager) : () => P
 })
 export class PortalModule {
     static injector = new ReplaySubject<Injector>(1);
-
     constructor(injector : Injector) {
         PortalModule.injector.next(injector);
     }
