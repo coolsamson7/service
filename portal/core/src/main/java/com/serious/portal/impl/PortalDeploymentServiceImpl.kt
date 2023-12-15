@@ -6,7 +6,6 @@ package com.serious.service.administration.portal.impl
  */
 
 import com.serious.portal.DeploymentManager
-import com.serious.portal.PortalAdministrationService
 import com.serious.portal.PortalDeploymentService
 import com.serious.portal.model.Deployment
 import jakarta.annotation.PostConstruct

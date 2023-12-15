@@ -24,16 +24,13 @@ class ManifestLoader {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    var client: WebClient? = null
+    var client: WebClient
 
     // constructor
 
     constructor() {
         this.client = WebClient.builder()
-            //.baseUrl(url.toString())
-            //.defaultCookie("cookieKey", "cookieValue")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            //.defaultUriVariables(Collections.singletonMap("url", "http://localhost:8080"))
             .build();
     }
 
@@ -43,9 +40,8 @@ class ManifestLoader {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-
-        return this.client!!.get().uri(url.toString() + "/assets/manifest.json")
+        return this.client.get().uri(url.toString() + "/assets/manifest.json")
             .retrieve()
-            .bodyToMono(Manifest::class.java).block()
+            .bodyToMono(Manifest::class.java).block()!!
     }
 }

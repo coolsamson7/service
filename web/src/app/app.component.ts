@@ -20,17 +20,22 @@ export class AppComponent implements OnInit {
       {
        label: "Home",
        route: "/home",
-       icon: "home"      
+       icon: "home"
+      },
+      {
+        label: "Microfrontends",
+        route: "/microfrontends",
+        icon: "folder"
       },
       {
         label: "Components",
         route: "/components",
-        icon: "folder"      
+        icon: "folder"
        },
        {
         label: "Nodes",
         route: "/nodes",
-        icon: "computer"      
+        icon: "computer"
        }
     ]
   }
@@ -50,11 +55,11 @@ export class AppComponent implements OnInit {
   public login() {
     this.oauthService.initLoginFlow();
   }
-  
+
   public logout() {
     this.oauthService.logOut();
   }
-  
+
   private configure() {
     // adjust configuration
 

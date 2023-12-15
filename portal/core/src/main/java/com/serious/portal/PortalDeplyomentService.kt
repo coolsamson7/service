@@ -10,10 +10,12 @@ import com.serious.service.ServiceInterface
 import com.serious.portal.model.Deployment
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 
 @ServiceInterface
 @RequestMapping("portal-administration/")
+@RestController
 interface PortalDeploymentService : Service {
     @GetMapping("deployment")
     fun getDeployment() : Deployment

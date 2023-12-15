@@ -29,6 +29,7 @@ class PortalComponentImpl : AbstractComponent(), PortalComponent {
     //lateinit var healthEndpoint: HealthEndpoint
 
     // override
+
     @get:ResponseBody
     @get:GetMapping("/portal-health")
     override val health: ComponentHealth

@@ -8,15 +8,24 @@ import { ServiceInstanceComponent } from './components/service-instance.componen
 import { NodesComponent } from './nodes/nodes.component';
 import { NodeDetailsComponent } from './nodes/node-details.component';
 import { AuthGuard } from './auth/auth.guard';
+import { MirofrontendsComponent } from "./portal/microfrontends.component";
 
 const routes: Routes = [
-  { 
-    path: 'home', 
+  {
+    path: 'home',
     data: {
       label: "Home",
       icon: "home"
     },
-    component: HomeComponent 
+    component: HomeComponent
+  },
+  {
+    path: 'microfrontends',
+    data: {
+      label: "Microfrontends",
+      icon: "folder"
+    },
+    component: MirofrontendsComponent
   },
   {
     path: 'components',

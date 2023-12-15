@@ -7,6 +7,7 @@ package com.serious.portal
 
 import com.serious.service.Component
 import com.serious.service.ComponentInterface
+import org.springframework.web.bind.annotation.RestController
 
 @ComponentInterface(name = "PortalComponent",
     services = [
@@ -14,5 +15,6 @@ import com.serious.service.ComponentInterface
         PortalAdministrationService::class,
         PortalDeploymentService::class
     ])
+@RestController
 interface PortalComponent : Component {
 }

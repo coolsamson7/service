@@ -15,7 +15,6 @@ data class Router(
 data class FeatureModule(
     var name : String
 )
-
 data class Feature(
     var id : String,
     var parent : String? = null,

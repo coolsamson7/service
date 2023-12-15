@@ -15,6 +15,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
+import { PortalModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import { Environment, EnvironmentModule } from './common/util/environment.service';
@@ -34,7 +35,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     this.environment = new Environment(environment)
   }
 
-  // implement 
+  // implement
 
   getEndpoint(domain: string): string {
     if ( domain == "admin")
@@ -58,9 +59,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     BrowserAnimationsModule,
     HttpClientModule,
     TranslocoRootModule,
-    AppRoutingModule, 
+    AppRoutingModule,
     ComponentsModule,
     NodesModule,
+    PortalModule,
     MaterialModule,
     EnvironmentModule.forRoot(environment),
     SharedModule.forRoot(),

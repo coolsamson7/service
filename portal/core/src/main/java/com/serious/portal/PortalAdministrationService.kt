@@ -8,9 +8,11 @@ package com.serious.portal
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 
 @ServiceInterface
 @RequestMapping("portal-administration/")
+@RestController
 interface PortalAdministrationService : Service {
 }

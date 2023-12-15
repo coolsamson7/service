@@ -7,5 +7,5 @@ package com.serious.portal.model
 
 
 data class Deployment(
-    var modules : HashMap<String, Manifest> = HashMap<String, Manifest>()
+    var modules : HashMap<String, Manifest> = HashMap()
 )

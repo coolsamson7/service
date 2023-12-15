@@ -5,8 +5,6 @@ package com.serious.portal
  * All rights reserved
  */
 
-
-import com.serious.portal.ManifestManager
 import com.serious.portal.model.Deployment
 import com.serious.portal.model.Feature
 import com.serious.portal.model.Manifest
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.*
 import kotlin.collections.HashMap
-
 
 // types
 
