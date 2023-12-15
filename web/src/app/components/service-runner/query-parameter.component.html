@@ -7,7 +7,7 @@
       </ng-container>
 
       <ng-container  *ngSwitchCase="'number'">
-         <input matInput  type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)' name="{{parameter.name}}"[id]="parameter.name"/>
+         <input matInput  type="number" [(ngModel)]="parameter.value" (ngModelChange)='newValue($event)' name="{{parameter.name}}" [id]="parameter.name"/>
       </ng-container>
 
       {{form | json}}

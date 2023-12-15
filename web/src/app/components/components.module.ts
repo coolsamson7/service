@@ -31,10 +31,10 @@ import { DescriptionComponent } from "./service/description.component";
 
 @NgModule({
     declarations: [
-        ComponentsComponent, 
-        ComponentListComponent, 
+        ComponentsComponent,
+        ComponentListComponent,
         ComponentDetailsComponent,
-        NavigableListItemDirective, 
+        NavigableListItemDirective,
         ServiceInstanceListComponent,
         ServiceInstanceComponent,
         NavigableListComponent,
@@ -62,9 +62,7 @@ import { DescriptionComponent } from "./service/description.component";
       MatSelectModule,
       MatDatepickerModule,
       MatNativeDateModule,
-      MonacoEditorModule.forRoot({
-        defaultOptions:  { theme: 'vs-dark', language: 'json' }
-      }) // use forRoot() in main app module only.
+      MonacoEditorModule
     ]
   })
 export class ComponentsModule { }

@@ -21,6 +21,7 @@ import { environment } from "../environments/environment"
 import { Environment, EnvironmentModule } from './common/util/environment.service';
 import { EndpointLocator } from './common/communication/endpoint-locator';
 import { HTTPErrorInterceptor } from './common/communication/http-error-interceptor';
+import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -64,6 +65,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     NodesModule,
     PortalModule,
     MaterialModule,
+    MonacoEditorModule.forRoot({
+      defaultOptions:  { theme: 'vs-dark', language: 'json' }
+    }),
+
     EnvironmentModule.forRoot(environment),
     SharedModule.forRoot(),
     OAuthModule.forRoot({
