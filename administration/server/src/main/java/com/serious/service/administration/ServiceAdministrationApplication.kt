@@ -5,6 +5,7 @@ package com.serious.demo
 * All rights reserved
 */
 
+import com.serious.portal.PortalConfiguration
 import com.serious.service.ServiceConfiguration
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,7 +67,7 @@ open class JWTSecurityConfig {
 
 @Configuration
 @ComponentScan
-@Import(ServiceConfiguration::class)
+@Import(ServiceConfiguration::class, PortalConfiguration::class)
 open class RootConfig
 
 @Configuration

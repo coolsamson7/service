@@ -27,6 +27,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- TODO TEMPORARY -->
+
+        <dependency>
+            <groupId>com.serious</groupId>
+            <artifactId>service-portal-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.serious</groupId>
             <artifactId>service-channel-rest</artifactId>
