@@ -51,7 +51,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
                 for ( let manifest of this.manifests)
                   if ( manifest.remoteEntry == url) {
-                      this.confirmationDialogs.okCancel("Remote", "Already registered").subscribe(result => console.log(result))
+                      this.confirmationDialogs.ok("Remote", "Already registered")
                       return
                   }
 
@@ -61,12 +61,12 @@ export class MirofrontendsComponent extends NavigationComponent {
                 this.manifests.push(manifest) // TODO: server
             }
             else {
-                this.confirmationDialogs.okCancel("Remote", "Error fetching manifest").subscribe(result => console.log(result))
+                this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
             }
         })
     }
     catch(e) {
-        this.confirmationDialogs.okCancel("Remote", "Invalid URL").subscribe(result => console.log(result))
+        this.confirmationDialogs.ok("Add Remote", "Invalid URL")
         return
     }
   }

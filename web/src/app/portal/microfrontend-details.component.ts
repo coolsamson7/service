@@ -100,31 +100,53 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   // public
 
+    setManifests(manifests: Manifest[]):Manifest[] {
+      // local functions
+
+        let analyzeFeature = (feature: Feature) => {
+            // recursion
+
+            if ( feature.children)
+                for (let child of feature.children)
+                    analyzeFeature(child)
+
+            // collect info
+
+            for ( let permission of feature.permissions)
+                if ( !this.allPermissions.includes(permission))
+                    this.allPermissions.push(permission)
+
+            for ( let tag of feature.tags)
+                if ( !this.allTags.includes(tag))
+                    this.allTags.push(tag)
+
+            for ( let category of feature.categories)
+                if ( !this.allCategories.includes(category))
+                    this.allCategories.push(category)
+        }
+
+        let analyzeManifest = (manifest: Manifest) => {
+            for (let feature of manifest.features)
+                analyzeFeature(feature)
+        }
+
+        for ( let manifest of manifests)
+            analyzeManifest(manifest)
+
+        // done
+
+
+      return manifests
+    }
+
   setManifest(manifestName: string) {
     this.model.uri = this.uuid + manifestName // will be set in onInit
 
-    this.microfrontendsComponent.$manifests.subscribe(manifests => this.manifest = manifests.find((manifest) => manifest.name == manifestName))
+    this.microfrontendsComponent.$manifests.subscribe(manifests => this.manifest = this.setManifests(manifests).find((manifest) => manifest.name == manifestName))
   }
 
   selectFeature(feature: Feature) {
     this.selectedFeature = feature
-
-    // TODO
-
-    if ( !feature.permissions)
-      feature.permissions = []
-
-    if ( !feature.visibility)
-      feature.visibility = []
-
-    if ( !feature.tags)
-      feature.tags = []
-
-    if ( !feature.categories)
-      feature.categories = []
-
-    if ( !feature.featureToggles)
-      feature.featureToggles = []
   }
 
   // visibility
