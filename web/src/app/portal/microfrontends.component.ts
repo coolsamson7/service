@@ -6,6 +6,7 @@ import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
 import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
+import { ManifestDecorator } from "./util/manifest-decorator";
 
 @Component({
   selector: 'microfrontends',
@@ -34,11 +35,53 @@ export class MirofrontendsComponent extends NavigationComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-
-      this.confirmationDialogs.okCancel("Add", "Are you sure").subscribe(result => console.log(result))
+      this.loadManifestFrom(result)
     });
   }
+
+  loadManifestFrom(url: string) {
+    try {
+        let asUrl = new URL(url)
+
+        fetch(url + "/assets/manifest.json").then(async (response) => {
+            if ( response.ok) {
+                let manifest = await response.json()
+
+                // check for duplicates
+
+                for ( let manifest of this.manifests)
+                  if ( manifest.remoteEntry == url) {
+                      this.confirmationDialogs.okCancel("Remote", "Already registered").subscribe(result => console.log(result))
+                      return
+                  }
+
+
+                ManifestDecorator.decorate(manifest)
+
+                this.manifests.push(manifest) // TODO: server
+            }
+            else {
+                this.confirmationDialogs.okCancel("Remote", "Error fetching manifest").subscribe(result => console.log(result))
+            }
+        })
+    }
+    catch(e) {
+        this.confirmationDialogs.okCancel("Remote", "Invalid URL").subscribe(result => console.log(result))
+        return
+    }
+  }
+
+  removeManifest(manifest: Manifest) {
+    // TODO: server
+    this.manifests.splice(this.manifests.indexOf(manifest), 1)
+  }
+
+  private decorateManifests(manifests: Manifest[]) : Manifest[] {
+    for (let manifest of manifests)
+      ManifestDecorator.decorate(manifest)
+
+      return manifests
+}
 
   // implement OnInit
 
@@ -46,7 +89,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     super.ngOnInit()
 
     this.introspectionService.getManifests().subscribe((manifests) =>
-      this.$manifests.next(this.manifests = manifests)
+      this.$manifests.next(this.manifests = this.decorateManifests(manifests))
     )
   }
 }
