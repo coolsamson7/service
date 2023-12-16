@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { PortalAdministrationService, PortalIntrospectionService } from "./service";
-import { Manifest } from "./model";
+import { Address, Manifest } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
@@ -30,7 +30,7 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   onChangedEnabled(manifest: Manifest) {
-      this.portalAdministrationService.saveManifest(manifest)
+      this.portalAdministrationService.saveManifest(manifest).subscribe(result => console.log(result))
   }
 
   addManifest() {
@@ -38,9 +38,17 @@ export class MirofrontendsComponent extends NavigationComponent {
       data: {remote: ""},
     });
 
-    dialogRef.afterClosed().subscribe(url => {
+    dialogRef.afterClosed().subscribe(remote => {
       //this.loadManifestFrom(result)
-        this.portalAdministrationService.addManifest(url).subscribe(manifest => this.manifests.push(ManifestDecorator.decorate(manifest)))
+        let url = new URL(remote)
+
+        let address : Address = {
+            protocol: url.protocol,
+            host: url.hostname,
+            port: +url.port
+
+        }
+        this.portalAdministrationService.registerMicrofrontend(address).subscribe(manifest => this.manifests.push(ManifestDecorator.decorate(manifest)))
     });
   }
 
@@ -81,13 +89,19 @@ export class MirofrontendsComponent extends NavigationComponent {
           if (result) {
               this.manifests.splice(this.manifests.indexOf(manifest), 1)
 
-              this.portalAdministrationService.removeManifest(manifest.remoteEntry)
+              let url = new URL(manifest.remoteEntry)
+              let address : Address = {
+                  protocol: url.protocol,
+                  host: url.hostname,
+                  port: +url.port
+              }
+              this.portalAdministrationService.removeMicrofrontend(address).subscribe(_ => console.log("ok"))
           }
       })
   }
 
    saveManifest(manifest: Manifest) {
-        this.portalAdministrationService.saveManifest(manifest)
+        this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
     }
 
   private decorateManifests(manifests: Manifest[]) : Manifest[] {

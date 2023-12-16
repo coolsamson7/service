@@ -5,7 +5,7 @@ package com.serious.portal
  * All rights reserved
  */
 
-import com.serious.portal.model.Manifest
+import com.serious.portal.model.*
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import org.springframework.web.bind.annotation.*
@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalAdministrationService : Service {
-    @PostMapping("add-manifest/")
-    fun addManifest(@RequestBody() url : String) : Manifest?
+    @PostMapping("register-microfrontend/")
+    @ResponseBody
+    fun registerMicrofrontend(@RequestBody url : Address) : Manifest?
 
-    @PostMapping("remove-manifest/")
-    fun removeManifest(@RequestBody() url : String)
+    @PostMapping("remove-microfrontend/")
+    fun removeMicrofrontend(@RequestBody url : Address)
 
     @PostMapping("save-manifest/")
+    @ResponseBody
     fun saveManifest(@RequestBody manifest : Manifest) : String
 }

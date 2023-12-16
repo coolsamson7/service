@@ -8,6 +8,7 @@ package com.serious.service.administration.portal.impl
 import com.serious.portal.ManifestLoader
 import com.serious.portal.ManifestManager
 import com.serious.portal.PortalAdministrationService
+import com.serious.portal.model.Address
 import com.serious.portal.model.Manifest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -23,18 +24,26 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var manifestLoader: ManifestLoader
 
     // implement PortalAdministrationService
-    override fun addManifest(url: String): Manifest? {
-        try {
-            return manifestManager.register(manifestLoader.load(URL(url)))
-        }
-        catch (exception: Exception) {
-            return null
-        }
+    override fun registerMicrofrontend(address: Address): Manifest? {
+        val url = URL(address.protocol + "//" + address.host + ":" + address.port).toString()
+        val result: Manifest? = manifestManager.manifests.find { manifest -> manifest.remoteEntry == url }
+        // check for duplicates
 
-        return null
+        if (result != null)
+            return result
+        else {
+            try {
+                return manifestManager.register(manifestLoader.load(URL(url)))
+            }
+            catch (exception: Exception) {
+                return null
+            }
+        }
     }
 
-    override fun removeManifest(url: String) {
+    override fun removeMicrofrontend(address: Address) {
+        val url = URL(address.protocol + "//" + address.host + ":" + address.port).toString()
+
         manifestManager.remove(url)
     }
 

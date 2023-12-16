@@ -8,7 +8,7 @@ import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { RegisterService } from "../../common/communication/register-service.decorator";
 import { AbstractHTTPService } from "../../common/communication/abstract-http-service";
-import { Deployment, Manifest } from "../model";
+import { Address, Deployment, Manifest } from "../model";
 
 @Injectable({providedIn: 'root'})
 @RegisterService({domain: "admin", prefix: "/portal-administration/"})
@@ -19,14 +19,15 @@ export class PortalAdministrationService extends AbstractHTTPService {
 		super(injector)
 	}
 
-	// public methods
 
-    public addManifest(url: String) : Observable<Manifest> {
-        return this.post<Manifest>(`add-manifest/`, url)
+
+	// public methods
+    public registerMicrofrontend(url: Address) : Observable<Manifest> {
+        return this.post<Manifest>(`register-microfrontend/`, url)
     }
 
-    public removeManifest(url: String) : Observable<Deployment> {
-        return this.post<Deployment>(`remove-manifest/`, url)
+    public removeMicrofrontend(url: Address) : Observable<any> {
+        return this.post<any>('remove-microfrontend/', url)
     }
 
     public saveManifest(manifest: Manifest) : Observable<Manifest> {

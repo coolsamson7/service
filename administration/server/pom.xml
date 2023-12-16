@@ -138,6 +138,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <executable>true</executable>
+                    <jvmArguments>-Dfile.encoding=UTF8 -Dserver.tomcat.uri-encoding=UTF8</jvmArguments>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
