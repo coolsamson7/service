@@ -32,4 +32,19 @@ class ManifestManager {
 
         return manifest
     }
+
+    fun remove(url: String) {
+        manifests.removeIf { manifest -> manifest.remoteEntry == url}
+    }
+
+    fun save(manifest: Manifest) {
+        val index = manifests.indexOfFirst { manifest -> manifest.remoteEntry == manifest.remoteEntry }
+
+        if ( index >= 0) {
+            manifests[index] = manifest
+        }
+        else {
+            manifests.add(manifest)
+        }
+    }
 }

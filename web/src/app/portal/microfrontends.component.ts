@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { PortalIntrospectionService } from "./service";
+import { PortalAdministrationService, PortalIntrospectionService } from "./service";
 import { Manifest } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
@@ -21,7 +21,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
   // constructor
 
-  constructor(private introspectionService : PortalIntrospectionService, private dialog : MatDialog, private confirmationDialogs: ConfirmationDialogs) {
+  constructor(private introspectionService : PortalIntrospectionService, private portalAdministrationService: PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs: ConfirmationDialogs) {
     super()
   }
 
@@ -29,13 +29,18 @@ export class MirofrontendsComponent extends NavigationComponent {
     console.log("CLICK")
   }
 
+  onChangedEnabled(manifest: Manifest) {
+      this.portalAdministrationService.saveManifest(manifest)
+  }
+
   addManifest() {
     const dialogRef = this.dialog.open(AddManifestDialog, {
       data: {remote: ""},
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.loadManifestFrom(result)
+    dialogRef.afterClosed().subscribe(url => {
+      //this.loadManifestFrom(result)
+        this.portalAdministrationService.addManifest(url).subscribe(manifest => this.manifests.push(ManifestDecorator.decorate(manifest)))
     });
   }
 
@@ -58,7 +63,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
                 ManifestDecorator.decorate(manifest)
 
-                this.manifests.push(manifest) // TODO: server
+                this.manifests.push(manifest)
             }
             else {
                 this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
@@ -72,9 +77,18 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   removeManifest(manifest: Manifest) {
-    // TODO: server
-    this.manifests.splice(this.manifests.indexOf(manifest), 1)
+      this.confirmationDialogs.okCancel("Remove Manifest", "are you sure?").subscribe(result => {
+          if (result) {
+              this.manifests.splice(this.manifests.indexOf(manifest), 1)
+
+              this.portalAdministrationService.removeManifest(manifest.remoteEntry)
+          }
+      })
   }
+
+   saveManifest(manifest: Manifest) {
+        this.portalAdministrationService.saveManifest(manifest)
+    }
 
   private decorateManifests(manifests: Manifest[]) : Manifest[] {
     for (let manifest of manifests)

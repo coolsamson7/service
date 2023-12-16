@@ -68,13 +68,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('visibilityAuto') visibilityAutocomplete: MatAutocomplete;
 
   filteredPermissions: Observable<string[]>;
-  allPermissions: string[] = ['read', 'write'];
+  allPermissions: string[] = [];
 
   filteredTags: Observable<string[]>;
-  allTags: string[] = ['tag1', 'tag2'];
+  allTags: string[] = [];
 
   filteredCategories: Observable<string[]>;
-  allCategories: string[] = ['cat1', 'cat2'];
+  allCategories: string[] = [];
 
   filteredVisibility: Observable<string[]>;
   allVisibilities: string[] = ['public', 'private'];

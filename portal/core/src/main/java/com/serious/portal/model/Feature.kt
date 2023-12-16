@@ -17,6 +17,7 @@ data class FeatureModule(
 )
 data class Feature(
     var id : String,
+    var enabled: Boolean = true,
     var parent : String? = null,
     var description : String? = null,
     var label : String? = null,

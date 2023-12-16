@@ -5,14 +5,22 @@ package com.serious.portal
  * All rights reserved
  */
 
+import com.serious.portal.model.Manifest
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 
 @ServiceInterface
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalAdministrationService : Service {
+    @PostMapping("add-manifest/")
+    fun addManifest(@RequestBody() url : String) : Manifest?
+
+    @PostMapping("remove-manifest/")
+    fun removeManifest(@RequestBody() url : String)
+
+    @PostMapping("save-manifest/")
+    fun saveManifest(@RequestBody manifest : Manifest) : String
 }

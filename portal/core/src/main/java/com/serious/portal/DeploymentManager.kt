@@ -28,6 +28,12 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
     // constructor
 
+    init {
+        filterManifest { manifest -> manifest.enabled }
+        filterFeature { feature -> feature.enabled }
+        // TODO: session
+    }
+
     // fluent
 
     fun filterManifest(filter: ManifestFilter): DeploymentManager {

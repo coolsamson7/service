@@ -25,7 +25,7 @@
 
           <mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon>
           <mat-icon class="icon" (click)="removeManifest(manifest)">remove_circle</mat-icon>
-          <mat-slide-toggle color="primary" class="toggle" [(ngModel)]="manifest.enabled"></mat-slide-toggle>
+          <mat-slide-toggle color="primary" class="toggle" [(ngModel)]="manifest.enabled" (ngModelChange)="onChangedEnabled(manifest)"></mat-slide-toggle>
         </mat-list-item>
 
         <mat-divider></mat-divider>
