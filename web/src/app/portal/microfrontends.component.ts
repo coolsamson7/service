@@ -1,8 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { PortalIntrospectionService } from "./service";
 import { Manifest } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
+import { MatDialog } from "@angular/material/dialog";
+import { AddManifestDialog } from "./add-manifest-dialog";
 
 @Component({
   selector: 'microfrontends',
@@ -12,17 +14,28 @@ import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 export class MirofrontendsComponent extends NavigationComponent {
   // instance data
 
-  manifests: Manifest[] = []
+  manifests : Manifest[] = []
   $manifests = new ReplaySubject<Manifest[]>(1);
 
   // constructor
 
-  constructor(private introspectionService: PortalIntrospectionService) {
+  constructor(private introspectionService : PortalIntrospectionService, private dialog : MatDialog) {
     super()
   }
 
-  selectManifest(manifest: Manifest) {
+  selectManifest(manifest : Manifest) {
     console.log("CLICK")
+  }
+
+  addManifest() {
+    const dialogRef = this.dialog.open(AddManifestDialog, {
+      data: {remote: ""},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+
+    });
   }
 
   // implement OnInit

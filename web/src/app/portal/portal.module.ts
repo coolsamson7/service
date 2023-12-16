@@ -15,16 +15,21 @@ import { MatLineModule, MatOptionModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatLegacyChipsModule } from "@angular/material/legacy-chips";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatDialogModule } from "@angular/material/dialog";
+import { AddManifestDialog } from "./add-manifest-dialog";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
     MirofrontendsComponent,
-    MicrofrontendDetailsComponent
+    MicrofrontendDetailsComponent,
+    AddManifestDialog
   ],
   imports: [
     CommonModule,
     RouterModule,
     MatListModule,
+    MatButtonModule,
     MatTabsModule,
     MatInputModule,
     MatOptionModule,
@@ -37,7 +42,8 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     MatChipsModule,
     MatSlideToggleModule,
     MatLegacyChipsModule,
-    MatLineModule
+    MatLineModule,
+    MatDialogModule
   ]
 })
 export class PortalModule { }
