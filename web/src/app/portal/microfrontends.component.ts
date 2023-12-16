@@ -5,6 +5,7 @@ import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
+import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
 
 @Component({
   selector: 'microfrontends',
@@ -19,7 +20,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
   // constructor
 
-  constructor(private introspectionService : PortalIntrospectionService, private dialog : MatDialog) {
+  constructor(private introspectionService : PortalIntrospectionService, private dialog : MatDialog, private confirmationDialogs: ConfirmationDialogs) {
     super()
   }
 
@@ -35,6 +36,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
 
+      this.confirmationDialogs.okCancel("Add", "Are you sure").subscribe(result => console.log(result))
     });
   }
 

@@ -18,12 +18,14 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatDialogModule } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfirmationDialog } from "./dialog/confirmation-dialog";
 
 @NgModule({
   declarations: [
     MirofrontendsComponent,
     MicrofrontendDetailsComponent,
-    AddManifestDialog
+    AddManifestDialog,
+    ConfirmationDialog
   ],
   imports: [
     CommonModule,

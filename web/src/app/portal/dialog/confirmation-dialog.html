@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+  {{data.message}}
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button *ngFor="let button of data.buttons"(click)="click(button)" [color]="button.primary == true ? 'primary' : 'basic'" [mat-dialog-close]="button.result">
+    {{button.label}}
+  </button>
+</div>
+
