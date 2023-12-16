@@ -14,12 +14,23 @@
   <!-- manifest list -->
 
   <div  *ngIf="outlet.isActivated == false" class="left">
-    <mat-list role="list">
-      <a mat-list-item *ngFor="let manifest of manifests"  [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem">
-        <mat-icon>language</mat-icon>
-        {{manifest.name}}
-      </a>
-    </mat-list>
+    <mat-nav-list>
+      <ng-container *ngFor="let manifest of manifests">
+        <mat-list-item class="manifest">
+          <a [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem" (click)="selectManifest(manifest)">
+            <mat-icon>language</mat-icon>
+            {{manifest.name}}
+          </a>
+
+          <mat-icon class="icon">add_circle</mat-icon>
+          <mat-icon class="icon">remove_circle</mat-icon>
+          <mat-slide-toggle class="toggle"></mat-slide-toggle>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+      </ng-container>
+
+    </mat-nav-list>
   </div>
 
   <!-- router outlet -->

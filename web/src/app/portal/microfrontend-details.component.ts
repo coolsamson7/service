@@ -103,9 +103,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   setManifest(manifestName: string) {
     this.model.uri = this.uuid + manifestName // will be set in onInit
 
-    this.manifest = this.microfrontendsComponent.manifests.find((manifest) => manifest.name == manifestName)
-
-    console.log(this.manifest)
+    this.microfrontendsComponent.$manifests.subscribe(manifests => this.manifest = manifests.find((manifest) => manifest.name == manifestName))
   }
 
   selectFeature(feature: Feature) {

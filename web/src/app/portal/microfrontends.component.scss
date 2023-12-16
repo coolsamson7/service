@@ -21,3 +21,25 @@
   height: 100%;
   flex-grow: 4
 }
+
+.manifest {
+  a {
+    text-decoration: none;
+    color: black;
+  }
+
+  .icon {
+    visibility: hidden;
+    float: right;
+  }
+
+  .toggle {
+    float: right;
+  }
+}
+
+.manifest:hover {
+  .icon {
+    visibility: visible;
+  }
+}

@@ -24,7 +24,7 @@
             <div>{{manifest.remoteEntry}}</div>
           </div>
 
-          <hr/>
+          <mat-divider></mat-divider>
 
           <!--  body -->
 
@@ -32,10 +32,17 @@
             <!-- features -->
 
             <div class="features">
-              <mat-nav-list>
-                <a mat-list-item *ngFor="let feature of manifest.features" role="listitem" (click)="selectFeature(feature)">
-                  {{feature.id == "" ? "Root" : feature.id}}
-                </a>
+              <mat-nav-list dense>
+                <ng-container *ngFor="let feature of manifest.features">
+                  <a class="item" mat-list-item role="listitem" (click)="selectFeature(feature)">
+                    <mat-icon matListItemIcon>view_array</mat-icon>
+                    <span>{{feature.id == "" ? "Root" : feature.id}}</span>
+                    <mat-slide-toggle></mat-slide-toggle>
+                  </a>
+                  <mat-divider></mat-divider>
+                </ng-container>
+
+
               </mat-nav-list>
             </div>
 

@@ -11,9 +11,10 @@ import { MicrofrontendDetailsComponent } from "./microfrontend-details.component
 import { MonacoEditorModule } from "../widgets/monaco-editor/monaco-editor.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatOptionModule } from "@angular/material/core";
+import { MatLineModule, MatOptionModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatLegacyChipsModule } from "@angular/material/legacy-chips";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,9 @@ import { MatLegacyChipsModule } from "@angular/material/legacy-chips";
     ReactiveFormsModule,
     MonacoEditorModule,
     MatChipsModule,
-    MatLegacyChipsModule
+    MatSlideToggleModule,
+    MatLegacyChipsModule,
+    MatLineModule
   ]
 })
 export class PortalModule { }
