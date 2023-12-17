@@ -12,10 +12,10 @@
 
             <mat-toolbar>
                 <mat-toolbar-row>
-                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                    <button mat-icon-button class="example-icon" [disabled]="!isDirty" (click)="save()">
                         <mat-icon>save</mat-icon>
                     </button>
-                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                    <button mat-icon-button class="example-icon"   [disabled]="!isDirty" (click)="revert()">
                         <mat-icon>undo</mat-icon>
                     </button>
                 </mat-toolbar-row>
@@ -61,46 +61,42 @@
 
             <!-- details -->
 
-            <div class="feature-details" >
-              <!-- id -->
-
-              <form *ngIf="selectedFeature != undefined">
+              <form class="feature-details" #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" novalidate>
                 <mat-form-field>
                   <mat-label>Id</mat-label>
-                  <input type="text" matInput name="id" id="id" [(ngModel)]="selectedFeature.id">
+                  <input type="text" matInput id="id" name="id" formControlName="id">
                 </mat-form-field>
 
                 <!-- visibility -->
 
-                <mat-form-field class="chips">
+                <mat-form-field>
                   <mat-label>Visibility</mat-label>
-                    <chips [(ngModel)]="selectedFeature.visibility" [allValues]="allVisibilities" placeholder="Add visibility" name="visibilities"></chips>
+                    <chips [allValues]="allVisibilities" placeholder="Add visibility" id="visibility" name="visibility" formControlName="visibility"></chips>
                 </mat-form-field>
 
                 <!-- permissions -->
 
-                <mat-form-field class="chips">
+                <mat-form-field>
                     <mat-label>Permissions</mat-label>
-                    <chips [(ngModel)]="selectedFeature.permissions" [allValues]="allPermissions" placeholder="Add permission" name="permissions"></chips>
+                    <chips [allValues]="allPermissions" placeholder="Add permission" id="permissions" name="permissions" formControlName="permissions"></chips>
                 </mat-form-field>
 
                   <!-- category -->
 
-                  <mat-form-field class="chips">
+                  <mat-form-field>
                       <mat-label>Categories</mat-label>
-                      <chips [(ngModel)]="selectedFeature.categories" [allValues]="allCategories" placeholder="Add category" name="categories"></chips>
+                      <chips [allValues]="allCategories" placeholder="Add category" id="categories" name="categories" formControlName="categories"></chips>
                   </mat-form-field>
 
                   <!-- tags -->
 
-                  <mat-form-field class="chips">
+                  <mat-form-field>
                       <mat-label>Tags</mat-label>
-                      <chips [(ngModel)]="selectedFeature.tags" [allValues]="allTags" placeholder="Add tag" name="tags"></chips>
+                      <chips [allValues]="allTags" placeholder="Add tag" id="tags" name="tags"  formControlName="tags"></chips>
                   </mat-form-field>
               </form>
             </div>
           </div>
-        </div>
       </mat-tab>
 
       <!-- raw -->
