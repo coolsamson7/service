@@ -1,4 +1,5 @@
-<mat-chip-list #chipList aria-label="Visibility selection">
+<mat-chip-list #chipList aria-label="Visibility selection"  (focusin)="onFocusIn($event)"
+               (focusout)="onFocusOut($event)">
     <mat-chip *ngFor="let value of values" [removable]="true" (removed)="remove(value)">
         {{value}}
         <mat-icon matChipRemove>cancel</mat-icon>

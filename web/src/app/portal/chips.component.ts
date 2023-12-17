@@ -1,14 +1,13 @@
-import { AbstractControlDirective,
+import {
     ControlValueAccessor,
     FormControl,
-    NG_VALUE_ACCESSOR,
     NgControl
 } from "@angular/forms";
 
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
-import { Component, ElementRef, Inject, Input, OnDestroy, Optional, Self, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostBinding, Inject, Input, OnDestroy, Optional, Self, ViewChild } from "@angular/core";
 import { map, Observable, startWith, Subject } from "rxjs";
 import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from "@angular/material/form-field";
 
@@ -17,42 +16,55 @@ import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from "@angular/mate
     selector: 'chips',
     templateUrl: "chips.component.html",
     styleUrls: ["chips.component.scss"],
-    providers: [
-        {provide: MatFormFieldControl, useExisting: ChipsComponent}
-        /*{
-            provide: NG_VALUE_ACCESSOR,
-            multi:true,
-            useExisting: ChipsComponent
-        }*/
-    ]
+    providers: [{provide: MatFormFieldControl, useExisting: ChipsComponent}]
 })
-export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl<ChipsComponent>, OnDestroy {
+export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl<string[]>, OnDestroy {
+    // constants
+
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
+
+    static nextId = 0;
+
     // input
 
     @Input() allValues : string[] = [];
-    @Input() placeholder : string
+    @Input()
+    get placeholder() {
+        return this._placeholder;
+    }
+    set placeholder(placeholder) {
+        this._placeholder = placeholder;
+
+        this.stateChanges.next();
+    }
+    private _placeholder: string;
 
     // instance data
 
     values : string[] = [];
-    onChange = (value) => {
-    };
-    onTouched = () => {
-    };
+    onChange = (value) => {};
+    onTouched = () => {};
 
     touched = false;
-    disabled = false;
+    @Input()
+    get disabled(): boolean { return this._disabled; }
+    set disabled(value: boolean) {
+        this._disabled = value;
+        // TODO?
 
-    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+        this.stateChanges.next();
+    }
+    private _disabled = false;
+
+    filteredValues : Observable<string[]>;
+    formControl = new FormControl();
+    stateChanges = new Subject<void>();
+
+    // children
 
     @ViewChild('input') input : ElementRef<HTMLInputElement>;
     @ViewChild('autocomplete') autocomplete : MatAutocomplete;
-
-    filteredValues : Observable<string[]>;
-
-    formControl = new FormControl();
-
-    stateChanges = new Subject<void>();
 
     // constructor
 
@@ -60,14 +72,32 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
                 @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
                 @Optional() @Self() public ngControl: NgControl,
     ) {
-        if (this.ngControl != null) {
+        if (this.ngControl != null)
             this.ngControl.valueAccessor = this;
-        }
 
         this.filteredValues = this.formControl.valueChanges.pipe(
             startWith(null),
             map((value : string | null) => value ? this.filterValues(value) : this.allValues.slice()));
     }
+
+    // callbacks
+
+    onFocusIn(event: FocusEvent) {
+        if (!this.focused) {
+            this.focused = true;
+            this.stateChanges.next();
+        }
+    }
+
+    onFocusOut(event: FocusEvent) {
+        if (!this._elementRef.nativeElement.contains(event.relatedTarget as Element)) {
+            this.touched = true;
+            this.focused = false;
+            this.onTouched();
+            this.stateChanges.next();
+        }
+    }
+
 
     // private
 
@@ -78,13 +108,11 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     }
 
     add(event: MatChipInputEvent): void {
-        if (!this.autocomplete.isOpen) {
-            this.markAsTouched()
-
+        if (!this.autocomplete.isOpen && event.value) {
             const input = event.input;
-            const value = event.value;
+            const value = event.value.trim();
 
-            if ((value || '').trim()) {
+            if (value.length > 0 && !this.values.includes(value)) {
                 this.values = [...this.values, value.trim()]
 
                 this.markAsTouched()
@@ -114,9 +142,11 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     selected(event: MatAutocompleteSelectedEvent): void {
         this.markAsTouched()
 
-        this.values.push(event.option.viewValue);
+        let add = event.option.viewValue
 
-        this.onChange([...this.values])
+        if ( !this.values.includes(add)) {
+            this.onChange([...this.values, add])
+        }
 
         this.input.nativeElement.value = '';
         this.formControl.setValue(null);
@@ -150,17 +180,42 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     // implement MatFormFieldControl
 
 
-    value: ChipsComponent;
+    @Input()
+    get value(): string[] | null {
+       return this.values
+    }
+    set value(value: string[] | null) {
+        this.values = value
+
+        this.stateChanges.next();
+    }
+
+    //value: ChipsComponent;
     //stateChanges: Observable<void>;
-    id: string;
+    @HostBinding()
+    id: string = `chips-${ChipsComponent.nextId++}`
     //placeholder: string;
     //ngControl: NgControl | AbstractControlDirective;
     focused: boolean;
-    empty: boolean;
-    shouldLabelFloat: boolean;
-    required: boolean;
-    errorState: boolean;
-    controlType?: string;
+    //empty: boolean;
+    get empty() {
+      return this.values.length == 0;
+    }
+    @HostBinding('class.floating')
+    get shouldLabelFloat() {
+        return this.focused || !this.empty;
+    }
+    @Input()
+    get required() {
+        return this._required;
+    }
+    set required(req: boolean) {
+        this._required = req;
+        this.stateChanges.next();
+    }
+    private _required = false;
+    errorState: boolean = false
+    controlType = "chips";
     autofilled?: boolean;
     userAriaDescribedBy?: string;
 
@@ -171,9 +226,9 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
         //throw new Error("Method not implemented.");
     }
 
-
     // implement OnDestroy
 
     ngOnDestroy() {
+        this.stateChanges.complete();
     }
 }
