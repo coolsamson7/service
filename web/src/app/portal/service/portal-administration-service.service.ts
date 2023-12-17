@@ -23,11 +23,11 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
 	// public methods
     public registerMicrofrontend(url: Address) : Observable<Manifest> {
-        return this.post<Manifest>(`register-microfrontend/`, url)
+        return this.post<Manifest>(`register-microfrontend`, url)
     }
 
     public removeMicrofrontend(url: Address) : Observable<any> {
-        return this.post<any>('remove-microfrontend/', url)
+        return this.post<any>('remove-microfrontend', url)
     }
 
     public saveManifest(manifest: Manifest) : Observable<Manifest> {

@@ -8,23 +8,36 @@
 
       <mat-tab label="Details">
         <div class="details">
-          <!-- header -->
+          <!-- toolbar -->
 
-          <div class="header">
-            <mat-label>Name</mat-label>
-            <div>{{manifest.name}}</div>
+            <mat-toolbar>
+                <mat-toolbar-row>
+                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                        <mat-icon>undo</mat-icon>
+                    </button>
+                </mat-toolbar-row>
+            </mat-toolbar>
 
-            <mat-label>Version</mat-label>
-            <div>{{manifest.version}}</div>
+            <!-- header -->
 
-            <mat-label>Commit</mat-label>
-            <div>{{manifest.commitHash}}</div>
+            <div class="header">
+                <mat-label>Name</mat-label>
+                <div>{{manifest.name}}</div>
 
-            <mat-label>Remote</mat-label>
-            <div>{{manifest.remoteEntry}}</div>
-          </div>
+                <mat-label>Version</mat-label>
+                <div>{{manifest.version}}</div>
 
-          <mat-divider></mat-divider>
+                <mat-label>Commit</mat-label>
+                <div>{{manifest.commitHash}}</div>
+
+                <mat-label>Remote</mat-label>
+                <div>{{manifest.remoteEntry}}</div>
+            </div>
+
+            <mat-divider></mat-divider>
 
           <!--  body -->
 
@@ -57,76 +70,33 @@
                   <input type="text" matInput name="id" id="id" [(ngModel)]="selectedFeature.id">
                 </mat-form-field>
 
-                <!-- we need AN/AUS :-) -->
-
                 <!-- visibility -->
 
                 <mat-form-field class="chips">
                   <mat-label>Visibility</mat-label>
-
-                  <mat-chip-list #visibilityChipList aria-label="Visibility selection">
-                    <mat-chip *ngFor="let visibility of selectedFeature.visibility"
-                              [removable]="true"
-                              (removed)="removeVisibility(visibility)">
-                      {{visibility}}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-
-                    <input
-                      placeholder="New visibility..."
-                      #visibilityInput
-                      [formControl]="visibilityCtrl"
-                      [matAutocomplete]="visibilityAuto"
-                      [matChipInputFor]="visibilityChipList"
-                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                      (matChipInputTokenEnd)="addVisibility($event)">
-                  </mat-chip-list>
-                  <mat-autocomplete #visibilityAuto="matAutocomplete" (optionSelected)="selectedVisibility($event)">
-                    <mat-option *ngFor="let visibility of filteredVisibility | async" [value]="visibility">
-                      {{visibility}}
-                    </mat-option>
-                  </mat-autocomplete>
+                    <chips [(ngModel)]="selectedFeature.visibility" [allValues]="allVisibilities" placeholder="Add visibility" name="visibilities"></chips>
                 </mat-form-field>
 
                 <!-- permissions -->
 
                 <mat-form-field class="chips">
-                  <mat-label>Permissions</mat-label>
-
-                  <mat-chip-list #permissionChipList aria-label="Permission selection">
-                    <mat-chip *ngFor="let permission of selectedFeature.permissions"
-                      [removable]="true"
-                      (removed)="removePermission(permission)">
-                      {{permission}}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-
-                    <input
-                      placeholder="New permission..."
-                      #permissionInput
-                      [formControl]="permissionCtrl"
-                      [matAutocomplete]="permissionAuto"
-                      [matChipInputFor]="permissionChipList"
-                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                      (matChipInputTokenEnd)="addPermission($event)">
-                  </mat-chip-list>
-                  <mat-autocomplete #permissionAuto="matAutocomplete" (optionSelected)="selectedPermission($event)">
-                    <mat-option *ngFor="let permission of filteredPermissions | async" [value]="permission">
-                      {{permission}}
-                    </mat-option>
-                  </mat-autocomplete>
+                    <mat-label>Permissions</mat-label>
+                    <chips [(ngModel)]="selectedFeature.permissions" [allValues]="allPermissions" placeholder="Add permission" name="permissions"></chips>
+                </mat-form-field>
 
                   <!-- category -->
 
+                  <mat-form-field class="chips">
+                      <mat-label>Categories</mat-label>
+                      <chips [(ngModel)]="selectedFeature.categories" [allValues]="allCategories" placeholder="Add category" name="categories"></chips>
+                  </mat-form-field>
+
                   <!-- tags -->
 
-                  <!-- feature toggles -->
-
-                </mat-form-field>
-
-                <!-- categories, tags, featureToggles,
-             -->
-
+                  <mat-form-field class="chips">
+                      <mat-label>Tags</mat-label>
+                      <chips [(ngModel)]="selectedFeature.tags" [allValues]="allTags" placeholder="Add tag" name="tags"></chips>
+                  </mat-form-field>
               </form>
             </div>
           </div>

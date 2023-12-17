@@ -11,6 +11,21 @@
     </ng-container>
   </div>
 
+    <!-- toolbar -->
+
+    <mat-toolbar *ngIf="outlet.isActivated == false">
+        <mat-toolbar-row>
+            <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                <mat-icon>save</mat-icon>
+            </button>
+            <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                <mat-icon>undo</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-divider></mat-divider>
+
   <!-- manifest list -->
 
   <div  *ngIf="outlet.isActivated == false" class="left">

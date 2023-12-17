@@ -19,33 +19,37 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialog } from "./dialog/confirmation-dialog";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { ChipsComponent } from "./chips.component";
 
 @NgModule({
   declarations: [
     MirofrontendsComponent,
     MicrofrontendDetailsComponent,
     AddManifestDialog,
-    ConfirmationDialog
+    ConfirmationDialog,
+      ChipsComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatListModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatInputModule,
-    MatOptionModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatIconModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MonacoEditorModule,
-    MatChipsModule,
-    MatSlideToggleModule,
-    MatLegacyChipsModule,
-    MatLineModule,
-    MatDialogModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatListModule,
+        MatButtonModule,
+        MatTabsModule,
+        MatInputModule,
+        MatOptionModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatIconModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MonacoEditorModule,
+        MatChipsModule,
+        MatSlideToggleModule,
+        MatLegacyChipsModule,
+        MatLineModule,
+        MatDialogModule,
+        MatToolbarModule
+    ]
 })
 export class PortalModule { }

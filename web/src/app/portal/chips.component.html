@@ -1,0 +1,23 @@
+<mat-chip-list #chipList aria-label="Visibility selection">
+    <mat-chip *ngFor="let value of values" [removable]="true" (removed)="remove(value)">
+        {{value}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input
+            [placeholder]="placeholder"
+            #input
+            [formControl]="formControl"
+            [matAutocomplete]="autocomplete"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)">
+
+
+    <mat-autocomplete #autocomplete="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let value of filteredValues | async" [value]="value">
+            {{value}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-chip-list>
+
+

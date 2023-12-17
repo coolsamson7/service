@@ -12,7 +12,7 @@ export class ConfirmationDialogs {
   }
 
   // public
-    ok(title: string, message: querystring) :Observable<boolean> {
+    ok(title: string, message: string) :Observable<boolean> {
         const dialogRef = this.dialog.open(ConfirmationDialog, {
             data: {
                 title: title,
@@ -30,7 +30,7 @@ export class ConfirmationDialogs {
         return dialogRef.afterClosed()
     }
 
-  okCancel(title: string, question) :Observable<boolean> {
+  okCancel(title: string, question: string) :Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmationDialog, {
       data: {
           title: title,
