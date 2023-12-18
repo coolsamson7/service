@@ -64,7 +64,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
           visibility: [[]],
           permissions: [[]],
           categories: [[]],
-          tags: [[]]
+          tags: [[]],
+          //enabled: [true]
           }
       )
   }
@@ -73,6 +74,10 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     save() {
       // copy values from
+
+        let index = this.manifest.features.indexOf(this.selectedFeature)
+
+        this.selectedFeature.enabled = this.enabled[index]
 
         for ( let propertyName in this.dirty)
             this.selectedFeature[propertyName] = this.dirty[propertyName]
@@ -87,6 +92,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     }
 
     revert() {
+      this.enabled = this.manifest.features.map(feature => feature.enabled)
       // will trigger isDirty calculation
         this.selectFeature(this.selectedFeature)
     }
@@ -133,22 +139,41 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   setManifest(manifestName: string) {
     this.model.uri = this.uuid + manifestName // will be set in onInit
 
-    this.microfrontendsComponent.$manifests.subscribe(manifests => this.manifest = this.setManifests(manifests).find((manifest) => manifest.name == manifestName))
+    this.microfrontendsComponent.$manifests.subscribe(manifests => this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)))
   }
 
+  enabled : boolean[]
+
+    reallySetManifest(manifest: Manifest) {
+      this.manifest = manifest
+
+        this.enabled = manifest.features.map(feature => feature.enabled)
+    }
+
   selectFeature(feature: Feature) {
-    this.selectedFeature = feature
+     this.selectedFeature = feature
 
       this.formGroup.setValue({
           id: feature.id,
           visibility: feature.visibility,
           categories: feature.categories,
           tags: feature.tags,
-          permissions: feature.permissions
+          permissions: feature.permissions,
+          //enabled: feature.enabled
       })
   }
 
-  private checkChanges(value: any) {
+    toggleEnabled(index: number) {
+      this.enabled[index] = !this.enabled[index]
+
+        this.checkChanges(this.formGroup.value)
+
+        console.log(this.enabled)
+    }
+
+  checkChanges(value: any) {
+      console.log(value)
+
       const equalArrays = (a, b) => {
         if ( a == undefined || b == undefined)
           return a == b
@@ -165,12 +190,23 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
       let dirty = {}
 
       this.isDirty = false
+
+      console.log("check dirty = " + this.isDirty)
       for (let propertyName in value) {
           if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
               dirty[propertyName] = value[propertyName]
               this.isDirty = true
+
+              console.log("dirty = " + this.isDirty)
           }
       }
+
+      let index = this.manifest.features.indexOf(this.selectedFeature)
+      if (this.selectedFeature.enabled !== this.enabled[index]) {
+          this.isDirty = true
+          dirty["enabled"] = this.enabled[index]
+      }
+
 
       this.dirty = dirty
   }

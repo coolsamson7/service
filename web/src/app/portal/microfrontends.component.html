@@ -34,8 +34,10 @@
         <mat-list-item class="manifest">
           <a [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem" (click)="selectManifest(manifest)">
             <mat-icon>language</mat-icon>
-            {{manifest.name}}
+            <span>
+                {{manifest.name}}
             ({{manifest.version}})
+            </span>
           </a>
 
           <mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon>

@@ -5,7 +5,7 @@
         <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
     <input
-            [placeholder]="placeholder"
+            [placeholder]="focused ? placeholder : ''"
             #input
             [formControl]="formControl"
             [matAutocomplete]="autocomplete"

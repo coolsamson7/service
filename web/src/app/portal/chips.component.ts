@@ -145,7 +145,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
         let add = event.option.viewValue
 
         if ( !this.values.includes(add)) {
-            this.onChange([...this.values, add])
+            this.onChange(this.values= [...this.values, add])
         }
 
         this.input.nativeElement.value = '';

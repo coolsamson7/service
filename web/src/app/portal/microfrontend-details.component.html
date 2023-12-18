@@ -46,11 +46,11 @@
 
             <div class="features">
               <mat-nav-list dense>
-                <ng-container *ngFor="let feature of manifest.features">
+                <ng-container *ngFor="let feature of manifest.features; let index = index">
                   <a class="item" mat-list-item role="listitem" (click)="selectFeature(feature)">
                     <mat-icon matListItemIcon>view_array</mat-icon>
                     <span>{{feature.id == "" ? "Root" : feature.id}}</span>
-                    <mat-slide-toggle color="primary"  [(ngModel)]="feature.enabled"></mat-slide-toggle>
+                    <mat-slide-toggle color="primary"  [disabled] ="selectedFeature !== feature" [ngModel]="enabled[index]" (toggleChange)="toggleEnabled(index)"></mat-slide-toggle>
                   </a>
                   <mat-divider></mat-divider>
                 </ng-container>
@@ -62,7 +62,7 @@
             <!-- details -->
 
               <form class="feature-details" #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" novalidate>
-                <mat-form-field>
+                  <mat-form-field>
                   <mat-label>Id</mat-label>
                   <input type="text" matInput id="id" name="id" formControlName="id">
                 </mat-form-field>

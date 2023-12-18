@@ -25,6 +25,10 @@
     display: grid;
     grid-template-columns: 1fr 4fr;
 
+    .hidden {
+      visibility: hidden;
+    }
+
     .features {
       .mat-mdc-slide-toggle {
         float: right;
