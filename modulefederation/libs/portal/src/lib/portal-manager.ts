@@ -16,6 +16,7 @@ import {TraceLevel, Tracer} from "./tracer";
 export interface FeatureData extends FeatureConfig {
     // computed
 
+    enabled?: boolean
     module? : any
     origin? : string
     path? : string

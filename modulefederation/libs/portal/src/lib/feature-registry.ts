@@ -3,7 +3,7 @@ import {ReplaySubject} from "rxjs";
 import {FeatureConfig, Visibility} from "./feature-config";
 import {FeatureData} from "./portal-manager";
 
-export type FeatureFilter = (feature : FeatureConfig) => boolean
+export type FeatureFilter = (feature : FeatureData) => boolean
 
 @Injectable({providedIn: 'root'})
 export class FeatureRegistry {
@@ -119,6 +119,9 @@ export class FeatureFinder {
     // constructor
 
     constructor(private featureRegistry : FeatureRegistry) {
+        // automatic filter for enabled
+
+        this.filters.push((feature) => feature.enabled == true)
     }
 
     // fluent
