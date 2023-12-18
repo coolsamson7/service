@@ -8,13 +8,15 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 
 import {localRoutes} from "./local.routes";
 import {
-  ConsoleTrace, EndpointLocator, Environment, EnvironmentModule,
-  HTTPDeploymentLoader,
-  LocalDeploymentLoader,
-  PortalModule,
-  Shell,
-  TraceLevel,
-  TracerModule
+    CanActivateGuard,
+    CanDeactivateGuard,
+    ConsoleTrace, EndpointLocator, Environment, EnvironmentModule,
+    HTTPDeploymentLoader,
+    LocalDeploymentLoader,
+    PortalModule,
+    Shell,
+    TraceLevel,
+    TracerModule
 } from "@modulefederation/portal";
 import {
     ActivatedRouteSnapshot,
@@ -39,48 +41,6 @@ import { environment } from "../environments/environment";
 export class AppComponentRouterModule {
 }
 
-
-// TEST
-
-@Injectable({providedIn: 'root'})
-export class ActivateGuard implements CanActivate {
-    // constructor
-
-    constructor(private router : Router) {
-    }
-
-    // implement CanActivate
-
-    /**
-     * @inheritdoc
-     */
-    canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) {
-        let feature = route.data['feature']
-
-        return true
-    }
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class CanDeactivateGuard implements CanDeactivate<any> {
-    // implement CanDeactivate
-
-    /**
-     * @inheritdoc
-     */
-    canDeactivate(
-        component : any,
-        currentRoute : ActivatedRouteSnapshot,
-        currentState : RouterStateSnapshot,
-        nextState? : RouterStateSnapshot
-    ) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        let feature = currentRoute.data['feature']
-
-        return of(true)
-    }
-}
 
 @Injectable({
     providedIn: 'root'
@@ -162,8 +122,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             localManifest: localManifest,
             decorateRoutes: (route : Route) => {
                 route.resolve = {i18n: I18nResolver}
-                route.canActivate = [ActivateGuard]
-                route.canDeactivate = []
+                route.canActivate = [CanActivateGuard]
+                route.canDeactivate = [CanDeactivateGuard]
             }
         }),
     ],
