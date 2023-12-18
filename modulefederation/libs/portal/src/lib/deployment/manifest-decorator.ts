@@ -8,6 +8,7 @@ export class ManifestDecorator {
 
     static FeatureDecorator = new ObjectDecorator()
         .defaultValueFunction("label", (object : any) => object.name)
+        .defaultValue("description", "")
         .defaultValue("tags", [])
         .defaultValue("enabled", true)
         .defaultValue("permissions", [])

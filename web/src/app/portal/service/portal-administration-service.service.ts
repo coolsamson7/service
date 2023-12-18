@@ -34,4 +34,8 @@ export class PortalAdministrationService extends AbstractHTTPService {
     public saveManifest(manifest: Manifest) : Observable<Manifest> {
         return this.post<Manifest>(`save-manifest`, manifest)
     }
+
+    public enableMicrofrontend(name: string, enabled: boolean) : Observable<Manifest> {
+        return this.get<any>(`enable-microfrontend/${name}/${enabled}`)
+    }
 }

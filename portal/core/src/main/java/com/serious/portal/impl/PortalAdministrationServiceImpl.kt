@@ -14,6 +14,7 @@ import com.serious.portal.model.RegistryError
 import com.serious.portal.model.RegistryResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import java.net.MalformedURLException
 import java.net.URL
@@ -68,5 +69,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     override fun saveManifest(manifest: Manifest) {
         manifestManager.save(manifest)
+    }
+
+    override fun enableMicrofrontend(name : String, enabled: Boolean) {
+        manifestManager.enableMicrofrontend(name, enabled)
     }
 }

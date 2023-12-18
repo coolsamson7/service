@@ -47,4 +47,11 @@ class ManifestManager {
             manifests.add(manifest)
         }
     }
+
+    fun enableMicrofrontend(name : String, enabled: Boolean) {
+        val manifest = this.manifests.find { manifest -> manifest.name == name }
+
+        //if ( manifest )
+        manifest?.enabled = enabled
+    }
 }

@@ -25,4 +25,7 @@ interface PortalAdministrationService : Service {
     @PostMapping("save-manifest")
     @ResponseBody
     fun saveManifest(@RequestBody manifest : Manifest)
+
+    @GetMapping("enable-microfrontend/{name}/{enabled}")
+    fun enableMicrofrontend(@PathVariable name : String, @PathVariable enabled: Boolean)
 }

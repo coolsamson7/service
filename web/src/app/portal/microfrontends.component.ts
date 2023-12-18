@@ -30,7 +30,7 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   onChangedEnabled(manifest: Manifest) {
-      this.portalAdministrationService.saveManifest(manifest).subscribe(result => console.log(result))
+      this.portalAdministrationService.enableMicrofrontend(manifest.name, manifest.enabled).subscribe(result => console.log(result))
   }
 
   addManifest() {
