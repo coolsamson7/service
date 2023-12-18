@@ -30,6 +30,11 @@
     }
 
     .features {
+
+      .selected {
+        background-color: darkgrey;
+      }
+
       .mat-mdc-slide-toggle {
         float: right;
       }

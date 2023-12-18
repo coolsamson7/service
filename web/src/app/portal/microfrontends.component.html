@@ -13,9 +13,9 @@
 
     <!-- toolbar -->
 
-    <mat-toolbar *ngIf="outlet.isActivated == false">
+    <mat-toolbar *ngIf="outlet.isActivated == false" class="left">
         <mat-toolbar-row>
-            <button mat-icon-button (click)="addManifest()")>
+            <button mat-icon-button (click)="addManifest()">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
         </mat-toolbar-row>
@@ -31,13 +31,22 @@
         <mat-list-item class="manifest">
           <a [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem" (click)="selectManifest(manifest)">
             <mat-icon>language</mat-icon>
+              <span class="bold">
+                  Name:
+              </span>
             <span>
                 {{manifest.name}}
-            ({{manifest.version}})
             </span>
+              <span class="bold">
+                  Version:
+              </span>
+              <span>
+                  {{manifest.version}}
+              </span>
+              <mat-icon>sentiment_satisfied</mat-icon>
           </a>
 
-          <mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon>
+          <!--mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon-->
           <mat-icon class="icon" (click)="removeManifest(manifest)">remove_circle</mat-icon>
           <mat-slide-toggle color="primary" class="toggle" [(ngModel)]="manifest.enabled" (ngModelChange)="onChangedEnabled(manifest)"></mat-slide-toggle>
         </mat-list-item>
