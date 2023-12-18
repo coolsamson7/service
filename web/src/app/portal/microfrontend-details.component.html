@@ -63,9 +63,14 @@
 
               <form class="feature-details" #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" novalidate>
                   <mat-form-field>
-                  <mat-label>Id</mat-label>
-                  <input type="text" matInput id="id" name="id" formControlName="id">
-                </mat-form-field>
+                      <mat-label>Id</mat-label>
+                      <input type="text" matInput id="id" name="id" formControlName="id">
+                    </mat-form-field>
+
+                  <mat-form-field>
+                      <mat-label>Description</mat-label>
+                      <input type="text" matInput id="description" name="description" formControlName="description">
+                  </mat-form-field>
 
                 <!-- visibility -->
 

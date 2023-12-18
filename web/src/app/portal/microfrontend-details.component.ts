@@ -7,6 +7,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
+import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
 @Component({
   selector: 'microfrontend-details',
   templateUrl: './microfrontend-details.component.html',
@@ -56,16 +57,16 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   // constructor
 
-  constructor(private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute, private microfrontendsComponent: MirofrontendsComponent) {
+  constructor(private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute, private microfrontendsComponent: MirofrontendsComponent, private confirmationDialogs: ConfirmationDialogs) {
     microfrontendsComponent.pushRouteElement(this.element)
 
       this.formGroup = this.formBuilder.group({
           id: [''],
+          description: [''],
           visibility: [[]],
           permissions: [[]],
           categories: [[]],
-          tags: [[]],
-          //enabled: [true]
+          tags: [[]]
           }
       )
   }
@@ -148,13 +149,28 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
       this.manifest = manifest
 
         this.enabled = manifest.features.map(feature => feature.enabled)
+
+        if ( manifest.features.length > 0)
+            this.selectFeature(manifest.features[0])
     }
 
   selectFeature(feature: Feature) {
+      if (feature !== this.selectedFeature && this.isDirty) {
+          this.confirmationDialogs.okCancel("Save", "Save first").subscribe(result => {
+              if ( result == true) {
+                  this.save()
+                  this.isDirty = false
+                  this.selectFeature(feature)
+              }
+          })
+          return
+      }
+
      this.selectedFeature = feature
 
       this.formGroup.setValue({
           id: feature.id,
+          description: feature.description,
           visibility: feature.visibility,
           categories: feature.categories,
           tags: feature.tags,
