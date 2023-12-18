@@ -36,10 +36,23 @@ export class MirofrontendsComponent extends NavigationComponent {
   addManifest() {
     const dialogRef = this.dialog.open(AddManifestDialog, {
       data: {remote: ""},
+        autoFocus: "first-tabbable",
+        restoreFocus: true
     });
 
     dialogRef.afterClosed().subscribe(remote => {
-        let url = new URL(remote)
+        if ( remote == "" || remote == undefined )
+            return
+
+        let url : URL = null
+
+        try {
+            url = new URL(remote)
+        }
+        catch(error) {
+            this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+            return
+        }
 
         let address : Address = {
             protocol: url.protocol,

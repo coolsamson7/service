@@ -1,5 +1,5 @@
 
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
 export interface ConfirmationButton {
@@ -16,7 +16,7 @@ export interface ConfirmationModel {
   selector: 'confirmation-dialog',
   templateUrl: 'confirmation-dialog.html'
 })
-export class ConfirmationDialog {
+export class ConfirmationDialog implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmationModel,
@@ -27,4 +27,22 @@ export class ConfirmationDialog {
   click(button: ConfirmationButton): void {
     this.dialogRef.close(button.result);
   }
+
+  // implement OnInit
+    ngOnInit(): void {
+       let button = this.data.buttons.find(button => button.primary)
+
+        if ( button )
+            this.dialogRef.keydownEvents().subscribe(event => {
+                //if (event.key === "Escape") {
+                //    this.cancel();
+                //}
+
+                if (event.key === "Enter"&& !event.shiftKey) {
+                    event.preventDefault();
+
+                    this.dialogRef.close(button.result);
+                }
+            });
+    }
 }
