@@ -39,16 +39,31 @@ export class MirofrontendsComponent extends NavigationComponent {
     });
 
     dialogRef.afterClosed().subscribe(remote => {
-      //this.loadManifestFrom(result)
         let url = new URL(remote)
 
         let address : Address = {
             protocol: url.protocol,
             host: url.hostname,
             port: +url.port
-
         }
-        this.portalAdministrationService.registerMicrofrontend(address).subscribe(manifest => this.manifests.push(ManifestDecorator.decorate(manifest)))
+        this.portalAdministrationService.registerMicrofrontend(address).subscribe(result => {
+            if ( result.manifest )
+                this.manifests.push(ManifestDecorator.decorate(result.manifest))
+
+            else {
+                switch (result.error) {
+                    case "duplicate":
+                        this.confirmationDialogs.ok("Add Microfrontend", "already registered")
+                        break;
+                    case "malformed_url":
+                        this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+                        break;
+                    case "unreachable":
+                        this.confirmationDialogs.ok("Add Microfrontend", "could not fetch manifest metadata")
+                        break;
+                }
+            }
+        })
     });
   }
 

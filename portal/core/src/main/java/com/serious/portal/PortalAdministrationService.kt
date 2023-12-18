@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalAdministrationService : Service {
-    @PostMapping("register-microfrontend/")
+    @PostMapping("register-microfrontend")
     @ResponseBody
-    fun registerMicrofrontend(@RequestBody url : Address) : Manifest?
+    fun registerMicrofrontend(@RequestBody url : Address) : RegistryResult
 
-    @PostMapping("remove-microfrontend/")
+    @PostMapping("remove-microfrontend")
     fun removeMicrofrontend(@RequestBody url : Address)
 
-    @PostMapping("save-manifest/")
+    @PostMapping("save-manifest")
     @ResponseBody
-    fun saveManifest(@RequestBody manifest : Manifest) : String
+    fun saveManifest(@RequestBody manifest : Manifest)
 }
