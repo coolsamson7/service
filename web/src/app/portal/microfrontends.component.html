@@ -15,11 +15,8 @@
 
     <mat-toolbar *ngIf="outlet.isActivated == false">
         <mat-toolbar-row>
-            <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-                <mat-icon>save</mat-icon>
-            </button>
-            <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-                <mat-icon>undo</mat-icon>
+            <button mat-icon-button (click)="addManifest()")>
+                <mat-icon>add_circle_outline</mat-icon>
             </button>
         </mat-toolbar-row>
     </mat-toolbar>

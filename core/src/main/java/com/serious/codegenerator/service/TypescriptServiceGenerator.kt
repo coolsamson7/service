@@ -191,7 +191,7 @@ class TypescriptServiceGenerator(options: TypescriptOptions) : AbstractTypescrip
 
         // add imports
 
-        this.addImport("Injectable", "Injector", "Observable", "RegisterService", "AbstractHTTPService")
+        this.addImport("Injectable", "Injector", "Observable", "Service", "AbstractHTTPService")
 
         // collect method imports
 
@@ -215,7 +215,7 @@ class TypescriptServiceGenerator(options: TypescriptOptions) : AbstractTypescrip
         // header
 
         val domain = options.domain
-        var register = "@RegisterService({domain: \"$domain\""
+        var register = "@Service({domain: \"$domain\""
         if (prefix != null)
             register += ", prefix: \"$prefix\""
 

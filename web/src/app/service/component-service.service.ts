@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { ComponentDTO } from "../model/component.interface";
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
 import { Healths } from "./update-service.service";
-import { RegisterService } from "../common/communication/register-service.decorator";
+import { Service } from "../common/communication/register-service.decorator";
 import { AbstractHTTPService } from "../common/communication/abstract-http-service";
 import { Server } from "../model/server.interface";
 import { InterfaceDescriptor } from "../model/service.interface";
@@ -11,28 +11,28 @@ import { InterfaceDescriptor } from "../model/service.interface";
 export interface Channel { // TODO
   name: string,
   uri: string[]
-} 
+}
 export type ApplicationChannels = {[ component: string] : Channel}
 
 @Injectable({providedIn: 'root'})
-@RegisterService({domain: "admin", prefix: "/administration"})
+@Service({domain: "admin", prefix: "/administration"})
 export class ComponentService extends AbstractHTTPService {
     // constructor
-    
+
     constructor(injector: Injector){
       super(injector);
     }
-  
+
     // public
-  
+
     public listAll(): Observable<string[]>{
       return this.get<string[]>(`/services`);
     }
 
     /**
-     * 
-     * @param component 
-     * @returns 
+     *
+     * @param component
+     * @returns
      */
     public getDetails(component: String): Observable<ComponentDTO>{
       return this.get<ComponentDTO>(`/component/${component}`);

@@ -62,10 +62,21 @@
             <!-- details -->
 
               <form class="feature-details" #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" novalidate>
+                  <!-- id -->
+
                   <mat-form-field>
                       <mat-label>Id</mat-label>
-                      <input type="text" matInput id="id" name="id" formControlName="id">
-                    </mat-form-field>
+                      <input type="text" [disabled]="true" matInput id="id" name="id" formControlName="id">
+                  </mat-form-field>
+
+                  <!-- label -->
+
+                  <mat-form-field>
+                      <mat-label>Label</mat-label>
+                      <input type="text" matInput id="label" name="label" formControlName="label">
+                  </mat-form-field>
+
+                  <!-- descirption -->
 
                   <mat-form-field>
                       <mat-label>Description</mat-label>
@@ -109,7 +120,7 @@
       <mat-tab label="Raw">
         <!-- component -->
 
-        <!--monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifest" name="body_value" [id]="'body_value'"></monaco-editor-->
+        <!--monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifest" name="raw_manifest" [id]="'raw_manifest'"></monaco-editor-->
 
         <textarea>{{manifest | json}}</textarea>
       </mat-tab>

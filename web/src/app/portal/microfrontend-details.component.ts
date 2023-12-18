@@ -62,6 +62,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
       this.formGroup = this.formBuilder.group({
           id: [''],
+          label: [''],
           description: [''],
           visibility: [[]],
           permissions: [[]],
@@ -170,6 +171,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
       this.formGroup.setValue({
           id: feature.id,
+          label: feature.label,
           description: feature.description,
           visibility: feature.visibility,
           categories: feature.categories,

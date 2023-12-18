@@ -7,11 +7,11 @@
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { Deployment } from "../model/deployment.interface"
-import { RegisterService } from "../../common/communication/register-service.decorator";
+import { Service } from "../../common/communication/register-service.decorator";
 import { AbstractHTTPService } from "../../common/communication/abstract-http-service";
 
 @Injectable({providedIn: 'root'})
-@RegisterService({domain: "admin", prefix: "/portal-administration/"})
+@Service({domain: "admin", prefix: "/portal-administration/"})
 export class PortalDeploymentService extends AbstractHTTPService {
 	// constructor
 
