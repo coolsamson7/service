@@ -167,12 +167,10 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
       this.enabled[index] = !this.enabled[index]
 
         this.checkChanges(this.formGroup.value)
-
-        console.log(this.enabled)
     }
 
   checkChanges(value: any) {
-      console.log(value)
+    // local functions
 
       const equalArrays = (a, b) => {
         if ( a == undefined || b == undefined)
@@ -191,15 +189,14 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
       this.isDirty = false
 
-      console.log("check dirty = " + this.isDirty)
       for (let propertyName in value) {
           if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
               dirty[propertyName] = value[propertyName]
               this.isDirty = true
-
-              console.log("dirty = " + this.isDirty)
           }
       }
+
+      // compare enabled
 
       let index = this.manifest.features.indexOf(this.selectedFeature)
       if (this.selectedFeature.enabled !== this.enabled[index]) {

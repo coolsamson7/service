@@ -132,10 +132,11 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
         const index = this.values.indexOf(value);
 
         if (index >= 0) {
+            this.values = [...this.values]
             this.values.splice(index, 1);
 
             this.markAsTouched()
-            this.onChange(this.values = [...this.values])
+            this.onChange(this.values)
         }
     }
 
