@@ -33,6 +33,12 @@ export class MirofrontendsComponent extends NavigationComponent {
       this.portalAdministrationService.enableMicrofrontend(manifest.name, manifest.enabled).subscribe(result => console.log(result))
   }
 
+  refresh() {
+      this.portalAdministrationService.refresh().subscribe(_ => {
+          this.loadManifests()
+      })
+  }
+
   addManifest() {
     const dialogRef = this.dialog.open(AddManifestDialog, {
       data: {remote: ""},
@@ -137,7 +143,13 @@ export class MirofrontendsComponent extends NavigationComponent {
       ManifestDecorator.decorate(manifest)
 
       return manifests
-}
+    }
+
+    private loadManifests() {
+        this.introspectionService.getManifests().subscribe((manifests) =>
+            this.$manifests.next(this.manifests = this.decorateManifests(manifests))
+        )
+    }
 
   // implement OnInit
 

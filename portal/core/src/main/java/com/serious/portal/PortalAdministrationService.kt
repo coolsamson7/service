@@ -28,4 +28,7 @@ interface PortalAdministrationService : Service {
 
     @GetMapping("enable-microfrontend/{name}/{enabled}")
     fun enableMicrofrontend(@PathVariable name : String, @PathVariable enabled: Boolean)
+
+    @GetMapping("refresh")
+    fun refresh()
 }

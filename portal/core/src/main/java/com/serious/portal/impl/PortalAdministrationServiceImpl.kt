@@ -74,4 +74,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     override fun enableMicrofrontend(name : String, enabled: Boolean) {
         manifestManager.enableMicrofrontend(name, enabled)
     }
+
+    override fun refresh() {
+        manifestManager.refresh()
+    }
 }

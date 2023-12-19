@@ -48,10 +48,25 @@ class ManifestManager {
         }
     }
 
+    fun refresh() {
+        var index = 0
+        for (manifest in manifests) {
+            try {
+                val manifest = loader.load(URL(manifest.remoteEntry))
+
+                manifests[index] = manifest
+            }
+            catch(exception: Throwable) {
+                println(exception.message) // TODO
+            }
+
+            index++
+        }
+    }
+
     fun enableMicrofrontend(name : String, enabled: Boolean) {
         val manifest = this.manifests.find { manifest -> manifest.name == name }
 
-        //if ( manifest )
         manifest?.enabled = enabled
     }
 }

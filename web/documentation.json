@@ -77,9 +77,9 @@
   "directives": [],
   "components": [
     {
-      "name": "AppComponent",
+      "name": "ShellComponent",
       "id": "component-AppComponent-f67707429bf6071d9f65e0f334c7c9e7a222b61c2711a0d2c7afd956f9dceadca761c20886737d53779abecca283beb0e459f5e1501580657d97c16225806559",
-      "file": "src/app/app.component.ts",
+      "file": "src/app/shell.component.ts",
       "encapsulation": [],
       "entryComponents": [],
       "inputs": [],
