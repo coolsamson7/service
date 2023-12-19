@@ -1,12 +1,12 @@
 import {
     AbstractFeature,
-    AuthenticationRequest,
     Feature,
     FeatureData,
-    FeatureRegistry,
+    FeatureRegistry, PortalManager,
     SessionManager
 } from "@modulefederation/portal";
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Feature({
     id: 'public-portal',
@@ -28,9 +28,17 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
 
     // constructor
 
-    constructor(private featureRegistry: FeatureRegistry, private sessionManager: SessionManager) {
+    constructor(private router: Router, private featureRegistry: FeatureRegistry, private sessionManager: SessionManager, private portalManager: PortalManager) {
         super();
+
+        featureRegistry.registry$.subscribe(_=>this.computeNavigation())
     }
+
+    // private
+
+  private computeNavigation() {
+    this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
+  }
 
     // public
 
@@ -40,8 +48,9 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
             password: "admin"
         }).subscribe(
             (session)=> {
-                console.log("ouch")
-                // TODO
+                this.portalManager.loadDeployment(true).then(result =>
+                    this.router.navigate([this.router.url]) // TODO
+                )
             },
             (error) => {
                 console.log("ouch")
@@ -51,6 +60,6 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
     // implement OnInit
 
     ngOnInit() : void {
-        this.features = this.featureRegistry.finder().withTag("navigation").find()
+        this.computeNavigation()
     }
 }

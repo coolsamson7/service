@@ -12,7 +12,7 @@
       "label": "Microfrontend 2",
       "component": "RemoteEntryComponent",
       "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "visibility": ["private"]
     }
   ]
 }

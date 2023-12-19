@@ -23,8 +23,8 @@ export type RouteDecorator = (route : Route) => void
 export const PortalModuleConfigToken = new InjectionToken<PortalModuleConfig>('PortalModuleConfig');
 
 
-function loadPortalConfiguration(configurationService : PortalManager) : () => Promise<void> {
-    return () => configurationService.load();
+function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
+    return () => portalManager.loadDeployment();
 }
 
 @NgModule({
@@ -32,7 +32,7 @@ function loadPortalConfiguration(configurationService : PortalManager) : () => P
     providers: [
         {
             provide: APP_INITIALIZER,
-            useFactory: loadPortalConfiguration,
+            useFactory: loadDeployment,
             multi: true,
             deps: [PortalManager]
         },

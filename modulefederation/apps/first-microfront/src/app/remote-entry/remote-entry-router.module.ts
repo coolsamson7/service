@@ -26,12 +26,7 @@ export const routes: Routes = [
       import('./private-portal/private-portal.module').then(
         (m) => m.PrivatePortalModule
       ),
-  },
-  {
-    path: 'child',
-    loadChildren: () =>
-      import('./child/child-module').then((m) => m.RemoteEntryChildModule),
-  },
+  }
 ];
 
 @NgModule({

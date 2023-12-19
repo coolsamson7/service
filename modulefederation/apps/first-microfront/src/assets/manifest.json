@@ -33,14 +33,6 @@
       "module": {
         "name": "PrivatePortalModule"
       }
-    },
-    {
-      "id": "child",
-      "label": "child",
-      "component": "RemoteEntryChildComponent",
-      "module": {
-        "name": "RemoteEntryChildModule"
-      }
     }
   ]
 }

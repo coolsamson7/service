@@ -5,13 +5,11 @@ import {Feature} from "@modulefederation/portal";
     id: '',
     label: "Microfrontend 2",
     tags: ["navigation"],
-    visibility: ["public", "private"]
+    visibility: ["private"]
 })
 @Component({
     selector: 'second-microfront',
-    template: `<div>Second MFE
-    <feature-outlet feature='first-microfront.child'></feature-outlet>
-  </div>`,
+    template: `<div>Second MF</div>`,
 })
 export class RemoteEntryComponent {
 }

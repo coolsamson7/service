@@ -53,7 +53,7 @@ export class PortalManager {
 
     // constructor
 
-    load() : Promise<void> {
+    loadDeployment(reset = false) : Promise<void> {
       let loader : DeploymentLoader
 
       if ( this.portalConfig.loader.server)
@@ -63,7 +63,7 @@ export class PortalManager {
 
         return loader
             .load()
-            .then((deployment) => this.setupDeployment(deployment))
+            .then((deployment) => this.setupDeployment(deployment, reset))
     }
 
     // private
@@ -122,23 +122,39 @@ export class PortalManager {
     }
 
     private linkRoutes(routes : Routes, features : FeatureData[]) {
+      // local functions
+
+      let featureRoute = (feature: FeatureConfig) => {
+        return feature.router?.path ? feature.router.path : feature.id
+      }
+
+      let findFeature4 = (route: string) => {
+        return features.find(feature => featureRoute(feature) == route)
+      }
+
+      // go
+
         let index = 0
-        for (let route of routes) {
-            if (!route.redirectTo) {
-                let feature = features[index]
+        while (index < routes.length) {
+            let route = routes[index]
 
-                this.link(route, feature)
+            if (!route.redirectTo) { // leave redirects
+                let feature = findFeature4(route.path!!)
 
-                // recursion
+                if ( feature) {
+                  index++
+                  this.link(route, feature)
 
-                if (route.children && route.children.length > 0)
+                  // recursion
+
+                  if (route.children && route.children.length > 0)
                     this.linkRoutes(route.children, feature.children!!)
-
-                // next
-
-                index++
-            }
-        }
+                }
+                else
+                  routes.splice(index, 1)
+            } // if
+          else index++
+        } // while
     }
 
     private buildRoutes(deployment : Deployment, localRoutes : Routes) : Routes {
@@ -175,6 +191,7 @@ export class PortalManager {
 
         this.linkRoutes(localRoutes, localFeatures)
 
+        console.log([...localRoutes, ...lazyRoutes]) // TODO
         // done
 
         return [...localRoutes, ...lazyRoutes]
@@ -195,11 +212,15 @@ export class PortalManager {
 
     // public
 
-    private setupDeployment(deployment : Deployment) {
+    private setupDeployment(deployment : Deployment, reset: boolean) {
         ;(window as any)["deployment"] = () => {
             console.log(deployment)
         }
 
+        // possibly reset feature registry
+
+        if ( reset )
+            this.featureRegistry.reset()
 
         // add local manifest
 
@@ -220,8 +241,6 @@ export class PortalManager {
             let module = deployment.modules[moduleName]
 
             ManifestDecorator.decorate(module)
-
-          console.log(JSON.stringify(module, null, 2))
 
             module.isLoaded = false
 

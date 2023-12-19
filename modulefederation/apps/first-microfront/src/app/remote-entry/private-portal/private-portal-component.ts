@@ -22,11 +22,20 @@ export class PrivatePortalComponent extends AbstractFeature implements OnInit {
     // constructor
     constructor(private featureRegistry: FeatureRegistry) {
         super();
+
+        featureRegistry.registry$.subscribe(_ => this.computeNavigation())
     }
 
-    // implement OnInit
+    // private
+
+  private computeNavigation() {
+    this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
+  }
+
+
+  // implement OnInit
 
     ngOnInit() : void {
-        this.features = this.featureRegistry.finder().withTag("navigation").find()
+        this.computeNavigation()
     }
 }

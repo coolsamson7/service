@@ -1,37 +1,55 @@
-import {ComponentRef, Directive, Input, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
-import {FeatureRegistry} from '../feature-registry';
-import {FeatureData} from "../portal-manager";
+import {ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
+  ViewContainerRef
+} from '@angular/core';
+import { FeatureRegistry } from '../feature-registry';
+import { FeatureData } from "../portal-manager";
 
 /**
  * this directive is able to render the specified feature in the surrounding container
  */
 @Directive({
-    selector: 'feature-outlet'
+  selector: 'feature-outlet'
 })
-export class FeatureOutletDirective implements OnInit, OnDestroy {
-    // inputs & outputs
+export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
+  // inputs & outputs
 
-    /**
-     * the feature id
-     */
-    @Input() feature : string = ""
+  /**
+   * the feature id
+   */
+  @Input() feature : string = ""
 
-    // instance data
+  // instance data
 
-    featureData : FeatureData | undefined
-    component? : ComponentRef<any> = undefined
+  featureData : FeatureData | undefined
+  component? : ComponentRef<any> = undefined
 
-    // constructor
+  // constructor
 
-    constructor(private featureRegistry : FeatureRegistry, private container : ViewContainerRef) {
-    }
+  constructor(private featureRegistry : FeatureRegistry, private container : ViewContainerRef) {
+    console.log("new feature-outlet ")
+  }
+
+  // private
+
+  private setFeature(feature: string) {
+    console.log("load feature-outlet feature " + feature)
+
+    this.featureData = this.featureRegistry.getFeature(feature)
+
+    this.load()
+  }
+
+  // implement OnChanges
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ( changes['feature'] && changes['feature'].currentValue !==  this.feature)
+      this.setFeature(this.feature)
+  }
 
     // implement OnInit
 
     ngOnInit() {
-        this.featureData = this.featureRegistry.getFeature(this.feature)
-
-        this.load()
+      this.setFeature(this.feature)
     }
 
     ngOnDestroy() {

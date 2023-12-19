@@ -3,6 +3,7 @@ import { Deployment, DeploymentLoader } from "../deployment";
 
 import { Observable } from "rxjs";
 import { AbstractHTTPService, Service } from "../common";
+import { SessionManager } from "../security";
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration"})
@@ -15,8 +16,8 @@ export class PortalDeploymentService extends AbstractHTTPService {
 
   // public
 
-  public getDeployment() : Observable<Deployment> {
-    return this.get<Deployment>(`/deployment`);
+  public getDeployment(session: Boolean) : Observable<Deployment> {
+    return this.get<Deployment>(`/deployment/${session}`);
   }
 }
 
@@ -24,13 +25,13 @@ export class PortalDeploymentService extends AbstractHTTPService {
 export class HTTPDeploymentLoader extends DeploymentLoader {
   // constructor
 
-  constructor(private deploymentService: PortalDeploymentService) {
+  constructor(private deploymentService: PortalDeploymentService, private sessionManager: SessionManager) {
     super();
   }
 
   // implement DeploymentLoader
   load() : Promise<Deployment> {
     // @ts-ignore
-    return this.deploymentService.getDeployment().toPromise()
+    return this.deploymentService.getDeployment(this.sessionManager.hasSession()).toPromise()
   }
 }

@@ -15,9 +15,13 @@ import kotlin.collections.HashMap
 
 // types
 
-typealias ManifestFilter = (manifest: Manifest) -> Boolean
+data class FilterContext(
+    val hasSession: Boolean
+)
 
-typealias FeatureFilter = (feature: Feature) -> Boolean
+typealias ManifestFilter = (context: FilterContext, manifest: Manifest) -> Boolean
+
+typealias FeatureFilter = (context: FilterContext, feature: Feature) -> Boolean
 
 @Component
 class DeploymentManager(@Autowired val manager: ManifestManager) {
@@ -29,9 +33,24 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
     // constructor
 
     init {
-        filterManifest { manifest -> manifest.enabled }
-        filterFeature { feature -> feature.enabled }
-        // TODO: session
+        // enabled
+
+        filterManifest { context, manifest -> manifest.enabled }
+        filterFeature { context, feature -> feature.enabled }
+
+        // session
+
+        filterFeature { context, feature ->
+            if (!context.hasSession)
+                // no session yet, allow everything not explicitly set to "private"
+                if (feature.visibility !== null)
+                    !feature.visibility!!.contains("private")
+                else
+                    true
+            else
+                // session
+                true /*feature.visibility!!.contains("public") */
+        }
     }
 
     // fluent
@@ -48,17 +67,17 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
         return this
     }
 
-    private fun check(manifest: Manifest) : Boolean {
+    private fun accept(context: FilterContext, manifest: Manifest) : Boolean {
         for ( filter in manifestFilters)
-            if ( !filter(manifest))
+            if ( !filter(context, manifest))
                 return false
 
         return true
     }
 
-    private fun check(feature: Feature) : Boolean {
+    private fun accept(context: FilterContext, feature: Feature) : Boolean {
         for ( filter in featureFilters)
-            if ( !filter(feature))
+            if ( !filter(context, feature))
                 return false
 
         return true
@@ -66,7 +85,9 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
     // public
 
-    fun create() : Deployment {
+    fun create(session: Boolean) : Deployment {
+        val context = FilterContext(session)
+
         // local function
 
         fun copyFeature(feature: Feature) : Feature {
@@ -74,10 +95,9 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
             val features = LinkedList<Feature>()
             if ( feature.children != null)
-                for ( feature in feature.children!!) {
-                    if ( check(feature))
+                for ( feature in feature.children!!)
+                    if ( accept(context, feature))
                         features.add(copyFeature(feature))
-                }
 
             result.children = features.toTypedArray()
 
@@ -89,18 +109,22 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
         // add matching manifests
 
         for ( manifest in manager.manifests)
-            if (check(manifest)) {
+            if (accept(context, manifest)) {
                 val result = manifest.copy()
 
-                deployment.modules.put(manifest.name, result);
+                // filter features
 
                 val features = LinkedList<Feature>()
-                for ( feature in manifest.features) {
-                    if ( check(feature))
+                for ( feature in manifest.features)
+                    if ( accept(context, feature))
                         features.add(copyFeature(feature))
-                }
 
                 result.features = features.toTypedArray()
+
+                // only add, if there are features
+
+                if ( !result.features.isEmpty())
+                    deployment.modules.put(manifest.name, result);
             }
 
         // done

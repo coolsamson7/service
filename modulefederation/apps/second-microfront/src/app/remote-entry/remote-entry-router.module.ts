@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { PortalManager } from '@modulefederation/portal';
 
-import { RemoteEntryComponent } from './entry.component';
+import { RemoteEntryComponent } from './remote-entry.component';
 
 export const routes: Routes = [
   {

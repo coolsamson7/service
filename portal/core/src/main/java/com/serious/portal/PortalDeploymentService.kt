@@ -9,6 +9,7 @@ import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.portal.model.Deployment
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -17,6 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalDeploymentService : Service {
-    @GetMapping("deployment")
-    fun getDeployment() : Deployment
+    @GetMapping("deployment/{session}")
+    fun getDeployment(@PathVariable session: Boolean) : Deployment
 }

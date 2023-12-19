@@ -39,6 +39,10 @@ export class FeatureRegistry {
         console.table(table)
     }
 
+    reset() {
+        this.features = {}
+    }
+
     ready() {
         this.registry$.next(this);
     }
@@ -146,6 +150,16 @@ export class FeatureFinder {
         this.filters.push((feature) => feature.tags!!.includes(tag))
         return this
     }
+
+  withEnabled(enabled = true) : FeatureFinder {
+    this.filters.push((feature) => {
+      if (feature.enabled !== null)
+        return feature.enabled == enabled
+      else
+        return true
+    })
+    return this
+  }
 
     withPermission(permission : string) : FeatureFinder {
         this.filters.push((feature) => feature.permissions!!.includes(permission))

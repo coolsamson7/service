@@ -12,7 +12,7 @@ import {AppComponent} from './app.component';
                 {
                     path: '',
                     loadChildren: () =>
-                        import('./remote-entry/entry.module').then(
+                        import('./remote-entry/remote-entry.module').then(
                             (m) => m.RemoteEntryModule
                         ),
                 },

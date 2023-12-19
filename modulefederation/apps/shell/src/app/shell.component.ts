@@ -9,23 +9,30 @@ import { FeatureData, FeatureRegistry, SessionManager } from "@modulefederation/
 export class ShellComponent {
     // instance data
 
-    portal: FeatureData
+    portal: FeatureData | undefined = undefined
 
-    // constructor
+    // private
 
-    constructor(private featureRegistry: FeatureRegistry, private sessionManager: SessionManager) {
-        let portals :FeatureData[]
-
-        if (sessionManager.hasSession())
-            portals = featureRegistry.finder().withTag("portal").withVisibility("private").find()
-        else
-            portals = featureRegistry.finder().withTag("portal").withVisibility("public").find()
+    determinePortal() :FeatureData {
+        let portals = this.featureRegistry.finder().withTag("portal").withVisibility(this.sessionManager.hasSession() ? "private" : "public").find()
 
         if ( portals.length == 0)
             throw new Error("there must be a feature with tag 'portal'")
         else if ( portals.length > 1)
             throw new Error("there must be exactly one feature with tag 'portal'")
 
-        this.portal = portals[0]
+        console.log("portal = " +  portals[0].path)
+
+        return portals[0]
+    }
+
+    // constructor
+
+    constructor(private featureRegistry: FeatureRegistry, private sessionManager: SessionManager) {
+        featureRegistry.registry$.subscribe(registry =>
+            this.portal = this.determinePortal()
+        )
+
+        this.portal = this.determinePortal();
     }
 }
