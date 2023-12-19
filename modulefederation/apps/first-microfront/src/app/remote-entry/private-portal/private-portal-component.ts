@@ -3,6 +3,8 @@ import { Component, OnInit } from "@angular/core";
 
 @Feature({
     id: 'private-portal',
+    visibility: ["private"],
+    tags: ["portal"],
     router: {
         lazyModule: "PrivatePortalModule"
     }

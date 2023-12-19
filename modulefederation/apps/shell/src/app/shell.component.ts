@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { FeatureData, FeatureRegistry } from "@modulefederation/portal";
+import { FeatureData, FeatureRegistry, SessionManager } from "@modulefederation/portal";
 
 @Component({
     selector: 'shell',
@@ -13,8 +13,13 @@ export class ShellComponent {
 
     // constructor
 
-    constructor(private featureRegistry: FeatureRegistry) {
-        let portals = featureRegistry.finder().withTag("portal").find()
+    constructor(private featureRegistry: FeatureRegistry, private sessionManager: SessionManager) {
+        let portals :FeatureData[]
+
+        if (sessionManager.hasSession())
+            portals = featureRegistry.finder().withTag("portal").withVisibility("private").find()
+        else
+            portals = featureRegistry.finder().withTag("portal").withVisibility("public").find()
 
         if ( portals.length == 0)
             throw new Error("there must be a feature with tag 'portal'")

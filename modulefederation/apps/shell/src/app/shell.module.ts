@@ -12,7 +12,7 @@ import {
     EndpointLocator,
     Environment,
     EnvironmentModule,
-    PortalModule,
+    PortalModule, SecurityModule,
     Shell,
     TraceLevel,
     TracerModule
@@ -27,6 +27,8 @@ import {
 import * as localManifest from "../assets/manifest.json"
 import {Observable, of} from "rxjs";
 import { environment } from "../environments/environment";
+import { SampleAuthentication } from "./security/sample-authentication";
+import { SampleAuthorization } from "./security/sample-authorization";
 
 @NgModule({
     imports: [RouterModule.forRoot(localRoutes)],
@@ -94,6 +96,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         AppComponentRouterModule,
 
         EnvironmentModule.forRoot(environment),
+
+        SecurityModule.forRoot({
+            authentication: SampleAuthentication,
+            authorization: SampleAuthorization
+        }),
 
         TracerModule.forRoot({
             enabled: !environment.production,
