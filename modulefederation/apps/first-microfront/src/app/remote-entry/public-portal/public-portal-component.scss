@@ -5,8 +5,11 @@
 
 .mat-button {
   color: white;
+  > a {
+    text-decoration: none;
+  }
 }
 
-.spacer{
+.spacer {
   flex: 1 1 auto;
 }
