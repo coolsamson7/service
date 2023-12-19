@@ -1,7 +1,7 @@
 {
   "name": "first-microfront",
   "version": "0.1",
-  "commitHash": "a11b1bab85070cf01f59a039b46611d8cccff19a",
+  "commitHash": "ec9c5b11ab3794f0d8f4c1e763530a4e9ff58a23",
   "module": {
     "name": "first-microfront",
     "ngModule": "RemoteEntryModule"

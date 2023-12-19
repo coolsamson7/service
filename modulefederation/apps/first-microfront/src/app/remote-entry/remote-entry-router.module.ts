@@ -16,7 +16,9 @@ export const routes: Routes = [
   {
     path: 'public-portal',
     loadChildren: () =>
-      import('./public-portal/public-portal.module').then((m) => m.PublicPortalModule),
+      import('./public-portal/public-portal.module').then(
+        (m) => m.PublicPortalModule
+      ),
   },
   {
     path: 'private-portal',
