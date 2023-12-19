@@ -1,17 +1,1 @@
-<!--div fxLayout="row wrap" fxLayoutAlign="center center" style="height:100%">
-    <div fxFlex="80%" fxFlex.lt-md="100%" style="height:100%">
-        <mat-sidenav-container>
-            <mat-sidenav #sidenav role="navigation">
-                <modulefederation-sidenav (sidenavClose)="sidenav.close()"></modulefederation-sidenav>
-            </mat-sidenav>
-
-            <mat-sidenav-content>
-                <modulefederation-navbar (sidenavToggle)="sidenav.toggle()"></modulefederation-navbar>
-                <main>
-                    <router-outlet></router-outlet>
-                </main>
-            </mat-sidenav-content>
-        </mat-sidenav-container>
-    </div>
-</div-->
 <feature-outlet [feature]="portal.path!!"></feature-outlet>

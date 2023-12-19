@@ -7,7 +7,6 @@ import { FeatureData, FeatureRegistry } from "@modulefederation/portal";
     styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-    title = 'shell';
     // instance data
 
     portal: FeatureData
@@ -17,12 +16,11 @@ export class AppComponent {
     constructor(private featureRegistry: FeatureRegistry) {
         let portals = featureRegistry.finder().withTag("portal").find()
 
+        if ( portals.length == 0)
+            throw new Error("there must be a feature with tag 'portal'")
+        else if ( portals.length > 1)
+            throw new Error("there must be exactly one feature with tag 'portal'")
+
         this.portal = portals[0]
-    }
-
-    // public
-
-    path(feature: FeatureData):string {
-        return feature.path!!.replace("/", ".") // ???
     }
 }

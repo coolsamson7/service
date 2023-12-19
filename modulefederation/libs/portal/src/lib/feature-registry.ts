@@ -60,7 +60,12 @@ export class FeatureRegistry {
     }
 
     getFeature(id : string) : FeatureData {
-        return this.features[id]
+        let feature =  this.features[id]
+
+        if (!feature )
+            throw new Error(`unknown feature ${id}`)
+
+        return feature
     }
 
     // public

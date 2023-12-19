@@ -1,18 +1,17 @@
 import {Injectable, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {AppComponent} from './app.component';
-import {NavbarModule} from './navbar/navbar.module';
-import {MatSidenavModule} from '@angular/material/sidenav';
 
 import {localRoutes} from "./local.routes";
+
 import {
     CanActivateGuard,
     CanDeactivateGuard,
-    ConsoleTrace, EndpointLocator, Environment, EnvironmentModule,
-    HTTPDeploymentLoader,
-    LocalDeploymentLoader,
+    ConsoleTrace,
+    EndpointLocator,
+    Environment,
+    EnvironmentModule,
     PortalModule,
     Shell,
     TraceLevel,
@@ -20,14 +19,9 @@ import {
 } from "@modulefederation/portal";
 import {
     ActivatedRouteSnapshot,
-    CanActivate,
-    CanDeactivate,
     Resolve,
     Route,
-    Router,
-    RouterModule,
-    RouterStateSnapshot,
-    UrlTree
+    RouterModule
 } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
@@ -98,9 +92,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     declarations: [AppComponent],
     imports: [
         BrowserModule,
-        BrowserAnimationsModule,
-        NavbarModule,
-        MatSidenavModule,
         AppComponentRouterModule,
 
         EnvironmentModule.forRoot(environment),
