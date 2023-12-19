@@ -19,6 +19,7 @@ export interface FeatureData extends FeatureConfig {
     enabled?: boolean
     module? : any
     origin? : string
+    routerPath?: string
     path? : string
 
     children? : FeatureConfig[]

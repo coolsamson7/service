@@ -4,12 +4,29 @@ import { Injector } from "@angular/core";
 import { Observable } from "rxjs";
 import { ServiceConfig } from "./register-service.decorator";
 
+import { HttpParameterCodec } from '@angular/common/http';
+
+export class CustomHttpParamEncoder implements HttpParameterCodec {
+    encodeKey(key: string): string {
+        return encodeURIComponent(key);
+    }
+    encodeValue(value: string): string {
+        return encodeURIComponent(value);
+    }
+    decodeKey(key: string): string {
+        return decodeURIComponent(key);
+    }
+    decodeValue(value: string): string {
+        return decodeURIComponent(value);
+    }
+}
+
 export class AbstractHTTPService {
     // instance data
- 
+
    private http: HttpClient
    private url: string
- 
+
    // constructor
 
    protected constructor(injector: Injector) {
@@ -43,10 +60,11 @@ export class AbstractHTTPService {
         responseType?: 'json';
         withCredentials?: boolean;
     }): Observable<T> {
+        options = {...options, params: new HttpParams({ encoder: new CustomHttpParamEncoder() })}
       return this.http.get<T>(this.url + url, options)
     }
 
-  
+
     /**
      * Constructs a `POST` request that interprets the body as JSON
      * and returns the response body as an object parsed from JSON.
@@ -77,6 +95,6 @@ export class AbstractHTTPService {
    // protected
 
    protected getConfig() : ServiceConfig {
-     return (this.constructor as any)["$$config"] || {domain: "", prefix: ""}; // see @RegisterService
+     return (this.constructor as any)["$$config"] || {domain: "", prefix: ""}; // see @Service
    }
  }

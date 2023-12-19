@@ -18,15 +18,8 @@ export class PrivatePortalComponent extends AbstractFeature implements OnInit {
     features : FeatureData[] = []
 
     // constructor
-
     constructor(private featureRegistry: FeatureRegistry) {
         super();
-    }
-
-    // public
-
-    public path(feature : FeatureData) {
-        return "/" + feature.path
     }
 
     // implement OnInit

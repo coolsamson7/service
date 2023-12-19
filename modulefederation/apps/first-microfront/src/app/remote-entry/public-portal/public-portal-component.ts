@@ -23,12 +23,6 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
         super();
     }
 
-    // public
-
-    public path(feature : FeatureData) {
-        return "/" + feature.path
-    }
-
     // implement OnInit
 
     ngOnInit() : void {

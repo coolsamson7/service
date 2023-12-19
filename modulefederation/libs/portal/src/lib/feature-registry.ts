@@ -91,7 +91,8 @@ export class FeatureRegistry {
 
         this.features[name] = feature
 
-        feature.path = name.replace(".", "/")
+        feature.path = name
+        feature.routerPath = "/" + name.replace(".", "/")
 
         // link parent & child
 
