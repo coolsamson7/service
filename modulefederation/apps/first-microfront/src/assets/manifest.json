@@ -1,7 +1,7 @@
 {
   "name": "first-microfront",
   "version": "0.1",
-  "commitHash": "4fdf681d91714f293de194e424e9c9aadf8c0477",
+  "commitHash": "a11b1bab85070cf01f59a039b46611d8cccff19a",
   "module": {
     "name": "first-microfront",
     "ngModule": "RemoteEntryModule"
@@ -11,13 +11,24 @@
       "id": "",
       "label": "Microfrontend 1",
       "component": "RemoteEntryComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "public-portal",
+      "label": "public-portal",
+      "component": "PublicPortalComponent",
+      "module": {
+        "name": "PublicPortalModule"
+      }
+    },
+    {
+      "id": "private-portal",
+      "label": "private-portal",
+      "component": "PrivatePortalComponent",
+      "module": {
+        "name": "PrivatePortalModule"
+      }
     },
     {
       "id": "child",

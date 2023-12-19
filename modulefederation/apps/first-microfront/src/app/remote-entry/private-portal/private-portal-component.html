@@ -1,0 +1,8 @@
+<mat-toolbar color="primary">
+    <a *ngFor="let feature of features" [routerLink]="path(feature)">{{feature.label}}</a>
+
+    <div class="spacer"></div>
+
+    <a mat-button>About</a>
+</mat-toolbar>
+<router-outlet></router-outlet>
