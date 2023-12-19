@@ -14,7 +14,7 @@ const coreLibraries = new Set([
 module.exports = withModuleFederation({
         name: 'shell',
         exposes: {
-            './Module': 'apps/shell/src/app/app.module.ts',
+            './Module': 'apps/shell/src/app/shell.module.ts',
         },
         shared: (libraryName, defaultConfig) => {
             if (coreLibraries.has(libraryName)) {

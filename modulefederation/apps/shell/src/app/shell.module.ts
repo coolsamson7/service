@@ -1,7 +1,7 @@
 import {Injectable, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
-import {AppComponent} from './app.component';
+import {ShellComponent} from './shell.component';
 
 import {localRoutes} from "./local.routes";
 
@@ -84,12 +84,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 }
 
 
-// TEST
 @Shell({
-    name: 'app'
+    name: 'shell'
 })
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [ShellComponent],
     imports: [
         BrowserModule,
         AppComponentRouterModule,
@@ -124,7 +123,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         useValue: new ApplicationEndpointLocator(environment)
       },
     ],
-    bootstrap: [AppComponent],
+    bootstrap: [ShellComponent],
 })
-export class AppModule {
+export class ShellModule {
 }

@@ -2,11 +2,11 @@ import {Component} from '@angular/core';
 import { FeatureData, FeatureRegistry } from "@modulefederation/portal";
 
 @Component({
-    selector: 'modulefederation-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
+    selector: 'shell',
+    templateUrl: './shell.component.html',
+    styleUrls: ['./shell.component.scss'],
 })
-export class AppComponent {
+export class ShellComponent {
     // instance data
 
     portal: FeatureData
