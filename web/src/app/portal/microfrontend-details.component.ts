@@ -35,11 +35,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   uuid = uuidv4() // will be set in onInit
 
   model : EditorModel = {
-    value: '',
+    value: 'hallo',
     language: "json",
     schema: null,
-    uri: null // will be set in onInit
+    uri: 'json://' + this.uuid + '.schema'
   }
+
+  manifestJSON = ""
 
   @ViewChild('form') public form : NgForm
 
@@ -142,13 +144,14 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   }
 
   setManifest(manifestName : string) {
-    this.model.uri = this.uuid + manifestName // will be set in onInit
+    this.model.uri = 'json://' + this.uuid + manifestName + '.schema'
 
     this.microfrontendsComponent.$manifests.subscribe(manifests => this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)))
   }
 
   reallySetManifest(manifest : Manifest) {
     this.manifest = manifest
+    this.manifestJSON = JSON.stringify(manifest, null, 2)
 
     this.enabled = manifest.features.map(feature => feature.enabled)
 

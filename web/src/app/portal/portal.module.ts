@@ -49,7 +49,7 @@ import { ChipsComponent } from "./chips.component";
     MatLegacyChipsModule,
     MatLineModule,
     MatDialogModule,
-    MatToolbarModule
+    MatToolbarModule,
   ]
 })
 export class PortalModule {

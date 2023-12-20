@@ -123,11 +123,7 @@
       <!-- raw -->
 
       <mat-tab label="Raw">
-        <!-- component -->
-
-        <!--monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifest" name="raw_manifest" [id]="'raw_manifest'"></monaco-editor-->
-
-        <textarea>{{manifest | json}}</textarea>
+        <monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifestJSON" name="raw_manifest" [id]="'raw_manifest'"></monaco-editor>
       </mat-tab>
     </mat-tab-group>
   </div>
