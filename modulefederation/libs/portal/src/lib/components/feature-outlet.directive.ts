@@ -34,13 +34,12 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
   // constructor
 
   constructor(private featureRegistry : FeatureRegistry, private container : ViewContainerRef) {
-    console.log("new feature-outlet ")
   }
 
   // private
 
   private setFeature(feature: string) {
-    console.log("load feature-outlet feature " + feature)
+    // clear previous component
 
     if ( this.component) {
       this.component?.destroy();
@@ -81,10 +80,8 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
         // local function
         let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
             while (feature) {
-                if (feature.load) {
-                  console.log("next loadable feature " + feature.path)
+                if (feature.load)
                   return feature
-                }
                 else
                     feature = feature.$parent
             }

@@ -14,8 +14,6 @@ export class HomeComponent extends AbstractFeature implements OnInit {
 
     constructor() {
         super();
-
-        console.log(this.getName())
     }
 
     // implement OnInit

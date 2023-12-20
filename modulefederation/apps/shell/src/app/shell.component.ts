@@ -21,8 +21,6 @@ export class ShellComponent {
         else if ( portals.length > 1)
             throw new Error("there must be exactly one feature with tag 'portal'")
 
-        console.log("portal = " +  portals[0].path)
-
         return portals[0]
     }
 

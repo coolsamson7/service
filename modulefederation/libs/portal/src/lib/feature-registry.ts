@@ -1,78 +1,88 @@
-import {Injectable} from "@angular/core";
-import {ReplaySubject} from "rxjs";
-import {FeatureConfig, Visibility} from "./feature-config";
-import {FeatureData} from "./portal-manager";
+import { Injectable } from "@angular/core";
+import { ReplaySubject } from "rxjs";
+import { FeatureConfig, Visibility } from "./feature-config";
+import { FeatureData } from "./portal-manager";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
 
 @Injectable({providedIn: 'root'})
 export class FeatureRegistry {
-    // instance data
+  // instance data
 
-    features : { [name : string] : FeatureData } = {};
-    registry$ = new ReplaySubject<FeatureRegistry>(1);
+  features : { [name : string] : FeatureData } = {};
+  registry$ = new ReplaySubject<FeatureRegistry>(1);
 
-    // constructor
+  // constructor
 
-    constructor() {
-        ;(window as any)["features"] = () => {
-            this.report()
-          console.log(this.features)
-        }
+  constructor() {
+    ;(window as any)["features"] = () => {
+      this.report()
+      console.log(this.features)
+    }
+  }
+
+  // public
+
+  report() {
+    let table = []
+
+    for (let path in this.features) {
+      let feature = this.features[path]
+
+      table.push({
+        name: path,
+        component: feature.component,
+        origin: feature.origin,
+        enabled: feature.enabled ? "x" : null,
+        loaded: feature.ngComponent !== undefined ? "x" : null
+      })
     }
 
-    // public
+    console.table(table)
+  }
 
-    report() {
-        let table = []
+  ready() {
+    this.registry$.next(this);
+  }
 
-        for (let path in this.features) {
-            let feature = this.features[path]
+  register(...features : FeatureConfig[]) {
+    for (let feature of features)
+      if (!(feature as FeatureData).$parent)
+        this.registerFeature(feature, undefined, "")
+  }
 
-            table.push({
-                name: path,
-                component: feature.component,
-                origin: feature.origin,
-                enabled: feature.enabled ?  "x" : null,
-                loaded: feature.ngComponent !== undefined ? "x" : null
-            })
-        }
+  registerRemote(microfrontend : string, ...features : FeatureConfig[]) {
+    let rootFeature = features.find(feature => feature.id == "")
+    if (rootFeature)
+      this.registerFeature(rootFeature, undefined, microfrontend)
 
-        console.table(table)
+    for (let feature of features)
+      if (feature !== rootFeature && !(feature as FeatureData).$parent)
+        this.registerFeature(feature, rootFeature, microfrontend + ".")
+  }
+
+  disable(microfrontend : string) {
+    let rootFeature = this.getFeature(microfrontend)
+
+    let disable = (feature: FeatureData) => {
+      feature.enabled = false
+
+      if ( feature.children)
+        for ( let child of feature.children)
+          disable(child)
     }
 
-    reset() {
-        this.features = {}
-    }
+    disable(rootFeature)
+  }
 
-    ready() {
-        this.registry$.next(this);
-    }
+  getFeature(id : string) : FeatureData {
+    let feature = this.features[id]
 
-    register(...features : FeatureConfig[]) {
-        for (let feature of features)
-            if (!(feature as FeatureData).$parent)
-                this.registerFeature(feature, undefined, "")
-    }
+    if (!feature)
+      throw new Error(`unknown feature ${id}`)
 
-    registerRemote(microfrontend : string, ...features : FeatureConfig[]) {
-        let rootFeature = features.find(feature => feature.id == "")
-        if (rootFeature)
-            this.registerFeature(rootFeature, undefined, microfrontend)
-
-        for (let feature of features)
-            if (feature !== rootFeature && !(feature as FeatureData).$parent)
-                this.registerFeature(feature, rootFeature, microfrontend + ".")
-    }
-
-    getFeature(id : string) : FeatureData {
-        let feature =  this.features[id]
-
-        if (!feature )
-            throw new Error(`unknown feature ${id}`)
-
-        return feature
-    }
+    return feature
+  }
 
   findFeature(id : string) : FeatureData | undefined {
     return this.features[id]
@@ -81,99 +91,94 @@ export class FeatureRegistry {
 
   // public
 
-    findFeatures(filter : (feature : FeatureConfig) => boolean) : FeatureData[] {
-        return Object.values(this.features).filter(filter)
-    }
+  findFeatures(filter : (feature : FeatureConfig) => boolean) : FeatureData[] {
+    return Object.values(this.features).filter(filter)
+  }
 
-    finder() : FeatureFinder {
-        return new FeatureFinder(this)
-    }
+  finder() : FeatureFinder {
+    return new FeatureFinder(this)
+  }
 
-    // NEW
+  mergeFeature(feature : FeatureData, newFeature : FeatureData) {
+    // copy
 
-  mergeFeature(feature: FeatureData, newFeature: FeatureData) {
-      // copy
-
-      feature.enabled = newFeature.enabled // TODO: is that it??
+    feature.enabled = newFeature.enabled // TODO: is that it??
 
     // recursion
 
-
-    if ( feature.children)
+    if (feature.children)
       for (let child of feature.children)
         this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!!)
   }
 
-  // NEW
+  private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {
+    // local function
 
-    private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {
-        // local function
-
-        let key = (name : string, path : string) => {
-            if (path.length == 0)
-                return name
-            else
-                return path + name
-        }
-
-        let feature = featureConfig as FeatureData
-
-        // add
-
-        let name = key(feature.id, path)
-
-        this.features[name] = feature
-
-        feature.path = name
-        feature.routerPath = "/" + name.replace(".", "/")
-
-        // link parent & child
-
-        if (parent) {
-            if (parent.children == undefined)
-                parent.children = [feature]
-            else
-                parent.children.push(feature)
-
-            feature.$parent = parent
-        }
-
-        // recursion
-
-        for (let child of feature.children || [])
-            this.registerFeature(child, feature, (path == "" ? feature.id : path + "." + feature.id) + ".");
+    let key = (name : string, path : string) => {
+      if (path.length == 0)
+        return name
+      else
+        return path + name
     }
+
+    let feature = featureConfig as FeatureData
+
+    // add
+
+    let name = key(feature.id, path)
+
+    this.features[name] = feature
+
+    feature.path = name
+    feature.routerPath = "/" + name.replace(".", "/")
+
+    // link parent & child
+
+    if (parent) {
+      if (parent.children == undefined)
+        parent.children = [feature]
+      else
+        parent.children.push(feature)
+
+      feature.$parent = parent
+    }
+
+    // recursion
+
+    for (let child of feature.children || [])
+      this.registerFeature(child, feature, (path == "" ? feature.id : path + "." + feature.id) + ".");
+  }
 }
 
 export class FeatureFinder {
-    // instance data
+  // instance data
 
-    private filters : FeatureFilter[] = []
+  private filters : FeatureFilter[] = []
 
-    // constructor
+  // constructor
 
-    constructor(private featureRegistry : FeatureRegistry) {
-        // automatic filter for enabled
+  constructor(private featureRegistry : FeatureRegistry) {
+    // automatic filter for enabled
 
-        this.filters.push((feature) => feature.enabled == true)
-    }
+    this.filters.push((feature) => feature.enabled == true)
+  }
 
-    // fluent
+  // fluent
 
-    withId(id : string) : FeatureFinder {
-        this.filters.push((feature) => feature.id == id)
-        return this
-    }
+  withId(id : string) : FeatureFinder {
+    this.filters.push((feature) => feature.id == id)
+    return this
+  }
 
-    withVisibility(visibility : Visibility) : FeatureFinder {
-        this.filters.push((feature) => feature.visibility!!.includes(visibility))
-        return this
-    }
+  withVisibility(visibility : Visibility) : FeatureFinder {
+    this.filters.push((feature) => feature.visibility!!.includes(visibility))
+    return this
+  }
 
-    withTag(tag : string) : FeatureFinder {
-        this.filters.push((feature) => feature.tags!!.includes(tag))
-        return this
-    }
+  withTag(tag : string) : FeatureFinder {
+    this.filters.push((feature) => feature.tags!!.includes(tag))
+    return this
+  }
 
   withEnabled(enabled = true) : FeatureFinder {
     this.filters.push((feature) => {
@@ -185,25 +190,25 @@ export class FeatureFinder {
     return this
   }
 
-    withPermission(permission : string) : FeatureFinder {
-        this.filters.push((feature) => feature.permissions!!.includes(permission))
-        return this
-    }
+  withPermission(permission : string) : FeatureFinder {
+    this.filters.push((feature) => feature.permissions!!.includes(permission))
+    return this
+  }
 
-    withCategory(category : string) : FeatureFinder {
-        this.filters.push((feature) => feature.categories!!.includes(category))
-        return this
-    }
+  withCategory(category : string) : FeatureFinder {
+    this.filters.push((feature) => feature.categories!!.includes(category))
+    return this
+  }
 
-    // public
+  // public
 
-    find() : FeatureData[] {
-        return this.featureRegistry.findFeatures((feature) => {
-            for (let filter of this.filters)
-                if (!filter(feature))
-                    return false
+  find() : FeatureData[] {
+    return this.featureRegistry.findFeatures((feature) => {
+      for (let filter of this.filters)
+        if (!filter(feature))
+          return false
 
-            return true
-        })
-    }
+      return true
+    })
+  }
 }
