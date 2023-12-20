@@ -86,9 +86,13 @@
       "outputs": [],
       "providers": [],
       "selector": "app-root",
-      "styleUrls": ["./app.component.css"],
+      "styleUrls": [
+        "./app.component.css"
+      ],
       "styles": [],
-      "templateUrl": ["./app.component.html"],
+      "templateUrl": [
+        "./app.component.html"
+      ],
       "viewProviders": [],
       "inputsClass": [],
       "outputsClass": [],

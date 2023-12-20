@@ -1,24 +1,24 @@
-<mat-chip-list #chipList aria-label="Visibility selection"  (focusin)="onFocusIn($event)"
-               (focusout)="onFocusOut($event)">
-    <mat-chip *ngFor="let value of values" [removable]="true" (removed)="remove(value)">
-        {{value}}
-        <mat-icon matChipRemove>cancel</mat-icon>
-    </mat-chip>
-    <input
-            [placeholder]="focused ? placeholder : ''"
-            #input
-            [formControl]="formControl"
-            [matAutocomplete]="autocomplete"
-            [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="add($event)">
+<mat-chip-list #chipList (focusin)="onFocusIn($event)" (focusout)="onFocusOut($event)"
+               aria-label="Visibility selection">
+  <mat-chip (removed)="remove(value)" *ngFor="let value of values" [removable]="true">
+    {{value}}
+    <mat-icon matChipRemove>cancel</mat-icon>
+  </mat-chip>
+  <input
+    #input
+    (matChipInputTokenEnd)="add($event)"
+    [formControl]="formControl"
+    [matAutocomplete]="autocomplete"
+    [matChipInputFor]="chipList"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    [placeholder]="focused ? placeholder : ''">
 
 
-    <mat-autocomplete #autocomplete="matAutocomplete" (optionSelected)="selected($event)">
-        <mat-option *ngFor="let value of filteredValues | async" [value]="value">
-            {{value}}
-        </mat-option>
-    </mat-autocomplete>
+  <mat-autocomplete #autocomplete="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option *ngFor="let value of filteredValues | async" [value]="value">
+      {{value}}
+    </mat-option>
+  </mat-autocomplete>
 </mat-chip-list>
 
 

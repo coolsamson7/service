@@ -1,7 +1,8 @@
 <mat-list role="list">
-  
-  <a mat-list-item *ngFor="let comp of components"  [routerLinkActive]="['is-active']" routerLink="{{comp}}" role="listitem">
-    <mat-icon>language</mat-icon> 
+
+  <a *ngFor="let comp of components" [routerLinkActive]="['is-active']" mat-list-item role="listitem"
+     routerLink="{{comp}}">
+    <mat-icon>language</mat-icon>
     {{comp}}
   </a>
 </mat-list>

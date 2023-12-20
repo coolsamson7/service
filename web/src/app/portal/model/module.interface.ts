@@ -6,7 +6,7 @@
 
 
 export interface Module {
-    enabled?: boolean
-	name : string,
-	ngModule : string | undefined
+  enabled? : boolean
+  name : string,
+  ngModule : string | undefined
 }

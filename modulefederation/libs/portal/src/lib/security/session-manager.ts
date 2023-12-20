@@ -9,20 +9,19 @@ import { Ticket } from "./ticket.interface";
 import { AuthenticationRequest } from "./authentication-request.interface";
 
 
-
 /**
  * The session manager is the central service that keeps information on the current session.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class SessionManager {
   // instance data
 
-  private session?: Session<User, Ticket>;
-  private listeners: SessionListener[] = [];
+  private session? : Session<User, Ticket>;
+  private listeners : SessionListener[] = [];
 
   // constructor
 
-  constructor(private authentication: Authentication<User, Ticket>) {
+  constructor(private authentication : Authentication<User, Ticket>) {
   }
 
   // private
@@ -33,7 +32,7 @@ export class SessionManager {
    * retrieve a session locale value
    * @param key the key
    */
-  get<T>(key: string): T {
+  get<T>(key : string) : T {
     return this.session!![key];
   }
 
@@ -42,7 +41,7 @@ export class SessionManager {
    * @param key the key
    * @param value the value
    */
-  set<T>(key: string, value: T): void {
+  set<T>(key : string, value : T) : void {
     this.session!![key] = value;
   }
 
@@ -51,7 +50,7 @@ export class SessionManager {
    * @param listener the listener
    * @return the unsubscribe function
    */
-  addListener(listener: SessionListener) : () => void {
+  addListener(listener : SessionListener) : () => void {
     this.listeners.push(listener);
 
     return () => {
@@ -63,28 +62,28 @@ export class SessionManager {
    * remove a {@link SessionListener}
    * @param listener the listener
    */
-  removeListener(listener: SessionListener) {
+  removeListener(listener : SessionListener) {
     this.listeners.splice(this.listeners.indexOf(listener), 1);
   }
 
   /**
    * return <code>true</code>, if there is an active session, <code>false</code> otherwise
    */
-  hasSession(): boolean {
+  hasSession() : boolean {
     return this.session != undefined;
   }
 
   /**
    * return the current session
    */
-  currentSession(): Session<User, Ticket> {
+  currentSession() : Session<User, Ticket> {
     return this.session!!;
   }
 
   /**
    * return the current user.
    */
-  getUser(): User {
+  getUser() : User {
     return this.session?.user!!;
   }
 
@@ -92,16 +91,16 @@ export class SessionManager {
    * open a session by delegating to the configured {@link Authentication} object and return the created {@link Session}
    * @param request the request
    */
-  openSession(request: AuthenticationRequest): Observable<Session<User, Ticket>> {
+  openSession(request : AuthenticationRequest) : Observable<Session<User, Ticket>> {
     return this.authentication.authenticate(request).pipe(
       tap((session) => {
         for (const listener of this.listeners)
-            listener.opening(this.session!!);
+          listener.opening(this.session!!);
 
         this.session = session;
 
         for (const listener of this.listeners)
-            listener.opened(this.session);
+          listener.opened(this.session);
       })
     );
   }
@@ -109,7 +108,7 @@ export class SessionManager {
   /**
    * close the active session
    */
-  closeSession(): Observable<boolean> {
+  closeSession() : Observable<boolean> {
     if (this.session) {
       const session = this.session;
 

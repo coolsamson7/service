@@ -10,7 +10,7 @@ import { ComponentDetailsComponent } from "./component-details.component";
 import { MatListModule } from "@angular/material/list";
 import { RouterModule } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
-import { NavigableListItemDirective, NavigableListComponent } from "../widgets/navigable-list.directive";
+import { NavigableListComponent, NavigableListItemDirective } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
 import { ServiceComponent } from "./service.component";
@@ -30,39 +30,40 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DescriptionComponent } from "./service/description.component";
 
 @NgModule({
-    declarations: [
-        ComponentsComponent,
-        ComponentListComponent,
-        ComponentDetailsComponent,
-        NavigableListItemDirective,
-        ServiceInstanceListComponent,
-        ServiceInstanceComponent,
-        NavigableListComponent,
-        ServiceComponent,
-        ServiceLiteralComponent,
-        ServiceAnnotationComponent,
-        ServiceTypeComponent,
-        ServiceMethodComponent,
-        ServicePropertyComponent,
-        ServiceClassComponent,
-        ServiceMethodRunnerComponent,
-        QueryParamComponent,
-        ParameterValidator,
-        DescriptionComponent
-    ],
-    imports: [
-      CommonModule,
-      RouterModule,
-      MatListModule,
-      MatTabsModule,
-      MatInputModule,
-      MatFormFieldModule,
-      MatIconModule,
-      FormsModule,
-      MatSelectModule,
-      MatDatepickerModule,
-      MatNativeDateModule,
-      MonacoEditorModule
-    ]
-  })
-export class ComponentsModule { }
+  declarations: [
+    ComponentsComponent,
+    ComponentListComponent,
+    ComponentDetailsComponent,
+    NavigableListItemDirective,
+    ServiceInstanceListComponent,
+    ServiceInstanceComponent,
+    NavigableListComponent,
+    ServiceComponent,
+    ServiceLiteralComponent,
+    ServiceAnnotationComponent,
+    ServiceTypeComponent,
+    ServiceMethodComponent,
+    ServicePropertyComponent,
+    ServiceClassComponent,
+    ServiceMethodRunnerComponent,
+    QueryParamComponent,
+    ParameterValidator,
+    DescriptionComponent
+  ],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatListModule,
+    MatTabsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatIconModule,
+    FormsModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MonacoEditorModule
+  ]
+})
+export class ComponentsModule {
+}

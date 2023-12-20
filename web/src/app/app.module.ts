@@ -27,11 +27,11 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/mater
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
 
-  private environment: Environment
+  private environment : Environment
 
   // constructor
 
-  constructor(environment: any) {
+  constructor(environment : any) {
     super()
 
     this.environment = new Environment(environment)
@@ -39,11 +39,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
   // implement
 
-  getEndpoint(domain: string): string {
-    if ( domain == "admin")
+  getEndpoint(domain : string) : string {
+    if (domain == "admin")
       return this.environment.get<string>("administration.server");
     else
-       throw new Error("unknown domain " + domain)
+      throw new Error("unknown domain " + domain)
   }
 }
 
@@ -68,15 +68,15 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     PortalModule,
     MaterialModule,
     MonacoEditorModule.forRoot({
-      defaultOptions:  { theme: 'vs-dark', language: 'json' }
+      defaultOptions: {theme: 'vs-dark', language: 'json'}
     }),
 
     EnvironmentModule.forRoot(environment),
     SharedModule.forRoot(),
     OAuthModule.forRoot({
       resourceServer: {
-          allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
-          sendAccessToken: true
+        allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
+        sendAccessToken: true
       }
     })
   ],
@@ -90,7 +90,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       provide: HTTP_INTERCEPTORS,
       useClass: HTTPErrorInterceptor,
       multi: true
-  }],
+    }],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

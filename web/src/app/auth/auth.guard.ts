@@ -4,38 +4,33 @@ import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    // constructor
+  // constructor
 
-  constructor(private router: Router, private oauthService: OAuthService) {
+  constructor(private router : Router, private oauthService : OAuthService) {
   }
 
   // implement CanActivate
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken() ) {
-       return true;
-    } 
+  canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) {
+    if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
+      return true;
+    }
     else {
-       this.oauthService.initLoginFlow(state.url) // fetch it from state in the app component!
-      
-       return false;
+      this.oauthService.initLoginFlow(state.url) // fetch it from state in the app component!
+
+      return false;
     }
   }
 }
 
 @NgModule({
-  imports: [
-  ],
+  imports: [],
   providers: [],
-  declarations: [
-
-  ],
-  exports: [
-
-  ],
+  declarations: [],
+  exports: [],
 })
 export class SharedModule {
-  static forRoot(): ModuleWithProviders<SharedModule> {
+  static forRoot() : ModuleWithProviders<SharedModule> {
     return {
       providers: [AuthGuard],
       ngModule: SharedModule,

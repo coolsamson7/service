@@ -38,15 +38,11 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
 
   // private
 
-  private computeNavigation() {
-    this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
-  }
-
-  // public
-
   about() {
     this.aboutDialogService.show()
   }
+
+  // public
 
   login() {
     this.sessionManager.openSession({
@@ -63,9 +59,13 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
       })
   }
 
-  // implement OnInit
-
   ngOnInit() : void {
     this.computeNavigation()
+  }
+
+  // implement OnInit
+
+  private computeNavigation() {
+    this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
   }
 }

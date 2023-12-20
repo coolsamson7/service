@@ -1,8 +1,7 @@
-
 import { Component, OnInit } from '@angular/core';
 import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
-import { OAuthService, NullValidationHandler } from 'angular-oauth2-oidc';
+import { NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
 import { Environment } from './common/util/environment.service';
 
@@ -15,12 +14,12 @@ import { Environment } from './common/util/environment.service';
 export class AppComponent implements OnInit {
   // instance data
 
- portal: Portal = {
+  portal : Portal = {
     items: [
       {
-       label: "Home",
-       route: "/home",
-       icon: "home"
+        label: "Home",
+        route: "/home",
+        icon: "home"
       },
       {
         label: "Microfrontends",
@@ -31,25 +30,25 @@ export class AppComponent implements OnInit {
         label: "Components",
         route: "/components",
         icon: "folder"
-       },
-       {
+      },
+      {
         label: "Nodes",
         route: "/nodes",
         icon: "computer"
-       }
+      }
     ]
   }
 
   // public
 
-  navigate(element: PortalElement) {
-      this.router.navigate([element.route])
+  constructor(private router : Router, private oauthService : OAuthService, private environment : Environment) {
+    this.configure();
   }
 
   // constructor
 
-  constructor(private router: Router, private oauthService: OAuthService, private environment: Environment) {
-    this.configure();
+  navigate(element : PortalElement) {
+    this.router.navigate([element.route])
   }
 
   public login() {
@@ -60,16 +59,21 @@ export class AppComponent implements OnInit {
     this.oauthService.logOut();
   }
 
+  ngOnInit() : void {
+  }
+
+  // private
+
   private configure() {
     // adjust configuration
 
-    authConfig.issuer = this.environment.get<string>("oauth.server") + '/realms/' +  this.environment.get<string>("oauth.client"),
-    authConfig.scope += " " + this.environment.get<string>("oauth.scopes", "")
+    authConfig.issuer = this.environment.get<string>("oauth.server") + '/realms/' + this.environment.get<string>("oauth.client"),
+      authConfig.scope += " " + this.environment.get<string>("oauth.scopes", "")
 
     // tell oauth
 
     this.oauthService.configure(authConfig);
-    this.oauthService.tokenValidationHandler = new  NullValidationHandler();
+    this.oauthService.tokenValidationHandler = new NullValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
     this.oauthService.setupAutomaticSilentRefresh();
 
@@ -81,13 +85,13 @@ export class AppComponent implements OnInit {
           this.checkRedirect();
           break;
 
-          default:
-            ;
+        default:
+          ;
       }
     });
   }
 
-  // private
+  // implement OnInit
 
   private checkRedirect() {
     if (this.oauthService.state?.length > 0) {
@@ -97,10 +101,5 @@ export class AppComponent implements OnInit {
 
       this.router.navigateByUrl(url);
     }
-  }
-
-  // implement OnInit
-
-  ngOnInit(): void {
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentService } from '../service/component-service.service';
 
 import { Subscription } from 'rxjs';
@@ -12,45 +12,47 @@ import { Update, UpdateService } from '../service/update-service.service';
   styleUrls: ['./component-list.component.scss']
 })
 export class ComponentListComponent implements OnInit, OnDestroy {
-   // instance data
+  // instance data
 
-   components: string[] = []
-   selected: string
-   subscription: Subscription
+  components : string[] = []
+  selected : string
+  subscription : Subscription
 
-   // constructor
+  // constructor
 
-   constructor(private router: Router, private route: ActivatedRoute, private componentService: ComponentService, updateService: UpdateService) { 
+  constructor(private router : Router, private route : ActivatedRoute, private componentService : ComponentService, updateService : UpdateService) {
     this.subscription = updateService.getUpdates().subscribe(update => {
-       this.update(update)
+      this.update(update)
     })
-   }
+  }
 
-   // private
+  // private
 
-   private update(update: Update) {
-     // remove from list
+  select(id : any) {
+    this.router.navigate([id], {relativeTo: this.route});
+  }
 
-      this.components = this.components.filter(component => !update.deletedServices.find(s => s == component) == null)
-   }
+  // public
 
-   // public
+  ngOnInit() {
+    this.componentService.listAll().subscribe({
+      next: (response) => {
+        this.components = response;
+      }
+    })
+  }
 
-    select(id: any) {
-      this.router.navigate([id], { relativeTo: this.route });
-    }
+  // implement OnInit
 
-     // implement OnInit
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
+  }
 
-     ngOnInit() {
-       this.componentService.listAll().subscribe( {
-        next: (response) => { this.components = response; }
-       })
-     }
+  // implement OnDestroy
 
-     // implement OnDestroy
+  private update(update : Update) {
+    // remove from list
 
-     ngOnDestroy() {
-      this.subscription.unsubscribe()
-     }
+    this.components = this.components.filter(component => !update.deletedServices.find(s => s == component) == null)
+  }
 }

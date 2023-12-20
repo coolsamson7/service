@@ -1,9 +1,9 @@
 <mat-toolbar color="primary">
-    <a mat-button *ngFor="let feature of features" [routerLink]="feature.routerPath">{{feature.label}}</a>
+  <a *ngFor="let feature of features" [routerLink]="feature.routerPath" mat-button>{{feature.label}}</a>
 
-    <div class="spacer"></div>
+  <div class="spacer"></div>
 
-  <a mat-button (click)="about()">About</a>
-  <a mat-button (click)="logout()">Logout</a>
+  <a (click)="about()" mat-button>About</a>
+  <a (click)="logout()" mat-button>Logout</a>
 </mat-toolbar>
 <router-outlet></router-outlet>

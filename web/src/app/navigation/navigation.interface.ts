@@ -1,9 +1,9 @@
 export interface Portal {
-   items: PortalElement[]
-} 
+  items : PortalElement[]
+}
 
 export interface PortalElement {
-   icon: String
-   label: String
-   route: String
-} 
+  icon : String
+  label : String
+  route : String
+}

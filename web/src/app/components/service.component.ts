@@ -4,77 +4,78 @@ import { ComponentModel } from "../model/component.interface";
 
 
 export interface ServiceRequestParam {
-   name: string,
-   value: any
+  name : string,
+  value : any
 }
+
 export interface ServiceRequest {
-    component: string,
-    service: string,
-    method: string,
-    parameters: ServiceRequestParam[]
+  component : string,
+  service : string,
+  method : string,
+  parameters : ServiceRequestParam[]
 }
 
 @Component({
-    selector: 'service',
-    templateUrl: './service.component.html',
-    styleUrls: ['./service.component.scss']
-  })
+  selector: 'service',
+  templateUrl: './service.component.html',
+  styleUrls: ['./service.component.scss']
+})
 export class ServiceComponent implements OnInit {
-    // input
+  // input
 
-    @Input('model') model: ComponentModel 
-    @Input('service') service: InterfaceDescriptor 
-    @Input('open') open = false
-    icon = "expand_more"
+  @Input('model') model : ComponentModel
+  @Input('service') service : InterfaceDescriptor
+  @Input('open') open = false
+  icon = "expand_more"
 
-    description : AnnotationDescriptor = null
-    annotations: AnnotationDescriptor[]
+  description : AnnotationDescriptor = null
+  annotations : AnnotationDescriptor[]
 
-    // public
+  // public
 
-    toggle() {
-        if ( this.open) {
-            this.open = false
-            this.icon = "expand_more"
-        }
-        else {
-            this.open = true
-            this.icon = "expand_less"
-        }  
+  toggle() {
+    if (this.open) {
+      this.open = false
+      this.icon = "expand_more"
     }
-
-    superClass() : Boolean{
-        return this.service.inherits != null && this.service.inherits != ""
+    else {
+      this.open = true
+      this.icon = "expand_less"
     }
+  }
 
-    inherits() : Boolean{
-        return this.superClass() || this.service.implements.length > 0
-    }
+  superClass() : Boolean {
+    return this.service.inherits != null && this.service.inherits != ""
+  }
 
-    format(o: any) {
-        if ( typeof o == "string")
-           return "\"" + o +  "\""
-        else
-         return o
-    }
+  inherits() : Boolean {
+    return this.superClass() || this.service.implements.length > 0
+  }
 
-    formatType(type: TypeDescriptor) {
-        return type.name.substring(type.name.lastIndexOf('.') + 1)
-    }
+  format(o : any) {
+    if (typeof o == "string")
+      return "\"" + o + "\""
+    else
+      return o
+  }
 
-    formatClass(type: String) {
-        return type.substring(type.lastIndexOf('.') + 1)
-    }
+  formatType(type : TypeDescriptor) {
+    return type.name.substring(type.name.lastIndexOf('.') + 1)
+  }
 
-    // implement OnInit
+  formatClass(type : String) {
+    return type.substring(type.lastIndexOf('.') + 1)
+  }
 
-    ngOnInit(): void {
-        this.toggle()
-        this.toggle()
+  // implement OnInit
 
-        this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
-        this.annotations =  this.service.annotations
-        if ( this.description )
-            this.annotations = this.service.annotations.filter(annotation => annotation !== this.description)
-    }
+  ngOnInit() : void {
+    this.toggle()
+    this.toggle()
+
+    this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
+    this.annotations = this.service.annotations
+    if (this.description)
+      this.annotations = this.service.annotations.filter(annotation => annotation !== this.description)
+  }
 }

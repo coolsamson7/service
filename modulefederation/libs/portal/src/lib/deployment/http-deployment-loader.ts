@@ -16,7 +16,7 @@ export class PortalDeploymentService extends AbstractHTTPService {
 
   // public
 
-  public getDeployment(session: Boolean) : Observable<Deployment> {
+  public getDeployment(session : Boolean) : Observable<Deployment> {
     return this.get<Deployment>(`/deployment/${session}`);
   }
 }
@@ -25,7 +25,7 @@ export class PortalDeploymentService extends AbstractHTTPService {
 export class HTTPDeploymentLoader extends DeploymentLoader {
   // constructor
 
-  constructor(private deploymentService: PortalDeploymentService, private sessionManager: SessionManager) {
+  constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager) {
     super();
   }
 

@@ -14,7 +14,7 @@ export class ObjectDecorator {
   // fluent
 
   defaultValue(name : string, defaultValue : any) : ObjectDecorator {
-    let isUndefined = (o: any) => {
+    let isUndefined = (o : any) => {
       return o == null || o == undefined
     }
 
@@ -27,11 +27,11 @@ export class ObjectDecorator {
   }
 
   defaultValueFunction(name : string, defaultValue : Getter) : ObjectDecorator {
-    let isUndefined = (o: any) => {
+    let isUndefined = (o : any) => {
       return o == null || o == undefined
     }
     this.properties[name] = (object : any) => {
-      if (!Object.hasOwn(object, name) || isUndefined(object[name] ))
+      if (!Object.hasOwn(object, name) || isUndefined(object[name]))
         object[name] = defaultValue(object)
     }
 

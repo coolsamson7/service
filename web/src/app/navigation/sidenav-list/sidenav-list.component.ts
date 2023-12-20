@@ -1,8 +1,7 @@
-
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Portal, PortalElement } from '../navigation.interface';
 import { AppComponent } from 'src/app/app.component';
- 
+
 @Component({
   selector: 'app-sidenav-list',
   templateUrl: './sidenav-list.component.html',
@@ -11,20 +10,21 @@ import { AppComponent } from 'src/app/app.component';
 export class SidenavListComponent implements OnInit {
   // input & output
 
-  @Input({ required: true }) portal: Portal;
+  @Input({required: true}) portal : Portal;
   @Output() sidenavClose = new EventEmitter();
- 
+
   // constructor
 
-  constructor(public app: AppComponent) { }
+  constructor(public app : AppComponent) {
+  }
 
   // public
 
-  public select(element: PortalElement) {
+  public select(element : PortalElement) {
     this.app.navigate(element)
     this.sidenavClose.emit();
   }
- 
+
   // implement OnInit
 
   ngOnInit() {

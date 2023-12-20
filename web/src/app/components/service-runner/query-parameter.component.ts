@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 
 import { ComponentModel } from "../..//model/component.interface";
 import { TypeDescriptor } from "../../model/service.interface";
@@ -6,57 +6,57 @@ import { QueryParameter } from "../../json/query-analyzer";
 
 
 @Component({
-   selector: 'query-parameter',
-   templateUrl: './query-parameter.component.html',
-   styleUrls: ['./query-parameter.component.scss']
- })
+  selector: 'query-parameter',
+  templateUrl: './query-parameter.component.html',
+  styleUrls: ['./query-parameter.component.scss']
+})
 export class QueryParamComponent implements OnInit {
-   // input
+  // input
 
-   @Input('parameter') parameter: QueryParameter 
-   @Input('model') model: ComponentModel 
-   @Input() form: any 
+  @Input('parameter') parameter : QueryParameter
+  @Input('model') model : ComponentModel
+  @Input() form : any
 
-   @Output() changed = new EventEmitter<any>();
+  @Output() changed = new EventEmitter<any>();
 
-   type: string
+  type : string
 
-   // callbacks
+  // callbacks
 
-   newValue(value: any) {
-       this.changed.emit(value)
-   }
+  newValue(value : any) {
+    this.changed.emit(value)
+  }
 
-   // private
+  // private
 
-   private inputType4(type: TypeDescriptor) : string {
-       switch(type.name) {
-           case "kotlin.String":
-               return "string"
+  ngOnInit() : void {
+    this.type = this.inputType4(this.parameter.type)
+  }
 
-           case "kotlin.Short":
-           case "kotlin.Int":
-           case "kotlin.Long":
-               return "integer"
+  // implement OnInit
 
-           case "kotlin.Double":
-           case "kotlin.Float":
-               return "number"
+  private inputType4(type : TypeDescriptor) : string {
+    switch (type.name) {
+      case "kotlin.String":
+        return "string"
 
-           case "kotlin.Boolean":
-               return "boolean"
+      case "kotlin.Short":
+      case "kotlin.Int":
+      case "kotlin.Long":
+        return "integer"
 
-            case "java.util.Date":
-               return "date";
+      case "kotlin.Double":
+      case "kotlin.Float":
+        return "number"
 
-           default:
-               return "json"
-       }
-   }
+      case "kotlin.Boolean":
+        return "boolean"
 
-   // implement OnInit
-   
-   ngOnInit(): void {
-       this.type = this.inputType4(this.parameter.type)
-   }
+      case "java.util.Date":
+        return "date";
+
+      default:
+        return "json"
+    }
+  }
 }

@@ -1,7 +1,7 @@
 <div class="property">
-    <annotation [annotation]="annotation" *ngFor="let annotation of property.annotations"/>
-    <div class="body"> 
-        <span *ngIf="property.type != null">{{property.name}} : <type [type]="property.type"/></span>
-        <span *ngIf="property.type == null">{{property.name}}</span>
-    </div>
+  <annotation *ngFor="let annotation of property.annotations" [annotation]="annotation"/>
+  <div class="body">
+    <span *ngIf="property.type != null">{{property.name}} : <type [type]="property.type"/></span>
+    <span *ngIf="property.type == null">{{property.name}}</span>
+  </div>
 </div>

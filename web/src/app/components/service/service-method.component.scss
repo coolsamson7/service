@@ -1,18 +1,18 @@
 .method {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+
+  .body {
     display: flex;
-    flex-direction: column;
-    margin-left: 20px;
+    flex-direction: row;
 
-    .body {
-        display: flex;
-        flex-direction: row;
-
-        .parameter {
-            display: flex;
-        }
+    .parameter {
+      display: flex;
     }
+  }
 
-    .keyword {
-        color: darkblue;
-    }
+  .keyword {
+    color: darkblue;
+  }
 }

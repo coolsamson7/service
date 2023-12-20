@@ -1,32 +1,27 @@
 import { Injectable } from "@angular/core";
-import {
-    ActivatedRouteSnapshot,
-    CanDeactivate,
-    RouterStateSnapshot,
-    UrlTree
-} from "@angular/router";
+import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { Observable, of } from "rxjs";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class CanDeactivateGuard implements CanDeactivate<any> {
-    // implement CanDeactivate
+  // implement CanDeactivate
 
-    /**
-     * @inheritdoc
-     */
-    canDeactivate(
-        component : any,
-        currentRoute : ActivatedRouteSnapshot,
-        currentState : RouterStateSnapshot,
-        nextState? : RouterStateSnapshot
-    ) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        let feature = currentRoute.data['feature']
+  /**
+   * @inheritdoc
+   */
+  canDeactivate(
+    component : any,
+    currentRoute : ActivatedRouteSnapshot,
+    currentState : RouterStateSnapshot,
+    nextState? : RouterStateSnapshot
+  ) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    let feature = currentRoute.data['feature']
 
-        if ( component && component['canDeactivate'])
-            return component.canDeactivate(component, currentRoute, currentState, nextState)
-        else
-            return  of(true)
-    }
+    if (component && component['canDeactivate'])
+      return component.canDeactivate(component, currentRoute, currentState, nextState)
+    else
+      return of(true)
+  }
 }

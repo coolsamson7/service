@@ -7,6 +7,6 @@ export const environment = {
     scopes: ''
   },
   administration: {
-    server:'http://localhost:8083'
+    server: 'http://localhost:8083'
   }
 };

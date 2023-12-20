@@ -13,13 +13,13 @@ import { Manifest } from "../model";
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-introspection/"})
 export class PortalIntrospectionService extends AbstractHTTPService {
-	// constructor
+  // constructor
 
-	constructor(injector: Injector) {
-		super(injector)
-	}
+  constructor(injector : Injector) {
+    super(injector)
+  }
 
-	// public methods
+  // public methods
 
   public getManifests() : Observable<Manifest[]> {
     return this.get<Manifest[]>(`manifests`)

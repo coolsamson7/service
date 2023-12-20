@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Feature, Manifest } from "./model";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
@@ -8,6 +8,7 @@ import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
 import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
+
 @Component({
   selector: 'microfrontend-details',
   templateUrl: './microfrontend-details.component.html',
@@ -17,7 +18,7 @@ import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
 export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   // instance data
 
-  manifest: Manifest = {
+  manifest : Manifest = {
     commitHash: "",
     features: [],
     module: undefined,
@@ -25,205 +26,204 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     remoteEntry: "",
     version: ""
   }
-  subscription: Subscription
-  element: RouteElement = {
+  subscription : Subscription
+  element : RouteElement = {
     label: "Microfrontends",
     route: "/microfrontends/"
   }
 
   uuid = uuidv4() // will be set in onInit
 
-  model :  EditorModel = {
+  model : EditorModel = {
     value: '',
     language: "json",
     schema: null,
     uri: null // will be set in onInit
   }
 
-  @ViewChild('form') public form: NgForm
+  @ViewChild('form') public form : NgForm
 
   selectedFeature : Feature
 
 
-  allPermissions: string[] = [];
-  allTags: string[] = [];
-  allCategories: string[] = [];
-  allVisibilities: string[] = ['public', 'private'];
+  allPermissions : string[] = [];
+  allTags : string[] = [];
+  allCategories : string[] = [];
+  allVisibilities : string[] = ['public', 'private'];
 
-  formGroup: FormGroup
+  formGroup : FormGroup
 
-    dirty = {}
-    isDirty = false
+  dirty = {}
+  isDirty = false
 
   // constructor
-
-  constructor(private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute, private microfrontendsComponent: MirofrontendsComponent, private confirmationDialogs: ConfirmationDialogs) {
-    microfrontendsComponent.pushRouteElement(this.element)
-
-      this.formGroup = this.formBuilder.group({
-          id: [''],
-          label: [''],
-          description: [''],
-          visibility: [[]],
-          permissions: [[]],
-          categories: [[]],
-          tags: [[]]
-          }
-      )
-  }
+  enabled : boolean[]
 
   // public
 
-    save() {
-      // copy values from
+  constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private confirmationDialogs : ConfirmationDialogs) {
+    microfrontendsComponent.pushRouteElement(this.element)
 
-        let index = this.manifest.features.indexOf(this.selectedFeature)
+    this.formGroup = this.formBuilder.group({
+        id: [''],
+        label: [''],
+        description: [''],
+        visibility: [[]],
+        permissions: [[]],
+        categories: [[]],
+        tags: [[]]
+      }
+    )
+  }
 
-        this.selectedFeature.enabled = this.enabled[index]
+  save() {
+    // copy values from
 
-        for ( let propertyName in this.dirty)
-            this.selectedFeature[propertyName] = this.dirty[propertyName]
+    let index = this.manifest.features.indexOf(this.selectedFeature)
 
-        // save
+    this.selectedFeature.enabled = this.enabled[index]
 
-        this.microfrontendsComponent.saveManifest(this.manifest)
+    for (let propertyName in this.dirty)
+      this.selectedFeature[propertyName] = this.dirty[propertyName]
 
-        // new state
+    // save
 
-        this.selectFeature(this.selectedFeature)
+    this.microfrontendsComponent.saveManifest(this.manifest)
+
+    // new state
+
+    this.selectFeature(this.selectedFeature)
+  }
+
+  revert() {
+    this.enabled = this.manifest.features.map(feature => feature.enabled)
+    // will trigger isDirty calculation
+    this.selectFeature(this.selectedFeature)
+  }
+
+  setManifests(manifests : Manifest[]) : Manifest[] {
+    // local functions
+
+    let analyzeFeature = (feature : Feature) => {
+      // recursion
+
+      if (feature.children)
+        for (let child of feature.children)
+          analyzeFeature(child)
+
+      // collect info
+
+      for (let permission of feature.permissions)
+        if (!this.allPermissions.includes(permission))
+          this.allPermissions.push(permission)
+
+      for (let tag of feature.tags)
+        if (!this.allTags.includes(tag))
+          this.allTags.push(tag)
+
+      for (let category of feature.categories)
+        if (!this.allCategories.includes(category))
+          this.allCategories.push(category)
     }
 
-    revert() {
-      this.enabled = this.manifest.features.map(feature => feature.enabled)
-      // will trigger isDirty calculation
-        this.selectFeature(this.selectedFeature)
+    let analyzeManifest = (manifest : Manifest) => {
+      for (let feature of manifest.features)
+        analyzeFeature(feature)
     }
 
-    setManifests(manifests: Manifest[]):Manifest[] {
-      // local functions
+    for (let manifest of manifests)
+      analyzeManifest(manifest)
 
-        let analyzeFeature = (feature: Feature) => {
-            // recursion
-
-            if ( feature.children)
-                for (let child of feature.children)
-                    analyzeFeature(child)
-
-            // collect info
-
-            for ( let permission of feature.permissions)
-                if ( !this.allPermissions.includes(permission))
-                    this.allPermissions.push(permission)
-
-            for ( let tag of feature.tags)
-                if ( !this.allTags.includes(tag))
-                    this.allTags.push(tag)
-
-            for ( let category of feature.categories)
-                if ( !this.allCategories.includes(category))
-                    this.allCategories.push(category)
-        }
-
-        let analyzeManifest = (manifest: Manifest) => {
-            for (let feature of manifest.features)
-                analyzeFeature(feature)
-        }
-
-        for ( let manifest of manifests)
-            analyzeManifest(manifest)
-
-        // done
+    // done
 
 
-      return manifests
-    }
+    return manifests
+  }
 
-  setManifest(manifestName: string) {
+  setManifest(manifestName : string) {
     this.model.uri = this.uuid + manifestName // will be set in onInit
 
     this.microfrontendsComponent.$manifests.subscribe(manifests => this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)))
   }
 
-  enabled : boolean[]
+  reallySetManifest(manifest : Manifest) {
+    this.manifest = manifest
 
-    reallySetManifest(manifest: Manifest) {
-      this.manifest = manifest
+    this.enabled = manifest.features.map(feature => feature.enabled)
 
-        this.enabled = manifest.features.map(feature => feature.enabled)
-
-        if ( manifest.features.length > 0)
-            this.selectFeature(manifest.features[0])
-    }
-
-  selectFeature(feature: Feature) {
-      if (feature !== this.selectedFeature && this.isDirty) {
-          this.confirmationDialogs.okCancel("Save", "Save first").subscribe(result => {
-              if ( result == true) {
-                  this.save()
-                  this.isDirty = false
-                  this.selectFeature(feature)
-              }
-          })
-          return
-      }
-
-     this.selectedFeature = feature
-
-      this.formGroup.setValue({
-          id: feature.id,
-          label: feature.label,
-          description: feature.description,
-          visibility: feature.visibility,
-          categories: feature.categories,
-          tags: feature.tags,
-          permissions: feature.permissions,
-          //enabled: feature.enabled
-      })
+    if (manifest.features.length > 0)
+      this.selectFeature(manifest.features[0])
   }
 
-    toggleEnabled(index: number) {
-      this.enabled[index] = !this.enabled[index]
-
-        this.checkChanges(this.formGroup.value)
+  selectFeature(feature : Feature) {
+    if (feature !== this.selectedFeature && this.isDirty) {
+      this.confirmationDialogs.okCancel("Save", "Save first").subscribe(result => {
+        if (result == true) {
+          this.save()
+          this.isDirty = false
+          this.selectFeature(feature)
+        }
+      })
+      return
     }
 
-  checkChanges(value: any) {
+    this.selectedFeature = feature
+
+    this.formGroup.setValue({
+      id: feature.id,
+      label: feature.label,
+      description: feature.description,
+      visibility: feature.visibility,
+      categories: feature.categories,
+      tags: feature.tags,
+      permissions: feature.permissions,
+      //enabled: feature.enabled
+    })
+  }
+
+  toggleEnabled(index : number) {
+    this.enabled[index] = !this.enabled[index]
+
+    this.checkChanges(this.formGroup.value)
+  }
+
+  checkChanges(value : any) {
     // local functions
 
-      const equalArrays = (a, b) => {
-        if ( a == undefined || b == undefined)
-          return a == b
+    const equalArrays = (a, b) => {
+      if (a == undefined || b == undefined)
+        return a == b
 
-          if ( a.length != b.length )
-              return false
+      if (a.length != b.length)
+        return false
 
-           let sorted = b.sort()
-          return a.sort().every((element, index) => element == sorted[index]);
+      let sorted = b.sort()
+      return a.sort().every((element, index) => element == sorted[index]);
     }
 
-      const equals = (a, b) => Array.isArray(a) ? equalArrays(a, b) : a == b
+    const equals = (a, b) => Array.isArray(a) ? equalArrays(a, b) : a == b
 
-      let dirty = {}
+    let dirty = {}
 
-      this.isDirty = false
+    this.isDirty = false
 
-      for (let propertyName in value) {
-          if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
-              dirty[propertyName] = value[propertyName]
-              this.isDirty = true
-          }
+    for (let propertyName in value) {
+      if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
+        dirty[propertyName] = value[propertyName]
+        this.isDirty = true
       }
+    }
 
-      // compare enabled
+    // compare enabled
 
-      let index = this.manifest.features.indexOf(this.selectedFeature)
-      if (this.selectedFeature.enabled !== this.enabled[index]) {
-          this.isDirty = true
-          dirty["enabled"] = this.enabled[index]
-      }
+    let index = this.manifest.features.indexOf(this.selectedFeature)
+    if (this.selectedFeature.enabled !== this.enabled[index]) {
+      this.isDirty = true
+      dirty["enabled"] = this.enabled[index]
+    }
 
 
-      this.dirty = dirty
+    this.dirty = dirty
   }
 
   // implement OnInit
@@ -233,13 +233,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
       this.setManifest(params["microfrontend"])
     })
 
-      this.formGroup.valueChanges.subscribe(value => this.checkChanges(value))
+    this.formGroup.valueChanges.subscribe(value => this.checkChanges(value))
   }
 
   // implement OnDestroy
 
   ngOnDestroy() {
-    if ( this.element)
+    if (this.element)
       this.microfrontendsComponent.popRouteElement(this.element);
 
     this.subscription.unsubscribe();

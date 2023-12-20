@@ -8,9 +8,9 @@ import { Ticket } from "./ticket.interface";
  * the configuration object for the security module
  */
 interface SecurityModuleConfig {
-  authentication?: Type<Authentication<User, Ticket>>;
+  authentication? : Type<Authentication<User, Ticket>>;
 
-  authorization?: Type<Authorization>;
+  authorization? : Type<Authorization>;
 }
 
 @NgModule({
@@ -21,7 +21,7 @@ interface SecurityModuleConfig {
 export class SecurityModule {
   // static methods
 
-  static forRoot(config: SecurityModuleConfig = {}): ModuleWithProviders<SecurityModule> {
+  static forRoot(config : SecurityModuleConfig = {}) : ModuleWithProviders<SecurityModule> {
     return {
       ngModule: SecurityModule,
       providers: [

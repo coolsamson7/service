@@ -1,15 +1,15 @@
 .container {
-    display: flex; /* or inline-flex */
-    flex-direction: column;
-    height: 100%
+  display: flex; /* or inline-flex */
+  flex-direction: column;
+  height: 100%
 }
 
 .left {
-    height: 100%;
-    flex-grow: 0
+  height: 100%;
+  flex-grow: 0
 }
 
 .right {
-    height: 100%;
-    flex-grow: 4
+  height: 100%;
+  flex-grow: 4
 }

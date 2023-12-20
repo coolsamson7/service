@@ -7,5 +7,5 @@ import { Manifest } from "./manifest.interface";
 
 
 export interface Deployment {
-	modules : { [name : string] : Manifest }
+  modules : { [name : string] : Manifest }
 }

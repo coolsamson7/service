@@ -14,21 +14,21 @@ export class ManifestDecorator {
     .defaultValue("visibility", [])
     .defaultValue("featureToggles", [])
 
-  static decorate(manifest : Manifest): Manifest {
-    let decorateFeature = (feature: Feature) => {
+  static decorate(manifest : Manifest) : Manifest {
+    let decorateFeature = (feature : Feature) => {
       ManifestDecorator.FeatureDecorator.decorate(feature)
 
-      if ( feature.children)
-        for ( let child of feature.children)
+      if (feature.children)
+        for (let child of feature.children)
           decorateFeature(child)
     }
 
     // manifest
 
-    if ( !Object.hasOwn(manifest, "enabled"))
-        manifest.enabled = true
+    if (!Object.hasOwn(manifest, "enabled"))
+      manifest.enabled = true
 
-      // features
+    // features
 
     for (let feature of manifest.features) {
       decorateFeature(feature)

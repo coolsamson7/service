@@ -5,12 +5,12 @@ export interface User {
   /**
    * the account
    */
-  account: string;
+  account : string;
 
   /**
    * any other user properties
    */
-  [prop: string]: any;
+  [prop : string] : any;
 }
 
 

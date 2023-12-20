@@ -13,15 +13,15 @@ import { AbstractHTTPService } from "../../common/communication/abstract-http-se
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration/"})
 export class PortalDeploymentService extends AbstractHTTPService {
-	// constructor
+  // constructor
 
-	constructor(injector: Injector) {
-		super(injector)
-	}
+  constructor(injector : Injector) {
+    super(injector)
+  }
 
-	// public methods
+  // public methods
 
-	public getDeployment(session: boolean) : Observable<Deployment> {
-		return this.get<Deployment>(`deployment/${session}`)
-	}
+  public getDeployment(session : boolean) : Observable<Deployment> {
+    return this.get<Deployment>(`deployment/${session}`)
+  }
 }

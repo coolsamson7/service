@@ -8,11 +8,11 @@ import { Feature } from "./feature.interface"
 import { Module } from "./module.interface"
 
 export interface Manifest {
-    enabled?: boolean
-	commitHash : string,
-	features : Feature[],
-	module : Module,
-	name : string,
-	remoteEntry : string | undefined,
-	version : string
+  enabled? : boolean
+  commitHash : string,
+  features : Feature[],
+  module : Module,
+  name : string,
+  remoteEntry : string | undefined,
+  version : string
 }

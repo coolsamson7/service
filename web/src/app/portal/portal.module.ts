@@ -28,28 +28,29 @@ import { ChipsComponent } from "./chips.component";
     MicrofrontendDetailsComponent,
     AddManifestDialog,
     ConfirmationDialog,
-      ChipsComponent
+    ChipsComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule,
-        MatListModule,
-        MatButtonModule,
-        MatTabsModule,
-        MatInputModule,
-        MatOptionModule,
-        MatAutocompleteModule,
-        MatFormFieldModule,
-        MatIconModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MonacoEditorModule,
-        MatChipsModule,
-        MatSlideToggleModule,
-        MatLegacyChipsModule,
-        MatLineModule,
-        MatDialogModule,
-        MatToolbarModule
-    ]
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatListModule,
+    MatButtonModule,
+    MatTabsModule,
+    MatInputModule,
+    MatOptionModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MonacoEditorModule,
+    MatChipsModule,
+    MatSlideToggleModule,
+    MatLegacyChipsModule,
+    MatLineModule,
+    MatDialogModule,
+    MatToolbarModule
+  ]
 })
-export class PortalModule { }
+export class PortalModule {
+}

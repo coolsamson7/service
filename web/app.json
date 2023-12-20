@@ -2,5 +2,7 @@
   "name": "Component Browser",
   "description": "Component Browser",
   "repository": "https://github.com/coolsamson7/service",
-  "keywords": ["angular"]
+  "keywords": [
+    "angular"
+  ]
 }

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ComponentDTO } from '../model/component.interface';
-import { InterfaceDescriptor } from '../model/service.interface';
 import { ComponentsComponent } from './components.component';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { Update, UpdateService } from '../service/update-service.service';
@@ -18,71 +17,90 @@ import { Subscription } from 'rxjs';
 export class ComponentDetailsComponent implements OnInit, OnDestroy {
   // instance data
 
-  component: ComponentDTO = {
-     name: null,
-     label: "",
-     description: "",
-     model: {
+  component : ComponentDTO = {
+    name: null,
+    label: "",
+    description: "",
+    model: {
       component: null,
       services: [],
       models: []
-     },
-     channels: []
+    },
+    channels: []
   }
-  subscription: Subscription
-  element: RouteElement = {
+  subscription : Subscription
+  element : RouteElement = {
     label: "",
     route: "/components/"
   }
-  open: boolean[]
+  open : boolean[]
   dead = false
 
-  updateSubscription: Subscription
+  updateSubscription : Subscription
 
   // constructor
 
-  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent, updateService: UpdateService) {
+  constructor(private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent, updateService : UpdateService) {
     componentsComponent.pushRouteElement(this.element)
 
     this.updateSubscription = updateService.getUpdates().subscribe({
-        next: update => {
-          this.update(update)
-        }
-      });
+      next: update => {
+        this.update(update)
+      }
+    });
   }
 
   // public
 
   toggle(i : number) {
-      this.open[i] = ! this.open[i]
+    this.open[i] = !this.open[i]
   }
 
   // private
 
-  private update(update: Update) {
-    this.componentStore.update(update)
-
-    if ( this.dead ) {
-      if ( update.addedServices.find(service => service == this.component.name) != null)
-        this.dead = false
-    }
-    else {
-      if ( update.deletedServices.find(service => service == this.component.name) != null)
-        this.dead = true
-    }
+  ngOnInit() {
+    this.subscription = this.activatedRoute.params.subscribe(params => {
+      this.setComponent(params["component"])
+    })
   }
 
   // network
 
+  ngOnDestroy() {
+    if (this.element)
+      this.componentsComponent.popRouteElement(this.element);
 
-  private setComponent(componentName: string) {
+    this.subscription.unsubscribe();
+    this.updateSubscription.unsubscribe();
+
+    this.componentStore.destroy()
+  }
+
+  // implement OnInit
+
+  private update(update : Update) {
+    this.componentStore.update(update)
+
+    if (this.dead) {
+      if (update.addedServices.find(service => service == this.component.name) != null)
+        this.dead = false
+    }
+    else {
+      if (update.deletedServices.find(service => service == this.component.name) != null)
+        this.dead = true
+    }
+  }
+
+  // implement OnDestroy
+
+  private setComponent(componentName : string) {
     this.componentStore.setup(componentName);
 
     // this is a stream also called after upates!
 
     this.componentStore.getComponent().subscribe({
-      next: (value: ComponentDTO) => {
-        if ( value != null) {
+      next: (value : ComponentDTO) => {
+        if (value != null) {
           this.component = value
           this.dead = false
 
@@ -98,25 +116,5 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
-
-  // implement OnInit
-
-  ngOnInit() {
-    this.subscription = this.activatedRoute.params.subscribe(params => {
-      this.setComponent(params["component"])
-    })
-  }
-
-  // implement OnDestroy
-
-  ngOnDestroy() {
-    if ( this.element)
-      this.componentsComponent.popRouteElement(this.element);
-
-    this.subscription.unsubscribe();
-    this.updateSubscription.unsubscribe();
-
-    this.componentStore.destroy()
   }
 }

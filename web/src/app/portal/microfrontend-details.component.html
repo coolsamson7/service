@@ -4,40 +4,40 @@
     <h1>{{manifest.name}}</h1>
     <hr/>
     <mat-tab-group *ngIf="manifest.name">
-     <!-- details -->
+      <!-- details -->
 
       <mat-tab label="Details">
         <div class="details">
           <!-- toolbar -->
 
-            <mat-toolbar>
-                <mat-toolbar-row>
-                    <button mat-icon-button class="example-icon" [disabled]="!isDirty" (click)="save()">
-                        <mat-icon>save</mat-icon>
-                    </button>
-                    <button mat-icon-button class="example-icon"   [disabled]="!isDirty" (click)="revert()">
-                        <mat-icon>undo</mat-icon>
-                    </button>
-                </mat-toolbar-row>
-            </mat-toolbar>
+          <mat-toolbar>
+            <mat-toolbar-row>
+              <button (click)="save()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
+                <mat-icon>save</mat-icon>
+              </button>
+              <button (click)="revert()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
+                <mat-icon>undo</mat-icon>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
 
-            <!-- header -->
+          <!-- header -->
 
-            <div class="header">
-                <mat-label>Name</mat-label>
-                <div>{{manifest.name}}</div>
+          <div class="header">
+            <mat-label>Name</mat-label>
+            <div>{{manifest.name}}</div>
 
-                <mat-label>Version</mat-label>
-                <div>{{manifest.version}}</div>
+            <mat-label>Version</mat-label>
+            <div>{{manifest.version}}</div>
 
-                <mat-label>Commit</mat-label>
-                <div>{{manifest.commitHash}}</div>
+            <mat-label>Commit</mat-label>
+            <div>{{manifest.commitHash}}</div>
 
-                <mat-label>Remote</mat-label>
-                <div>{{manifest.remoteEntry}}</div>
-            </div>
+            <mat-label>Remote</mat-label>
+            <div>{{manifest.remoteEntry}}</div>
+          </div>
 
-            <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
 
           <!--  body -->
 
@@ -47,10 +47,13 @@
             <div class="features">
               <mat-nav-list dense>
                 <ng-container *ngFor="let feature of manifest.features; let index = index">
-                  <a class="item" mat-list-item role="listitem" [ngClass]="{selected: selectedFeature == feature}" (click)="selectFeature(feature)">
+                  <a (click)="selectFeature(feature)" [ngClass]="{selected: selectedFeature == feature}" class="item" mat-list-item
+                     role="listitem">
                     <mat-icon matListItemIcon>view_array</mat-icon>
                     <span>{{feature.id == "" ? "Root" : feature.id}}</span>
-                    <mat-slide-toggle color="primary"  [disabled] ="selectedFeature !== feature" [ngModel]="enabled[index]" (toggleChange)="toggleEnabled(index)"></mat-slide-toggle>
+                    <mat-slide-toggle (toggleChange)="toggleEnabled(index)" [disabled]="selectedFeature !== feature"
+                                      [ngModel]="enabled[index]"
+                                      color="primary"></mat-slide-toggle>
                   </a>
                   <mat-divider></mat-divider>
                 </ng-container>
@@ -61,58 +64,62 @@
 
             <!-- details -->
 
-              <form class="feature-details" #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" novalidate>
-                  <!-- id -->
+            <form #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" class="feature-details" novalidate>
+              <!-- id -->
 
-                  <mat-form-field>
-                      <mat-label>Id</mat-label>
-                      <input type="text" [disabled]="true" matInput id="id" name="id" formControlName="id">
-                  </mat-form-field>
+              <mat-form-field>
+                <mat-label>Id</mat-label>
+                <input [disabled]="true" formControlName="id" id="id" matInput name="id" type="text">
+              </mat-form-field>
 
-                  <!-- label -->
+              <!-- label -->
 
-                  <mat-form-field>
-                      <mat-label>Label</mat-label>
-                      <input type="text" matInput id="label" name="label" formControlName="label">
-                  </mat-form-field>
+              <mat-form-field>
+                <mat-label>Label</mat-label>
+                <input formControlName="label" id="label" matInput name="label" type="text">
+              </mat-form-field>
 
-                  <!-- description -->
+              <!-- description -->
 
-                  <mat-form-field>
-                      <mat-label>Description</mat-label>
-                      <input type="text" matInput id="description" name="description" formControlName="description">
-                  </mat-form-field>
+              <mat-form-field>
+                <mat-label>Description</mat-label>
+                <input formControlName="description" id="description" matInput name="description" type="text">
+              </mat-form-field>
 
-                <!-- visibility -->
+              <!-- visibility -->
 
-                <mat-form-field>
-                  <mat-label>Visibility</mat-label>
-                    <chips [allValues]="allVisibilities" [allowNew]="false" placeholder="Add visibility" id="visibility" name="visibility" formControlName="visibility"></chips>
-                </mat-form-field>
+              <mat-form-field>
+                <mat-label>Visibility</mat-label>
+                <chips [allValues]="allVisibilities" [allowNew]="false" formControlName="visibility" id="visibility"
+                       name="visibility" placeholder="Add visibility"></chips>
+              </mat-form-field>
 
-                <!-- permissions -->
+              <!-- permissions -->
 
-                <mat-form-field>
-                    <mat-label>Permissions</mat-label>
-                    <chips [allValues]="allPermissions" [allowNew]="true" placeholder="Add permission" id="permissions" name="permissions" formControlName="permissions"></chips>
-                </mat-form-field>
+              <mat-form-field>
+                <mat-label>Permissions</mat-label>
+                <chips [allValues]="allPermissions" [allowNew]="true" formControlName="permissions" id="permissions"
+                       name="permissions" placeholder="Add permission"></chips>
+              </mat-form-field>
 
-                  <!-- category -->
+              <!-- category -->
 
-                  <mat-form-field>
-                      <mat-label>Categories</mat-label>
-                      <chips [allValues]="allCategories" [allowNew]="true" placeholder="Add category" id="categories" name="categories" formControlName="categories"></chips>
-                  </mat-form-field>
+              <mat-form-field>
+                <mat-label>Categories</mat-label>
+                <chips [allValues]="allCategories" [allowNew]="true" formControlName="categories" id="categories"
+                       name="categories" placeholder="Add category"></chips>
+              </mat-form-field>
 
-                  <!-- tags -->
+              <!-- tags -->
 
-                  <mat-form-field>
-                      <mat-label>Tags</mat-label>
-                      <chips [allValues]="allTags" [allowNew]="true" placeholder="Add tag" id="tags" name="tags"  formControlName="tags"></chips>
-                  </mat-form-field>
-              </form>
-            </div>
+              <mat-form-field>
+                <mat-label>Tags</mat-label>
+                <chips [allValues]="allTags" [allowNew]="true" formControlName="tags" id="tags" name="tags"
+                       placeholder="Add tag"></chips>
+              </mat-form-field>
+            </form>
           </div>
+        </div>
       </mat-tab>
 
       <!-- raw -->
@@ -129,6 +136,6 @@
 
   <!-- router outlet -->
 
-  <router-outlet  #outlet="outlet"></router-outlet>
+  <router-outlet #outlet="outlet"></router-outlet>
 </div>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { filter, map, switchMap } from 'rxjs';
@@ -17,10 +17,10 @@ export class HeaderComponent implements OnInit {
   icon = ""
   loggedIn = false
   user = undefined
-  
+
   // constructor
 
-  constructor(public app: AppComponent, private router: Router, private activatedRoute: ActivatedRoute, private oauthService: OAuthService) { 
+  constructor(public app : AppComponent, private router : Router, private activatedRoute : ActivatedRoute, private oauthService : OAuthService) {
     // check initial status
 
     this.loggedIn = oauthService.hasValidAccessToken()
@@ -28,35 +28,27 @@ export class HeaderComponent implements OnInit {
     // subscribe to events
 
     oauthService.events.subscribe((e) => {
-        // console.debug('oauth/oidc event', e);
-        switch ( e.type ) {
-          case "discovery_document_loaded":
-            if ( this.user == undefined && oauthService.hasValidAccessToken())
-               this.loadUser();
-            break;
+      // console.debug('oauth/oidc event', e);
+      switch (e.type) {
+        case "discovery_document_loaded":
+          if (this.user == undefined && oauthService.hasValidAccessToken())
+            this.loadUser();
+          break;
 
-          case "token_received":
-            this.onTokenReceived()
-            break;
+        case "token_received":
+          this.onTokenReceived()
+          break;
 
-          case "logout":
-            this.onLogout()
-            break;
+        case "logout":
+          this.onLogout()
+          break;
 
-          default:
-        }
-      }); 
+        default:
+      }
+    });
   }
 
   // private
-
-   private loadUser() {
-    this.oauthService.loadUserProfile().then((user) => 
-      this.user = user['info']
-      );
-   }
-
- // callbacks
 
   onTokenReceived() {
     this.loggedIn = true;
@@ -65,45 +57,53 @@ export class HeaderComponent implements OnInit {
 
     //const scopes = this.oauthService.getGrantedScopes(); // see config object
   }
-     
+
+  // callbacks
+
   onLogout() {
     this.loggedIn = false;
     this.user = undefined;
   }
 
-
-  // public
-
   public login() {
     this.oauthService.initLoginFlow();
   }
-  
+
+
+  // public
+
   public logout() {
     this.oauthService.logOut();
   }
-
-  // public
 
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
   }
 
-  // implement OnInit
+  // public
 
-  ngOnInit(): void {
-     // listen to router events
+  ngOnInit() : void {
+    // listen to router events
 
-      this.router.events
+    this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map(route => route.firstChild),
         switchMap(route => (route as any).data),
         //map(data => data['label'])
-         )
-        .subscribe(data => {
-           this.label = data['label']
-           this.icon = data['icon']
-        });
-    }
+      )
+      .subscribe(data => {
+        this.label = data['label']
+        this.icon = data['icon']
+      });
   }
+
+  // implement OnInit
+
+  private loadUser() {
+    this.oauthService.loadUserProfile().then((user) =>
+      this.user = user['info']
+    );
+  }
+}

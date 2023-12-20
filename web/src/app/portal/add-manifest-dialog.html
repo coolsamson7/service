@@ -2,10 +2,10 @@
 <div mat-dialog-content>
   <mat-form-field>
     <mat-label>Remote</mat-label>
-    <input matInput tabindex="1" cdkFocusInitial [(ngModel)]="data.remote">
+    <input [(ngModel)]="data.remote" cdkFocusInitial matInput tabindex="1">
   </mat-form-field>
 </div>
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data.remote" color="primary">Ok</button>
+<div align="end" mat-dialog-actions>
+  <button (click)="onNoClick()" mat-button>Cancel</button>
+  <button [mat-dialog-close]="data.remote" color="primary" mat-button>Ok</button>
 </div>

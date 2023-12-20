@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { ComponentsComponent } from './components/components.component';
 import { HomeComponent } from './home/home-component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -11,7 +11,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { MirofrontendsComponent } from "./portal/microfrontends.component";
 import { MicrofrontendDetailsComponent } from "./portal/microfrontend-details.component";
 
-const routes: Routes = [
+const routes : Routes = [
   {
     path: 'home',
     data: {
@@ -46,10 +46,10 @@ const routes: Routes = [
         path: ':component',
         component: ComponentDetailsComponent,
         children: [
-              {
-                path: ':instance',
-                component: ServiceInstanceComponent
-              }
+          {
+            path: ':instance',
+            component: ServiceInstanceComponent
+          }
         ]
       }
     ]
@@ -69,14 +69,15 @@ const routes: Routes = [
       }
     ]
   },
-  { path: '',   redirectTo: '/home', pathMatch: 'full' },
-  { path: '**', component: PageNotFoundComponent }
+  {path: '', redirectTo: '/home', pathMatch: 'full'},
+  {path: '**', component: PageNotFoundComponent}
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(
     routes,
-    { enableTracing: true })],
+    {enableTracing: true})],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

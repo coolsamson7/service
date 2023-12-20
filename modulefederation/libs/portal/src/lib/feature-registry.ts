@@ -64,11 +64,11 @@ export class FeatureRegistry {
   disable(microfrontend : string) {
     let rootFeature = this.getFeature(microfrontend)
 
-    let disable = (feature: FeatureData) => {
+    let disable = (feature : FeatureData) => {
       feature.enabled = false
 
-      if ( feature.children)
-        for ( let child of feature.children)
+      if (feature.children)
+        for (let child of feature.children)
           disable(child)
     }
 

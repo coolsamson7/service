@@ -1,18 +1,18 @@
 import { Component, Input } from "@angular/core"
 
 @Component({
-    selector: 'class',
-    templateUrl: './service-class.component.html',
-    styleUrls: ['./service-type.component.scss']
-  })
+  selector: 'class',
+  templateUrl: './service-class.component.html',
+  styleUrls: ['./service-type.component.scss']
+})
 export class ServiceClassComponent {
-    // input
+  // input
 
-    @Input('class') clazz: String 
+  @Input('class') clazz : String
 
-    // public
+  // public
 
-    format(clazz: String) {
-        return clazz.substring(clazz.lastIndexOf('.') + 1) // for now
-    }
+  format(clazz : String) {
+    return clazz.substring(clazz.lastIndexOf('.') + 1) // for now
+  }
 }

@@ -9,12 +9,12 @@ import { ModuleMetadata, ModuleRegistry } from "@modulefederation/portal";
 export class AboutDialog implements OnInit {
   // instance data
 
-  dataSource: ModuleMetadata[] = []
-  displayedColumns: string[] = ['name', 'type', 'version', 'isLoaded'];
+  dataSource : ModuleMetadata[] = []
+  displayedColumns : string[] = ['name', 'type', 'version', 'isLoaded'];
 
   // constructor
   constructor(
-    public dialogRef: MatDialogRef<AboutDialog>,
+    public dialogRef : MatDialogRef<AboutDialog>,
     public moduleRegistry : ModuleRegistry
     //@Inject(MAT_DIALOG_DATA) public data: ConfirmationModel,
   ) {
@@ -24,17 +24,17 @@ export class AboutDialog implements OnInit {
   // callbacks
 
   // implement OnInit
-  ngOnInit(): void {
-      this.dialogRef.keydownEvents().subscribe(event => {
-        //if (event.key === "Escape") {
-        //    this.cancel();
-        //}
+  ngOnInit() : void {
+    this.dialogRef.keydownEvents().subscribe(event => {
+      //if (event.key === "Escape") {
+      //    this.cancel();
+      //}
 
-        if (event.key === "Enter"&& !event.shiftKey) {
-          event.preventDefault();
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
 
-          this.dialogRef.close();
-        }
-      });
+        this.dialogRef.close();
+      }
+    });
   }
 }

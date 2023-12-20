@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>About</h1>
 <div mat-dialog-content>
-  <table class="table" mat-table [dataSource]="dataSource">
+  <table [dataSource]="dataSource" class="table" mat-table>
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -8,27 +8,27 @@
     <!-- name -->
 
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let module"> {{module.name}} </td>
+      <th *matHeaderCellDef mat-header-cell>Name</th>
+      <td *matCellDef="let module" mat-cell> {{module.name}} </td>
     </ng-container>
 
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let module"> {{module.type}} </td>
+      <th *matHeaderCellDef mat-header-cell>Name</th>
+      <td *matCellDef="let module" mat-cell> {{module.type}} </td>
     </ng-container>
 
     <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef>Version</th>
-      <td mat-cell *matCellDef="let module"> {{module.version}} </td>
+      <th *matHeaderCellDef mat-header-cell>Version</th>
+      <td *matCellDef="let module" mat-cell> {{module.version}} </td>
     </ng-container>
 
     <ng-container matColumnDef="isLoaded">
-      <th mat-header-cell *matHeaderCellDef>Loaded</th>
-      <td mat-cell *matCellDef="let module"> {{module.isLoaded}} </td>
+      <th *matHeaderCellDef mat-header-cell>Loaded</th>
+      <td *matCellDef="let module" mat-cell> {{module.isLoaded}} </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
   </table>
 </div>
 

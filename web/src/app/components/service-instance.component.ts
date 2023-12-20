@@ -8,8 +8,8 @@ import { ComponentStore } from './component-store';
 
 
 interface Channel {
-  name: String,
-  uri: String
+  name : String,
+  uri : String
 }
 
 @Component({
@@ -20,99 +20,80 @@ interface Channel {
 export class ServiceInstanceComponent implements OnInit, OnDestroy {
   // instance data
 
-  subscription: Subscription
+  subscription : Subscription
   updateSubscription : Subscription
   healthSubscription : Subscription
   instanceSubscription : Subscription
-  instance: ServiceInstanceDTO = {
+  instance : ServiceInstanceDTO = {
     component: null,
-    instanceId:  "",
-    serviceId:  "",
-	  host: "",
+    instanceId: "",
+    serviceId: "",
+    host: "",
     port: 1,
-	  isSecure: false,
-	  uri : "",
+    isSecure: false,
+    uri: "",
     scheme: "",
     metadata: {}
   }
   health : string = "unknown"
-  element: RouteElement = {
+  element : RouteElement = {
     label: "",
     route: ""
   }
-  channels: Channel[] = []
+  channels : Channel[] = []
   dead = false
 
   // constructor
 
-  constructor(private activatedRoute: ActivatedRoute, private componentStore: ComponentStore, private componentsComponent: ComponentsComponent) {
+  constructor(private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent) {
     this.element.route = componentsComponent.topRouteElement().route + "/"
 
     this.componentsComponent.pushRouteElement(this.element)
 
     this.subscription = this.activatedRoute.params.subscribe({
-        next: (params: any) => {
-          this.setInstance(params['instance'])
-        }
-      });
+      next: (params : any) => {
+        this.setInstance(params['instance'])
+      }
+    });
   }
 
   // private
 
-  private parseChannnels = (addresses: String) :Channel[] => {
-    let result = []
-
-    if ( addresses )
-      for (let address of addresses.split(",")) {
-          let lparen = address.indexOf("(")
-          let rparen = address.indexOf(")")
-
-          let channel = address.substring(0, lparen)
-          let url = address.substring(lparen + 1, rparen)
-
-          result.push({name: channel, uri: url})
-      }
-
-    return result
-  }
-
-  setInstance(id: string) {
+  setInstance(id : string) {
     this.instanceSubscription = this.componentStore.getInstances().subscribe({
-        next: (instances: ServiceInstanceDTO[]) => {
-            let instance = instances.find((instance) => instance.instanceId == id)
+      next: (instances : ServiceInstanceDTO[]) => {
+        let instance = instances.find((instance) => instance.instanceId == id)
 
-            if ( instance ) {
-              this.instance = instance
+        if (instance) {
+          this.instance = instance
 
-              // set label
+          // set label
 
-              this.element.label = this.instance.serviceId
+          this.element.label = this.instance.serviceId
 
-              this.channels = this.parseChannnels(instance.metadata['channels'])
+          this.channels = this.parseChannnels(instance.metadata['channels'])
 
-              this.dead = false
-            }
-            else {
-              this.channels = []
-              this.dead = true
-            }
+          this.dead = false
         }
-    })   
+        else {
+          this.channels = []
+          this.dead = true
+        }
+      }
+    })
 
     this.healthSubscription = this.componentStore.getHealths().subscribe({
-        next: (value) => this.health = value[id]
+      next: (value) => this.health = value[id]
     })
   }
-
-  // implement OnInit
 
   ngOnInit() {
   }
 
-  // implement OnDestroy
+  // implement OnInit
 
   ngOnDestroy() {
-    if ( this.element)
+    if (this.element)
       this.componentsComponent.popRouteElement(this.element);
 
     this.subscription.unsubscribe();
@@ -122,5 +103,24 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
 
     if (this.healthSubscription != null)
       this.healthSubscription.unsubscribe()
+  }
+
+  // implement OnDestroy
+
+  private parseChannnels = (addresses : String) : Channel[] => {
+    let result = []
+
+    if (addresses)
+      for (let address of addresses.split(",")) {
+        let lparen = address.indexOf("(")
+        let rparen = address.indexOf(")")
+
+        let channel = address.substring(0, lparen)
+        let url = address.substring(lparen + 1, rparen)
+
+        result.push({name: channel, uri: url})
+      }
+
+    return result
   }
 }

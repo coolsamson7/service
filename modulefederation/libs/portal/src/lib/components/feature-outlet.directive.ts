@@ -1,5 +1,12 @@
 import {
-  Component, ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
+  Component,
+  ComponentRef,
+  Directive,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
   ViewContainerRef
 } from '@angular/core';
 import { FeatureRegistry } from '../feature-registry';
@@ -10,8 +17,9 @@ import { FeatureData } from "../portal-manager";
   template: '<div>Unknown Feature {{feature}}</div>'
 })
 export class UnknownFeatureComponent {
-  feature: string = ""
+  feature : string = ""
 }
+
 /**
  * this directive is able to render the specified feature in the surrounding container
  */
@@ -38,17 +46,35 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
 
   // private
 
-  private setFeature(feature: string) {
+  ngOnChanges(changes : SimpleChanges) : void {
+    if (changes['feature'] && !changes['feature'].isFirstChange())
+      this.setFeature(this.feature)
+  }
+
+  // implement OnChanges
+
+  ngOnInit() {
+    this.setFeature(this.feature)
+  }
+
+  // implement OnInit
+
+  ngOnDestroy() {
+    this.component?.destroy();
+    this.container.clear();
+  }
+
+  private setFeature(feature : string) {
     // clear previous component
 
-    if ( this.component) {
+    if (this.component) {
       this.component?.destroy();
       this.container.clear();
     }
 
     this.featureData = this.featureRegistry.findFeature(feature)
 
-    if ( this.featureData)
+    if (this.featureData)
       this.load()
     else {
       this.component = this.container.createComponent(UnknownFeatureComponent);
@@ -56,43 +82,25 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // implement OnChanges
+  // implement OnDestroy
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if ( changes['feature'] && !changes['feature'].isFirstChange())
-      this.setFeature(this.feature)
+  private async load() {
+    // local function
+    let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
+      while (feature) {
+        if (feature.load)
+          return feature
+        else
+          feature = feature.$parent
+      }
+
+      return undefined
+    }
+
+    let next : FeatureData | undefined
+    while ((next = nextLoader(this.featureData)) != undefined)
+      await next.load!!() // will set load to undefined in registerLazyRoutes
+
+    this.component = this.container.createComponent(this.featureData?.ngComponent);
   }
-
-    // implement OnInit
-
-    ngOnInit() {
-      this.setFeature(this.feature)
-    }
-
-    ngOnDestroy() {
-        this.component?.destroy();
-        this.container.clear();
-    }
-
-    // implement OnDestroy
-
-    private async load() {
-        // local function
-        let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
-            while (feature) {
-                if (feature.load)
-                  return feature
-                else
-                    feature = feature.$parent
-            }
-
-            return undefined
-        }
-
-        let next : FeatureData | undefined
-        while ((next = nextLoader(this.featureData)) != undefined)
-            await next.load!!() // will set load to undefined in registerLazyRoutes
-
-        this.component = this.container.createComponent(this.featureData?.ngComponent);
-    }
 }

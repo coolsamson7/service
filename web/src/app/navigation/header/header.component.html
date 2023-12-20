@@ -1,27 +1,27 @@
 <mat-toolbar class="toolbar" color="primary">
-    <!-- button -->
+  <!-- button -->
 
-    <div fxHide.gt-xs>
-        <button mat-icon-button (click)="onToggleSidenav()">
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
+  <div fxHide.gt-xs>
+    <button (click)="onToggleSidenav()" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
 
-    <!-- current selection -->
+  <!-- current selection -->
 
-    <div class="title">
-        <mat-icon>{{icon}}</mat-icon>
-        <span>{{label}}</span>
-    </div>
+  <div class="title">
+    <mat-icon>{{icon}}</mat-icon>
+    <span>{{label}}</span>
+  </div>
 
 
-    <button *ngIf="!loggedIn" mat-button (click)="login()">Login</button>
+  <button (click)="login()" *ngIf="!loggedIn" mat-button>Login</button>
 
-    <span *ngIf="user">
-        <button mat-button [matMenuTriggerFor]="menu">{{user.given_name}} {{user.family_name}}</button>
+  <span *ngIf="user">
+        <button [matMenuTriggerFor]="menu" mat-button>{{user.given_name}} {{user.family_name}}</button>
         <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="logout()">Logout</button>
+            <button (click)="logout()" mat-menu-item>Logout</button>
         </mat-menu>
     </span>
 
-  </mat-toolbar>
+</mat-toolbar>

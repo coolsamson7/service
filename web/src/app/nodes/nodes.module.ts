@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
 import { MatListModule } from "@angular/material/list";
@@ -12,19 +12,20 @@ import { NodesComponent } from "./nodes.component";
 import { NavigationBreadcrumbComponent } from "./navigation-breadcrumb.component";
 
 @NgModule({
-    declarations: [
-        NodesComponent, 
-        NodeDetailsComponent,
-        NavigationBreadcrumbComponent
-    ],
-    imports: [
-      CommonModule,
-      RouterModule,
-      MatListModule,
-      MatTabsModule,
-      MatInputModule,
-      MatFormFieldModule,
-      MatIconModule
-    ]
-  })
-export class NodesModule { }
+  declarations: [
+    NodesComponent,
+    NodeDetailsComponent,
+    NavigationBreadcrumbComponent
+  ],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatListModule,
+    MatTabsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatIconModule
+  ]
+})
+export class NodesModule {
+}

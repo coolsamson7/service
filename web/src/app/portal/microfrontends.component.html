@@ -11,47 +11,49 @@
     </ng-container>
   </div>
 
-    <!-- toolbar -->
+  <!-- toolbar -->
 
-    <mat-toolbar *ngIf="outlet.isActivated == false" class="left">
-        <mat-toolbar-row>
-            <button mat-icon-button (click)="addManifest()">
-                <mat-icon>add_circle_outline</mat-icon>
-            </button>
-            <button mat-icon-button (click)="refresh()">
-                <mat-icon>refresh</mat-icon>
-            </button>
-        </mat-toolbar-row>
-    </mat-toolbar>
+  <mat-toolbar *ngIf="outlet.isActivated == false" class="left">
+    <mat-toolbar-row>
+      <button (click)="addManifest()" mat-icon-button>
+        <mat-icon>add_circle_outline</mat-icon>
+      </button>
+      <button (click)="refresh()" mat-icon-button>
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
 
-    <mat-divider></mat-divider>
+  <mat-divider></mat-divider>
 
   <!-- manifest list -->
 
-  <div  *ngIf="outlet.isActivated == false" class="left">
+  <div *ngIf="outlet.isActivated == false" class="left">
     <mat-nav-list>
       <ng-container *ngFor="let manifest of manifests">
         <mat-list-item class="manifest">
-          <a [routerLinkActive]="['is-active']" routerLink="{{manifest.name}}" role="listitem" (click)="selectManifest(manifest)">
+          <a (click)="selectManifest(manifest)" [routerLinkActive]="['is-active']" role="listitem"
+             routerLink="{{manifest.name}}">
             <mat-icon>language</mat-icon>
-              <span class="bold">
+            <span class="bold">
                   Name:
               </span>
             <span>
                 {{manifest.name}}
             </span>
-              <span class="bold">
+            <span class="bold">
                   Version:
               </span>
-              <span>
+            <span>
                   {{manifest.version}}
               </span>
-              <mat-icon>sentiment_satisfied</mat-icon>
+            <mat-icon>sentiment_satisfied</mat-icon>
           </a>
 
           <!--mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon-->
-          <mat-icon class="icon" (click)="removeManifest(manifest)">remove_circle</mat-icon>
-          <mat-slide-toggle color="primary" class="toggle" [(ngModel)]="manifest.enabled" (ngModelChange)="onChangedEnabled(manifest)"></mat-slide-toggle>
+          <mat-icon (click)="removeManifest(manifest)" class="icon">remove_circle</mat-icon>
+          <mat-slide-toggle (ngModelChange)="onChangedEnabled(manifest)" [(ngModel)]="manifest.enabled" class="toggle"
+                            color="primary"></mat-slide-toggle>
         </mat-list-item>
 
         <mat-divider></mat-divider>
@@ -62,6 +64,6 @@
 
   <!-- router outlet -->
 
-  <router-outlet  #outlet="outlet"></router-outlet>
+  <router-outlet #outlet="outlet"></router-outlet>
 </div>
 

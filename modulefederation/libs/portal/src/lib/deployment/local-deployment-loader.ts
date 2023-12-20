@@ -1,48 +1,49 @@
-import {DeploymentLoader} from "./deployment-loader";
-import {Deployment} from "./deployment-model";
-import {ManifestDecorator} from "./manifest-decorator";
+import { DeploymentLoader } from "./deployment-loader";
+import { Deployment } from "./deployment-model";
+import { ManifestDecorator } from "./manifest-decorator";
 
 export class LocalDeploymentLoader extends DeploymentLoader {
-    // instance data
+  // instance data
 
-    private urls : string[]
+  private urls : string[]
 
-    // constructor
-    constructor(...urls : string[]) {
-        super()
+  // constructor
+  constructor(...urls : string[]) {
+    super()
 
-        this.urls = urls
+    this.urls = urls
+  }
+
+  // implement DeploymentLoader
+  async load() : Promise<Deployment> {
+    const promises = this.urls.map(url => {
+      return fetch(url + "/assets/manifest.json")
+    })
+
+    let deployment : Deployment = {
+      modules: {}
     }
 
-    // implement DeploymentLoader
-    async load() : Promise<Deployment> {
-        const promises = this.urls.map(url => {
-            return fetch(url + "/assets/manifest.json")
-        })
+    let responses = await Promise.allSettled<Response>(promises)
 
-        let deployment : Deployment = {
-            modules: {}
-        }
+    let index = 0
+    for (let response of responses) {
+      if (response.status == "fulfilled") {
+        let manifest = await response.value.json()
 
-        let responses = await Promise.allSettled<Response>(promises)
+        ManifestDecorator.decorate(manifest)
 
-        let index = 0
-        for (let response of responses) {
-            if (response.status == "fulfilled") {
-                let manifest = await response.value.json()
+        manifest.remoteEntry = this.urls[index]
 
-                ManifestDecorator.decorate(manifest)
+        deployment.modules[manifest.module.name] = manifest
+      }
+      else {
+        console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)
+      }
 
-                manifest.remoteEntry = this.urls[index]
-
-                deployment.modules[manifest.module.name] = manifest
-            } else {
-                console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)
-            }
-
-            index++;
-        }
-
-        return deployment
+      index++;
     }
+
+    return deployment
+  }
 }

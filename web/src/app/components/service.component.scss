@@ -1,15 +1,15 @@
 .service {
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+
+  .body {
     display: flex;
     flex-direction: column;
-    column-gap: 20px;
+    row-gap: 20px;
+  }
 
-    .body {
-        display: flex;
-        flex-direction: column;
-        row-gap: 20px;
-    }
-
-    .keyword {
-        color: darkblue;
-    }
+  .keyword {
+    color: darkblue;
+  }
 }

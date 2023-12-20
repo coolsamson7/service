@@ -8,18 +8,18 @@ import { FeatureModule } from "./feature-module.interface"
 import { Router } from "./router.interface"
 
 export interface Feature {
-    enabled?: boolean
-	categories : string[] | undefined,
-	children : Feature[] | undefined,
-	component : string,
-	description : string | undefined,
-	featureToggles : string[] | undefined,
-	id : string,
-	label : string | undefined,
-	module : FeatureModule | undefined,
-	parent : string | undefined,
-	permissions : string[] | undefined,
-	router : Router | undefined,
-	tags : string[] | undefined,
-	visibility : string[] | undefined
+  enabled? : boolean
+  categories : string[] | undefined,
+  children : Feature[] | undefined,
+  component : string,
+  description : string | undefined,
+  featureToggles : string[] | undefined,
+  id : string,
+  label : string | undefined,
+  module : FeatureModule | undefined,
+  parent : string | undefined,
+  permissions : string[] | undefined,
+  router : Router | undefined,
+  tags : string[] | undefined,
+  visibility : string[] | undefined
 }

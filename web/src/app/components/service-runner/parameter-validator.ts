@@ -1,86 +1,87 @@
-import { AbstractControl, ValidatorFn, NG_VALIDATORS, Validator, FormControl, ValidationErrors } from '@angular/forms';
+import { FormControl, NG_VALIDATORS, ValidationErrors, Validator } from '@angular/forms';
 import { Directive, Input } from '@angular/core';
 import { ParameterDescriptor } from '../../model/service.interface';
 
-let constraintHandlers =  [
-    // required
+let constraintHandlers = [
+  // required
 
-     {
-        type: ["integer", "number", "string"],
-        constraint: "required",
-        check: (constraint, value) => {
-            return value !== undefined && value !== null
-        }
-    },
-
-    // type
-
-     {
-        type: ["integer", "number", "string"],
-        constraint: "type",
-        check: (constraint, value) => {
-            let type = typeof value
-
-            switch ( type ) {
-                case "string":
-                    return constraint == type
-
-                case "number":
-                    return constraint == "integer" || constraint == "number"
-            }
-
-            return typeof value !== undefined && value !== null
-        }
-    },
-
-    // minimum
-
-    {
-        type: ["integer", "number"],
-        constraint: "minimum",
-        check: (constraint, value) => {
-            return value >= constraint
-        }
-    },
-
-    // maximum
-
-    {
-        type: ["integer", "number"],
-        constraint: "maximum",
-        check: (constraint, value) => {
-            return value <= constraint
-        }
-    },
-
-    // minLength
-
-      {
-        type: ["string"],
-        constraint: "minLength",
-        check: (constraint, value) => {
-            return value.length >= constraint
-        }
-    },
-
-    // maxLength
-
-    {
-        type: ["string"],
-        constraint: "maxLength",
-        check: (constraint, value) => {
-            return value.length <= constraint
-        }
+  {
+    type: ["integer", "number", "string"],
+    constraint: "required",
+    check: (constraint, value) => {
+      return value !== undefined && value !== null
     }
+  },
+
+  // type
+
+  {
+    type: ["integer", "number", "string"],
+    constraint: "type",
+    check: (constraint, value) => {
+      let type = typeof value
+
+      switch (type) {
+        case "string":
+          return constraint == type
+
+        case "number":
+          return constraint == "integer" || constraint == "number"
+      }
+
+      return typeof value !== undefined && value !== null
+    }
+  },
+
+  // minimum
+
+  {
+    type: ["integer", "number"],
+    constraint: "minimum",
+    check: (constraint, value) => {
+      return value >= constraint
+    }
+  },
+
+  // maximum
+
+  {
+    type: ["integer", "number"],
+    constraint: "maximum",
+    check: (constraint, value) => {
+      return value <= constraint
+    }
+  },
+
+  // minLength
+
+  {
+    type: ["string"],
+    constraint: "minLength",
+    check: (constraint, value) => {
+      return value.length >= constraint
+    }
+  },
+
+  // maxLength
+
+  {
+    type: ["string"],
+    constraint: "maxLength",
+    check: (constraint, value) => {
+      return value.length <= constraint
+    }
+  }
 ]
+
 class ConstraintValidator {
-   // instance data
+  // instance data
 
-   handlers = []
+  handlers = []
 
-   // constructor
+  // constructor
 
-   constructor(constraints: any) {
+  constructor(constraints : any) {
     let type = constraints.type
 
     let keys = Object.keys(constraints)
@@ -91,76 +92,76 @@ class ConstraintValidator {
     keys.unshift("type")
 
     index = keys.indexOf("required")
-    if ( index >= 0) {
-        keys.splice(index, 1)
-        keys.unshift("required")
+    if (index >= 0) {
+      keys.splice(index, 1)
+      keys.unshift("required")
     }
 
 
     // sort, so that type and required come first
 
-    let findHandler = (type: string, constraint: string) => {
-        for ( let handler of constraintHandlers)
-           if ( handler.constraint == constraint && handler.type.includes(type))
-              return handler
+    let findHandler = (type : string, constraint : string) => {
+      for (let handler of constraintHandlers)
+        if (handler.constraint == constraint && handler.type.includes(type))
+          return handler
 
-        return undefined
+      return undefined
     }
 
 
-    for ( let constraintName of keys) {
-        let constraint =  constraints[constraintName]
+    for (let constraintName of keys) {
+      let constraint = constraints[constraintName]
 
-        let handler = findHandler(type, constraintName)
-        if ( handler ) {
-            this.handlers.push({constraint: constraint, handler: handler})
-        }
+      let handler = findHandler(type, constraintName)
+      if (handler) {
+        this.handlers.push({constraint: constraint, handler: handler})
+      }
     }
-   }
+  }
 
-   // public
+  // public
 
-   validate(value) {
-    for ( let handler of this.handlers) {
-        if ( !handler.handler.check(handler.constraint, value)) {
-            let error = {}
+  validate(value) {
+    for (let handler of this.handlers) {
+      if (!handler.handler.check(handler.constraint, value)) {
+        let error = {}
 
-            error[handler.handler.constraint] = handler.constraint 
+        error[handler.handler.constraint] = handler.constraint
 
-            return error
-        }
+        return error
+      }
     }
 
     return null
-   }
+  }
 }
 
 @Directive({
-    selector: '[validateParameter][ngModel]',
-    providers: [
-        { provide: NG_VALIDATORS, useExisting: ParameterValidator, multi: true }
-    ]
+  selector: '[validateParameter][ngModel]',
+  providers: [
+    {provide: NG_VALIDATORS, useExisting: ParameterValidator, multi: true}
+  ]
 })
 export class ParameterValidator implements Validator {
-    // input
+  // input
 
-    @Input("validateParameter") parameter : ParameterDescriptor
+  @Input("validateParameter") parameter : ParameterDescriptor
 
-    // instance data
+  // instance data
 
-    validator: ConstraintValidator;
+  validator : ConstraintValidator;
 
-    // constructor
+  // constructor
 
-    constructor() {
-    }
+  constructor() {
+  }
 
-    // implement Validator
+  // implement Validator
 
-    validate(control: FormControl) : ValidationErrors | null {
-        if ( !this.validator)
-            this.validator = new ConstraintValidator(this.parameter['schema'])
-        
-        return this.validator.validate(control.value);
-    }
+  validate(control : FormControl) : ValidationErrors | null {
+    if (!this.validator)
+      this.validator = new ConstraintValidator(this.parameter['schema'])
+
+    return this.validator.validate(control.value);
+  }
 }
