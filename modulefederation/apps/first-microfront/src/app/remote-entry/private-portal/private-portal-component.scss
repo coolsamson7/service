@@ -3,15 +3,18 @@
   color: white;
 }
 
-.mat-button {
-  color: white;
+.toolbar {
+  .mat-button {
+    color: white;
+  }
 
   > a {
     text-decoration: none;
   }
 
+  .spacer {
+    flex: 1 1 auto;
+  }
 }
 
-.spacer {
-  flex: 1 1 auto;
-}
+
