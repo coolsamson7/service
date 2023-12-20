@@ -31,8 +31,12 @@
 
     .features {
 
+      .item {
+        padding-left: 3px;
+      }
+
       .selected {
-        background-color: darkgrey;
+        background-color: rgb(212, 234, 242);
       }
 
       .mat-mdc-slide-toggle {

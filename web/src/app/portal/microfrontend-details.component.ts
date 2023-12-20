@@ -45,7 +45,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   selectedFeature : Feature
 
-
   allPermissions : string[] = [];
   allTags : string[] = [];
   allCategories : string[] = [];
@@ -74,6 +73,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         tags: [[]]
       }
     )
+
+    this.formGroup.get('id')?.disable();
   }
 
   save() {
