@@ -1,5 +1,13 @@
-import { AbstractFeature, Feature, FeatureData, FeatureRegistry } from "@modulefederation/portal";
+import {
+  AboutDialogService,
+  AbstractFeature,
+  Feature,
+  FeatureData,
+  FeatureRegistry, PortalManager,
+  SessionManager
+} from "@modulefederation/portal";
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Feature({
     id: 'private-portal',
@@ -20,11 +28,29 @@ export class PrivatePortalComponent extends AbstractFeature implements OnInit {
     features : FeatureData[] = []
 
     // constructor
-    constructor(private featureRegistry: FeatureRegistry) {
+    constructor(private portalManager: PortalManager, private router: Router, private sessionManager: SessionManager, private featureRegistry: FeatureRegistry, private aboutDialogService: AboutDialogService) {
         super();
 
         featureRegistry.registry$.subscribe(_ => this.computeNavigation())
     }
+
+    // callbacks
+
+  about() {
+    this.aboutDialogService.show()
+  }
+
+  logout() {
+    this.sessionManager.closeSession().subscribe(
+      (session)=> {
+        this.portalManager.loadDeployment(true).then(result =>
+          this.router.navigate(["/"])
+        )
+      },
+      (error) => {
+        console.log("ouch")
+      })
+  }
 
     // private
 

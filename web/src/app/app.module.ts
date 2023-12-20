@@ -22,6 +22,7 @@ import { Environment, EnvironmentModule } from './common/util/environment.servic
 import { EndpointLocator } from './common/communication/endpoint-locator';
 import { HTTPErrorInterceptor } from './common/communication/http-error-interceptor';
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -56,6 +57,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     SidenavListComponent
   ],
   imports: [
+    MatSnackBarModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -79,6 +81,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     })
   ],
   providers: [
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
     {
       provide: EndpointLocator,
       useValue: new ApplicationEndpointLocator(environment)

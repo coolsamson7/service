@@ -76,7 +76,7 @@
                       <input type="text" matInput id="label" name="label" formControlName="label">
                   </mat-form-field>
 
-                  <!-- descirption -->
+                  <!-- description -->
 
                   <mat-form-field>
                       <mat-label>Description</mat-label>
@@ -87,28 +87,28 @@
 
                 <mat-form-field>
                   <mat-label>Visibility</mat-label>
-                    <chips [allValues]="allVisibilities" placeholder="Add visibility" id="visibility" name="visibility" formControlName="visibility"></chips>
+                    <chips [allValues]="allVisibilities" [allowNew]="false" placeholder="Add visibility" id="visibility" name="visibility" formControlName="visibility"></chips>
                 </mat-form-field>
 
                 <!-- permissions -->
 
                 <mat-form-field>
                     <mat-label>Permissions</mat-label>
-                    <chips [allValues]="allPermissions" placeholder="Add permission" id="permissions" name="permissions" formControlName="permissions"></chips>
+                    <chips [allValues]="allPermissions" [allowNew]="true" placeholder="Add permission" id="permissions" name="permissions" formControlName="permissions"></chips>
                 </mat-form-field>
 
                   <!-- category -->
 
                   <mat-form-field>
                       <mat-label>Categories</mat-label>
-                      <chips [allValues]="allCategories" placeholder="Add category" id="categories" name="categories" formControlName="categories"></chips>
+                      <chips [allValues]="allCategories" [allowNew]="true" placeholder="Add category" id="categories" name="categories" formControlName="categories"></chips>
                   </mat-form-field>
 
                   <!-- tags -->
 
                   <mat-form-field>
                       <mat-label>Tags</mat-label>
-                      <chips [allValues]="allTags" placeholder="Add tag" id="tags" name="tags"  formControlName="tags"></chips>
+                      <chips [allValues]="allTags" [allowNew]="true" placeholder="Add tag" id="tags" name="tags"  formControlName="tags"></chips>
                   </mat-form-field>
               </form>
             </div>

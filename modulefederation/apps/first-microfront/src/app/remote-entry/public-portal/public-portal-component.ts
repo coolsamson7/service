@@ -1,9 +1,10 @@
 import {
-    AbstractFeature,
-    Feature,
-    FeatureData,
-    FeatureRegistry, PortalManager,
-    SessionManager
+  AboutDialogService,
+  AbstractFeature,
+  Feature,
+  FeatureData,
+  FeatureRegistry, PortalManager,
+  SessionManager
 } from "@modulefederation/portal";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
@@ -28,7 +29,7 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
 
     // constructor
 
-    constructor(private router: Router, private featureRegistry: FeatureRegistry, private sessionManager: SessionManager, private portalManager: PortalManager) {
+    constructor(private aboutDialogService : AboutDialogService, private router: Router, private featureRegistry: FeatureRegistry, private sessionManager: SessionManager, private portalManager: PortalManager) {
         super();
 
         featureRegistry.registry$.subscribe(_=>this.computeNavigation())
@@ -41,6 +42,10 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
   }
 
     // public
+
+  about() {
+      this.aboutDialogService.show()
+  }
 
     login() {
         this.sessionManager.openSession({

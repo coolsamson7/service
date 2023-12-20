@@ -29,6 +29,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     // input
 
     @Input() allValues : string[] = [];
+    @Input() allowNew = true;
     @Input()
     get placeholder() {
         return this._placeholder;
@@ -98,7 +99,6 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
         }
     }
 
-
     // private
 
     private filterValues(value: string): string[] {
@@ -112,7 +112,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
             const input = event.input;
             const value = event.value.trim();
 
-            if (value.length > 0 && !this.values.includes(value)) {
+            if (value.length > 0 && !this.values.includes(value) && (this.allowNew || !this.allValues.includes(value))) {
                 this.values = [...this.values, value.trim()]
 
                 this.markAsTouched()

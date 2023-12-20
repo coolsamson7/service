@@ -16,7 +16,7 @@ export class ManifestDecorator {
         .defaultValue("visibility", [])
         .defaultValue("featureToggles", [])
 
-    static decorate(manifest : Manifest) {
+    static decorate(manifest : Manifest) : Manifest {
       let decorateFeature = (feature: FeatureData) => {
         ManifestDecorator.FeatureDecorator.decorate(feature)
 
@@ -28,5 +28,7 @@ export class ManifestDecorator {
         for (let feature of manifest.features) {
           decorateFeature(feature)
         }
+
+        return manifest
     }
 }

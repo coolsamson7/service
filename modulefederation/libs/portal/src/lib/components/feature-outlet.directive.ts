@@ -1,9 +1,17 @@
-import {ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
+import {
+  Component, ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges,
   ViewContainerRef
 } from '@angular/core';
 import { FeatureRegistry } from '../feature-registry';
 import { FeatureData } from "../portal-manager";
 
+@Component({
+  selector: 'unknown-feature',
+  template: '<div>Unknown Feature {{feature}}</div>'
+})
+export class UnknownFeatureComponent {
+  feature: string = ""
+}
 /**
  * this directive is able to render the specified feature in the surrounding container
  */
@@ -34,15 +42,25 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
   private setFeature(feature: string) {
     console.log("load feature-outlet feature " + feature)
 
-    this.featureData = this.featureRegistry.getFeature(feature)
+    if ( this.component) {
+      this.component?.destroy();
+      this.container.clear();
+    }
 
-    this.load()
+    this.featureData = this.featureRegistry.findFeature(feature)
+
+    if ( this.featureData)
+      this.load()
+    else {
+      this.component = this.container.createComponent(UnknownFeatureComponent);
+      this.component.instance.feature = feature
+    }
   }
 
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ( changes['feature'] && changes['feature'].currentValue !==  this.feature)
+    if ( changes['feature'] && !changes['feature'].isFirstChange())
       this.setFeature(this.feature)
   }
 
@@ -63,8 +81,10 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
         // local function
         let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
             while (feature) {
-                if (feature.load)
-                    return feature
+                if (feature.load) {
+                  console.log("next loadable feature " + feature.path)
+                  return feature
+                }
                 else
                     feature = feature.$parent
             }

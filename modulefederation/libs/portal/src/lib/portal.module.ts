@@ -6,6 +6,7 @@ import {DeploymentLoader, Manifest} from "./deployment";
 import {ModulesModule} from "./modules";
 import {FeatureOutletDirective} from "./components";
 import { HttpClientModule } from "@angular/common/http";
+import { AboutModule } from "./about/about.module";
 
 export type LoaderConfig = {
     remotes?: string[],
@@ -28,7 +29,7 @@ function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
 }
 
 @NgModule({
-    imports: [ModulesModule, HttpClientModule],
+    imports: [ModulesModule, HttpClientModule, AboutModule],
     providers: [
         {
             provide: APP_INITIALIZER,

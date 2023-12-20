@@ -52,9 +52,11 @@ class ManifestManager {
         var index = 0
         for (manifest in manifests) {
             try {
-                val manifest = loader.load(URL(manifest.remoteEntry))
+                val newManifest = loader.load(URL(manifest.remoteEntry))
 
-                manifests[index] = manifest
+                newManifest.remoteEntry = manifest.remoteEntry
+
+                manifests[index] = newManifest
             }
             catch(exception: Throwable) {
                 println(exception.message) // TODO

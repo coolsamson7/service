@@ -7,6 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
 import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
 import { ManifestDecorator } from "./util/manifest-decorator";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'microfrontends',
@@ -21,12 +22,16 @@ export class MirofrontendsComponent extends NavigationComponent {
 
   // constructor
 
-  constructor(private introspectionService : PortalIntrospectionService, private portalAdministrationService: PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs: ConfirmationDialogs) {
+  constructor(private snackBar: MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService: PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs: ConfirmationDialogs) {
     super()
   }
 
   selectManifest(manifest : Manifest) {
     console.log("CLICK")
+  }
+
+  showSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action);
   }
 
   onChangedEnabled(manifest: Manifest) {
@@ -135,6 +140,8 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
    saveManifest(manifest: Manifest) {
+      this.showSnackBar("Manifest", "Saved")
+
         this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
     }
 

@@ -39,7 +39,9 @@ export class ModuleRegistry {
      * @param metadata meta data
      */
     register(metadata : ModuleMetadata) {
-        this.modules[metadata.name] = metadata
+      // leave registered moduels as is ( in case of a redeployment )
+        if ( !this.modules[metadata.name])
+          this.modules[metadata.name] = metadata
     }
 
     /**

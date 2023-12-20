@@ -14,19 +14,21 @@ import {TraceLevel, Tracer} from "./tracer";
  * the runtime data of feature
  */
 export interface FeatureData extends FeatureConfig {
-    // computed
+  // computed after resolving parent links
 
-    enabled?: boolean
-    module? : any
-    origin? : string
-    routerPath?: string
-    path? : string
+  children? : FeatureConfig[]
+  $parent? : FeatureConfig
 
-    children? : FeatureConfig[]
-    $parent? : FeatureConfig
+  // computed
 
-    ngComponent? : any
-    load? : LoadChildrenCallback
+  enabled?: boolean
+  module? : any
+  origin? : string
+  routerPath?: string
+  path? : string
+
+  ngComponent? : any
+  load? : LoadChildrenCallback
 }
 
 @Injectable({providedIn: 'root'})
@@ -34,6 +36,17 @@ export class PortalManager {
     // static
 
     static instance : PortalManager
+
+  // instance data
+
+  deployment : Deployment = {
+      modules: {}
+  }
+
+  loadedModules: {[key: string] : boolean} = {}
+  routes: {[path: string] : Route} = {}
+
+  // constructor
 
     constructor(
         @Inject(PortalModuleConfigToken) private portalConfig : PortalModuleConfig,
@@ -50,8 +63,6 @@ export class PortalManager {
 
         return routes
     }
-
-    // constructor
 
     loadDeployment(reset = false) : Promise<void> {
       let loader : DeploymentLoader
@@ -92,6 +103,7 @@ export class PortalManager {
     }
 
     private link(route : Route, feature : FeatureData) {
+      if ( route.data == undefined) {
         // let the portal do some stuff
 
         this.decorateRoute(route)
@@ -99,26 +111,28 @@ export class PortalManager {
         // set  feature as data
 
         route.data = {
-            feature: feature
+          feature: feature
         }
 
         // remember component
 
         if (route.component) {
-            feature.ngComponent = route.component
+          feature.ngComponent = route.component
 
-            let componentType : any = route.component
+          let componentType : any = route.component
 
-            componentType['$$feature'] = feature
+          componentType['$$feature'] = feature
         }
 
         // remember load function
 
         if (route.loadChildren) {
-            feature.load = route.loadChildren
-            if (!feature.origin)
-                feature.origin = feature.module.name
+          feature.load = route.loadChildren
+          if (!feature.origin)
+            feature.origin = feature.module.name
         }
+      }
+      else console.log("route already linked")
     }
 
     private linkRoutes(routes : Routes, features : FeatureData[]) {
@@ -136,13 +150,12 @@ export class PortalManager {
 
         let index = 0
         while (index < routes.length) {
-            let route = routes[index]
+            let route = routes[index++]
 
             if (!route.redirectTo) { // leave redirects
                 let feature = findFeature4(route.path!!)
 
                 if ( feature) {
-                  index++
                   this.link(route, feature)
 
                   // recursion
@@ -150,14 +163,15 @@ export class PortalManager {
                   if (route.children && route.children.length > 0)
                     this.linkRoutes(route.children, feature.children!!)
                 }
-                else
-                  routes.splice(index, 1)
+                else {
+                  throw new Error("did not find feature for path " + route.path!!)
+                  //TODO routes.splice(--index, 1)
+                }
             } // if
-          else index++
         } // while
     }
 
-    private buildRoutes(deployment : Deployment, localRoutes : Routes) : Routes {
+    private buildRoutes(deployment : Deployment, localRoutes : Routes, merge: boolean) : Routes {
         if (Tracer.ENABLED)
             Tracer.Trace("portal", TraceLevel.FULL, "build routes")
 
@@ -168,43 +182,100 @@ export class PortalManager {
         const lazyRoutes : Routes = Object.values(modules)
             .filter(module => module.remoteEntry !== undefined)
             .map(module => {
-                const key = module.name
-                const feature = this.featureRegistry.getFeature(key)
+              const key = module.name
+              const feature = this.featureRegistry.getFeature(key)
 
-                let route = {
-                    path: key,
-                    loadChildren: () => loadRemoteModule(key, './Module')
-                        .then((m) => m[module.module.ngModule]),
+              let route = this.routes[key]
+
+              if (!route) {
+                route  = {
+                  path: key
                 }
 
-                feature.origin = module.remoteEntry
+                // TODO: brauchen wir das?????
 
-                this.link(route, feature)
+              if (!this.loadedModules[key])
+                route.loadChildren = () => loadRemoteModule(key, './Module')
+                  .then((m) => {
+                    this.loadedModules[key] = true
+
+                    return m[module.module.ngModule]
+                  })
+
+              feature.origin = module.remoteEntry
+
+              this.link(route, feature)
+
+                // remember
+
+                this.routes[key] = route
+            } // if
 
                 return route
             });
 
-        // patch local routes
+        if ( !merge ) {
+          // patch local routes
 
-        let localModule = Object.values(modules).find(module => module.remoteEntry == undefined)
-        let localFeatures = localModule!!.features
+          let localModule = Object.values(modules).find(module => module.remoteEntry == undefined)
+          let localFeatures = localModule!!.features
 
-        this.linkRoutes(localRoutes, localFeatures)
+          this.linkRoutes(localRoutes, localFeatures)
+        }
 
-        console.log([...localRoutes, ...lazyRoutes]) // TODO
+        let routes = [...localRoutes, ...lazyRoutes]
+
+        ;(window as any)["routes"] = () => {
+        console.log(routes)
+      }
+
+      console.log(routes)
+
         // done
 
-        return [...localRoutes, ...lazyRoutes]
+        return routes
+    }
+
+    private mergeFeatureRegistry(deployment : Deployment) { // TODO
+      for (let module in deployment.modules) {
+        let manifest = deployment.modules[module]
+      }
     }
 
     private fillFeatureRegistry(deployment : Deployment) {
         for (let module in deployment.modules) {
             let manifest = deployment.modules[module]
 
+          let prevManifest = this.deployment.modules[module]
+          if ( prevManifest) {
+
+            // forget about local features, since they never change
+
+            if ( manifest.type == "microfrontend") {
+              // copy manifest
+
+              //TODO ???? prevManifest.enabled = manifest.enabled
+
+              // we need to merge ( e.g. the enabled status )
+
+
+              let rootFeature: FeatureData =  manifest.features.find(feature => feature.id == "")!!
+              // append the rest as children
+              rootFeature.children = manifest.features.filter(feature => feature.id != "")!!
+
+              this.featureRegistry.mergeFeature(this.featureRegistry.getFeature(manifest.name), rootFeature)
+            }
+          }
+          else {
             if (manifest.type == "microfrontend")
-                this.featureRegistry.registerRemote(manifest.name, ...manifest.features)
+              this.featureRegistry.registerRemote(manifest.name, ...manifest.features)
             else
-                this.featureRegistry.register(...manifest.features)
+              this.featureRegistry.register(...manifest.features)
+
+            // remember
+
+            this.deployment.modules[module] = manifest
+          }
         }
 
         this.featureRegistry.ready()
@@ -219,14 +290,12 @@ export class PortalManager {
 
         // possibly reset feature registry
 
-        if ( reset )
-            this.featureRegistry.reset()
+        //if ( reset )
+        //    this.featureRegistry.reset()
 
         // add local manifest
 
-        let localManifest = this.portalConfig.localManifest
-
-        ManifestDecorator.decorate(localManifest)
+        let localManifest = ManifestDecorator.decorate(this.portalConfig.localManifest)
 
         localManifest.type = "shell"
         localManifest.isLoaded = true
@@ -238,9 +307,7 @@ export class PortalManager {
         let remotes : any = {}
 
         for (let moduleName in deployment.modules) {
-            let module = deployment.modules[moduleName]
-
-            ManifestDecorator.decorate(module)
+            let module = ManifestDecorator.decorate(deployment.modules[moduleName])
 
             module.isLoaded = false
 
@@ -261,6 +328,6 @@ export class PortalManager {
 
         // setup routes
 
-        this.router.resetConfig(this.buildRoutes(deployment, this.portalConfig.localRoutes))
+        this.router.resetConfig(this.buildRoutes(deployment, this.portalConfig.localRoutes, reset))
     }
 }

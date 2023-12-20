@@ -17,6 +17,7 @@ export class FeatureRegistry {
     constructor() {
         ;(window as any)["features"] = () => {
             this.report()
+          console.log(this.features)
         }
     }
 
@@ -32,6 +33,7 @@ export class FeatureRegistry {
                 name: path,
                 component: feature.component,
                 origin: feature.origin,
+                enabled: feature.enabled ?  "x" : null,
                 loaded: feature.ngComponent !== undefined ? "x" : null
             })
         }
@@ -72,7 +74,12 @@ export class FeatureRegistry {
         return feature
     }
 
-    // public
+  findFeature(id : string) : FeatureData | undefined {
+    return this.features[id]
+  }
+
+
+  // public
 
     findFeatures(filter : (feature : FeatureConfig) => boolean) : FeatureData[] {
         return Object.values(this.features).filter(filter)
@@ -81,6 +88,23 @@ export class FeatureRegistry {
     finder() : FeatureFinder {
         return new FeatureFinder(this)
     }
+
+    // NEW
+
+  mergeFeature(feature: FeatureData, newFeature: FeatureData) {
+      // copy
+
+      feature.enabled = newFeature.enabled // TODO: is that it??
+
+    // recursion
+
+
+    if ( feature.children)
+      for (let child of feature.children)
+        this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!!)
+  }
+
+  // NEW
 
     private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {
         // local function

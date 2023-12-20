@@ -29,6 +29,7 @@ import {Observable, of} from "rxjs";
 import { environment } from "../environments/environment";
 import { SampleAuthentication } from "./security/sample-authentication";
 import { SampleAuthorization } from "./security/sample-authorization";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
     imports: [RouterModule.forRoot(localRoutes)],
@@ -94,6 +95,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     imports: [
         BrowserModule,
         AppComponentRouterModule,
+      MatSnackBarModule,
 
         EnvironmentModule.forRoot(environment),
 
@@ -129,6 +131,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         provide: EndpointLocator,
         useValue: new ApplicationEndpointLocator(environment)
       },
+      {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
     ],
     bootstrap: [ShellComponent],
 })

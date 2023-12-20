@@ -40,16 +40,19 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
         // session
 
+        fun specifiedVisibilty(feature: Feature) :Boolean {
+            return feature.visibility != null && feature.visibility!!.isNotEmpty()
+        }
+
         filterFeature { context, feature ->
-            if (!context.hasSession)
-                // no session yet, allow everything not explicitly set to "private"
-                if (feature.visibility !== null)
-                    !feature.visibility!!.contains("private")
+            if ( specifiedVisibilty(feature))
+                if (!context.hasSession)
+                    // no session yet, allow public only
+                    feature.visibility!!.contains("public")
                 else
-                    true
-            else
-                // session
-                true /*feature.visibility!!.contains("public") */
+                    // a have a session, allow private only
+                    feature.visibility!!.contains("private")
+            else true
         }
     }
 
@@ -95,9 +98,13 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
             val features = LinkedList<Feature>()
             if ( feature.children != null)
-                for ( feature in feature.children!!)
-                    if ( accept(context, feature))
-                        features.add(copyFeature(feature))
+                for ( child in feature.children!!) {
+                    val copy = copyFeature(child)
+
+                    copy.enabled = accept(context, child)
+
+                    features.add(copy)
+                }
 
             result.children = features.toTypedArray()
 
@@ -114,17 +121,26 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
                 // filter features
 
+                var enabledFeatures = 0
+
                 val features = LinkedList<Feature>()
-                for ( feature in manifest.features)
-                    if ( accept(context, feature))
-                        features.add(copyFeature(feature))
+                for (feature in manifest.features) {
+                    // copy anyway
 
-                result.features = features.toTypedArray()
+                    val copy = copyFeature(feature)
+                    copy.enabled = accept(context, feature)
+                    features.add(copy)
 
-                // only add, if there are features
+                    if (copy.enabled)
+                        enabledFeatures++
 
-                if ( !result.features.isEmpty())
-                    deployment.modules.put(manifest.name, result);
+                    result.features = features.toTypedArray()
+
+                    // only add, if there is at least one enabled feature
+
+                    if (enabledFeatures > 0)
+                        deployment.modules.put(manifest.name, result);
+                } // for
             }
 
         // done
