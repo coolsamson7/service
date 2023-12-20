@@ -39,7 +39,7 @@ export class ModuleRegistry {
    * @param metadata meta data
    */
   register(metadata : ModuleMetadata) {
-    // leave registered moduels as is ( in case of a redeployment )
+    // leave registered modules as is ( in case of a redeployment )
     if (!this.modules[metadata.name])
       this.modules[metadata.name] = metadata
   }
@@ -49,7 +49,11 @@ export class ModuleRegistry {
    * @param metadata the module meta-data
    */
   markAsLoaded(metadata : ModuleMetadata) {
-    if (this.modules[metadata.name])
+    metadata.isLoaded = true
+
+    if (!this.modules[metadata.name])
+      this.register(metadata)
+    else
       this.modules[metadata.name].isLoaded = true
   }
 }

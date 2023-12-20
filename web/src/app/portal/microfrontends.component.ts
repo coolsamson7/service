@@ -35,6 +35,8 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   onChangedEnabled(manifest : Manifest) {
+    this.showSnackBar("Manifest",  manifest.enabled ? "disabled" : "enabled")
+
     this.portalAdministrationService.enableMicrofrontend(manifest.name, manifest.enabled).subscribe(result => console.log(result))
   }
 
