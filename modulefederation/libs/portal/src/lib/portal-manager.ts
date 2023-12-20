@@ -9,6 +9,8 @@ import { ModuleRegistry } from "./modules";
 import { FeatureConfig } from "./feature-config";
 import { DeploymentLoader, HTTPDeploymentLoader, LocalDeploymentLoader, ManifestDecorator } from "./deployment";
 import { TraceLevel, Tracer } from "./tracer";
+import { PathResolveService } from "./page-not-found/page-not-found-resolver";
+import { PageNotFoundComponent } from "./page-not-found/page-not-found-components";
 
 /**
  * the runtime data of feature
@@ -160,7 +162,8 @@ export class PortalManager {
             this.linkRoutes(route.children, feature.children!!)
         }
         else {
-          throw new Error("did not find feature for path " + route.path!!)
+          console.log("did not find feature for path " + route.path!!)
+          //throw new Error("did not find feature for path " + route.path!!)
           //TODO routes.splice(--index, 1)
         }
       } // if
@@ -211,7 +214,16 @@ export class PortalManager {
       this.linkRoutes(localRoutes, localFeatures)
     }
 
-    let routes = [...localRoutes, ...lazyRoutes]
+    let pageNotFoundRoute : Route = {
+      path: '**',
+      pathMatch: 'full',
+      resolve: {
+        path: PathResolveService
+      },
+      component: PageNotFoundComponent
+    }
+
+    let routes = [...localRoutes, ...lazyRoutes/*,  pageNotFoundRoute*/]
 
     // done
 
