@@ -8,9 +8,11 @@ package com.serious.demo
 import com.serious.portal.PortalConfiguration
 import com.serious.service.ServiceConfiguration
 import lombok.extern.slf4j.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.domain.EntityScan
+//import org.springframework.boot.autoconfigure.security.reactive.PathRequest
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -25,6 +28,7 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
@@ -55,6 +59,7 @@ open class JWTSecurityConfig {
                 authz
                     .requestMatchers("/**").permitAll()
                     .requestMatchers("/administration/**").hasAnyRole("service-admin-role")
+                    .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest()
                     .authenticated()
             }
@@ -67,6 +72,9 @@ open class JWTSecurityConfig {
 
 @Configuration
 @ComponentScan
+@EntityScan( basePackages = ["com.serious"] )
+@EnableJpaRepositories(basePackages = ["com.serious.portal.entity"])
+@EnableTransactionManagement
 @Import(ServiceConfiguration::class, PortalConfiguration::class)
 open class RootConfig
 

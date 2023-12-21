@@ -24,6 +24,20 @@ web:
     allowed-headers: "Requestor-Type"
     exposed-headers: "X-Get-Header"
 spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  h2:
+    console.enabled: false
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+    jpa:
+      spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
   security:
     oauth2:
       resourceserver:

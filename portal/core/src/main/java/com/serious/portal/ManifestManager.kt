@@ -17,6 +17,8 @@ class ManifestManager {
     val manifests = mutableListOf<Manifest>()
     @Autowired
     lateinit var loader : ManifestLoader
+    @Autowired
+    lateinit var entityManager : ManifestEntityManager
 
     // public
 
@@ -29,6 +31,10 @@ class ManifestManager {
 
     fun register(manifest: Manifest) : Manifest {
         this.manifests.add(manifest)
+
+        // teST
+
+        entityManager.createManifest(manifest)
 
         return manifest
     }
