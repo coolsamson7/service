@@ -22,13 +22,6 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
     @Autowired
     lateinit var deploymentManager: DeploymentManager
 
-    @PostConstruct
-    fun onInit() {
-        // TODO
-        //deploymentManager.manager.load(URL("http://localhost:4201"))
-        //deploymentManager.manager.load(URL("http://localhost:4202"))
-    }
-
     // implement
 
     override fun getDeployment(session: Boolean) : Deployment {

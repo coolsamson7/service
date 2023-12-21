@@ -1,5 +1,7 @@
 package com.serious.portal.model
 
+import com.fasterxml.jackson.annotation.JsonInclude
+
 /*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
@@ -9,6 +11,7 @@ package com.serious.portal.model
 /**
  * @author Andreas Ernst
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Manifest(
     var name: String,
     var version: String,

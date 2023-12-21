@@ -1,20 +1,21 @@
 package com.serious.portal.model
-
 /*
  * @COPYRIGHT (C) 2016 Andreas Ernst
  *
  * All rights reserved
  */
 
+import com.fasterxml.jackson.annotation.JsonInclude
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Router(
     var lazyModule : String,
     var reuse : Boolean = false,
     var path : String? = null
 )
 
-data class FeatureModule(
-    var name : String
-)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Feature(
     var id : String,
     var enabled: Boolean = true,
