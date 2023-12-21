@@ -29,6 +29,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+    defer-datasource-initialization: true
   h2:
     console.enabled: false
   datasource:

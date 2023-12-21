@@ -49,6 +49,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             try {
                 manifest = manifestLoader.load(url)
 
+                manifest.enabled = true
+                manifest.health  = "ok"
                 manifest.remoteEntry = url.toString()
             }
             catch (exception: Exception) {

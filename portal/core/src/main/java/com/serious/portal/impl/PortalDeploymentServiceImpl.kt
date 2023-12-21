@@ -25,7 +25,7 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
     @PostConstruct
     fun onInit() {
         // TODO
-        deploymentManager.manager.load(URL("http://localhost:4201"))
+        //deploymentManager.manager.load(URL("http://localhost:4201"))
         //deploymentManager.manager.load(URL("http://localhost:4202"))
     }
 

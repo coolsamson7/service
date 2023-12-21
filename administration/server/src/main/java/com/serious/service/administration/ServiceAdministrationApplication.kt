@@ -73,7 +73,7 @@ open class JWTSecurityConfig {
 @Configuration
 @ComponentScan
 @EntityScan( basePackages = ["com.serious"] )
-@EnableJpaRepositories(basePackages = ["com.serious.portal.entity"])
+@EnableJpaRepositories(basePackages = ["com.serious"])
 @EnableTransactionManagement
 @Import(ServiceConfiguration::class, PortalConfiguration::class)
 open class RootConfig

@@ -11,10 +11,16 @@ package com.serious.portal.model
  */
 data class Manifest(
     var name: String,
-    var enabled: Boolean = true,
     var version: String,
     var commitHash: String,
     var remoteEntry: String?,
+
+    // actually
+
+    var enabled: Boolean,
+    var health: String? = "",
+
+    // end
 
     var module: Module,
     var features: Array<Feature>
