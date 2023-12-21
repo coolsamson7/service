@@ -7,7 +7,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
+import { Dialogs } from "./dialog/dialogs";
 
 @Component({
   selector: 'microfrontend-details',
@@ -62,7 +62,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   // public
 
-  constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private confirmationDialogs : ConfirmationDialogs) {
+  constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : Dialogs) {
     microfrontendsComponent.pushRouteElement(this.element)
 
     this.formGroup = this.formBuilder.group({
@@ -161,7 +161,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   selectFeature(feature : Feature) {
     if (feature !== this.selectedFeature && this.isDirty) {
-      this.confirmationDialogs.okCancel("Save", "Save first").subscribe(result => {
+      this.dialogs
+        .confirmationDialog()
+        .type("info")
+        .title("Switch feature")
+        .message("Please save first")
+        .okCancel()
+        .show().subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
         if (result == true) {
           this.save()
           this.isDirty = false

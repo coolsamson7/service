@@ -35,19 +35,19 @@
           <a class="content" [routerLinkActive]="['is-active']" role="listitem" routerLink="{{manifest.name}}">
             <mat-icon>language</mat-icon>
             <span class="bold">
-                  Name:
+                  Name
             </span>
             <span>
-                {{manifest.name}}
+                {{manifest.name}}({{manifest.version}})
             </span>
             <span class="bold">
-                  Version:
+                  URI
             </span>
             <span>
-                  {{manifest.version}}
+                  {{manifest.remoteEntry}}
             </span>
             <span class="bold">
-                  Health:
+                  Health
             </span>
             <mat-icon [ngStyle]="{'color':manifest.health == 'alive' ? 'green' : 'red' }">{{manifest.health == "alive" ? "wifi" : "sentiment_very_dissatisfied"}}</mat-icon>
           </a>

@@ -5,7 +5,7 @@ import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
-import { ConfirmationDialogs } from "./dialog/confirmation-dialogs";
+import { Dialogs } from "./dialog/dialogs";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
@@ -22,7 +22,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
   // constructor
 
-  constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs : ConfirmationDialogs) {
+  constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs : Dialogs) {
     super()
   }
 

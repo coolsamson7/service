@@ -9,13 +9,15 @@ export interface ConfirmationButton {
 
 export interface ConfirmationModel {
   title : string;
+  type: string;
   message : string;
   buttons : ConfirmationButton[]
 }
 
 @Component({
   selector: 'confirmation-dialog',
-  templateUrl: 'confirmation-dialog.html'
+  templateUrl: 'confirmation-dialog.html',
+  styleUrls: ['./confirmation-dialog.scss']
 })
 export class ConfirmationDialog implements OnInit {
   constructor(
@@ -25,6 +27,17 @@ export class ConfirmationDialog implements OnInit {
   }
 
   // callbacks
+
+  icon() {
+    switch (this.data.type) {
+      case "info":
+        return "info"
+      case "warning":
+        return "warn"
+      case "error":
+        return "error"
+    }
+  }
 
   click(button : ConfirmationButton) : void {
     this.dialogRef.close(button.result);
