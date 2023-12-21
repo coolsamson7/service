@@ -26,9 +26,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     super()
   }
 
-  selectManifest(manifest : Manifest) {
-    console.log("CLICK")
-  }
+  // public
 
   showSnackBar(message : string, action : string) {
     this.snackBar.open(message, action);
@@ -117,14 +115,15 @@ export class MirofrontendsComponent extends NavigationComponent {
           this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
         }
       })
-    } catch(e) {
+    }
+    catch(e) {
       this.confirmationDialogs.ok("Add Remote", "Invalid URL")
       return
     }
   }
 
   removeManifest(manifest : Manifest) {
-    this.confirmationDialogs.okCancel("Remove Manifest", "are you sure?").subscribe(result => {
+    this.confirmationDialogs.okCancel("Remove Manifest", "Are you sure?").subscribe(result => {
       if (result) {
         this.manifests.splice(this.manifests.indexOf(manifest), 1)
 
@@ -140,7 +139,7 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   saveManifest(manifest : Manifest) {
-    this.showSnackBar("Manifest", "Saved")
+    this.showSnackBar(manifest.name, "Saved")
 
     this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
   }

@@ -36,6 +36,7 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
         // enabled
 
         filterManifest { context, manifest -> manifest.enabled }
+        filterManifest { context, manifest -> manifest.health == "alive" }
         filterFeature { context, feature -> feature.enabled }
 
         // session

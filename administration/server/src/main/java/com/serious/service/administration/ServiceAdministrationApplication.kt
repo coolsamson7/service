@@ -22,6 +22,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -76,6 +77,7 @@ open class JWTSecurityConfig {
 @EnableJpaRepositories(basePackages = ["com.serious"])
 @EnableTransactionManagement
 @Import(ServiceConfiguration::class, PortalConfiguration::class)
+@EnableScheduling
 open class RootConfig
 
 @Configuration

@@ -9,8 +9,10 @@ import com.serious.portal.model.Manifest
 import com.serious.portal.persistence.ManifestEntityManager
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.net.URL
+
 
 @Component
 class ManifestManager {
@@ -33,7 +35,7 @@ class ManifestManager {
                 val activeManifest = loader.load(URL(manifest.remoteEntry))
 
                 activeManifest.enabled = manifest.enabled
-                activeManifest.health  = "ok"
+                activeManifest.health  = "alive"
 
                 this.entityManager.saveManifest(activeManifest)
 
@@ -50,6 +52,8 @@ class ManifestManager {
     fun load(url: URL) : Manifest {
         val manifest = loader.load(url)
 
+        manifest.enabled = true
+        manifest.health = "alive"
         manifest.remoteEntry = url.toString()
 
         return register(manifest)
@@ -82,6 +86,30 @@ class ManifestManager {
         this.entityManager.saveManifest(manifest)
     }
 
+    @Scheduled(fixedRate = 1000 * 10)
+    fun checkHealth() {
+        for (manifest in manifests) {
+            try {
+                loader.load(URL(manifest.remoteEntry))
+
+                if ( manifest.health != "alive") {
+                    println(manifest.name + "-> alive ")
+                    manifest.health = "alive"
+
+                    this.entityManager.updateHealth(manifest.remoteEntry!!, "alive")
+                }
+            }
+            catch(exception: Throwable) {
+                if ( manifest.health == "alive") {
+                    println(manifest.name + "-> dead ")
+                    manifest.health = "dead"
+
+                    this.entityManager.updateHealth(manifest.remoteEntry!!, "dead")
+                }
+            }
+        }
+    }
+
     fun refresh() {
         var index = 0
         for (manifest in manifests) {
@@ -89,6 +117,8 @@ class ManifestManager {
                 val newManifest = loader.load(URL(manifest.remoteEntry))
 
                 newManifest.remoteEntry = manifest.remoteEntry
+                newManifest.health = manifest.health
+                newManifest.enabled = manifest.enabled
 
                 manifests[index] = newManifest
 
