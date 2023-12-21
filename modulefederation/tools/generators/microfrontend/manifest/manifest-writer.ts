@@ -2,6 +2,7 @@ import { ProjectConfiguration, Tree } from "@nrwl/devkit";
 
 
 type Action = (object : any) => void
+type Compute = (object : any) => any
 
 export class Class {
   // instance data
@@ -22,8 +23,8 @@ export class Class {
 
   // fluent
 
-  required(name : string) : Class {
-    //this.properties[name] = defaultValue
+  compute(name : string, compute: Compute) : Class {
+    this.properties[name] = (obj) => obj[name] = compute(obj)
 
     return this
   }
@@ -65,14 +66,13 @@ export class ManifestWriter {
   // static
 
   static ModuleClass = new Class()
-    .required("name")
-    .required("ngModule")
+    //.required("ngModule")
     .remove("file")
     .remove("relative")
 
   static FeatureClass = new Class()
-    .required("name")
-    .required("component")
+    .compute("module", (obj) => obj.module?.name)
+    //.required("component")
     .optional("router", "") // ?
     .optional("label", "")
     .optional("permissions", [])
@@ -103,14 +103,16 @@ export class ManifestWriter {
   private clean(manifest : any) {
     // module
 
-    ManifestWriter.ModuleClass.clean(manifest.module)
+    //ManifestWriter.ModuleClass.clean(manifest.module)
+
+    manifest.module = manifest.module.ngModule
 
     // features
 
     for (let feature of manifest.features) {
       ManifestWriter.FeatureClass.clean(feature)
-      if (feature.module)
-        ManifestWriter.ModuleClass.clean(feature.module)
+      //if (feature.module)
+      //  ManifestWriter.ModuleClass.clean(feature.module)
     }
   }
 }

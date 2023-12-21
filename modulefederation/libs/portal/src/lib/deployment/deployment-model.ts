@@ -9,7 +9,7 @@ export interface ModuleData {
 export interface Manifest extends ModuleMetadata {
   enabled? : boolean
   remoteEntry? : string,
-  module : ModuleData,
+  module : string,
   features : FeatureConfig[],
 }
 

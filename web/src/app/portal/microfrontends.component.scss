@@ -23,27 +23,32 @@
 }
 
 .manifest {
-  a {
-    text-decoration: none;
-    color: black;
-  }
+  .content {
+    display: inline-grid;
+    grid-template-columns: 27px 4em 10em 5em 3em 4em 25px;
+}
 
-  .bold {
-    font-weight: bold;
-  }
+a {
+  text-decoration: none;
+  color: black;
+}
 
-  .icon {
-    visibility: hidden;
-    float: right;
-  }
+.bold {
+  font-weight: bold;
+}
 
-  .toggle {
-    float: right;
-  }
+.icon {
+  visibility: hidden;
+  float: right;
+}
+
+.toggle {
+  float: right;
+}
 }
 
 .manifest:hover {
-  .icon {
-    visibility: visible;
-  }
+.icon {
+  visibility: visible;
+}
 }

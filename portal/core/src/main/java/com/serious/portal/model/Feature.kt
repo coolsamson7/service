@@ -30,5 +30,5 @@ data class Feature(
     var router: Router? = null,
     var children: Array<Feature>? = null,
 
-    var module: FeatureModule? = null
+    var module: String? = null
 )

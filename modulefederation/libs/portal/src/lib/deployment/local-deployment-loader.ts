@@ -35,7 +35,7 @@ export class LocalDeploymentLoader extends DeploymentLoader {
 
         manifest.remoteEntry = this.urls[index]
 
-        deployment.modules[manifest.module.name] = manifest
+        deployment.modules[manifest.name] = manifest
       }
       else {
         console.log("error fetching " + this.urls[index] + "/assets/manifest.json, reason: " + response.reason)

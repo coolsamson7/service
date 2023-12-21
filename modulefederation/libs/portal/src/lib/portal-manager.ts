@@ -129,7 +129,7 @@ export class PortalManager {
     if (route.loadChildren) {
       feature.load = route.loadChildren
       if (!feature.origin)
-        feature.origin = feature.module.name
+        feature.origin = feature.module
     }
   }
 
@@ -190,7 +190,7 @@ export class PortalManager {
           route = {
             path: key,
             loadChildren: () => loadRemoteModule(key, './Module')
-              .then((m) => m[module.module.ngModule])
+              .then((m) => m[module.module])
           }
 
           feature.origin = module.remoteEntry
@@ -297,7 +297,7 @@ export class PortalManager {
       localManifest.type = "shell"
       localManifest.isLoaded = true
 
-      deployment.modules[localManifest.module.name] = localManifest
+      deployment.modules[localManifest.name] = localManifest
     }
 
     // set remote definitions

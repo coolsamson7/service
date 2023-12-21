@@ -32,21 +32,24 @@
     <mat-nav-list>
       <ng-container *ngFor="let manifest of manifests">
         <mat-list-item class="manifest">
-          <a [routerLinkActive]="['is-active']" role="listitem" routerLink="{{manifest.name}}">
+          <a class="content" [routerLinkActive]="['is-active']" role="listitem" routerLink="{{manifest.name}}">
             <mat-icon>language</mat-icon>
             <span class="bold">
                   Name:
-              </span>
+            </span>
             <span>
                 {{manifest.name}}
             </span>
             <span class="bold">
                   Version:
-              </span>
+            </span>
             <span>
                   {{manifest.version}}
-              </span>
-            <mat-icon>{{manifest.health == "alive" ? "sentiment_satisfied" : "sentiment_very_dissatisfied"}}</mat-icon>
+            </span>
+            <span class="bold">
+                  Health:
+            </span>
+            <mat-icon [ngStyle]="{'color':manifest.health == 'alive' ? 'green' : 'red' }">{{manifest.health == "alive" ? "wifi" : "sentiment_very_dissatisfied"}}</mat-icon>
           </a>
 
           <!--mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon-->

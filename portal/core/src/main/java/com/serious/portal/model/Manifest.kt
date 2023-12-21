@@ -22,6 +22,6 @@ data class Manifest(
 
     // end
 
-    var module: Module,
+    var module: String,
     var features: Array<Feature>
 )

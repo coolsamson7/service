@@ -1,11 +1,8 @@
 {
   "name": "shell",
   "version": "0.1",
-  "commitHash": "c7de74eb743aab37b704da5de5aa05bc0e05ab44",
-  "module": {
-    "name": "shell",
-    "ngModule": "ShellModule"
-  },
+  "commitHash": "cee321dab5182cb5ea2315f9fe877a24c76052a9",
+  "module": "ShellModule",
   "features": [
     {
       "id": "home",
