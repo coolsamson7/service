@@ -126,7 +126,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
 
   // implement MatFormFieldControl
 
-  onChange = (value: any) => {
+  onChange = (value : any) => {
   };
 
   onTouched = () => {
@@ -140,6 +140,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
       this.stateChanges.next();
     }
   }
+
   //placeholder: string;
 
   onFocusOut(event : FocusEvent) {

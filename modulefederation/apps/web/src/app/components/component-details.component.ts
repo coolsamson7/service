@@ -16,15 +16,15 @@ import { Feature } from "@modulefederation/portal";
   providers: [ComponentStore]
 })
 @Feature({
-    id: "component",
-    parent: "components",
-    router: {
-        path: ":component"
-    },
-    label: "",
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "component",
+  parent: "components",
+  router: {
+    path: ":component"
+  },
+  label: "",
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class ComponentDetailsComponent implements OnInit, OnDestroy {
   // instance data

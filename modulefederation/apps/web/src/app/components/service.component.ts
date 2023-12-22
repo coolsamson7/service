@@ -74,7 +74,7 @@ export class ServiceComponent implements OnInit {
     this.toggle()
 
     // @ts-ignore
-      this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
+    this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
     this.annotations = this.service!!.annotations
     if (this.description)
       this.annotations = this.service!!.annotations.filter(annotation => annotation !== this.description)

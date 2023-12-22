@@ -55,7 +55,7 @@ export class ComponentStore {
 
     if (update.deletedServices.includes(this.componentName)) {
       // @ts-ignore
-        this.componentSubject.next(null)
+      this.componentSubject.next(null)
       this.instancesSubject.next(this.instances = [])
       this.healthSubject.next(this.healths = {})
 

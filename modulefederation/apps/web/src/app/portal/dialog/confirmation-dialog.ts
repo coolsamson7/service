@@ -9,7 +9,7 @@ export interface ConfirmationButton {
 
 export interface ConfirmationModel {
   title : string;
-  type: string;
+  type : string;
   message : string;
   buttons : ConfirmationButton[]
 }

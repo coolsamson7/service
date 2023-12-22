@@ -6,8 +6,7 @@
 
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
-import { Deployment, Service } from "@modulefederation/portal";
-import { AbstractHTTPService } from "@modulefederation/portal";
+import { AbstractHTTPService, Deployment, Service } from "@modulefederation/portal";
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration/"})

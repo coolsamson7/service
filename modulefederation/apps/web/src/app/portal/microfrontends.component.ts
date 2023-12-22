@@ -16,13 +16,13 @@ import { Feature, Manifest } from "@modulefederation/portal";
   styleUrls: ['./microfrontends.component.scss']
 })
 @Feature({
-    id: "microfrontends",
-    label: "",
-    icon: "folder",
-    visibility: ["public", "private"],
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "microfrontends",
+  label: "",
+  icon: "folder",
+  visibility: ["public", "private"],
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class MirofrontendsComponent extends NavigationComponent {
   // instance data
@@ -43,7 +43,7 @@ export class MirofrontendsComponent extends NavigationComponent {
   }
 
   onChangedEnabled(manifest : Manifest) {
-    this.showSnackBar(manifest.name,  manifest.enabled ? "disabled" : "enabled")
+    this.showSnackBar(manifest.name, manifest.enabled ? "disabled" : "enabled")
 
     this.portalAdministrationService.enableMicrofrontend(manifest.name, !manifest.enabled).subscribe(result => console.log(result))
   }
@@ -69,8 +69,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
       try {
         url = new URL(remote)
-      }
-      catch(error) {
+      } catch(error) {
         this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
         return
       }
@@ -126,8 +125,7 @@ export class MirofrontendsComponent extends NavigationComponent {
           this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
         }
       })
-    }
-    catch(e) {
+    } catch(e) {
       this.confirmationDialogs.ok("Add Remote", "Invalid URL")
       return
     }
@@ -155,7 +153,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
   }
 
-    override ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit()
 
     this.introspectionService.getManifests().subscribe((manifests) =>

@@ -39,13 +39,13 @@ interface Link {
   providers: []
 })
 @Feature({
-    id: "nodes",
-    label: "Nodes",
-    icon: "computer",
-    visibility: ["public", "private"],
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "nodes",
+  label: "Nodes",
+  icon: "computer",
+  visibility: ["public", "private"],
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class NodesComponent extends NavigationComponent implements AfterViewInit {
   // instance data
@@ -82,7 +82,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     }
 
 
-    let parse = (addresses: string) => {
+    let parse = (addresses : string) => {
       for (let address of addresses.split(",")) {
         let lparen = address.indexOf("(")
         let rparen = address.indexOf(")")
@@ -129,7 +129,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     }
 
     let sortResults = (instancesArray : ServiceInstanceDTO[][], result : Result) => {
-      let servers : {[name: string] : boolean} = {}
+      let servers : { [name : string] : boolean } = {}
 
       for (let instances of instancesArray)
         for (let instance of instances) {
@@ -196,14 +196,14 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
   // host listener
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  onResize(event : any) {
     if (this.paper && this.graph)
       this.paper.setDimensions(event.target.innerWidth, event.target.innerHeight);
   }
 
   // implement OnInit
 
-    override ngOnInit() {
+  override ngOnInit() {
     this.namespace = joint.shapes;
     this.graph = new joint.dia.Graph({}, {cellNamespace: this.namespace});
   }
@@ -242,10 +242,10 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
   // private
 
-  private buildGraph(graph: any, result : Result) {
+  private buildGraph(graph : any, result : Result) {
     // new
 
-    let merge = (obj1: any, obj2: any) => {
+    let merge = (obj1 : any, obj2 : any) => {
       if (obj1 == undefined) {
         return obj2
       }
@@ -273,7 +273,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
     // local functions
 
-    let connect = (a: any, b: any, labels : string[], attributes? : any) => {
+    let connect = (a : any, b : any, labels : string[], attributes? : any) => {
       var link = new joint.shapes.standard.Link();
       if (attributes)
         link.attr(attributes)
@@ -385,7 +385,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
     // collect servers & components
 
-    let servers : {[name: string] : any} = {}
+    let servers : { [name : string] : any } = {}
 
     for (let server of result.servers) {
       servers[server] = {
@@ -415,10 +415,9 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
         children: []
       }
 
-      for (let child of component.getEmbeddedCells())
-        { // @ts-ignore
-            result.children.push(fetchStructure(child))
-        }
+      for (let child of component.getEmbeddedCells()) { // @ts-ignore
+        result.children.push(fetchStructure(child))
+      }
 
       return result
     }
@@ -515,7 +514,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     // we need to delet and save all embedded elements since the layout algorithm would break otherwise
     // oh boy!
 
-    let save : {[name: string]: Node[] } = {}
+    let save : { [name : string] : Node[] } = {}
 
     for (let server in servers) {
       let serverRegion = servers[server].server
@@ -572,7 +571,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
         for (let cell of cells) {
           cell.addTo(this.graph)
           // @ts-ignore TODO??
-            cell.translate(dx + 20, dy + 10) // the padding
+          cell.translate(dx + 20, dy + 10) // the padding
         }
 
         // embed

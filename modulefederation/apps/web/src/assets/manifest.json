@@ -9,7 +9,10 @@
       "label": "microfrontends",
       "icon": "folder",
       "component": "MirofrontendsComponent",
-      "visibility": ["public", "private"],
+      "visibility": [
+        "public",
+        "private"
+      ],
       "children": [
         {
           "id": "microfrontend",
@@ -26,20 +29,29 @@
       "label": "Nodes",
       "icon": "computer",
       "component": "NodesComponent",
-      "visibility": ["public", "private"]
+      "visibility": [
+        "public",
+        "private"
+      ]
     },
     {
       "id": "home",
       "label": "Home",
       "component": "HomeComponent",
-      "visibility": ["public", "private"]
+      "visibility": [
+        "public",
+        "private"
+      ]
     },
     {
       "id": "components",
       "label": "Components",
       "icon": "folder",
       "component": "ComponentsComponent",
-      "visibility": ["public", "private"],
+      "visibility": [
+        "public",
+        "private"
+      ],
       "children": [
         {
           "id": "component",

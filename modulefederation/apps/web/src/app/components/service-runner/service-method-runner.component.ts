@@ -54,7 +54,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
   // public
 
-  paramModel(param: any) : EditorModel {
+  paramModel(param : any) : EditorModel {
     return {
       value: param.value,
       language: "json",
@@ -86,7 +86,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
   enumValues(type : TypeDescriptor) {
     // @ts-ignore
-      return this.model.models.find(descriptor => descriptor.name == type.name).properties.map(property => property.name)
+    return this.model.models.find(descriptor => descriptor.name == type.name).properties.map(property => property.name)
   }
 
   inputType4(type : TypeDescriptor) : string {
@@ -186,7 +186,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
     for (let param of this.query.params) {
       // @ts-ignore
-        this.parameter[param.name] = param
+      this.parameter[param.name] = param
       if (param.parameterType == ParameterType.BODY)
         this.body = param
     }
@@ -214,7 +214,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
       let variable = template.substring(lbrace + 1, rbrace)
 
       // @ts-ignore
-        this.executedURL += encodeURI(this.parameter[variable].value)
+      this.executedURL += encodeURI(this.parameter[variable].value)
 
       lbrace = template.indexOf("{", rbrace)
     }

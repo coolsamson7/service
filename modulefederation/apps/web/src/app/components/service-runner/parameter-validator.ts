@@ -1,13 +1,13 @@
 import { FormControl, NG_VALIDATORS, ValidationErrors, Validator } from '@angular/forms';
 import { Directive, Input } from '@angular/core';
-import { ParameterDescriptor } from '../../model/service.interface';
 import { QueryParameter } from "../../json/query-analyzer";
 
-type ConstraintCheck = (constraint: any, value: any) => boolean
+type ConstraintCheck = (constraint : any, value : any) => boolean
+
 interface ConstraintHandler {
-   type: string[]
-   constraint: string,
-   check:  ConstraintCheck
+  type : string[]
+  constraint : string,
+  check : ConstraintCheck
 }
 
 let constraintHandlers : ConstraintHandler[] = [
@@ -122,21 +122,21 @@ class ConstraintValidator {
       let handler = findHandler(type, constraintName)
       if (handler) {
         // @ts-ignore
-          this.handlers.push({constraint: constraint, handler: handler})
+        this.handlers.push({constraint: constraint, handler: handler})
       }
     }
   }
 
   // public
 
-  validate(value: any) {
+  validate(value : any) {
     for (let handler of this.handlers) {
       // @ts-ignore
-        if (!handler.handler.check(handler.constraint, value)) {
+      if (!handler.handler.check(handler.constraint, value)) {
         let error = {}
 
         // @ts-ignore
-            error[handler.handler.constraint] = handler.constraint
+        error[handler.handler.constraint] = handler.constraint
 
         return error
       }
@@ -159,7 +159,7 @@ export class ParameterValidator implements Validator {
 
   // instance data
 
-  validator?: ConstraintValidator
+  validator? : ConstraintValidator
 
   // constructor
 
@@ -169,10 +169,9 @@ export class ParameterValidator implements Validator {
   // implement Validator
 
   validate(control : FormControl) : ValidationErrors | null {
-    if (!this.validator)
-      { // @ts-ignore
-          this.validator = new ConstraintValidator(this.parameter['schema'])
-      }
+    if (!this.validator) { // @ts-ignore
+      this.validator = new ConstraintValidator(this.parameter['schema'])
+    }
 
     return this.validator.validate(control.value);
   }

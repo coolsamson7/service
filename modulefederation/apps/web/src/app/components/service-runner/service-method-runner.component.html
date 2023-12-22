@@ -9,7 +9,8 @@
 
       <mat-form-field *ngIf="inputType4(param.type) == 'string'">
         <mat-label>{{param.name}}</mat-label>
-        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param" matInput
+        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param"
+               matInput
                name="{{param.name}}" required type="text"/>
         <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
       </mat-form-field>
@@ -18,7 +19,8 @@
 
       <mat-form-field *ngIf="inputType4(param.type) == 'number'">
         <mat-label>{{param.name}}</mat-label>
-        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param" matInput
+        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param"
+               matInput
                name="{{param.name}}" required type="number"/>
         <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
       </mat-form-field>
@@ -60,7 +62,8 @@
       <!-- json -->
 
       <div *ngIf="inputType4(param.type) == 'json'">
-        <monaco-editor (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [model]="paramModel(param)"
+        <monaco-editor (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                       [model]="paramModel(param)"
                        [options]="{}" name="{{param.name}}"></monaco-editor>
         <div *ngIf="form.touched && isError(param.name)" class="error">{{errorMessage(param.name)}}</div>
       </div>

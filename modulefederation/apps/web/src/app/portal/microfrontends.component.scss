@@ -26,29 +26,29 @@
   .content {
     display: inline-grid;
     grid-template-columns: 27px 4em 15em 2em 14em 4em 25px;
-}
+  }
 
-a {
-  text-decoration: none;
-  color: black;
-}
+  a {
+    text-decoration: none;
+    color: black;
+  }
 
-.bold {
-  font-weight: bold;
-}
+  .bold {
+    font-weight: bold;
+  }
 
-.icon {
-  visibility: hidden;
-  float: right;
-}
+  .icon {
+    visibility: hidden;
+    float: right;
+  }
 
-.toggle {
-  float: right;
-}
+  .toggle {
+    float: right;
+  }
 }
 
 .manifest:hover {
-.icon {
-  visibility: visible;
-}
+  .icon {
+    visibility: visible;
+  }
 }

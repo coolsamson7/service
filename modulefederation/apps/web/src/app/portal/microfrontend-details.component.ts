@@ -16,15 +16,15 @@ import { Feature, Manifest } from "@modulefederation/portal";
   providers: []
 })
 @Feature({
-    id: "microfrontend",
-    parent: "microfrontends",
-    router: {
-        path: ":microfrontend"
-    },
-    label: "",
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "microfrontend",
+  parent: "microfrontends",
+  router: {
+    path: ":microfrontend"
+  },
+  label: "",
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   // instance data
@@ -69,7 +69,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   isDirty = false
   enabled : boolean[] = []
 
-    // constructor
+  // constructor
 
   constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : Dialogs) {
     microfrontendsComponent.pushRouteElement(this.element)
@@ -95,10 +95,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     this.selectedFeature!!.enabled = this.enabled[index]
 
-    for (let propertyName in this.dirty)
-      { // @ts-ignore
-          this["selectedFeature"][propertyName] = this.dirty[propertyName]
-      }
+    for (let propertyName in this.dirty) { // @ts-ignore
+      this["selectedFeature"][propertyName] = this.dirty[propertyName]
+    }
 
     // save
 
@@ -158,10 +157,10 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     this.model.uri = 'json://' + this.uuid + manifestName + '.schema'
 
     // @ts-ignore
-      // @ts-ignore
-      this.microfrontendsComponent.$manifests
-        .subscribe(manifests =>
-            this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)!!))
+    // @ts-ignore
+    this.microfrontendsComponent.$manifests
+      .subscribe(manifests =>
+        this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)!!))
   }
 
   reallySetManifest(manifest : Manifest) {
@@ -169,7 +168,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     this.manifestJSON = JSON.stringify(manifest, null, 2)
 
     // @ts-ignore
-      this.enabled = manifest.features.map(feature => feature.enabled)
+    this.enabled = manifest.features.map(feature => feature.enabled)
 
     if (manifest.features.length > 0)
       this.selectFeature(manifest.features[0])
@@ -216,7 +215,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   checkChanges(value : any) {
     // local functions
 
-    const equalArrays = (a: any, b: any) => {
+    const equalArrays = (a : any, b : any) => {
       if (a == undefined || b == undefined)
         return a == b
 
@@ -224,10 +223,10 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         return false
 
       let sorted = b.sort()
-      return a.sort().every((element: any, index:  number) => element == sorted[index]);
+      return a.sort().every((element : any, index : number) => element == sorted[index]);
     }
 
-    const equals = (a: any, b: any) => Array.isArray(a) ? equalArrays(a, b) : a == b
+    const equals = (a : any, b : any) => Array.isArray(a) ? equalArrays(a, b) : a == b
 
     let dirty = {}
 
@@ -235,9 +234,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     for (let propertyName in value) {
       // @ts-ignore
-        if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
+      if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
         // @ts-ignore
-            dirty[propertyName] = value[propertyName]
+        dirty[propertyName] = value[propertyName]
         this.isDirty = true
       }
     }
@@ -248,7 +247,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     if (this.selectedFeature!!.enabled !== this.enabled[index]) {
       this.isDirty = true
       // @ts-ignore
-        dirty["enabled"] = this.enabled[index]
+      dirty["enabled"] = this.enabled[index]
     }
 
 

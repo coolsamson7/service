@@ -90,7 +90,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
   // implement AfterViewInit
 
-    override ngAfterViewInit() : void {
+  override ngAfterViewInit() : void {
     super.ngAfterViewInit()
 
     const ngControl : NgControl | null = this.injector.get(NgControl, null);
@@ -111,7 +111,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
   // protected
 
-    override createEditor() {
+  override createEditor() {
     let editor = super.createEditor()
 
     // add listeners
@@ -132,7 +132,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     editor.onDidChangeModelDecorations(() => {
       // @ts-ignore
-        const errorMessages = this.getModelMarkers().map(({message}) => message);
+      const errorMessages = this.getModelMarkers().map(({message}) => message);
 
       if (this.errorMessages.length != errorMessages.length) {
         this.errorMessages = errorMessages;
@@ -159,7 +159,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     if (this.editor) {
       // @ts-ignore
-        let errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
+      let errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
 
       if (errors.length > 0) {
         return {
@@ -199,8 +199,8 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
   }
 
   ngOnChanges(changes : SimpleChanges) {
-      if (this.editor && changes["model"] && !changes["model"].firstChange) {
-          const currentModel = changes["model"].currentValue;
+    if (this.editor && changes["model"] && !changes["model"].firstChange) {
+      const currentModel = changes["model"].currentValue;
       const previousModel = changes["model"].previousValue;
 
       const previousUri = previousModel?.uri
@@ -215,7 +215,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         let existingModel;
 
         if (currentUri)
-          existingModel = monaco.editor.getModels().find((model: any) => model.uri.path === currentUri.path);
+          existingModel = monaco.editor.getModels().find((model : any) => model.uri.path === currentUri.path);
 
         if (!existingModel)
           this.createModel();

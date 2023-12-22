@@ -11,15 +11,15 @@ import { Feature } from "@modulefederation/portal";
   providers: []
 })
 @Feature({
-    id: "nodes",
-    parent: "nodes",
-    router: {
-        path: ":node"
-    },
-    label: "",
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "nodes",
+  parent: "nodes",
+  router: {
+    path: ":node"
+  },
+  label: "",
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class NodeDetailsComponent extends NavigationComponent {
   // instance data
@@ -49,8 +49,8 @@ export class NodeDetailsComponent extends NavigationComponent {
 
   // implement OnInit
 
-    override ngOnInit() : void {
-        super.ngOnInit();
+  override ngOnInit() : void {
+    super.ngOnInit();
 
     this.subscription = this.activatedRoute.params.subscribe(params => {
       this.setNode(params["node"])

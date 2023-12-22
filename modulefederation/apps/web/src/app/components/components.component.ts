@@ -9,13 +9,13 @@ import { Feature } from "@modulefederation/portal";
   providers: []
 })
 @Feature({
-    id: "components",
-    label: "Components",
-    icon: "folder",
-    visibility: ["public", "private"],
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "components",
+  label: "Components",
+  icon: "folder",
+  visibility: ["public", "private"],
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class ComponentsComponent extends NavigationComponent {
   // constructor

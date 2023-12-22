@@ -8,12 +8,12 @@ import { Feature } from "@modulefederation/portal";
   styleUrls: ['./home.component.css']
 })
 @Feature({
-    id: "home",
-    label: "Home",
-    visibility: ["public", "private"],
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "home",
+  label: "Home",
+  visibility: ["public", "private"],
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class HomeComponent implements OnInit {
   // constructor
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
 
   // public
 
-  public executeSelectedChange = (event: any) => {
+  public executeSelectedChange = (event : any) => {
     console.log(event);
   }
 

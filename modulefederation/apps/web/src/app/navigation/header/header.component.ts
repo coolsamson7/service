@@ -93,7 +93,7 @@ export class HeaderComponent implements OnInit {
         switchMap(route => (route as any).data),
         //map(data => data['label'])
       )
-      .subscribe((data :any) => {
+      .subscribe((data : any) => {
         this.label = data['label']
         this.icon = data['icon']
       });
@@ -102,7 +102,7 @@ export class HeaderComponent implements OnInit {
   // implement OnInit
 
   private loadUser() {
-    this.oauthService.loadUserProfile().then((user: any) =>
+    this.oauthService.loadUserProfile().then((user : any) =>
       this.user = user['info']
     );
   }

@@ -19,15 +19,15 @@ interface Channel {
   styleUrls: ['./service-instance.component.scss']
 })
 @Feature({
-    id: "instance",
-    parent: "component",
-    router: {
-        path: ":instance"
-    },
-    label: "",
-    categories: [],
-    tags: [],
-    permissions: []
+  id: "instance",
+  parent: "component",
+  router: {
+    path: ":instance"
+  },
+  label: "",
+  categories: [],
+  tags: [],
+  permissions: []
 })
 export class ServiceInstanceComponent implements OnInit, OnDestroy {
   // instance data
@@ -36,7 +36,7 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
   healthSubscription! : Subscription
   instanceSubscription! : Subscription
   instance : ServiceInstanceDTO = {
-      //component: null,
+    //component: null,
     instanceId: "",
     serviceId: "",
     host: "",

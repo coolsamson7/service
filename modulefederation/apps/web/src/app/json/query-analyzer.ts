@@ -44,7 +44,7 @@ export class QueryAnalyzer {
     let annotation
     if ((annotation = service.annotations.find(annotation => annotation.name.endsWith("RequestMapping"))) != undefined) {
       // @ts-ignore
-        this.urlPrefix = annotation.parameters.find(param => param.name == "value").value[0]
+      this.urlPrefix = annotation.parameters.find(param => param.name == "value").value[0]
     }
   }
 
@@ -64,7 +64,7 @@ export class QueryAnalyzer {
 
   findAnnotation(method : MethodDescriptor, mapping : string) : AnnotationDescriptor {
     // @ts-ignore
-      return method.annotations.find(annotation => annotation.name.endsWith(mapping))
+    return method.annotations.find(annotation => annotation.name.endsWith(mapping))
   }
 
   defaultValue4(type : TypeDescriptor) {
@@ -184,8 +184,8 @@ export class QueryAnalyzer {
 
   analyzeGetMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
     // @ts-ignore
-      // @ts-ignore
-      let query : Query = {
+    // @ts-ignore
+    let query : Query = {
       method: "get",
       url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
       params: []
@@ -198,7 +198,7 @@ export class QueryAnalyzer {
 
   analyzePostMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
     // @ts-ignore
-      let query : Query = {
+    let query : Query = {
       method: "post",
       url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
       params: []
@@ -211,7 +211,7 @@ export class QueryAnalyzer {
 
   analyzePutMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
     // @ts-ignore
-      let query : Query = {
+    let query : Query = {
       method: "put",
       url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
       params: []
@@ -250,7 +250,7 @@ export class QueryAnalyzer {
       }
 
       // @ts-ignore
-        json[property] = value
+      json[property] = value
     }
 
 

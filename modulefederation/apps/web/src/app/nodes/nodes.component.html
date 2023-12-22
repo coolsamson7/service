@@ -7,7 +7,8 @@
 
   <div *ngIf="outlet.isActivated == false" class="left">
     <mat-list class="nodes" role="list">
-      <a *ngFor="let node of nodes" [class.active-item]="node == selected" [routerLinkActive]="['is-active']" mat-list-item
+      <a *ngFor="let node of nodes" [class.active-item]="node == selected" [routerLinkActive]="['is-active']"
+         mat-list-item
          role="listitem"
          routerLink="{{node}}">
         {{node}}

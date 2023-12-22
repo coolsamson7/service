@@ -28,14 +28,20 @@ export class DescriptionComponent implements OnInit {
 
   // private
 
+  ngOnInit() : void {
+    this.extractDescription(this.annotation)
+  }
+
+  // implement OnInit
+
   private extractDescription(annotation : AnnotationDescriptor) {
     this.description.description = " * " + annotation.parameters.find(parameter => parameter.name == "value")!!.value.replace("\n", "<br> * ")
 
     let parameters = annotation.parameters.find(parameter => parameter.name == "parameters")
     if (parameters)
       for (let param of parameters.value) {
-        let name = param.parameters.find((p: any) => p.name == "name").value
-        let value = param.parameters.find((p: any) => p.name == "description").value.replace("\n", "<br>")
+        let name = param.parameters.find((p : any) => p.name == "name").value
+        let value = param.parameters.find((p : any) => p.name == "description").value.replace("\n", "<br>")
 
         this.description.parameter.push({
           name: name,
@@ -43,10 +49,4 @@ export class DescriptionComponent implements OnInit {
         })
       }
   }
-
-    // implement OnInit
-
-    ngOnInit() : void {
-        this.extractDescription(this.annotation)
-    }
 }

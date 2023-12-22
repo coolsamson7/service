@@ -1,23 +1,24 @@
-<mat-chip-grid #chipGrid (focusin)="onFocusIn($event)" (focusout)="onFocusOut($event)" aria-label="Visibility selection">
-    <mat-chip-row (removed)="remove(value)" *ngFor="let value of values" [removable]="true">
-        {{value}}
-        <mat-icon matChipRemove>cancel</mat-icon>
-    </mat-chip-row>
+<mat-chip-grid #chipGrid (focusin)="onFocusIn($event)" (focusout)="onFocusOut($event)"
+               aria-label="Visibility selection">
+  <mat-chip-row (removed)="remove(value)" *ngFor="let value of values" [removable]="true">
+    {{value}}
+    <mat-icon matChipRemove>cancel</mat-icon>
+  </mat-chip-row>
 </mat-chip-grid>
 
 <input
-    #input
-    (matChipInputTokenEnd)="add($event)"
-    [formControl]="formControl"
-    [matAutocomplete]="autocomplete"
-    [matChipInputFor]="chipGrid"
-    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-    [placeholder]="focused ? placeholder : ''">
+  #input
+  (matChipInputTokenEnd)="add($event)"
+  [formControl]="formControl"
+  [matAutocomplete]="autocomplete"
+  [matChipInputFor]="chipGrid"
+  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+  [placeholder]="focused ? placeholder : ''">
 
 <mat-autocomplete #autocomplete="matAutocomplete" (optionSelected)="selected($event)">
-    <mat-option *ngFor="let value of filteredValues | async" [value]="value">
-        {{value}}
-    </mat-option>
+  <mat-option *ngFor="let value of filteredValues | async" [value]="value">
+    {{value}}
+  </mat-option>
 </mat-autocomplete>
 
 

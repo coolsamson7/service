@@ -16,7 +16,7 @@ interface ConstraintHandler {
 export class JSONSchemaBuilder {
   // instance data
 
-  types: {[key: string]: InterfaceDescriptor} = {}
+  types : { [key : string] : InterfaceDescriptor } = {}
   schema : any
 
   constraintHandlers : ConstraintHandler[] = [
@@ -286,15 +286,14 @@ export class JSONSchemaBuilder {
 
       let itemTypeName = property.type.parameter[0].name
 
-      if (this.isObject(itemTypeName))
-        { // @ts-ignore
-            result.items = this.referenceType({name: itemTypeName, type: this.types[itemTypeName], annotations: []})
-        } // HACK TODO
+      if (this.isObject(itemTypeName)) { // @ts-ignore
+        result.items = this.referenceType({name: itemTypeName, type: this.types[itemTypeName], annotations: []})
+      } // HACK TODO
 
       else {
         result.items = {}
         // @ts-ignore
-          this.mapLiteralType(itemTypeName, {name: itemTypeName, type: null, annotations: []}, result.items)
+        this.mapLiteralType(itemTypeName, {name: itemTypeName, type: null, annotations: []}, result.items)
       }
     }
 
@@ -318,7 +317,7 @@ export class JSONSchemaBuilder {
   }
 
   private createProperties(descriptor : InterfaceDescriptor) {
-    let properties : {[name: string] : PropertyDescriptor} = {}
+    let properties : { [name : string] : PropertyDescriptor } = {}
 
     for (let property of descriptor.properties)
       properties[property.name] = this.createType(property)

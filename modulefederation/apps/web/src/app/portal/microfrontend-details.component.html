@@ -47,10 +47,12 @@
             <div class="features">
               <mat-nav-list dense>
                 <ng-container *ngFor="let feature of manifest.features; let index = index">
-                  <a (click)="selectFeature(feature)" [ngClass]="{selected: selectedFeature == feature}" class="item" mat-list-item
+                  <a (click)="selectFeature(feature)" [ngClass]="{selected: selectedFeature == feature}" class="item"
+                     mat-list-item
                      role="listitem">
                     <mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon>
-                    <span [ngClass]="[feature.id == '' ? 'root' : 'view']">{{feature.id == "" ? "Root" : feature.id}}</span>
+                    <span
+                      [ngClass]="[feature.id == '' ? 'root' : 'view']">{{feature.id == "" ? "Root" : feature.id}}</span>
                     <mat-slide-toggle (toggleChange)="toggleEnabled(index)" [disabled]="selectedFeature !== feature"
                                       [ngModel]="enabled[index]"
                                       color="primary"></mat-slide-toggle>
@@ -123,7 +125,8 @@
       <!-- raw -->
 
       <mat-tab label="Raw">
-        <monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifestJSON" name="raw_manifest" [id]="'raw_manifest'"></monaco-editor>
+        <monaco-editor [(ngModel)]="manifestJSON" [id]="'raw_manifest'" [model]="model" [options]="{}"
+                       name="raw_manifest"></monaco-editor>
       </mat-tab>
     </mat-tab-group>
   </div>

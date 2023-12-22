@@ -4,10 +4,11 @@ import { ConfirmationDialog } from "./confirmation-dialog";
 import { Observable } from "rxjs";
 
 export interface ButtonConfiguration {
-  label: string,
-  result: any,
-  primary?: boolean
+  label : string,
+  result : any,
+  primary? : boolean
 }
+
 export class ConfirmationDialogBuilder {
   // instance data
 
@@ -29,7 +30,7 @@ export class ConfirmationDialogBuilder {
    * set the dialog type
    * @param type the type
    */
-  type(type: "info" | "warning" | "error"): ConfirmationDialogBuilder {
+  type(type : "info" | "warning" | "error") : ConfirmationDialogBuilder {
     this.configuration.type = type;
 
     return this;
@@ -39,7 +40,7 @@ export class ConfirmationDialogBuilder {
    * set the dialog title
    * @param title the title
    */
-  title(title: string): ConfirmationDialogBuilder {
+  title(title : string) : ConfirmationDialogBuilder {
     this.configuration.title = title;
 
     return this;
@@ -49,7 +50,7 @@ export class ConfirmationDialogBuilder {
    * set the dialog message
    * @param message the message
    */
-  message(message: string): ConfirmationDialogBuilder {
+  message(message : string) : ConfirmationDialogBuilder {
     this.configuration.message = message;
 
     return this;
@@ -59,9 +60,9 @@ export class ConfirmationDialogBuilder {
    * add a button
    * @param button the {@link ButtonConfiguration}
    */
-  button(button: ButtonConfiguration): ConfirmationDialogBuilder {
+  button(button : ButtonConfiguration) : ConfirmationDialogBuilder {
     // @ts-ignore
-      this.configuration.buttons.push(button);
+    this.configuration.buttons.push(button);
 
     return this;
   }
@@ -71,7 +72,7 @@ export class ConfirmationDialogBuilder {
   /**
    * add "ok"
    */
-  public ok(): ConfirmationDialogBuilder {
+  public ok() : ConfirmationDialogBuilder {
     return this
       .button({
         label: "Ok",
@@ -82,7 +83,7 @@ export class ConfirmationDialogBuilder {
   /**
    * add "ok" and "cancel" buttons
    */
-  public okCancel(): ConfirmationDialogBuilder {
+  public okCancel() : ConfirmationDialogBuilder {
     return this
       .button({
         label: "Ok",
@@ -99,7 +100,7 @@ export class ConfirmationDialogBuilder {
   /**
    * show the dialog and return the button value
    */
-  show(): Observable<any> {
+  show() : Observable<any> {
     const dialogRef = this.dialog.open(ConfirmationDialog, {
       data: this.configuration
     });
