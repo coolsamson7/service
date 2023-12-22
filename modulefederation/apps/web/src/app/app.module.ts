@@ -79,7 +79,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     HttpClientModule,
     MatIconModule,
     AppRoutingModule,
-    RouterModule,
     ComponentsModule,
     NodesModule,
     PortalComponentsModule,
