@@ -74,7 +74,7 @@ class ManifestManager {
     }
 
     fun save(manifest: Manifest) {
-        val index = manifests.indexOfFirst { manifest -> manifest.remoteEntry == manifest.remoteEntry }
+        val index = manifests.indexOfFirst { man -> man.remoteEntry == manifest.remoteEntry }
 
         if ( index >= 0) {
             manifests[index] = manifest
@@ -122,7 +122,7 @@ class ManifestManager {
 
                 manifests[index] = newManifest
 
-                this.entityManager.saveManifest(manifest)
+                this.entityManager.saveManifest(newManifest)
             }
             catch(exception: Throwable) {
                 println(exception.message) // TODO
