@@ -1,10 +1,19 @@
 import { Component, OnInit } from "@angular/core";
 import { OAuthService } from "angular-oauth2-oidc";
+import { Feature } from "@modulefederation/portal";
 
 @Component({
   selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
+})
+@Feature({
+    id: "home",
+    label: "Home",
+    visibility: ["public", "private"],
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class HomeComponent implements OnInit {
   // constructor

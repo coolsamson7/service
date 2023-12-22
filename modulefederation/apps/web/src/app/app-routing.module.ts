@@ -13,7 +13,7 @@ import { MicrofrontendDetailsComponent } from "./portal/microfrontend-details.co
 
 const routes : Routes = [
   {
-    path: 'home',
+    path: 'home', // ok
     data: {
       label: "Home",
       icon: "home"
@@ -30,7 +30,7 @@ const routes : Routes = [
     children: [
       {
         path: ':microfrontend',
-        component: MicrofrontendDetailsComponent
+        component: MicrofrontendDetailsComponent // ok
       }]
   },
   {
@@ -39,16 +39,16 @@ const routes : Routes = [
       label: "Components",
       icon: "folder"
     },
-    component: ComponentsComponent,
+    component: ComponentsComponent, // ok
     canActivate: [AuthGuard],
     children: [
       {
         path: ':component',
-        component: ComponentDetailsComponent,
+        component: ComponentDetailsComponent, // ok
         children: [
           {
             path: ':instance',
-            component: ServiceInstanceComponent
+            component: ServiceInstanceComponent // ok
           }
         ]
       }
@@ -65,7 +65,7 @@ const routes : Routes = [
     children: [
       {
         path: ':node',
-        component: NodeDetailsComponent
+        component: NodeDetailsComponent // ok
       }
     ]
   },
@@ -73,9 +73,11 @@ const routes : Routes = [
   {path: '**', component: PageNotFoundComponent}
 ];
 
+import { localRoutes } from "./local.routes";
+
 @NgModule({
   imports: [RouterModule.forRoot(
-    routes,
+      localRoutes,// TODO CHANGed  routes,
     {enableTracing: true})],
   exports: [RouterModule]
 })

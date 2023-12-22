@@ -14,15 +14,28 @@ import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
-import { PortalModule } from './portal/portal.module';
-import { SharedModule } from './auth/auth.guard';
+import { PortalComponentsModule } from './portal/portal.module';
+import { AuthGuard, SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
-import { Environment, EnvironmentModule } from "@modulefederation/portal";
+import {
+  CanActivateGuard,
+  CanDeactivateGuard,
+  Environment,
+  EnvironmentModule, Manifest,
+  PortalModule,
+  Shell
+} from "@modulefederation/portal";
 import { EndpointLocator } from "@modulefederation/portal";
 import { HTTPErrorInterceptor } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatIconModule } from "@angular/material/icon";
+
+import { localRoutes } from "./local.routes";
+import { Route, RouterModule } from "@angular/router";
+import { I18nResolver } from "../../../shell/src/app/shell.module";
+
+import * as localManifest from "../assets/manifest.json"
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -47,6 +60,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   }
 }
 
+@Shell({
+    name: "shell"
+})
 @NgModule({
   declarations: [
     AppComponent,
@@ -63,10 +79,26 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     HttpClientModule,
     MatIconModule,
     AppRoutingModule,
+    RouterModule,
     ComponentsModule,
     NodesModule,
-    PortalModule,
+    PortalComponentsModule,
     MaterialModule,
+
+    PortalModule.forRoot({
+      loader: {
+          //server: true,
+          remotes: []
+      },
+      localRoutes: localRoutes,
+      localManifest: localManifest as Manifest,
+      decorateRoutes: (route : Route) => {
+          //route.resolve = {i18n: I18nResolver}
+          //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
+          route.canDeactivate = [CanDeactivateGuard]
+      }
+    }),
+
     MonacoEditorModule.forRoot({
       defaultOptions: {theme: 'vs-dark', language: 'json'}
     }),

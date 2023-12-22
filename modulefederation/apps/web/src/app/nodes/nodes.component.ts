@@ -8,6 +8,7 @@ import * as joint from 'jointjs';
 import { combineLatest, Observable, of, switchMap } from "rxjs";
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
 import { InterfaceDescriptor } from "../model/service.interface";
+import { Feature } from "@modulefederation/portal";
 
 interface Result {
   instances : { [component : string] : ServiceInstanceDTO[] }
@@ -36,6 +37,15 @@ interface Link {
       <div #graph></div>
     </div>`,
   providers: []
+})
+@Feature({
+    id: "nodes",
+    label: "Nodes",
+    icon: "computer",
+    visibility: ["public", "private"],
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class NodesComponent extends NavigationComponent implements AfterViewInit {
   // instance data

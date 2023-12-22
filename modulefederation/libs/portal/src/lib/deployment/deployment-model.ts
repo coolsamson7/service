@@ -1,13 +1,12 @@
 import { FeatureConfig } from "../feature-config";
 import { ModuleMetadata } from "../modules";
 
-export interface ModuleData {
-  name : string
-  ngModule : string
-}
-
 export interface Manifest extends ModuleMetadata {
-  enabled? : boolean
+  name : string,
+  version : string,
+  enabled? : boolean,
+  health?: string,
+  commitHash : string,
   remoteEntry? : string,
   module : string,
   features : FeatureConfig[],

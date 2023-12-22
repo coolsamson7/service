@@ -18,7 +18,7 @@ import { PageNotFoundComponent } from "./page-not-found/page-not-found-component
 export interface FeatureData extends FeatureConfig {
   // computed after resolving parent links
 
-  children? : FeatureConfig[]
+  //children? : FeatureConfig[]
   $parent? : FeatureConfig
 
   // computed
@@ -326,6 +326,6 @@ export class PortalManager {
 
     // setup routes
 
-    this.router.resetConfig(this.buildRoutes(deployment, this.portalConfig.localRoutes, merge))
+    this.router.resetConfig(this.buildRoutes(deployment,  this.portalConfig.localRoutes, merge))
   }
 }

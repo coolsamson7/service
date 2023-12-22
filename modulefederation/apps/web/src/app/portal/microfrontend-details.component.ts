@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { Feature, Manifest } from "./model";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { Subscription } from 'rxjs';
@@ -8,12 +7,24 @@ import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
 import { Dialogs } from "./dialog/dialogs";
+import { Feature, Manifest } from "@modulefederation/portal";
 
 @Component({
   selector: 'microfrontend-details',
   templateUrl: './microfrontend-details.component.html',
   styleUrls: ['./microfrontend-details.component.scss'],
   providers: []
+})
+@Feature({
+    id: "microfrontend",
+    parent: "microfrontends",
+    router: {
+        path: ":microfrontend"
+    },
+    label: "",
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   // instance data
@@ -45,7 +56,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild('form') public form! : NgForm
 
-  selectedFeature? : Feature
+  selectedFeature? : any
 
   allPermissions : string[] = [];
   allTags : string[] = [];
@@ -107,7 +118,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   setManifests(manifests : Manifest[]) : Manifest[] {
     // local functions
 
-    let analyzeFeature = (feature : Feature) => {
+    let analyzeFeature = (feature : any) => {
       // recursion
 
       if (feature.children)
@@ -164,7 +175,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
       this.selectFeature(manifest.features[0])
   }
 
-  selectFeature(feature : Feature) {
+  selectFeature(feature : any) {
     if (feature !== this.selectedFeature && this.isDirty) {
       this.dialogs
         .confirmationDialog()

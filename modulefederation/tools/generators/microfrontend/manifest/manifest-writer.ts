@@ -73,8 +73,9 @@ export class ManifestWriter {
   static FeatureClass = new Class()
     .compute("module", (obj) => obj.module?.name)
     //.required("component")
-    .optional("router", "") // ?
+    .optional("router", null)
     .optional("label", "")
+    .optional("icon", "")
     .optional("permissions", [])
     .optional("tags", [])
     .optional("categories", [])
@@ -109,10 +110,15 @@ export class ManifestWriter {
 
     // features
 
-    for (let feature of manifest.features) {
-      ManifestWriter.FeatureClass.clean(feature)
-      //if (feature.module)
-      //  ManifestWriter.ModuleClass.clean(feature.module)
-    }
+      let  cleanFeature = (feature) => {
+          ManifestWriter.FeatureClass.clean(feature)
+
+          if ( feature.children)
+              for ( let child of feature.children)
+                  cleanFeature(child)
+      }
+
+    for (let feature of manifest.features)
+        cleanFeature(feature)
   }
 }

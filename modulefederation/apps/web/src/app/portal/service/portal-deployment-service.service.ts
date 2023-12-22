@@ -6,8 +6,7 @@
 
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
-import { Deployment } from "../model/deployment.interface"
-import { Service } from "@modulefederation/portal";
+import { Deployment, Service } from "@modulefederation/portal";
 import { AbstractHTTPService } from "@modulefederation/portal";
 
 @Injectable({providedIn: 'root'})

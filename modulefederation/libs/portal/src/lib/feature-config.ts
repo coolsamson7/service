@@ -3,7 +3,7 @@
  */
 export type RouterConfig = {
   /**
-   * the router path which will override th eid
+   * the router path which will override the id
    */
   path? : string;
   /**
@@ -13,7 +13,7 @@ export type RouterConfig = {
   /**
    * the name of a lazy loaded module
    */
-  lazyModule : string;
+  lazyModule? : string;
 };
 
 /**
@@ -22,6 +22,21 @@ export type RouterConfig = {
 export type Visibility = "public" | "private"
 
 export interface FeatureConfig {
+    /**
+     * enabeld status of a feature
+     */
+    enabled? : boolean
+
+    /**
+     * resolved children array
+     */
+    children? : FeatureConfig[]
+
+    /**
+     * optional icon name
+     */
+    icon?: string,
+
   /**
    * optional id of a parent feature.  This must be unique in a microfrontend!
    */
@@ -57,7 +72,7 @@ export interface FeatureConfig {
   /**
    * visibility of the feature.
    */
-  visibility? : Visibility[]
+  visibility? : ("public" | "private")[]
   /**
    * set of permissions, that are required
    */

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { PortalAdministrationService, PortalIntrospectionService } from "./service";
-import { Address, Manifest } from "./model";
+import { Address } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
@@ -8,11 +8,21 @@ import { AddManifestDialog } from "./add-manifest-dialog";
 import { Dialogs } from "./dialog/dialogs";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { Feature, Manifest } from "@modulefederation/portal";
 
 @Component({
   selector: 'microfrontends',
   templateUrl: './microfrontends.component.html',
   styleUrls: ['./microfrontends.component.scss']
+})
+@Feature({
+    id: "microfrontends",
+    label: "",
+    icon: "folder",
+    visibility: ["public", "private"],
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class MirofrontendsComponent extends NavigationComponent {
   // instance data

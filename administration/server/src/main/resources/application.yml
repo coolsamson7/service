@@ -1,10 +1,11 @@
 logging:
-  file: "log/hello.log"
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%t] [%logger - %line]: %m%n"
     file: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%t] [%logger - %line]: %m%n"
   level:
     root: INFO
+  file:
+    name: "log/hello.log"
 keycloak:
   realm: service
   auth-server-url: = http://127.0.0.1:8080/auth
@@ -20,7 +21,6 @@ web:
   cors:
     allowed-origins: "http://localhost:4200"
     allowed-methods: GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD
-    max-age: 3600
     allowed-headers: "Requestor-Type"
     exposed-headers: "X-Get-Header"
 spring:
@@ -30,6 +30,7 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console.enabled: false
   datasource:
@@ -37,8 +38,6 @@ spring:
     username: sa
     password: password
     driverClassName: org.h2.Driver
-    jpa:
-      spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
   security:
     oauth2:
       resourceserver:

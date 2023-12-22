@@ -1,5 +1,5 @@
 import { ObjectDecorator } from "./object-decorator"
-import { Feature, Manifest } from "../model";
+import { FeatureData, Manifest } from "@modulefederation/portal";
 
 export class ManifestDecorator {
   // static
@@ -15,7 +15,7 @@ export class ManifestDecorator {
     .defaultValue("featureToggles", [])
 
   static decorate(manifest : Manifest) : Manifest {
-    let decorateFeature = (feature : Feature) => {
+    let decorateFeature = (feature : FeatureData) => {
       ManifestDecorator.FeatureDecorator.decorate(feature)
 
       if (feature.children)

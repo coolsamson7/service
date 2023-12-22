@@ -50,5 +50,5 @@ import { ChipsComponent } from "./chips.component";
     MatToolbarModule,
   ]
 })
-export class PortalModule {
+export class PortalComponentsModule {
 }

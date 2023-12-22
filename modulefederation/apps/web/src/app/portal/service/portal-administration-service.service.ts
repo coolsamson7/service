@@ -6,9 +6,9 @@
 
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
-import { Service } from "@modulefederation/portal";
+import { Manifest, Service } from "@modulefederation/portal";
 import { AbstractHTTPService } from "@modulefederation/portal";
-import { Address, Manifest } from "../model";
+import { Address } from "../model";
 import { RegistryResult } from "../model/registry-result.interface";
 
 @Injectable({providedIn: 'root'})

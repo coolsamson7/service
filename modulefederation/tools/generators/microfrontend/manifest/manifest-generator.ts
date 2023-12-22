@@ -173,7 +173,9 @@ export class ManifestGenerator {
         .read((data : DecoratorData) => {
           features.push(data)
 
-          map[data.data.name] = data
+            //console.log("remember " + data.decorates + " as " + data.data.id)
+
+          map[data.data.id] = data
         })
 
     // sort
@@ -181,6 +183,9 @@ export class ManifestGenerator {
     const result : { [key : string] : any } = {}
 
     const findData = (name : string) : DecoratorData => {
+        if ( !map[name])
+            throw new Error("no decorated feature named " + name)
+
       return map[name]
     }
 
@@ -203,6 +208,8 @@ export class ManifestGenerator {
       feature = {
         id: decorator.id,
         label: decorator.label || decorator.id,
+        icon: decorator.icon || "",
+        router: decorator.router || null,
         component: data.decorates,
         tags: decorator.tags || [], // portal
         categories: decorator.categories || [],

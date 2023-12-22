@@ -5,6 +5,7 @@ import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { ComponentsComponent } from './components.component';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { ComponentStore } from './component-store';
+import { Feature } from "@modulefederation/portal";
 
 
 interface Channel {
@@ -16,6 +17,17 @@ interface Channel {
   selector: 'service-instance',
   templateUrl: './service-instance.component.html',
   styleUrls: ['./service-instance.component.scss']
+})
+@Feature({
+    id: "instance",
+    parent: "component",
+    router: {
+        path: ":instance"
+    },
+    label: "",
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class ServiceInstanceComponent implements OnInit, OnDestroy {
   // instance data

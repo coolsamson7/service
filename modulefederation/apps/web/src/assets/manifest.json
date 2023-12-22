@@ -1,0 +1,65 @@
+{
+  "name": "modulefederation",
+  "version": "0.0.0",
+  "commitHash": "616675408cbfff912c37ddeb38acf86bae5b7c10",
+  "module": "AppModule",
+  "features": [
+    {
+      "id": "microfrontends",
+      "label": "microfrontends",
+      "icon": "folder",
+      "component": "MirofrontendsComponent",
+      "visibility": ["public", "private"],
+      "children": [
+        {
+          "id": "microfrontend",
+          "label": "microfrontend",
+          "router": {
+            "path": ":microfrontend"
+          },
+          "component": "MicrofrontendDetailsComponent"
+        }
+      ]
+    },
+    {
+      "id": "nodes",
+      "label": "Nodes",
+      "icon": "computer",
+      "component": "NodesComponent",
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "home",
+      "label": "Home",
+      "component": "HomeComponent",
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "components",
+      "label": "Components",
+      "icon": "folder",
+      "component": "ComponentsComponent",
+      "visibility": ["public", "private"],
+      "children": [
+        {
+          "id": "component",
+          "label": "component",
+          "router": {
+            "path": ":component"
+          },
+          "component": "ComponentDetailsComponent",
+          "children": [
+            {
+              "id": "instance",
+              "label": "instance",
+              "router": {
+                "path": ":instance"
+              },
+              "component": "ServiceInstanceComponent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

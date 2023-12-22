@@ -6,6 +6,7 @@ import { RouteElement } from '../widgets/navigation-component.component';
 import { Update, UpdateService } from '../service/update-service.service';
 import { ComponentStore } from './component-store';
 import { Subscription } from 'rxjs';
+import { Feature } from "@modulefederation/portal";
 
 
 @Component({
@@ -13,6 +14,17 @@ import { Subscription } from 'rxjs';
   templateUrl: './component-details.component.html',
   styleUrls: ['./component-details.component.scss'],
   providers: [ComponentStore]
+})
+@Feature({
+    id: "component",
+    parent: "components",
+    router: {
+        path: ":component"
+    },
+    label: "",
+    categories: [],
+    tags: [],
+    permissions: []
 })
 export class ComponentDetailsComponent implements OnInit, OnDestroy {
   // instance data

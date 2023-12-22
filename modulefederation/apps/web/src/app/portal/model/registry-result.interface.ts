@@ -1,4 +1,4 @@
-import { Manifest } from "./manifest.interface";
+import { Manifest } from "@modulefederation/portal";
 
 export type RegistryError = "duplicate" | "malformed_url" | "unreachable"
 
