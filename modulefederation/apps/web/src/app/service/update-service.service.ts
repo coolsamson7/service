@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from "@angular/core";
 import { Observable, Subject } from 'rxjs';
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
-import { Environment } from "../common/util/environment.service";
+import { Environment } from "@modulefederation/portal";
 
 export interface Update {
   deletedServices : string[],

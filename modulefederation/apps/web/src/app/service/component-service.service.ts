@@ -3,8 +3,8 @@ import { Observable } from "rxjs";
 import { ComponentDTO } from "../model/component.interface";
 import { ServiceInstanceDTO } from "../model/service-instance.interface";
 import { Healths } from "./update-service.service";
-import { Service } from "../common/communication/register-service.decorator";
-import { AbstractHTTPService } from "../common/communication/abstract-http-service";
+import { Service } from "@modulefederation/portal";
+import { AbstractHTTPService } from "@modulefederation/portal";
 import { Server } from "../model/server.interface";
 import { InterfaceDescriptor } from "../model/service.interface";
 

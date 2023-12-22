@@ -3,7 +3,7 @@ import { Portal, PortalElement } from './navigation/navigation.interface';
 import { Router } from '@angular/router';
 import { NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
-import { Environment } from './common/util/environment.service';
+import { Environment } from "@modulefederation/portal";
 
 
 @Component({

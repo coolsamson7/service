@@ -6,8 +6,8 @@
 
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
-import { Service } from "../../common/communication/register-service.decorator";
-import { AbstractHTTPService } from "../../common/communication/abstract-http-service";
+import { Service } from "@modulefederation/portal";
+import { AbstractHTTPService } from "@modulefederation/portal";
 import { Address, Manifest } from "../model";
 import { RegistryResult } from "../model/registry-result.interface";
 

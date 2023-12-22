@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core"
 import { NgForm } from "@angular/forms"
 
-import { ServerError } from "../../common/error/error"
+import { ServerError } from "@modulefederation/portal";
 import { ComponentModel } from "../../model/component.interface"
 import { InterfaceDescriptor, MethodDescriptor, TypeDescriptor } from "../../model/service.interface"
 import { ComponentService } from "../../service/component-service.service"

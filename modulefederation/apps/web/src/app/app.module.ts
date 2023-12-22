@@ -17,9 +17,9 @@ import { NodesModule } from './nodes/nodes.module';
 import { PortalModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
-import { Environment, EnvironmentModule } from './common/util/environment.service';
-import { EndpointLocator } from './common/communication/endpoint-locator';
-import { HTTPErrorInterceptor } from './common/communication/http-error-interceptor';
+import { Environment, EnvironmentModule } from "@modulefederation/portal";
+import { EndpointLocator } from "@modulefederation/portal";
+import { HTTPErrorInterceptor } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatIconModule } from "@angular/material/icon";
