@@ -1,0 +1,25 @@
+.service-instance {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  row-gap: 10px;
+
+  mat-label {
+    font-weight: bold;
+  }
+
+  .ok {
+    color: green;
+  }
+
+  .nok {
+    color: red
+  }
+
+  .channels {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    column-gap: 5px;
+  }
+}

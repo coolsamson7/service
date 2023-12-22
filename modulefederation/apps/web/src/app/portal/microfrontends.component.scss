@@ -1,0 +1,54 @@
+.container {
+  display: flex; /* or inline-flex */
+  flex-direction: column;
+  height: 100%
+}
+
+.breadcrumb {
+  display: flex; /* or inline-flex */
+  flex-direction: row;
+  column-gap: 10px;
+  width: 100%;
+  color: gray;
+}
+
+.left {
+  height: 100%;
+  flex-grow: 0a
+}
+
+.right {
+  height: 100%;
+  flex-grow: 4
+}
+
+.manifest {
+  .content {
+    display: inline-grid;
+    grid-template-columns: 27px 4em 15em 2em 14em 4em 25px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.icon {
+  visibility: hidden;
+  float: right;
+}
+
+.toggle {
+  float: right;
+}
+}
+
+.manifest:hover {
+.icon {
+  visibility: visible;
+}
+}

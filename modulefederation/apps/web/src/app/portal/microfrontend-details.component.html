@@ -1,0 +1,135 @@
+<div>
+  <div *ngIf="outlet.isActivated == false" class="left">
+
+    <h1>{{manifest.name}}</h1>
+    <hr/>
+    <mat-tab-group *ngIf="manifest.name">
+      <!-- details -->
+
+      <mat-tab label="Details">
+        <div class="details">
+          <!-- toolbar -->
+
+          <mat-toolbar>
+            <mat-toolbar-row>
+              <button (click)="save()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
+                <mat-icon>save</mat-icon>
+              </button>
+              <button (click)="revert()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
+                <mat-icon>undo</mat-icon>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
+
+          <!-- header -->
+
+          <div class="header">
+            <mat-label>Name</mat-label>
+            <div>{{manifest.name}}</div>
+
+            <mat-label>Version</mat-label>
+            <div>{{manifest.version}}</div>
+
+            <mat-label>Commit</mat-label>
+            <div>{{manifest.commitHash}}</div>
+
+            <mat-label>Remote</mat-label>
+            <div>{{manifest.remoteEntry}}</div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!--  body -->
+
+          <div class="body">
+            <!-- features -->
+
+            <div class="features">
+              <mat-nav-list dense>
+                <ng-container *ngFor="let feature of manifest.features; let index = index">
+                  <a (click)="selectFeature(feature)" [ngClass]="{selected: selectedFeature == feature}" class="item" mat-list-item
+                     role="listitem">
+                    <mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon>
+                    <span [ngClass]="[feature.id == '' ? 'root' : 'view']">{{feature.id == "" ? "Root" : feature.id}}</span>
+                    <mat-slide-toggle (toggleChange)="toggleEnabled(index)" [disabled]="selectedFeature !== feature"
+                                      [ngModel]="enabled[index]"
+                                      color="primary"></mat-slide-toggle>
+                  </a>
+                  <mat-divider></mat-divider>
+                </ng-container>
+              </mat-nav-list>
+            </div>
+
+            <!-- details -->
+
+            <form #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" class="feature-details" novalidate>
+              <!-- id -->
+
+              <mat-form-field>
+                <mat-label>Id</mat-label>
+                <input formControlName="id" id="id" matInput name="id" type="text">
+              </mat-form-field>
+
+              <!-- label -->
+
+              <mat-form-field>
+                <mat-label>Label</mat-label>
+                <input formControlName="label" id="label" matInput name="label" type="text">
+              </mat-form-field>
+
+              <!-- description -->
+
+              <mat-form-field>
+                <mat-label>Description</mat-label>
+                <input formControlName="description" id="description" matInput name="description" type="text">
+              </mat-form-field>
+
+              <!-- visibility -->
+
+              <mat-form-field>
+                <mat-label>Visibility</mat-label>
+                <chips [allValues]="allVisibilities" [allowNew]="false" formControlName="visibility" id="visibility"
+                       name="visibility" placeholder="Add visibility"></chips>
+              </mat-form-field>
+
+              <!-- permissions -->
+
+              <mat-form-field>
+                <mat-label>Permissions</mat-label>
+                <chips [allValues]="allPermissions" [allowNew]="true" formControlName="permissions" id="permissions"
+                       name="permissions" placeholder="Add permission"></chips>
+              </mat-form-field>
+
+              <!-- category -->
+
+              <mat-form-field>
+                <mat-label>Categories</mat-label>
+                <chips [allValues]="allCategories" [allowNew]="true" formControlName="categories" id="categories"
+                       name="categories" placeholder="Add category"></chips>
+              </mat-form-field>
+
+              <!-- tags -->
+
+              <mat-form-field>
+                <mat-label>Tags</mat-label>
+                <chips [allValues]="allTags" [allowNew]="true" formControlName="tags" id="tags" name="tags"
+                       placeholder="Add tag"></chips>
+              </mat-form-field>
+            </form>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- raw -->
+
+      <mat-tab label="Raw">
+        <monaco-editor [options]="{}" [model]="model" [(ngModel)]="manifestJSON" name="raw_manifest" [id]="'raw_manifest'"></monaco-editor>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- router outlet -->
+
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
+

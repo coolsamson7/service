@@ -1,0 +1,12 @@
+<span [ngSwitch]="type" class="literal">
+    <span *ngSwitchCase="'string'" class="string">&quot;{{value}}&quot;</span>
+    <span *ngSwitchCase="'array'" class="array">
+        &#91;
+        <ng-container *ngFor="let element of value; let i = index">
+            <ng-container *ngIf="i > 0">, </ng-container>
+            <literal [value]="element"></literal>
+        </ng-container>
+        &#93;
+    </span>
+    <span *ngSwitchDefault class="value">{{value}}</span>
+</span>

@@ -1,0 +1,27 @@
+<mat-toolbar class="toolbar" color="primary">
+  <!-- button -->
+
+  <div fxHide.gt-xs>
+    <button (click)="onToggleSidenav()" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <!-- current selection -->
+
+  <div class="title">
+    <mat-icon>{{icon}}</mat-icon>
+    <span>{{label}}</span>
+  </div>
+
+
+  <button (click)="login()" *ngIf="!loggedIn" mat-button>Login</button>
+
+  <span *ngIf="user">
+        <button [matMenuTriggerFor]="menu" mat-button>{{user.given_name}} {{user.family_name}}</button>
+        <mat-menu #menu="matMenu">
+            <button (click)="logout()" mat-menu-item>Logout</button>
+        </mat-menu>
+    </span>
+
+</mat-toolbar>

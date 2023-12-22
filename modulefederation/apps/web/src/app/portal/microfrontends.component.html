@@ -1,0 +1,71 @@
+<div class="container">
+  <!-- breadcrumb -->
+
+  <div *ngIf="outlet.isActivated == true" class="breadcrumb">
+    <ng-container *ngFor="let route of routes; let i = index; let first = first ;let last = last;">
+      <ng-container *ngIf="i > 0 && i < routes.length">
+        /
+      </ng-container>
+
+      <a routerLink="{{route.route}}"> {{route.label}}</a>
+    </ng-container>
+  </div>
+
+  <!-- toolbar -->
+
+  <mat-toolbar *ngIf="outlet.isActivated == false" class="left">
+    <mat-toolbar-row>
+      <button (click)="addManifest()" mat-icon-button>
+        <mat-icon>add_circle_outline</mat-icon>
+      </button>
+      <button (click)="refresh()" mat-icon-button>
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-divider></mat-divider>
+
+  <!-- manifest list -->
+
+  <div *ngIf="outlet.isActivated == false" class="left">
+    <mat-nav-list>
+      <ng-container *ngFor="let manifest of manifests">
+        <mat-list-item class="manifest">
+          <a class="content" [routerLinkActive]="['is-active']" role="listitem" routerLink="{{manifest.name}}">
+            <mat-icon>language</mat-icon>
+            <span class="bold">
+                  Name
+            </span>
+            <span>
+                {{manifest.name}}({{manifest.version}})
+            </span>
+            <span class="bold">
+                  URI
+            </span>
+            <span>
+                  {{manifest.remoteEntry}}
+            </span>
+            <span class="bold">
+                  Health
+            </span>
+            <mat-icon [ngStyle]="{'color':manifest.health == 'alive' ? 'green' : 'red' }">{{manifest.health == "alive" ? "wifi" : "sentiment_very_dissatisfied"}}</mat-icon>
+          </a>
+
+          <!--mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon-->
+          <mat-icon (click)="removeManifest(manifest)" class="icon">remove_circle</mat-icon>
+          <mat-slide-toggle (ngModelChange)="onChangedEnabled(manifest)" [(ngModel)]="manifest.enabled" class="toggle"
+                            color="primary"></mat-slide-toggle>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+      </ng-container>
+
+    </mat-nav-list>
+  </div>
+
+  <!-- router outlet -->
+
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
+

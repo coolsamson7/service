@@ -1,0 +1,31 @@
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.toolbar > :nth-child(2) {
+  margin-right: auto;
+}
+
+
+a:hover, a:active {
+  color: lightgray;
+}
+
+.navigation-items {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+
+@media (max-width: 959px) {
+  mat-toolbar {
+    border-radius: 0px;
+  }
+}
