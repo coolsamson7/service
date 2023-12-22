@@ -44,7 +44,7 @@ interface Link {
   icon: "computer",
   visibility: ["public", "private"],
   categories: [],
-  tags: [],
+  tags: ["navigation"],
   permissions: []
 })
 export class NodesComponent extends NavigationComponent implements AfterViewInit {

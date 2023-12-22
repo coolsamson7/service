@@ -14,7 +14,7 @@ import { Feature } from "@modulefederation/portal";
   icon: "folder",
   visibility: ["public", "private"],
   categories: [],
-  tags: [],
+  tags: ["navigation"],
   permissions: []
 })
 export class ComponentsComponent extends NavigationComponent {

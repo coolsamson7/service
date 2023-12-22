@@ -164,7 +164,6 @@ export class PortalManager {
         else {
           console.log("did not find feature for path " + route.path!!)
           //throw new Error("did not find feature for path " + route.path!!)
-          //TODO routes.splice(--index, 1)
         }
       } // if
     } // while

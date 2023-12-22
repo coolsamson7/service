@@ -13,6 +13,7 @@
         "public",
         "private"
       ],
+      "tags": ["navigation"],
       "children": [
         {
           "id": "microfrontend",
@@ -29,6 +30,7 @@
       "label": "Nodes",
       "icon": "computer",
       "component": "NodesComponent",
+      "tags": ["navigation"],
       "visibility": [
         "public",
         "private"
@@ -38,6 +40,7 @@
       "id": "home",
       "label": "Home",
       "component": "HomeComponent",
+      "tags": ["navigation"],
       "visibility": [
         "public",
         "private"
@@ -48,6 +51,7 @@
       "label": "Components",
       "icon": "folder",
       "component": "ComponentsComponent",
+      "tags": ["navigation"],
       "visibility": [
         "public",
         "private"

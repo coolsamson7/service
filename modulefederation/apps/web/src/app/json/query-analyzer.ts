@@ -253,9 +253,6 @@ export class QueryAnalyzer {
       json[property] = value
     }
 
-
     return JSON.stringify(json, null, "\t")
-
-    //TODO this.parameter.value =
   }
 }

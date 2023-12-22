@@ -102,7 +102,7 @@ export class FeatureRegistry {
   mergeFeature(feature : FeatureData, newFeature : FeatureData) {
     // copy
 
-    feature.enabled = newFeature.enabled // TODO: is that it??
+    feature.enabled = newFeature.enabled
 
     // recursion
 

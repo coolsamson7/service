@@ -1,32 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Portal, PortalElement } from '../navigation.interface';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AppComponent } from "../../app.component";
+import { FeatureData, FeatureRegistry } from "@modulefederation/portal";
 
 @Component({
   selector: 'app-sidenav-list',
   templateUrl: './sidenav-list.component.html',
   styleUrls: ['./sidenav-list.component.css']
 })
-export class SidenavListComponent implements OnInit {
+export class SidenavListComponent {
   // input & output
 
-  @Input() portal! : Portal;
   @Output() sidenavClose = new EventEmitter();
+
+  // instance data
+
+  elements : FeatureData[]
 
   // constructor
 
-  constructor(public app : AppComponent) {
+  constructor(public app : AppComponent, private featureRegistry: FeatureRegistry) {
+    this.elements = this.featureRegistry.finder().withTag("navigation").find()
   }
 
-  // public
-
-  public select(element : PortalElement) {
-    this.app.navigate(element)
+  public select() {
     this.sidenavClose.emit();
-  }
-
-  // implement OnInit
-
-  ngOnInit() {
   }
 }

@@ -73,7 +73,7 @@ export class AbstractHTTPService {
     return this.http.post<T>(this.url + url, body, options)
   }
 
-  // TODO MORE
+  // TODO put, etc.
 
   // protected
 

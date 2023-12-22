@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Portal, PortalElement } from './navigation/navigation.interface';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
@@ -11,34 +10,7 @@ import { Environment } from "@modulefederation/portal";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  // instance data
-
-  portal : Portal = {
-    items: [
-      {
-        label: "Home",
-        route: "/home",
-        icon: "home"
-      },
-      {
-        label: "Microfrontends",
-        route: "/microfrontends",
-        icon: "folder"
-      },
-      {
-        label: "Components",
-        route: "/components",
-        icon: "folder"
-      },
-      {
-        label: "Nodes",
-        route: "/nodes",
-        icon: "computer"
-      }
-    ]
-  }
-
+export class AppComponent {
   // public
 
   constructor(private router : Router, private oauthService : OAuthService, private environment : Environment) {
@@ -47,19 +19,12 @@ export class AppComponent implements OnInit {
 
   // constructor
 
-  navigate(element : PortalElement) {
-    this.router.navigate([element.route])
-  }
-
   public login() {
     this.oauthService.initLoginFlow();
   }
 
   public logout() {
     this.oauthService.logOut();
-  }
-
-  ngOnInit() : void {
   }
 
   // private

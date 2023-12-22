@@ -21,7 +21,7 @@ import { Feature, Manifest } from "@modulefederation/portal";
   icon: "folder",
   visibility: ["public", "private"],
   categories: [],
-  tags: [],
+  tags: ["navigation"],
   permissions: []
 })
 export class MirofrontendsComponent extends NavigationComponent {

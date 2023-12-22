@@ -12,7 +12,7 @@ import { Feature } from "@modulefederation/portal";
   label: "Home",
   visibility: ["public", "private"],
   categories: [],
-  tags: [],
+  tags: ["navigation"],
   permissions: []
 })
 export class HomeComponent implements OnInit {

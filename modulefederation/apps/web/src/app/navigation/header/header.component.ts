@@ -13,6 +13,9 @@ export class HeaderComponent implements OnInit {
   // output
 
   @Output() public sidenavToggle = new EventEmitter();
+
+  // instance data
+
   label = ""
   icon = ""
   loggedIn = false

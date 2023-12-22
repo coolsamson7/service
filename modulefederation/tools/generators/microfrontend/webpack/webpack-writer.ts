@@ -18,8 +18,8 @@ export class WebpackWriter {
     generateFiles(host, webpackTemplatePath, this.project.root, {
       manifest,
       projectName: this.projectName,
-      moduleName: moduleName, // TODO
-      moduleFile: fileName, // TODO
+      moduleName: moduleName,
+      moduleFile: fileName,
       tmpl: '', // remove __tmpl__ from file endings
     });
   }
