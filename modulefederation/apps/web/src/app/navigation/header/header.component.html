@@ -14,14 +14,12 @@
     <span>{{label}}</span>
   </div>
 
+  <button (click)="sessionManager.login()" *ngIf="!sessionManager.hasSession()" mat-button>Login</button>
 
-  <button (click)="login()" *ngIf="!loggedIn" mat-button>Login</button>
-
-  <span *ngIf="user">
-        <button [matMenuTriggerFor]="menu" mat-button>{{user.given_name}} {{user.family_name}}</button>
-        <mat-menu #menu="matMenu">
-            <button (click)="logout()" mat-menu-item>Logout</button>
-        </mat-menu>
-    </span>
-
+  <span *ngIf="sessionManager.hasSession()">
+    <button [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
+    <mat-menu #menu="matMenu">
+      <button (click)="sessionManager.logout()" mat-menu-item>Logout</button>
+    </mat-menu>
+  </span>
 </mat-toolbar>

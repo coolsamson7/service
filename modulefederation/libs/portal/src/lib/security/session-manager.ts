@@ -4,7 +4,6 @@ import { tap } from 'rxjs/operators';
 import { Authentication } from './authentication';
 import { SessionListener } from "./session-listener";
 import { Session } from "./session.interface";
-import { User } from "./user.interface";
 import { Ticket } from "./ticket.interface";
 import { AuthenticationRequest } from "./authentication-request.interface";
 
@@ -13,26 +12,28 @@ import { AuthenticationRequest } from "./authentication-request.interface";
  * The session manager is the central service that keeps information on the current session.
  */
 @Injectable({providedIn: 'root'})
-export class SessionManager {
+export class SessionManager<U = any, T extends Ticket = Ticket> {
   // instance data
 
-  private session? : Session<User, Ticket>;
-  private listeners : SessionListener[] = [];
+  private session? : Session<U, T>;
+  private listeners : SessionListener<Session<U,T>>[] = [];
 
   // constructor
 
-  constructor(private authentication : Authentication<User, Ticket>) {
+  constructor(private authentication : Authentication<U, T>) {
   }
 
-  // private
-
   // public
+
+  login() {}
+
+  logout() {}
 
   /**
    * retrieve a session locale value
    * @param key the key
    */
-  get<T>(key : string) : T {
+  get<TYPE>(key : string) : TYPE {
     return this.session!![key];
   }
 
@@ -41,7 +42,7 @@ export class SessionManager {
    * @param key the key
    * @param value the value
    */
-  set<T>(key : string, value : T) : void {
+  set<TYPE>(key : string, value : TYPE) : void {
     this.session!![key] = value;
   }
 
@@ -50,7 +51,7 @@ export class SessionManager {
    * @param listener the listener
    * @return the unsubscribe function
    */
-  addListener(listener : SessionListener) : () => void {
+  addListener(listener : SessionListener<Session<U,T>>) : () => void {
     this.listeners.push(listener);
 
     return () => {
@@ -62,7 +63,7 @@ export class SessionManager {
    * remove a {@link SessionListener}
    * @param listener the listener
    */
-  removeListener(listener : SessionListener) {
+  removeListener(listener : SessionListener<Session<U,T>>) {
     this.listeners.splice(this.listeners.indexOf(listener), 1);
   }
 
@@ -76,14 +77,14 @@ export class SessionManager {
   /**
    * return the current session
    */
-  currentSession() : Session<User, Ticket> {
+  currentSession() : Session<U, T> {
     return this.session!!;
   }
 
   /**
    * return the current user.
    */
-  getUser() : User {
+  getUser() : U {
     return this.session?.user!!;
   }
 
@@ -91,18 +92,29 @@ export class SessionManager {
    * open a session by delegating to the configured {@link Authentication} object and return the created {@link Session}
    * @param request the request
    */
-  openSession(request : AuthenticationRequest) : Observable<Session<User, Ticket>> {
-    return this.authentication.authenticate(request).pipe(
-      tap((session) => {
-        for (const listener of this.listeners)
-          listener.opening(this.session!!);
-
-        this.session = session;
-
-        for (const listener of this.listeners)
-          listener.opened(this.session);
-      })
+  openSession(request : AuthenticationRequest) : Observable<Session<U, T>> {
+    return this.authentication.authenticate(request)
+      .pipe(
+        tap((session) => this.setSession(session))
     );
+  }
+
+  /**
+   * set the current session
+   * @param session
+   */
+  setSession(session: Session<U, T>) {
+    // listener
+
+    for (const listener of this.listeners)
+      listener.opening(session);
+
+    this.session = session;
+
+    // listener
+
+    for (const listener of this.listeners)
+      listener.opened(this.session);
   }
 
   /**
@@ -112,13 +124,19 @@ export class SessionManager {
     if (this.session) {
       const session = this.session;
 
-      for (const listener of this.listeners) listener.closing(session);
+      for (const listener of this.listeners)
+        listener.closing(session);
 
       this.session = undefined;
 
-      for (const listener of this.listeners) listener.closed(session);
+      for (const listener of this.listeners)
+        listener.closed(session);
     }
 
     return of(true);
   }
+}
+
+@Injectable({providedIn: 'root'})
+export class StandardSessionManager<U = any, T extends Ticket = Ticket>  extends SessionManager<U,T> {
 }

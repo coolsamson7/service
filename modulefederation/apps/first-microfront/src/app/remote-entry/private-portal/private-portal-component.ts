@@ -5,7 +5,8 @@ import {
   FeatureData,
   FeatureRegistry,
   PortalManager,
-  SessionManager
+  SessionManager,
+  Ticket
 } from "@modulefederation/portal";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
@@ -29,7 +30,7 @@ export class PrivatePortalComponent extends AbstractFeature implements OnInit {
   features : FeatureData[] = []
 
   // constructor
-  constructor(private portalManager : PortalManager, private router : Router, private sessionManager : SessionManager, private featureRegistry : FeatureRegistry, private aboutDialogService : AboutDialogService) {
+  constructor(private portalManager : PortalManager, private router : Router, private sessionManager : SessionManager<any,Ticket>, private featureRegistry : FeatureRegistry, private aboutDialogService : AboutDialogService) {
     super();
 
     featureRegistry.registry$.subscribe(_ => this.computeNavigation())

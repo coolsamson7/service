@@ -3,7 +3,7 @@ import { Deployment, DeploymentLoader } from "../deployment";
 
 import { Observable } from "rxjs";
 import { AbstractHTTPService, Service } from "../common";
-import { SessionManager } from "../security";
+import { SessionManager, Ticket } from "../security";
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration"})
@@ -25,7 +25,7 @@ export class PortalDeploymentService extends AbstractHTTPService {
 export class HTTPDeploymentLoader extends DeploymentLoader {
   // constructor
 
-  constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager) {
+  constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager<any,Ticket>) {
     super();
   }
 

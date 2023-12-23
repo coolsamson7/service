@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FeatureData, FeatureRegistry, SessionManager } from "@modulefederation/portal";
+import { FeatureData, FeatureRegistry, SessionManager, Ticket } from "@modulefederation/portal";
 
 @Component({
   selector: 'shell',
@@ -13,7 +13,7 @@ export class ShellComponent {
 
   // private
 
-  constructor(private featureRegistry : FeatureRegistry, private sessionManager : SessionManager) {
+  constructor(private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any,Ticket>) {
     featureRegistry.registry$.subscribe(registry =>
       this.portal = this.determinePortal()
     )

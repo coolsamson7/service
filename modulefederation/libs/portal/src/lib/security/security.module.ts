@@ -1,14 +1,16 @@
 import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { Authentication } from './authentication';
 import { Authorization } from './authorization';
-import { User } from "./user.interface";
 import { Ticket } from "./ticket.interface";
+import { SessionManager, StandardSessionManager } from "./session-manager";
 
 /**
  * the configuration object for the security module
  */
 interface SecurityModuleConfig {
-  authentication? : Type<Authentication<User, Ticket>>;
+  sessionManager? : Type<SessionManager<any, Ticket>>;
+
+  authentication? : Type<Authentication<any, Ticket>>;
 
   authorization? : Type<Authorization>;
 }
@@ -28,6 +30,10 @@ export class SecurityModule {
         {
           provide: Authentication,
           useClass: config?.authentication || Authentication
+        },
+        {
+          provide: SessionManager,
+          useClass: config?.sessionManager || StandardSessionManager
         },
         {
           provide: Authorization,

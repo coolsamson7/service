@@ -22,8 +22,8 @@ import {
   Environment,
   EnvironmentModule,
   HTTPErrorInterceptor,
-  Manifest,
-  PortalModule,
+  Manifest, OIDCAuthentication,
+  PortalModule, SecurityModule, SessionManager,
   Shell
 } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
@@ -34,6 +34,9 @@ import { localRoutes } from "./local.routes";
 import { Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
+import { SampleAuthentication } from "../../../shell/src/app/security/sample-authentication";
+import { SampleAuthorization } from "../../../shell/src/app/security/sample-authorization";
+import { OIDCSessionManager } from "../../../../libs/portal/src/lib/security/oidc/oidc-session-manager";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -95,6 +98,12 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       }
     }),
 
+    SecurityModule.forRoot({
+      sessionManager: OIDCSessionManager,
+      authentication: OIDCAuthentication,
+      //authorization: SampleAuthorization
+    }),
+
     MonacoEditorModule.forRoot({
       defaultOptions: {theme: 'vs-dark', language: 'json'}
     }),
@@ -122,4 +131,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  constructor(sessionManager: SessionManager<any, any>) {
+    console.log(sessionManager)
+  }
 }
