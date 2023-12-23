@@ -26,8 +26,8 @@ export class CurrentFeatureComponent {
         switchMap(route => (route as any).data)
       )
       .subscribe((data : any) => {
-        this.label = data['label']
-        this.icon = data['icon']
+        this.label = data['feature'].label
+        this.icon = data['feature'].icon
       });
   }
 }

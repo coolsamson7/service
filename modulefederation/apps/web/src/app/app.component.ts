@@ -1,10 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
 import { Environment } from "@modulefederation/portal";
-import { SideNavigationComponent, SideNavToggle } from './navigation'
-import { NgForm } from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -20,7 +18,7 @@ export class AppComponent {
 
   // private
 
-  private configure() {
+  private configure() { // TODO -> refactor
     // adjust configuration
 
     authConfig.issuer = this.environment.get<string>("oauth.server") + '/realms/' + this.environment.get<string>("oauth.client"),

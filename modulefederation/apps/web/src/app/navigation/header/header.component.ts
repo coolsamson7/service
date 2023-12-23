@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-header',
+  selector: 'portal-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

@@ -7,7 +7,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { HamburgerComponent } from "./sidenav/hamburger.component";
+import { HamburgerComponent } from "./burger/hamburger.component";
 import { MatButtonModule } from "@angular/material/button";
 import { CurrentFeatureComponent } from "./feature/current-feature.component";
 import { CurrentUserComponent } from "./user/user.component";
