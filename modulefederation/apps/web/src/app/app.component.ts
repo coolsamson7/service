@@ -9,37 +9,13 @@ import { NgForm } from "@angular/forms";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   // constructor
 
   constructor(private router : Router, private oauthService : OAuthService, private environment : Environment) {
     this.configure();
-  }
-
-
-  @ViewChild('navigation') public navigation! : SideNavigationComponent
-
-
-  isSideNavCollapsed = false;
-  screenWidth = 0;
-
-  onToggleSideNav(data: SideNavToggle): void {
-    this.screenWidth = window.innerWidth//data.screenWidth;
-    this.isSideNavCollapsed = !this.isSideNavCollapsed//data.collapsed;
-
-    this.navigation.toggleCollapse()
-  }
-
-  // public
-
-  public login() {
-    this.oauthService.initLoginFlow();
-  }
-
-  public logout() {
-    this.oauthService.logOut();
   }
 
   // private
