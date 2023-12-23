@@ -39,6 +39,7 @@
     {
       "id": "home",
       "label": "Home",
+      "icon": "home",
       "component": "HomeComponent",
       "tags": ["navigation"],
       "visibility": [
