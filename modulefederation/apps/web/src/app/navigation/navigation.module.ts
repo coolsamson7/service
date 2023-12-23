@@ -8,16 +8,22 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { HamburgerComponent } from "./sidenav/hamburger.component";
+import { MatButtonModule } from "@angular/material/button";
+import { CurrentFeatureComponent } from "./feature/current-feature.component";
+import { CurrentUserComponent } from "./user/user.component";
 
 @NgModule({
   declarations: [
     SideNavigationComponent,
     HeaderComponent,
     HamburgerComponent,
-    SublevelMenuComponent
+    SublevelMenuComponent,
+    CurrentFeatureComponent,
+    CurrentUserComponent
   ],
   imports: [
     CommonModule,
+    MatButtonModule,
     MatMenuModule,
     MatIconModule,
     MatToolbarModule,
@@ -26,7 +32,9 @@ import { HamburgerComponent } from "./sidenav/hamburger.component";
   exports: [
     HeaderComponent,
     HamburgerComponent,
-    SideNavigationComponent
+    SideNavigationComponent,
+    CurrentFeatureComponent,
+    CurrentUserComponent
   ]
 })
 export class NavigationModule {

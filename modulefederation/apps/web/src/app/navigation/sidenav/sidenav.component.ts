@@ -1,7 +1,6 @@
-import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { Component, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { fadeInOut, INavbarData } from './helper';
+import { INavbarData } from './helper';
 import { FeatureRegistry } from "@modulefederation/portal";
 
 export interface SideNavToggle {
@@ -15,22 +14,16 @@ export interface SideNavToggle {
   styleUrls: ['./sidenav.component.scss']
 })
 export class SideNavigationComponent implements OnInit {
+  // input & output
 
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
+
+  // instance data
 
   collapsed = false;
   screenWidth = 0;
   navData: INavbarData[] = [];
   multiple: boolean = false;
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.screenWidth = window.innerWidth;
-    if(this.screenWidth <= 768 ) {
-      this.collapsed = false;
-      this.onToggleSideNav.emit({collapsed: this.collapsed, screenWidth: this.screenWidth});
-    }
-  }
 
   // constructor
 
@@ -46,9 +39,19 @@ export class SideNavigationComponent implements OnInit {
     }})
   }
 
-  ngOnInit(): void {
-      this.screenWidth = window.innerWidth;
+  // host listner
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.screenWidth = window.innerWidth;
+    if(this.screenWidth <= 768 ) {
+      this.collapsed = false;
+      this.onToggleSideNav.emit({collapsed: this.collapsed, screenWidth: this.screenWidth});
+    }
   }
+
+
+  // public
 
   toggleCollapse(): void {
     this.collapsed = !this.collapsed;
@@ -77,5 +80,11 @@ export class SideNavigationComponent implements OnInit {
         }
       }
     }
+  }
+
+  // implement OnInit
+
+  ngOnInit(): void {
+    this.screenWidth = window.innerWidth;
   }
 }

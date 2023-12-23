@@ -1,4 +1,16 @@
-<app-header class="example-header" (sidenavToggle)="sidenav.collapsed = !sidenav.collapsed"></app-header>
+<app-header class="example-header">
+  <!-- burger -->
+
+  <hamburger [isHamburger]="true" (toggle)="sidenav.collapsed = !sidenav.collapsed"></hamburger>
+
+  <!-- current selection -->
+
+  <current-feature></current-feature>
+
+  <!-- login or logout -->
+
+  <current-user></current-user>
+</app-header>
 
 <mat-sidenav-container autosize class="example-container">
   <mat-sidenav  mode="side" [opened]="true" class="example-sidenav"
@@ -8,7 +20,7 @@
     <app-sidenav #sidenav></app-sidenav>
   </mat-sidenav>
 
-  <mat-sidenav-content>
+  <mat-sidenav-content class="content">
    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
