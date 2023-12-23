@@ -9,9 +9,6 @@ import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home-component';
 import { MaterialModule } from './material/material.module';
-import { LayoutComponent } from './layout/layout.component';
-import { HeaderComponent } from './navigation/header/header.component';
-import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { NodesModule } from './nodes/nodes.module';
 import { PortalComponentsModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
@@ -34,9 +31,9 @@ import { localRoutes } from "./local.routes";
 import { Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
-import { SampleAuthentication } from "../../../shell/src/app/security/sample-authentication";
-import { SampleAuthorization } from "../../../shell/src/app/security/sample-authorization";
+
 import { OIDCSessionManager } from "../../../../libs/portal/src/lib/security/oidc/oidc-session-manager";
+import { NavigationModule } from "./navigation/navigation.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -68,9 +65,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   declarations: [
     AppComponent,
     HomeComponent,
-    LayoutComponent,
-    HeaderComponent,
-    SidenavListComponent
   ],
   imports: [
     MatSnackBarModule,
@@ -83,6 +77,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     NodesModule,
     PortalComponentsModule,
     MaterialModule,
+    NavigationModule,
 
     PortalModule.forRoot({
       loader: {

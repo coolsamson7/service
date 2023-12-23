@@ -1,11 +1,7 @@
 <mat-toolbar class="toolbar" color="primary">
-  <!-- button -->
+  <!-- burger -->
 
-  <div fxHide.gt-xs>
-    <button (click)="onToggleSidenav()" mat-icon-button>
-      <mat-icon>menu</mat-icon>
-    </button>
-  </div>
+  <hamburger [isHamburger]="true" (toggle)="onToggleSidenav()"></hamburger>
 
   <!-- current selection -->
 
@@ -13,6 +9,8 @@
     <mat-icon>{{icon}}</mat-icon>
     <span>{{label}}</span>
   </div>
+
+  <!-- login or logout -->
 
   <button (click)="sessionManager.login()" *ngIf="!sessionManager.hasSession()" mat-button>Login</button>
 

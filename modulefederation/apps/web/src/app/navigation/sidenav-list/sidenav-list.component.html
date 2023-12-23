@@ -1,7 +1,0 @@
-<mat-nav-list>
-  <a (click)="select()" *ngFor="let item of elements" [routerLinkActiveOptions]="{exact: false}"
-     mat-list-item routerLink="{{item.routerPath}}" routerLinkActive="active">
-    <mat-icon>{{item.icon}}</mat-icon>
-    <span class="nav-caption">{{item.label}}</span>
-  </a>
-</mat-nav-list>

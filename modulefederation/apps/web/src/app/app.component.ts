@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from './auth.config';
 import { Environment } from "@modulefederation/portal";
-
+import { SideNavigationComponent, SideNavToggle } from './navigation'
+import { NgForm } from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -11,13 +12,27 @@ import { Environment } from "@modulefederation/portal";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // public
+  // constructor
 
   constructor(private router : Router, private oauthService : OAuthService, private environment : Environment) {
     this.configure();
   }
 
-  // constructor
+
+  @ViewChild('navigation') public navigation! : SideNavigationComponent
+
+
+  isSideNavCollapsed = false;
+  screenWidth = 0;
+
+  onToggleSideNav(data: SideNavToggle): void {
+    this.screenWidth = window.innerWidth//data.screenWidth;
+    this.isSideNavCollapsed = !this.isSideNavCollapsed//data.collapsed;
+
+    this.navigation.toggleCollapse()
+  }
+
+  // public
 
   public login() {
     this.oauthService.initLoginFlow();

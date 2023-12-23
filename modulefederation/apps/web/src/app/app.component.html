@@ -1,13 +1,14 @@
-<app-layout>
-  <mat-sidenav-container>
-    <mat-sidenav #sidenav role="navigation">
-      <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <app-header (sidenavToggle)="sidenav.toggle()"></app-header>
-      <main>
-        <router-outlet></router-outlet>
-      </main>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-</app-layout>
+<app-header class="example-header" (sidenavToggle)="sidenav.collapsed = !sidenav.collapsed"></app-header>
+
+<mat-sidenav-container autosize class="example-container">
+  <mat-sidenav  mode="side" [opened]="true" class="example-sidenav"
+               [fixedInViewport]="true"
+               [fixedTopGap]="64"
+               [fixedBottomGap]="0">
+    <app-sidenav #sidenav></app-sidenav>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+   <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
