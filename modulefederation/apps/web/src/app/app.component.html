@@ -1,7 +1,7 @@
 <portal-header class="example-header">
   <!-- burger -->
 
-  <hamburger [isHamburger]="true" (toggle)="sidenav.collapsed = !sidenav.collapsed"></hamburger>
+  <hamburger [isHamburger]="true" (toggle)="sidenav.toggleCollapse()"></hamburger>
 
   <!-- current selection -->
 
@@ -19,6 +19,7 @@
                [fixedInViewport]="true"
                [fixedTopGap]="64"
                [fixedBottomGap]="0">
+    <!--feature-navigation -->
     <app-sidenav #sidenav></app-sidenav>
   </mat-sidenav>
 

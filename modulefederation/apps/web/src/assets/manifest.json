@@ -6,7 +6,7 @@
   "features": [
     {
       "id": "microfrontends",
-      "label": "microfrontends",
+      "label": "Microfrontends",
       "icon": "folder",
       "component": "MirofrontendsComponent",
       "visibility": [

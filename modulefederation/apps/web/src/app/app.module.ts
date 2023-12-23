@@ -19,7 +19,7 @@ import {
   Environment,
   EnvironmentModule,
   HTTPErrorInterceptor,
-  Manifest, OIDCAuthentication,
+  Manifest, OIDCAuthentication, OIDCSessionManager,
   PortalModule, SecurityModule, SessionManager,
   Shell
 } from "@modulefederation/portal";
@@ -32,7 +32,6 @@ import { Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
 
-import { OIDCSessionManager } from "../../../../libs/portal/src/lib/security/oidc/oidc-session-manager";
 import { NavigationModule } from "./navigation/navigation.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {

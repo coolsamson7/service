@@ -166,7 +166,7 @@ export class ManifestGenerator {
     // read
 
     let features : any[] = []
-    const map : { [key : string] : DecoratorData } = {}
+    const featureMap : { [key : string] : DecoratorData } = {}
 
     for (const file of files)
       new DecoratorReader(file, decorator, true)
@@ -175,18 +175,18 @@ export class ManifestGenerator {
 
             //console.log("remember " + data.decorates + " as " + data.data.id)
 
-          map[data.data.id] = data
+          featureMap[data.data.id] = data
         })
 
     // sort
 
     const result : { [key : string] : any } = {}
 
-    const findData = (name : string) : DecoratorData => {
-        if ( !map[name])
+    const findFeatureDecorator = (name : string) : DecoratorData => {
+        if ( !featureMap[name])
             throw new Error("no decorated feature named " + name)
 
-      return map[name]
+      return featureMap[name]
     }
 
     const findFeature = (name : string) : any => {
@@ -244,7 +244,7 @@ export class ManifestGenerator {
 
       let parent
       if (data.data.parent) {
-        parent = mapFeature(findData(data.data.parent))
+        parent = mapFeature(findFeatureDecorator(data.data.parent))
 
         if (!parent.children)
           parent.children = []

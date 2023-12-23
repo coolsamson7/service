@@ -32,7 +32,6 @@ export class ModuleReader {
   // public
 
   private parseFile(file : string, matches : Modules) {
-    console.log("parse " + file)
     const sourceCode = readFileSync(file, "utf-8")
     const sourceFile = createSourceFile(file, sourceCode, ScriptTarget.Latest, true)
 
