@@ -1,14 +1,14 @@
 import { Component } from "@angular/core";
-import { SessionManager, Ticket } from "@modulefederation/portal";
+import { SessionManager } from "@modulefederation/portal";
 
 @Component({
-  selector: 'current-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss']
+    selector: 'current-user',
+    templateUrl: './user.component.html',
+    styleUrls: ['./user.component.scss']
 })
 export class CurrentUserComponent {
-  // constructor
+    // constructor
 
-  constructor(public sessionManager : SessionManager) {
-  }
+    constructor(public sessionManager : SessionManager) {
+    }
 }

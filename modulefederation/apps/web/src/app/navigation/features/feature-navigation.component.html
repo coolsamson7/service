@@ -1,41 +1,41 @@
-<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed': ''">
+<div [ngClass]="collapsed ? 'sidenav-collapsed': ''" class="sidenav">
     <div class="scrollwrap scrollwrap_delayed">
         <ul class="sidenav-nav">
-            <li class="sidenav-nav-item" *ngFor="let data of navData">
-                <a class="sidenav-nav-link" (click)="handleClick(data)"
-                   *ngIf="data.items && data.items.length > 0"
+            <li *ngFor="let data of navData" class="sidenav-nav-item">
+                <a (click)="handleClick(data)" *ngIf="data.items && data.items.length > 0"
                    [ngClass]="getActiveClass(data)"
+                   class="sidenav-nav-link"
                 >
                     <!--todO i class="sidenav-link-icon" [class]="data.icon"></i-->
                     <mat-icon class="sidenav-link-icon">{{data.icon}}</mat-icon>
-                    <span class="sidenav-link-text" *ngIf="collapsed">
+                    <span *ngIf="collapsed" class="sidenav-link-text">
                         {{data.label}}
                     </span>
                     <mat-icon *ngIf="data.items && collapsed" class="menu-collapse-icon">
-                       {{data.expanded ? 'expand_less' : 'expand_more'}}
+                        {{data.expanded ? 'expand_less' : 'expand_more'}}
                     </mat-icon>
                 </a>
 
-                <a class="sidenav-nav-link"
+                <a (click)="shrinkItems(data)"
                    *ngIf="!data.items || (data.items && data.items.length === 0)"
-                   [routerLink]="[data.routeLink]"
-                   routerLinkActive="active"
                    [routerLinkActiveOptions]="{exact: true}"
-                   (click)="shrinkItems(data)"
+                   [routerLink]="[data.routeLink]"
+                   class="sidenav-nav-link"
+                   routerLinkActive="active"
                 >
                     <mat-icon class="sidenav-link-icon">{{data.icon}}</mat-icon>
                     <!--i class="sidenav-link-icon" [class]="data.icon"></i-->
-                    <span class="sidenav-link-text" *ngIf="collapsed">
+                    <span *ngIf="collapsed" class="sidenav-link-text">
                         {{data.label}}
                     </span>
                 </a>
                 <div *ngIf="collapsed && data.items && data.items.length > 0">
-                    <app-sublevel-menu
-                            [data]="data"
+                    <sublevel-menu
                             [collapsed]="collapsed"
-                            [multiple]="multiple"
+                            [data]="data"
                             [expanded]="data.expanded"
-                    ></app-sublevel-menu>
+                            [multiple]="multiple"
+                    ></sublevel-menu>
                 </div>
             </li>
         </ul>

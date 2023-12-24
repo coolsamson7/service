@@ -1,1 +1,1 @@
-export * from "./sidenav/sidenav.component"
+export * from "./features/sidenav.component"
