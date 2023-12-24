@@ -5,12 +5,11 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home-component';
 import { MaterialModule } from './material/material.module';
 import { NodesModule } from './nodes/nodes.module';
-import { PortalComponentsModule } from './portal/portal.module';
+import { PortalComponentModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
@@ -22,6 +21,7 @@ import {
     Manifest,
     OIDCAuthentication,
     OIDCSessionManager,
+    PortalComponentsModule,
     PortalModule,
     SecurityModule,
     SessionManager,
@@ -35,8 +35,8 @@ import { localRoutes } from "./local.routes";
 import { Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
+import { ComponentsModule } from "./components/components.module";
 
-import { NavigationModule } from "./navigation/navigation.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -79,8 +79,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         ComponentsModule,
         NodesModule,
         PortalComponentsModule,
+        PortalComponentModule,
         MaterialModule,
-        NavigationModule,
 
         PortalModule.forRoot({
             loader: {

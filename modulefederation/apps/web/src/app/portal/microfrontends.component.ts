@@ -17,7 +17,7 @@ import { Feature, Manifest } from "@modulefederation/portal";
 })
 @Feature({
     id: "microfrontends",
-    label: "",
+    label: "Microfrontends",
     icon: "folder",
     visibility: ["public", "private"],
     categories: [],

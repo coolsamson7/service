@@ -8,9 +8,10 @@ import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { BurgerComponent } from "./burger/burger.component";
 import { MatButtonModule } from "@angular/material/button";
-import { CurrentFeatureComponent } from "./feature/current-feature.component";
+import { CurrentFeatureComponent } from "./current-feature/current-feature.component";
 import { CurrentUserComponent } from "./user/user.component";
 import { FeatureNavigationComponent } from "./features/feature-navigation.component";
+import { FeatureOutletDirective } from "@modulefederation/portal";
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { FeatureNavigationComponent } from "./features/feature-navigation.compon
         BurgerComponent,
         SublevelMenuComponent,
         CurrentFeatureComponent,
-        CurrentUserComponent
+        CurrentUserComponent,
+        FeatureOutletDirective
     ],
     imports: [
         CommonModule,
@@ -34,8 +36,9 @@ import { FeatureNavigationComponent } from "./features/feature-navigation.compon
         BurgerComponent,
         FeatureNavigationComponent,
         CurrentFeatureComponent,
-        CurrentUserComponent
+        CurrentUserComponent,
+        FeatureOutletDirective
     ]
 })
-export class NavigationModule {
+export class PortalComponentsModule {
 }

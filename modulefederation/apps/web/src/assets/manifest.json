@@ -1,22 +1,17 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
+  "commitHash": "e95ebfc442cc3fb359bb65b25ea2aa4aeb689124",
   "module": "AppModule",
   "features": [
     {
       "id": "microfrontends",
-      "label": "microfrontends",
+      "label": "Microfrontends",
       "icon": "folder",
       "folder": "microfrontends",
       "component": "MirofrontendsComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ],
+      "tags": ["navigation"],
+      "visibility": ["public", "private"],
       "children": [
         {
           "id": "microfrontend",
@@ -33,39 +28,24 @@
       "label": "Nodes",
       "icon": "computer",
       "component": "NodesComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
     },
     {
       "id": "home",
       "label": "Home",
       "icon": "home",
       "component": "HomeComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
     },
     {
       "id": "components",
       "label": "Components",
       "icon": "folder",
       "component": "ComponentsComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ],
+      "tags": ["navigation"],
+      "visibility": ["public", "private"],
       "children": [
         {
           "id": "component",
@@ -91,15 +71,8 @@
   "folders": [
     {
       "name": "microfrontends",
-      "label": "Microfrontends",
-      "icon": "home",
-      "children": [
-        {
-          "name": "microfrontends-sub",
-          "label": "MicrofrontendsSub",
-          "icon": "home"
-        }
-      ]
+      "label": "Microfrontend Stuff",
+      "icon": "home"
     }
   ]
 }

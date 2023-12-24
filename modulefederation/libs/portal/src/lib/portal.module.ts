@@ -4,7 +4,6 @@ import { Route, Routes } from "@angular/router";
 import { PortalManager } from "./portal-manager";
 import { DeploymentLoader, Manifest } from "./deployment";
 import { ModulesModule } from "./modules";
-import { FeatureOutletDirective } from "./components";
 import { HttpClientModule } from "@angular/common/http";
 import { AboutModule } from "./about/about.module";
 
@@ -38,8 +37,8 @@ function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
             deps: [PortalManager]
         },
     ],
-    declarations: [FeatureOutletDirective],
-    exports: [FeatureOutletDirective]
+    declarations: [],
+    exports: []
 })
 export class PortalModule {
     static injector = new ReplaySubject<Injector>(1);

@@ -24,13 +24,7 @@ import { Folder } from "@modulefederation/portal";
 
 @Folder({
     name: "microfrontends",
-    label: "Microfrontends",
-    icon: "home"
-})
-@Folder({
-    name: "microfrontends-sub",
-    label: "MicrofrontendsSub",
-    parent: "microfrontends",
+    label: "Microfrontend Stuff",
     icon: "home"
 })
 @NgModule({
@@ -62,5 +56,5 @@ import { Folder } from "@modulefederation/portal";
         MatToolbarModule,
     ]
 })
-export class PortalComponentsModule {
+export class PortalComponentModule {
 }
