@@ -32,6 +32,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
   manifest : Manifest = {
     commitHash: "",
     features: [],
+    folders: [],
     module: "",
     name: "",
     remoteEntry: "",

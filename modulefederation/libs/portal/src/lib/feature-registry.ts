@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { ReplaySubject } from "rxjs";
 import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
+import { FolderData } from "./folder.decorator";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
 
@@ -44,6 +45,29 @@ export class FeatureRegistry {
   ready() {
     this.registry$.next(this);
   }
+
+  // NEW
+
+  folders: FolderData[] = []
+  path2Folder: {[key: string] : FolderData} = {}
+
+  registerFolders(...folders : FolderData[]) {
+    let rememberPath = (folder: FolderData, prefix: string = "") => {
+      this.path2Folder[prefix + folder.name] = folder
+
+        for ( let child of folder.children || [])
+          rememberPath(child, prefix + folder.name + ".")
+    }
+
+    // remember paths
+
+    for ( let folder of folders) {
+      this.folders.push(folder)
+      rememberPath(folder)
+    }
+  }
+
+  // NEW
 
   register(...features : FeatureConfig[]) {
     for (let feature of features)
@@ -143,6 +167,19 @@ export class FeatureRegistry {
       }
 
       feature.$parent = parent
+    }
+
+    // link folder?
+
+    if ( feature.folder) {
+      let folder = this.path2Folder[feature.folder]
+
+      // TODO CHECK null
+
+      if ( folder.features)
+        folder.features.push(feature)
+      else
+        folder.features = [feature]
     }
 
     // recursion

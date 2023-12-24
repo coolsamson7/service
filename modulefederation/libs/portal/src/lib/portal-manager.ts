@@ -256,10 +256,18 @@ export class PortalManager {
         }
       }
       else {
+        // register folders first
+
+        this.featureRegistry.registerFolders(...manifest.folders)
+
+        // register features
+
         if (manifest.type == "microfrontend")
           this.featureRegistry.registerRemote(manifest.name, ...manifest.features)
         else
           this.featureRegistry.register(...manifest.features)
+
+
 
         // remember
 

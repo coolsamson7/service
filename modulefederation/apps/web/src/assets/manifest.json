@@ -1,19 +1,17 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "616675408cbfff912c37ddeb38acf86bae5b7c10",
+  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
   "module": "AppModule",
   "features": [
     {
       "id": "microfrontends",
-      "label": "Microfrontends",
+      "label": "microfrontends",
       "icon": "folder",
+      "folder": "microfrontends",
       "component": "MirofrontendsComponent",
-      "visibility": [
-        "public",
-        "private"
-      ],
       "tags": ["navigation"],
+      "visibility": ["public", "private"],
       "children": [
         {
           "id": "microfrontend",
@@ -31,21 +29,14 @@
       "icon": "computer",
       "component": "NodesComponent",
       "tags": ["navigation"],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "visibility": ["public", "private"]
     },
     {
       "id": "home",
       "label": "Home",
-      "icon": "home",
       "component": "HomeComponent",
       "tags": ["navigation"],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "visibility": ["public", "private"]
     },
     {
       "id": "components",
@@ -53,10 +44,7 @@
       "icon": "folder",
       "component": "ComponentsComponent",
       "tags": ["navigation"],
-      "visibility": [
-        "public",
-        "private"
-      ],
+      "visibility": ["public", "private"],
       "children": [
         {
           "id": "component",
@@ -75,6 +63,20 @@
               "component": "ServiceInstanceComponent"
             }
           ]
+        }
+      ]
+    }
+  ],
+  "folders": [
+    {
+      "name": "microfrontends",
+      "label": "Microfrontends",
+      "icon": "home",
+      "children": [
+        {
+          "name": "microfrontends-sub",
+          "label": "MicrofrontendsSub",
+          "icon": "home"
         }
       ]
     }

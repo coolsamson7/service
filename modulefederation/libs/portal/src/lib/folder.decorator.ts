@@ -1,7 +1,15 @@
+import { FeatureData } from "./portal-manager";
 
 export interface FolderConfig {
   name: string,
+  label?: string,
+  icon?: string,
   parent?: string
+}
+
+export interface FolderData extends FolderConfig {
+  children?: FolderData[],
+  features: FeatureData[]
 }
 
 export function Folder(config : FolderConfig) {

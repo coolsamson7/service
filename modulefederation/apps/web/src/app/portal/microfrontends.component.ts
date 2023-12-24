@@ -22,7 +22,8 @@ import { Feature, Manifest } from "@modulefederation/portal";
   visibility: ["public", "private"],
   categories: [],
   tags: ["navigation"],
-  permissions: []
+  permissions: [],
+  folder: "microfrontends" // TODO NEW
 })
 export class MirofrontendsComponent extends NavigationComponent {
   // instance data

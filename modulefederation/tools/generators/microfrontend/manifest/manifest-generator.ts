@@ -48,13 +48,17 @@ export class ManifestGenerator {
 
     const module = await this.readModule()
 
+    // find folders
+
+    const folders = await this.readFolders(this.path(module.file))
+
     // find features
 
     const features = await this.readFeatures(this.path(module.file))
 
     // assemble manifest
 
-    const manifest = this.generateManifest(packageJson, commitHash, module, features)
+    const manifest = this.generateManifest(packageJson, commitHash, module, features, folders)
 
     // write
 
@@ -86,7 +90,7 @@ export class ManifestGenerator {
     return this.modules[module]
   }
 
-  private generateManifest(packageJson : any, commitHash : string, module : any, features : any[]) : any {
+  private generateManifest(packageJson : any, commitHash : string, module : any, features : any[], folders: any[]) : any {
     // done
 
     const {name, version} = packageJson
@@ -96,7 +100,8 @@ export class ManifestGenerator {
       version,
       commitHash,
       module,
-      features
+      features,
+      folders
     }
 
     // done
@@ -159,6 +164,76 @@ export class ManifestGenerator {
 
   // public
 
+  private async readFolders(modulePath: string) : Promise<any[]> {
+    const decorator = "Folder"
+    const files = await this.findDecorators(decorator, this.dir)
+
+    const decorators : {[name: string]: DecoratorData} = {}
+
+    for (const file of files)
+      new DecoratorReader(file, decorator, true)
+        .read((data : DecoratorData) => {
+          decorators[data.data.name] = data // TODO duplicate
+        })
+
+    let decorator4 = (name: string) => {
+      let decorator = decorators[name]
+      if ( decorator )
+        return decorator
+      else
+        throw new Error("unknown folder " + name )
+    }
+
+    // name, label, icon?, parent?
+
+    let resultMap:{[name: string] : any} = {}
+    let result: any[] = []
+
+    let createFolder = (name: string) : any => {
+      let decorator: DecoratorData = decorator4(name)
+
+      let folderDecorator = decorator.data
+      let  folder = {
+        name: folderDecorator.name,
+        label: folderDecorator.label,
+        icon: folderDecorator.icon
+      }
+
+      resultMap[folder.name] = folder
+
+      // parent?
+
+      if ( folderDecorator.parent) {
+        let parent = findFolder(folderDecorator.parent)
+
+        if ( !parent.children)
+          parent.children = [folder]
+        else
+          parent.children.push(folder)
+      }
+      else result.push(folder)
+
+      return folder
+    }
+
+    let findFolder = (name: string) : any => {
+      let folder = resultMap[name]
+      if ( !folder )
+        folder = createFolder(name)
+
+      return folder
+    }
+
+    // create folder hierarchy
+
+    for ( let decorator in decorators)
+      findFolder(decorator)
+
+    // return the list of root folders...
+
+    return result
+  }
+
   private async readFeatures(modulePath : string) : Promise<any> {
     const decorator = "Feature"
     const files = await this.findDecorators(decorator, this.dir)
@@ -209,6 +284,7 @@ export class ManifestGenerator {
         id: decorator.id,
         label: decorator.label || decorator.id,
         icon: decorator.icon || "",
+        folder: decorator.folder || "",
         router: decorator.router || null,
         component: data.decorates,
         tags: decorator.tags || [], // portal

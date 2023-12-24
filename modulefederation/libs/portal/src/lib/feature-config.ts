@@ -22,20 +22,25 @@ export type RouterConfig = {
 export type Visibility = "public" | "private"
 
 export interface FeatureConfig {
-    /**
-     * enabeld status of a feature
-     */
-    enabled? : boolean
+  /**
+   * enabeld status of a feature
+   */
+  enabled? : boolean
 
-    /**
-     * resolved children array
-     */
-    children? : FeatureConfig[]
+  /**
+   * resolved children array
+   */
+  children? : FeatureConfig[]
 
-    /**
-     * optional icon name
-     */
-    icon?: string,
+  /**
+   * optional icon name
+   */
+  icon? : string,
+
+  /**
+   * optional folder name
+   */
+  folder? : string,
 
   /**
    * optional id of a parent feature.  This must be unique in a microfrontend!

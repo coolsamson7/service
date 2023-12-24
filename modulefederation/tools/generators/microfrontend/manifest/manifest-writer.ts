@@ -75,6 +75,7 @@ export class ManifestWriter {
     //.required("component")
     .optional("router", null)
     .optional("label", "")
+    .optional("folder", "")
     .optional("icon", "")
     .optional("permissions", [])
     .optional("tags", [])

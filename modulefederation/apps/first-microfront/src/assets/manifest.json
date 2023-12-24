@@ -1,7 +1,7 @@
 {
   "name": "first-microfront",
   "version": "0.1",
-  "commitHash": "cee321dab5182cb5ea2315f9fe877a24c76052a9",
+  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
   "module": "RemoteEntryModule",
   "features": [
     {
@@ -14,6 +14,9 @@
     {
       "id": "public-portal",
       "label": "public-portal",
+      "router": {
+        "lazyModule": "PublicPortalModule"
+      },
       "component": "PublicPortalComponent",
       "tags": ["portal"],
       "visibility": ["public"],
@@ -22,10 +25,14 @@
     {
       "id": "private-portal",
       "label": "private-portal",
+      "router": {
+        "lazyModule": "PrivatePortalModule"
+      },
       "component": "PrivatePortalComponent",
       "tags": ["portal"],
       "visibility": ["private"],
       "module": "PrivatePortalModule"
     }
-  ]
+  ],
+  "folders": []
 }

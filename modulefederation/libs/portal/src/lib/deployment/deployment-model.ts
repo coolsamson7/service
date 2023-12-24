@@ -1,5 +1,6 @@
 import { FeatureConfig } from "../feature-config";
 import { ModuleMetadata } from "../modules";
+import { FolderConfig, FolderData } from "../folder.decorator";
 
 export interface Manifest extends ModuleMetadata {
   name : string,
@@ -10,6 +11,7 @@ export interface Manifest extends ModuleMetadata {
   remoteEntry? : string,
   module : string,
   features : FeatureConfig[],
+  folders : FolderData[],
 }
 
 export interface Deployment {

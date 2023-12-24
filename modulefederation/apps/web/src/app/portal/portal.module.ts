@@ -20,7 +20,19 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialog } from "./dialog/confirmation-dialog";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ChipsComponent } from "./chips.component";
+import { Folder } from "@modulefederation/portal";
 
+@Folder({
+  name: "microfrontends",
+  label: "Microfrontends",
+  icon: "home"
+})
+@Folder({
+  name: "microfrontends-sub",
+  label: "MicrofrontendsSub",
+  parent: "microfrontends",
+  icon: "home"
+})
 @NgModule({
   declarations: [
     MirofrontendsComponent,

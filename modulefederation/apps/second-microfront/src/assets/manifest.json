@@ -1,7 +1,7 @@
 {
   "name": "second-microfront",
   "version": "0.1",
-  "commitHash": "cee321dab5182cb5ea2315f9fe877a24c76052a9",
+  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
   "module": "RemoteEntryModule",
   "features": [
     {
@@ -11,5 +11,6 @@
       "tags": ["navigation"],
       "visibility": ["private"]
     }
-  ]
+  ],
+  "folders": []
 }

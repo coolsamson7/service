@@ -48,50 +48,53 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PageNotFoundComponent,
-    HomeComponent,
-    LayoutComponent,
-    HeaderComponent,
-    SidenavListComponent
-  ],
-  imports: [
-    MatSnackBarModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    TranslocoRootModule,
-    AppRoutingModule,
-    ComponentsModule,
-    NodesModule,
-    PortalModule,
-    MaterialModule,
-    MonacoEditorModule.forRoot({
-      defaultOptions: {theme: 'vs-dark', language: 'json'}
-    }),
+    declarations: [
+        AppComponent,
+        PageNotFoundComponent,
+        HomeComponent,
+        LayoutComponent,
+        HeaderComponent,
+        SidenavListComponent
+    ],
+    imports: [
+        MatSnackBarModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        TranslocoRootModule,
+        AppRoutingModule,
+        ComponentsModule,
+        NodesModule,
+        PortalModule,
+        MaterialModule,
+        MonacoEditorModule.forRoot({
+            defaultOptions: {theme: 'vs-dark', language: 'json'}
+        }),
 
-    EnvironmentModule.forRoot(environment),
-    SharedModule.forRoot(),
-    OAuthModule.forRoot({
-      resourceServer: {
-        allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
-        sendAccessToken: true
-      }
-    })
-  ],
-  providers: [
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
-    {
-      provide: EndpointLocator,
-      useValue: new ApplicationEndpointLocator(environment)
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HTTPErrorInterceptor,
-      multi: true
-    }],
-  bootstrap: [AppComponent]
+        EnvironmentModule.forRoot(environment),
+        SharedModule.forRoot(),
+        OAuthModule.forRoot({
+            resourceServer: {
+                allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
+                sendAccessToken: true
+            }
+        })
+    ],
+    providers: [
+        {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        {
+            provide: EndpointLocator,
+            useValue: new ApplicationEndpointLocator(environment)
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HTTPErrorInterceptor,
+            multi: true
+        }],
+    exports: [
+        HeaderComponent
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 }
