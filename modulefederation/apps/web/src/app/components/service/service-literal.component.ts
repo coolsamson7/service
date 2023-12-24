@@ -1,21 +1,21 @@
 import { Component, Input, OnInit } from "@angular/core"
 
 @Component({
-  selector: 'literal',
-  templateUrl: './service-literal.component.html',
-  styleUrls: ['./service-literal.component.scss']
+    selector: 'literal',
+    templateUrl: './service-literal.component.html',
+    styleUrls: ['./service-literal.component.scss']
 })
 export class ServiceLiteralComponent implements OnInit {
-  // input
+    // input
 
-  @Input('value') value! : any
-  type : string = ""
+    @Input('value') value! : any
+    type : string = ""
 
-  // implement OnInit
+    // implement OnInit
 
-  ngOnInit() : void {
-    this.type = typeof this.value
-    if (Array.isArray(this.value))
-      this.type = "array"
-  }
+    ngOnInit() : void {
+        this.type = typeof this.value
+        if (Array.isArray(this.value))
+            this.type = "array"
+    }
 }

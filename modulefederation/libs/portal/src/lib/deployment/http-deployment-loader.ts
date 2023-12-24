@@ -8,30 +8,30 @@ import { SessionManager, Ticket } from "../security";
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration"})
 export class PortalDeploymentService extends AbstractHTTPService {
-  // constructor
+    // constructor
 
-  constructor(injector : Injector) {
-    super(injector);
-  }
+    constructor(injector : Injector) {
+        super(injector);
+    }
 
-  // public
+    // public
 
-  public getDeployment(session : Boolean) : Observable<Deployment> {
-    return this.get<Deployment>(`/deployment/${session}`);
-  }
+    public getDeployment(session : Boolean) : Observable<Deployment> {
+        return this.get<Deployment>(`/deployment/${session}`);
+    }
 }
 
 @Injectable({providedIn: 'root'})
 export class HTTPDeploymentLoader extends DeploymentLoader {
-  // constructor
+    // constructor
 
-  constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager<any,Ticket>) {
-    super();
-  }
+    constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager<any, Ticket>) {
+        super();
+    }
 
-  // implement DeploymentLoader
-  load() : Promise<Deployment> {
-    // @ts-ignore
-    return this.deploymentService.getDeployment(this.sessionManager.hasSession()).toPromise()
-  }
+    // implement DeploymentLoader
+    load() : Promise<Deployment> {
+        // @ts-ignore
+        return this.deploymentService.getDeployment(this.sessionManager.hasSession()).toPromise()
+    }
 }

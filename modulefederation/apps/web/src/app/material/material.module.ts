@@ -10,28 +10,28 @@ import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    MatTabsModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatListModule,
-    MatMenuModule,
-    MatTabsModule,
-  ],
-  exports: [
-    MatTabsModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatListModule,
-    MatMenuModule,
-    MatTabsModule
-  ]
+    declarations: [],
+    imports: [
+        CommonModule,
+        MatTabsModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatListModule,
+        MatMenuModule,
+        MatTabsModule,
+    ],
+    exports: [
+        MatTabsModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatListModule,
+        MatMenuModule,
+        MatTabsModule
+    ]
 })
 export class MaterialModule {
 }

@@ -14,14 +14,18 @@ import { PortalComponentsModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
-  CanDeactivateGuard,
-  EndpointLocator,
-  Environment,
-  EnvironmentModule,
-  HTTPErrorInterceptor,
-  Manifest, OIDCAuthentication, OIDCSessionManager,
-  PortalModule, SecurityModule, SessionManager,
-  Shell
+    CanDeactivateGuard,
+    EndpointLocator,
+    Environment,
+    EnvironmentModule,
+    HTTPErrorInterceptor,
+    Manifest,
+    OIDCAuthentication,
+    OIDCSessionManager,
+    PortalModule,
+    SecurityModule,
+    SessionManager,
+    Shell
 } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
@@ -35,97 +39,97 @@ import * as localManifest from "../assets/manifest.json"
 import { NavigationModule } from "./navigation/navigation.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
-  // instance data
+    // instance data
 
-  private environment : Environment
+    private environment : Environment
 
-  // constructor
+    // constructor
 
-  constructor(environment : any) {
-    super()
+    constructor(environment : any) {
+        super()
 
-    this.environment = new Environment(environment)
-  }
+        this.environment = new Environment(environment)
+    }
 
-  // implement
+    // implement
 
-  getEndpoint(domain : string) : string {
-    if (domain == "admin")
-      return this.environment.get<string>("administration.server")!!
-    else
-      throw new Error("unknown domain " + domain)
-  }
+    getEndpoint(domain : string) : string {
+        if (domain == "admin")
+            return this.environment.get<string>("administration.server")!!
+        else
+            throw new Error("unknown domain " + domain)
+    }
 }
 
 @Shell({
-  name: "shell"
+    name: "shell"
 })
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-  ],
-  imports: [
-    MatSnackBarModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    MatIconModule,
-    AppRoutingModule,
-    ComponentsModule,
-    NodesModule,
-    PortalComponentsModule,
-    MaterialModule,
-    NavigationModule,
+    declarations: [
+        AppComponent,
+        HomeComponent,
+    ],
+    imports: [
+        MatSnackBarModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        MatIconModule,
+        AppRoutingModule,
+        ComponentsModule,
+        NodesModule,
+        PortalComponentsModule,
+        MaterialModule,
+        NavigationModule,
 
-    PortalModule.forRoot({
-      loader: {
-        //server: true,
-        remotes: []
-      },
-      localRoutes: localRoutes,
-      localManifest: localManifest as Manifest,
-      decorateRoutes: (route : Route) => {
-        //route.resolve = {i18n: I18nResolver}
-        //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
-        route.canDeactivate = [CanDeactivateGuard]
-      }
-    }),
+        PortalModule.forRoot({
+            loader: {
+                //server: true,
+                remotes: []
+            },
+            localRoutes: localRoutes,
+            localManifest: localManifest as Manifest,
+            decorateRoutes: (route : Route) => {
+                //route.resolve = {i18n: I18nResolver}
+                //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
+                route.canDeactivate = [CanDeactivateGuard]
+            }
+        }),
 
-    SecurityModule.forRoot({
-      sessionManager: OIDCSessionManager,
-      authentication: OIDCAuthentication,
-      //authorization: SampleAuthorization
-    }),
+        SecurityModule.forRoot({
+            sessionManager: OIDCSessionManager,
+            authentication: OIDCAuthentication,
+            //authorization: SampleAuthorization
+        }),
 
-    MonacoEditorModule.forRoot({
-      defaultOptions: {theme: 'vs-dark', language: 'json'}
-    }),
+        MonacoEditorModule.forRoot({
+            defaultOptions: {theme: 'vs-dark', language: 'json'}
+        }),
 
-    EnvironmentModule.forRoot(environment),
-    SharedModule.forRoot(),
-    OAuthModule.forRoot({
-      resourceServer: {
-        allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
-        sendAccessToken: true
-      }
-    })
-  ],
-  providers: [
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
-    {
-      provide: EndpointLocator,
-      useValue: new ApplicationEndpointLocator(environment)
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HTTPErrorInterceptor,
-      multi: true
-    }],
-  bootstrap: [AppComponent]
+        EnvironmentModule.forRoot(environment),
+        SharedModule.forRoot(),
+        OAuthModule.forRoot({
+            resourceServer: {
+                allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
+                sendAccessToken: true
+            }
+        })
+    ],
+    providers: [
+        {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        {
+            provide: EndpointLocator,
+            useValue: new ApplicationEndpointLocator(environment)
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HTTPErrorInterceptor,
+            multi: true
+        }],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(sessionManager: SessionManager<any, any>) {
-    console.log(sessionManager)
-  }
+    constructor(sessionManager : SessionManager<any, any>) {
+        console.log(sessionManager)
+    }
 }

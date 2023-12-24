@@ -5,27 +5,27 @@ import { ComponentsComponent } from "./components.component";
 import { ServiceInstanceComponent } from "./service-instance.component";
 
 const routes : Routes = [
-  {
-    path: 'components',
-    component: ComponentsComponent,
-    children: [
-      {
-        path: ':component',
-        component: ComponentDetailsComponent,
+    {
+        path: 'components',
+        component: ComponentsComponent,
         children: [
-          {
-            path: ':instance',
-            component: ServiceInstanceComponent
-          }
+            {
+                path: ':component',
+                component: ComponentDetailsComponent,
+                children: [
+                    {
+                        path: ':instance',
+                        component: ServiceInstanceComponent
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  }
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class ComponentsRoutingModule {
 }

@@ -2,8 +2,8 @@ import { Constructor } from "../lang/constructor.type"
 import { AbstractHTTPService } from "./abstract-http-service"
 
 export interface ServiceConfig {
-  domain : string,
-  prefix? : string
+    domain : string,
+    prefix? : string
 }
 
 /**
@@ -12,7 +12,7 @@ export interface ServiceConfig {
  * @constructor
  */
 export function Service(config : ServiceConfig) : any {
-  return function(clazz : Constructor<AbstractHTTPService>) {
-    Reflect.set(clazz, "$$config", config)
-  }
+    return function(clazz : Constructor<AbstractHTTPService>) {
+        Reflect.set(clazz, "$$config", config)
+    }
 }

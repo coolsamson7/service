@@ -5,26 +5,26 @@ import { Ticket } from "./ticket.interface";
  * authentication system.
  */
 export interface Session<U = any, T = Ticket> {
-  /**
-   * the user object
-   */
-  user : U;
-  /**
-   * the ticket
-   */
-  ticket : T;
-  /**
-   * the session expiry in ms.
-   */
-  expiry? : number;
+    /**
+     * the user object
+     */
+    user : U;
+    /**
+     * the ticket
+     */
+    ticket : T;
+    /**
+     * the session expiry in ms.
+     */
+    expiry? : number;
 
-  /**
-   * the session locale
-   */
-  locale? : string;
+    /**
+     * the session locale
+     */
+    locale? : string;
 
-  /**
-   * any other properties
-   */
-  [prop : string] : any;
+    /**
+     * any other properties
+     */
+    [prop : string] : any;
 }

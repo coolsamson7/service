@@ -4,21 +4,21 @@ import { AboutDialog } from "./about.dialog";
 
 @Injectable({providedIn: 'root'})
 export class AboutDialogService {
-  // instance data
+    // instance data
 
-  // constructor
+    // constructor
 
-  constructor(private dialog : MatDialog) {
-  }
+    constructor(private dialog : MatDialog) {
+    }
 
-  // public
-  show() {
-    const dialogRef = this.dialog.open(AboutDialog, {
-      data: {}
-    });
+    // public
+    show() {
+        const dialogRef = this.dialog.open(AboutDialog, {
+            data: {}
+        });
 
-    return dialogRef.afterClosed()
-  }
+        return dialogRef.afterClosed()
+    }
 }
 
 

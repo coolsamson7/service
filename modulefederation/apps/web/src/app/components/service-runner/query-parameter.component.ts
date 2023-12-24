@@ -6,57 +6,57 @@ import { QueryParameter } from "../../json/query-analyzer";
 
 
 @Component({
-  selector: 'query-parameter',
-  templateUrl: './query-parameter.component.html',
-  styleUrls: ['./query-parameter.component.scss']
+    selector: 'query-parameter',
+    templateUrl: './query-parameter.component.html',
+    styleUrls: ['./query-parameter.component.scss']
 })
 export class QueryParamComponent implements OnInit {
-  // input
+    // input
 
-  @Input('parameter') parameter! : QueryParameter
-  @Input('model') model! : ComponentModel
-  @Input() form : any
+    @Input('parameter') parameter! : QueryParameter
+    @Input('model') model! : ComponentModel
+    @Input() form : any
 
-  @Output() changed = new EventEmitter<any>();
+    @Output() changed = new EventEmitter<any>();
 
-  type : string = ""
+    type : string = ""
 
-  // callbacks
+    // callbacks
 
-  newValue(value : any) {
-    this.changed.emit(value)
-  }
-
-  // private
-
-  ngOnInit() : void {
-    this.type = this.inputType4(this.parameter.type)
-  }
-
-  // implement OnInit
-
-  private inputType4(type : TypeDescriptor) : string {
-    switch (type.name) {
-      case "kotlin.String":
-        return "string"
-
-      case "kotlin.Short":
-      case "kotlin.Int":
-      case "kotlin.Long":
-        return "integer"
-
-      case "kotlin.Double":
-      case "kotlin.Float":
-        return "number"
-
-      case "kotlin.Boolean":
-        return "boolean"
-
-      case "java.util.Date":
-        return "date";
-
-      default:
-        return "json"
+    newValue(value : any) {
+        this.changed.emit(value)
     }
-  }
+
+    // private
+
+    ngOnInit() : void {
+        this.type = this.inputType4(this.parameter.type)
+    }
+
+    // implement OnInit
+
+    private inputType4(type : TypeDescriptor) : string {
+        switch (type.name) {
+            case "kotlin.String":
+                return "string"
+
+            case "kotlin.Short":
+            case "kotlin.Int":
+            case "kotlin.Long":
+                return "integer"
+
+            case "kotlin.Double":
+            case "kotlin.Float":
+                return "number"
+
+            case "kotlin.Boolean":
+                return "boolean"
+
+            case "java.util.Date":
+                return "date";
+
+            default:
+                return "json"
+        }
+    }
 }

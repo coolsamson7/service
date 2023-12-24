@@ -8,16 +8,16 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-  ],
-  imports: [
-    CommonModule,
-    FlexLayoutModule,
-    MatIconModule,
-    MatTabsModule,
-    MatCardModule,
-  ]
+    declarations: [
+        HomeComponent,
+    ],
+    imports: [
+        CommonModule,
+        FlexLayoutModule,
+        MatIconModule,
+        MatTabsModule,
+        MatCardModule,
+    ]
 })
 export class HomeModule {
 }

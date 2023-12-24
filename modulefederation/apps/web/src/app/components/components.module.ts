@@ -30,40 +30,40 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DescriptionComponent } from "./service/description.component";
 
 @NgModule({
-  declarations: [
-    ComponentsComponent,
-    ComponentListComponent,
-    ComponentDetailsComponent,
-    NavigableListItemDirective,
-    ServiceInstanceListComponent,
-    ServiceInstanceComponent,
-    NavigableListComponent,
-    ServiceComponent,
-    ServiceLiteralComponent,
-    ServiceAnnotationComponent,
-    ServiceTypeComponent,
-    ServiceMethodComponent,
-    ServicePropertyComponent,
-    ServiceClassComponent,
-    ServiceMethodRunnerComponent,
-    QueryParamComponent,
-    ParameterValidator,
-    DescriptionComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatListModule,
-    MatTabsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatIconModule,
-    FormsModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MonacoEditorModule
-  ]
+    declarations: [
+        ComponentsComponent,
+        ComponentListComponent,
+        ComponentDetailsComponent,
+        NavigableListItemDirective,
+        ServiceInstanceListComponent,
+        ServiceInstanceComponent,
+        NavigableListComponent,
+        ServiceComponent,
+        ServiceLiteralComponent,
+        ServiceAnnotationComponent,
+        ServiceTypeComponent,
+        ServiceMethodComponent,
+        ServicePropertyComponent,
+        ServiceClassComponent,
+        ServiceMethodRunnerComponent,
+        QueryParamComponent,
+        ParameterValidator,
+        DescriptionComponent
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatListModule,
+        MatTabsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatIconModule,
+        FormsModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MonacoEditorModule
+    ]
 })
 export class ComponentsModule {
 }

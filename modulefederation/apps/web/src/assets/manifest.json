@@ -10,8 +10,13 @@
       "icon": "folder",
       "folder": "microfrontends",
       "component": "MirofrontendsComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"],
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ],
       "children": [
         {
           "id": "microfrontend",
@@ -28,23 +33,39 @@
       "label": "Nodes",
       "icon": "computer",
       "component": "NodesComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ]
     },
     {
       "id": "home",
       "label": "Home",
+      "icon": "home",
       "component": "HomeComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ]
     },
     {
       "id": "components",
       "label": "Components",
       "icon": "folder",
       "component": "ComponentsComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"],
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ],
       "children": [
         {
           "id": "component",

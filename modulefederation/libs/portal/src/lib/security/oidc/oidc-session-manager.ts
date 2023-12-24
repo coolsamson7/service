@@ -6,71 +6,71 @@ import { SessionManager } from "../session-manager";
 import { Ticket } from "../ticket.interface";
 
 export interface OIDCTicket extends Ticket {
-  token: string
-  refreshToken: string
+    token : string
+    refreshToken : string
 }
 
 @Injectable({providedIn: 'root'})
 export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
-  // constructor
+    // constructor
 
-  constructor(private oauthService : OAuthService, authentication : OIDCAuthentication) {
-    super(authentication);
+    constructor(private oauthService : OAuthService, authentication : OIDCAuthentication) {
+        super(authentication);
 
-    // subscribe to events
+        // subscribe to events
 
-    oauthService.events.subscribe((e) => {
-      console.debug('oauth/oidc event', e);
+        oauthService.events.subscribe((e) => {
+            console.debug('oauth/oidc event', e);
 
-      switch (e.type) {
-        case "discovery_document_loaded":
-          if (!this.hasSession() && oauthService.hasValidAccessToken())
-            this.loadUser();
-          break;
+            switch (e.type) {
+                case "discovery_document_loaded":
+                    if (!this.hasSession() && oauthService.hasValidAccessToken())
+                        this.loadUser();
+                    break;
 
-        case "token_received":
-          this.onTokenReceived()
-          break;
+                case "token_received":
+                    this.onTokenReceived()
+                    break;
 
-        case "logout":
-          this.onLogout()
-          break;
+                case "logout":
+                    this.onLogout()
+                    break;
 
-        default:
-      }
-    });
-  }
+                default:
+            }
+        });
+    }
 
-  // public
+    // public
 
-  public override login() {
-    this.oauthService.initLoginFlow();
-  }
+    public override login() {
+        this.oauthService.initLoginFlow();
+    }
 
-  public override logout() {
-    this.oauthService.logOut();
-  }
+    public override logout() {
+        this.oauthService.logOut();
+    }
 
-  // private
+    // private
 
-  onTokenReceived() {
-    this.loadUser();
+    onTokenReceived() {
+        this.loadUser();
 
-    //const scopes = this.oauthService.getGrantedScopes(); // see config object
-  }
+        //const scopes = this.oauthService.getGrantedScopes(); // see config object
+    }
 
-  onLogout() {
-    this.closeSession()
-  }
+    onLogout() {
+        this.closeSession()
+    }
 
-  private loadUser() {
-    this.oauthService.loadUserProfile().then((user : any) =>
-      this.setSession({
-        user:  user['info'],
-        ticket: {
-          token: this.oauthService.getAccessToken(),
-          refreshToken: this.oauthService.getRefreshToken()
-        }
-      }))
-  }
+    private loadUser() {
+        this.oauthService.loadUserProfile().then((user : any) =>
+            this.setSession({
+                user: user['info'],
+                ticket: {
+                    token: this.oauthService.getAccessToken(),
+                    refreshToken: this.oauthService.getRefreshToken()
+                }
+            }))
+    }
 }

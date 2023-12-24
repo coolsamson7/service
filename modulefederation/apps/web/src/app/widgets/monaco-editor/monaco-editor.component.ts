@@ -1,24 +1,24 @@
 import {
-  Component,
-  EventEmitter,
-  forwardRef,
-  Inject,
-  Injector,
-  Input,
-  NgZone,
-  OnChanges,
-  Output,
-  SimpleChanges
+    Component,
+    EventEmitter,
+    forwardRef,
+    Inject,
+    Injector,
+    Input,
+    NgZone,
+    OnChanges,
+    Output,
+    SimpleChanges
 } from "@angular/core";
 import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormControl,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-  ValidationErrors,
-  Validator
+    AbstractControl,
+    ControlValueAccessor,
+    FormControl,
+    NG_VALIDATORS,
+    NG_VALUE_ACCESSOR,
+    NgControl,
+    ValidationErrors,
+    Validator
 } from "@angular/forms";
 import { AbstractMonacoEditor } from "./abstract-monaco-editor.component";
 import { EditorModel, MONACO_EDITOR_CONFIG, MonacoEditorConfig } from "./monaco-editor";
@@ -27,9 +27,9 @@ import { MonacoEditorLoader } from "./monaco-editor-loader";
 declare var monaco : any;
 
 @Component({
-  selector: 'monaco-editor',
-  template: '<div class="editor-container" #editorContainer></div>',
-  styles: [`
+    selector: 'monaco-editor',
+    template: '<div class="editor-container" #editorContainer></div>',
+    styles: [`
       :host {
           display: block;
           height: 200px;
@@ -40,210 +40,210 @@ declare var monaco : any;
           height: 98%;
       }
   `],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MonacoEditorComponent),
-      multi: true
-    },
-    {
-      provide: NG_VALIDATORS,
-      multi: true,
-      useExisting: forwardRef(() => MonacoEditorComponent),
-    }
-  ]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => MonacoEditorComponent),
+            multi: true
+        },
+        {
+            provide: NG_VALIDATORS,
+            multi: true,
+            useExisting: forwardRef(() => MonacoEditorComponent),
+        }
+    ]
 })
 export class MonacoEditorComponent extends AbstractMonacoEditor implements ControlValueAccessor, Validator, OnChanges {
 
-  // input & ouput
+    // input & ouput
 
-  @Input() override model! : EditorModel
-  @Output() onInit : EventEmitter<MonacoEditorComponent> = new EventEmitter();
-  errorMessages : string[] = []
-  control! : FormControl
+    @Input() override model! : EditorModel
+    @Output() onInit : EventEmitter<MonacoEditorComponent> = new EventEmitter();
+    errorMessages : string[] = []
+    control! : FormControl
 
-  // instance data
+    // instance data
 
-  constructor(private zone : NgZone, loader : MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config : MonacoEditorConfig, private injector : Injector) {
-    super(loader)
-  }
+    constructor(private zone : NgZone, loader : MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config : MonacoEditorConfig, private injector : Injector) {
+        super(loader)
+    }
 
-  get options() : any {
-    return this.editorOptions;
-  }
+    get options() : any {
+        return this.editorOptions;
+    }
 
-  @Input('options')
-  set options(options : any) {
-    this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
-  }
+    @Input('options')
+    set options(options : any) {
+        this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
+    }
 
-  onChange = (_ : any) => {
-  };
+    onChange = (_ : any) => {
+    };
 
-  onTouched = () => {
-  };
+    onTouched = () => {
+    };
 
-  // constructor
+    // constructor
 
-  onErrorStatusChange : () => void = () => {
-  };
+    onErrorStatusChange : () => void = () => {
+    };
 
-  // implement AfterViewInit
+    // implement AfterViewInit
 
-  override ngAfterViewInit() : void {
-    super.ngAfterViewInit()
+    override ngAfterViewInit() : void {
+        super.ngAfterViewInit()
 
-    const ngControl : NgControl | null = this.injector.get(NgControl, null);
-    if (ngControl)
-      this.control = ngControl.control as FormControl;
+        const ngControl : NgControl | null = this.injector.get(NgControl, null);
+        if (ngControl)
+            this.control = ngControl.control as FormControl;
 
-  }
+    }
 
-  // public
+    // public
 
-  hasErrors() {
-    return this.errorMessages.length > 0
-  }
+    hasErrors() {
+        return this.errorMessages.length > 0
+    }
 
-  getErrorMessages() {
-    return this.errorMessages
-  }
+    getErrorMessages() {
+        return this.errorMessages
+    }
 
-  // protected
+    // protected
 
-  override createEditor() {
-    let editor = super.createEditor()
+    override createEditor() {
+        let editor = super.createEditor()
 
-    // add listeners
+        // add listeners
 
-    editor.onDidChangeModelContent((e : any) => {
-      const value = editor.getValue();
+        editor.onDidChangeModelContent((e : any) => {
+            const value = editor.getValue();
 
-      // value is not propagated to parent when executing outside zone.
+            // value is not propagated to parent when executing outside zone.
 
-      this.zone.run(() => this.onChange(this.value = value));
-    });
+            this.zone.run(() => this.onChange(this.value = value));
+        });
 
-    editor.onDidBlurEditorWidget(() => {
-      this.onTouched();
-    });
+        editor.onDidBlurEditorWidget(() => {
+            this.onTouched();
+        });
 
-    // doesnt't work
+        // doesnt't work
 
-    editor.onDidChangeModelDecorations(() => {
-      // @ts-ignore
-      const errorMessages = this.getModelMarkers().map(({message}) => message);
+        editor.onDidChangeModelDecorations(() => {
+            // @ts-ignore
+            const errorMessages = this.getModelMarkers().map(({message}) => message);
 
-      if (this.errorMessages.length != errorMessages.length) {
-        this.errorMessages = errorMessages;
+            if (this.errorMessages.length != errorMessages.length) {
+                this.errorMessages = errorMessages;
 
-        this.control?.updateValueAndValidity()
+                this.control?.updateValueAndValidity()
 
-        this.onErrorStatusChange();
-      }
-    });
+                this.onErrorStatusChange();
+            }
+        });
 
-    // trigger listener
+        // trigger listener
 
-    this.onInit.emit(this);
+        this.onInit.emit(this);
 
-    // done
+        // done
 
-    return editor
-  }
+        return editor
+    }
 
-  // override
+    // override
 
-  validate(control : AbstractControl<any, any>) : ValidationErrors | null {
-    const value = control.value
+    validate(control : AbstractControl<any, any>) : ValidationErrors | null {
+        const value = control.value
 
-    if (this.editor) {
-      // @ts-ignore
-      let errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
+        if (this.editor) {
+            // @ts-ignore
+            let errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
 
-      if (errors.length > 0) {
-        return {
-          json: {
-            messages: errors
-          }
+            if (errors.length > 0) {
+                return {
+                    json: {
+                        messages: errors
+                    }
+                }
+            }
         }
-      }
+
+        return null // for now
     }
 
-    return null // for now
-  }
+    // implement Validator
 
-  // implement Validator
+    writeValue(value : any) : void {
+        this.value = value || ''
 
-  writeValue(value : any) : void {
-    this.value = value || ''
+        //this.editor?.setValue(this.value)
 
-    //this.editor?.setValue(this.value)
-
-    this.modelInstance?.setValue(this.value)
-  }
-
-
-  // implement ControlValueAccessor
-
-  registerOnChange(fn : any) : void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn : any) : void {
-    this.onTouched = fn;
-  }
-
-  registerOnValidatorChange?(fn : () => void) : void {
-    this.onErrorStatusChange = fn;
-  }
-
-  ngOnChanges(changes : SimpleChanges) {
-    if (this.editor && changes["model"] && !changes["model"].firstChange) {
-      const currentModel = changes["model"].currentValue;
-      const previousModel = changes["model"].previousValue;
-
-      const previousUri = previousModel?.uri
-      const currentUri = currentModel?.uri
-
-      if (previousUri != currentUri) {
-        const value = this.editor.getValue();
-
-        if (this.modelInstance)
-          this.modelInstance.dispose();
-
-        let existingModel;
-
-        if (currentUri)
-          existingModel = monaco.editor.getModels().find((model : any) => model.uri.path === currentUri.path);
-
-        if (!existingModel)
-          this.createModel();
-
-        //this.modelInstance.setValue(this.value)
-
-        this.editor.setModel(this.modelInstance);
-      }
+        this.modelInstance?.setValue(this.value)
     }
-  }
 
-  // implement OnChanges
 
-  protected override setupEditor() : void {
-    this.uri = monaco.Uri.parse(this.model.uri)
+    // implement ControlValueAccessor
 
-    let model = this.getModel();
-    if (!model)
-      model = this.createModel();
+    registerOnChange(fn : any) : void {
+        this.onChange = fn;
+    }
 
-    this.createEditor()
+    registerOnTouched(fn : any) : void {
+        this.onTouched = fn;
+    }
 
-    this.editor.setModel(model)
+    registerOnValidatorChange?(fn : () => void) : void {
+        this.onErrorStatusChange = fn;
+    }
 
-    super.setupEditor()
+    ngOnChanges(changes : SimpleChanges) {
+        if (this.editor && changes["model"] && !changes["model"].firstChange) {
+            const currentModel = changes["model"].currentValue;
+            const previousModel = changes["model"].previousValue;
 
-    // set initial value from the property
+            const previousUri = previousModel?.uri
+            const currentUri = currentModel?.uri
 
-    this.writeValue(this.value)
-  }
+            if (previousUri != currentUri) {
+                const value = this.editor.getValue();
+
+                if (this.modelInstance)
+                    this.modelInstance.dispose();
+
+                let existingModel;
+
+                if (currentUri)
+                    existingModel = monaco.editor.getModels().find((model : any) => model.uri.path === currentUri.path);
+
+                if (!existingModel)
+                    this.createModel();
+
+                //this.modelInstance.setValue(this.value)
+
+                this.editor.setModel(this.modelInstance);
+            }
+        }
+    }
+
+    // implement OnChanges
+
+    protected override setupEditor() : void {
+        this.uri = monaco.Uri.parse(this.model.uri)
+
+        let model = this.getModel();
+        if (!model)
+            model = this.createModel();
+
+        this.createEditor()
+
+        this.editor.setModel(model)
+
+        super.setupEditor()
+
+        // set initial value from the property
+
+        this.writeValue(this.value)
+    }
 }

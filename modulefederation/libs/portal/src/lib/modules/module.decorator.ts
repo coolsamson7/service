@@ -9,20 +9,20 @@ import { addProviders } from '../util/add-providers';
  * Automatically adds a provider for metadata.
  */
 export function Module(metadata : ModuleMetadata, token : InjectionToken<ModuleMetadata>) {
-  return (componentClass : Type<any>) => {
-    addProviders(componentClass, [
-      {
-        provide: token,
-        useValue: metadata
-      }
-    ]);
+    return (componentClass : Type<any>) => {
+        addProviders(componentClass, [
+            {
+                provide: token,
+                useValue: metadata
+            }
+        ]);
 
-    import('./modules.module').then((m) => {
-      m.ModulesModule.injector.subscribe((injector) => {
-        const runtimeRegistry = injector.get(ModuleRegistry);
+        import('./modules.module').then((m) => {
+            m.ModulesModule.injector.subscribe((injector) => {
+                const runtimeRegistry = injector.get(ModuleRegistry);
 
-        runtimeRegistry.markAsLoaded(metadata);
-      });
-    });
-  };
+                runtimeRegistry.markAsLoaded(metadata);
+            });
+        });
+    };
 }

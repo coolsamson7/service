@@ -23,44 +23,44 @@ import { ChipsComponent } from "./chips.component";
 import { Folder } from "@modulefederation/portal";
 
 @Folder({
-  name: "microfrontends",
-  label: "Microfrontends",
-  icon: "home"
+    name: "microfrontends",
+    label: "Microfrontends",
+    icon: "home"
 })
 @Folder({
-  name: "microfrontends-sub",
-  label: "MicrofrontendsSub",
-  parent: "microfrontends",
-  icon: "home"
+    name: "microfrontends-sub",
+    label: "MicrofrontendsSub",
+    parent: "microfrontends",
+    icon: "home"
 })
 @NgModule({
-  declarations: [
-    MirofrontendsComponent,
-    MicrofrontendDetailsComponent,
-    AddManifestDialog,
-    ConfirmationDialog,
-    ChipsComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatListModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatInputModule,
-    MatOptionModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatIconModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MonacoEditorModule,
-    MatChipsModule,
-    MatSlideToggleModule,
-    MatLineModule,
-    MatDialogModule,
-    MatToolbarModule,
-  ]
+    declarations: [
+        MirofrontendsComponent,
+        MicrofrontendDetailsComponent,
+        AddManifestDialog,
+        ConfirmationDialog,
+        ChipsComponent
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatListModule,
+        MatButtonModule,
+        MatTabsModule,
+        MatInputModule,
+        MatOptionModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatIconModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MonacoEditorModule,
+        MatChipsModule,
+        MatSlideToggleModule,
+        MatLineModule,
+        MatDialogModule,
+        MatToolbarModule,
+    ]
 })
 export class PortalComponentsModule {
 }

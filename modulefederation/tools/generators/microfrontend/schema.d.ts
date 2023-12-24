@@ -1,4 +1,4 @@
 export interface MicrofrontendSchema {
-  projectName : string;
-  type : string
+    projectName : string;
+    type : string
 }

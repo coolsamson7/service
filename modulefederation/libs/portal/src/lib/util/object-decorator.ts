@@ -2,46 +2,46 @@ type Decorate = (object : any) => void
 export type Getter = (object : any) => any
 
 export class ObjectDecorator {
-  // instance data
+    // instance data
 
-  properties : { [name : string] : Decorate } = {}
+    properties : { [name : string] : Decorate } = {}
 
-  // constructor
+    // constructor
 
-  constructor() {
-  }
-
-  // fluent
-
-  defaultValue(name : string, defaultValue : any) : ObjectDecorator {
-    let isUndefined = (o : any) => {
-      return o == null || o == undefined
+    constructor() {
     }
 
-    this.properties[name] = (object : any) => {
-      if (!Object.hasOwn(object, name) || isUndefined(object[name]))
-        object[name] = defaultValue
+    // fluent
+
+    defaultValue(name : string, defaultValue : any) : ObjectDecorator {
+        let isUndefined = (o : any) => {
+            return o == null || o == undefined
+        }
+
+        this.properties[name] = (object : any) => {
+            if (!Object.hasOwn(object, name) || isUndefined(object[name]))
+                object[name] = defaultValue
+        }
+
+        return this
     }
 
-    return this
-  }
+    defaultValueFunction(name : string, defaultValue : Getter) : ObjectDecorator {
+        let isUndefined = (o : any) => {
+            return o == null || o == undefined
+        }
+        this.properties[name] = (object : any) => {
+            if (!Object.hasOwn(object, name) || isUndefined(object[name]))
+                object[name] = defaultValue(object)
+        }
 
-  defaultValueFunction(name : string, defaultValue : Getter) : ObjectDecorator {
-    let isUndefined = (o : any) => {
-      return o == null || o == undefined
+        return this
     }
-    this.properties[name] = (object : any) => {
-      if (!Object.hasOwn(object, name) || isUndefined(object[name]))
-        object[name] = defaultValue(object)
+
+    // public
+
+    decorate(object : any) {
+        for (let property in this.properties)
+            this.properties[property](object)
     }
-
-    return this
-  }
-
-  // public
-
-  decorate(object : any) {
-    for (let property in this.properties)
-      this.properties[property](object)
-  }
 }

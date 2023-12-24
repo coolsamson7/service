@@ -7,52 +7,52 @@ import { Update, UpdateService } from '../service/update-service.service';
 
 
 @Component({
-  selector: 'component-list',
-  templateUrl: './component-list.component.html',
-  styleUrls: ['./component-list.component.scss']
+    selector: 'component-list',
+    templateUrl: './component-list.component.html',
+    styleUrls: ['./component-list.component.scss']
 })
 export class ComponentListComponent implements OnInit, OnDestroy {
-  // instance data
+    // instance data
 
-  components : string[] = []
-  selected! : string
-  subscription : Subscription
+    components : string[] = []
+    selected! : string
+    subscription : Subscription
 
-  // constructor
+    // constructor
 
-  constructor(private router : Router, private route : ActivatedRoute, private componentService : ComponentService, updateService : UpdateService) {
-    this.subscription = updateService.getUpdates().subscribe(update => {
-      this.update(update)
-    })
-  }
+    constructor(private router : Router, private route : ActivatedRoute, private componentService : ComponentService, updateService : UpdateService) {
+        this.subscription = updateService.getUpdates().subscribe(update => {
+            this.update(update)
+        })
+    }
 
-  // private
+    // private
 
-  select(id : any) {
-    this.router.navigate([id], {relativeTo: this.route});
-  }
+    select(id : any) {
+        this.router.navigate([id], {relativeTo: this.route});
+    }
 
-  // public
+    // public
 
-  ngOnInit() {
-    this.componentService.listAll().subscribe({
-      next: (response) => {
-        this.components = response;
-      }
-    })
-  }
+    ngOnInit() {
+        this.componentService.listAll().subscribe({
+            next: (response) => {
+                this.components = response;
+            }
+        })
+    }
 
-  // implement OnInit
+    // implement OnInit
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe()
-  }
+    ngOnDestroy() {
+        this.subscription.unsubscribe()
+    }
 
-  // implement OnDestroy
+    // implement OnDestroy
 
-  private update(update : Update) {
-    // remove from list
+    private update(update : Update) {
+        // remove from list
 
-    this.components = this.components.filter(component => !update.deletedServices.find(s => s == component) == null)
-  }
+        this.components = this.components.filter(component => !update.deletedServices.find(s => s == component) == null)
+    }
 }

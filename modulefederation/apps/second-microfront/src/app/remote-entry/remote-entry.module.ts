@@ -6,12 +6,12 @@ import { RemoteEntryRouterModule } from "./remote-entry-router.module";
 
 
 @Microfrontend({
-  name: 'second-microfront'
+    name: 'second-microfront'
 })
 @NgModule({
-  declarations: [RemoteEntryComponent],
-  imports: [CommonModule, RemoteEntryRouterModule, PortalModule],
-  providers: [],
+    declarations: [RemoteEntryComponent],
+    imports: [CommonModule, RemoteEntryRouterModule, PortalModule],
+    providers: [],
 })
 export class RemoteEntryModule {
 }

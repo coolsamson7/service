@@ -1,23 +1,23 @@
 <div class="container">
-  <!-- breadcrumb -->
+    <!-- breadcrumb -->
 
-  <navigation-breadcrumb *ngIf="outlet.isActivated == true" [routes]="routes"/>
+    <navigation-breadcrumb *ngIf="outlet.isActivated == true" [routes]="routes"/>
 
-  <!-- list -->
+    <!-- list -->
 
-  <div *ngIf="outlet.isActivated == false" class="left">
-    <mat-list class="nodes" role="list">
-      <a *ngFor="let node of nodes" [class.active-item]="node == selected" [routerLinkActive]="['is-active']"
-         mat-list-item
-         role="listitem"
-         routerLink="{{node}}">
-        {{node}}
-      </a>
-    </mat-list>
-  </div>
+    <div *ngIf="outlet.isActivated == false" class="left">
+        <mat-list class="nodes" role="list">
+            <a *ngFor="let node of nodes" [class.active-item]="node == selected" [routerLinkActive]="['is-active']"
+               mat-list-item
+               role="listitem"
+               routerLink="{{node}}">
+                {{node}}
+            </a>
+        </mat-list>
+    </div>
 
-  <!-- router outlet -->
+    <!-- router outlet -->
 
-  <router-outlet #outlet="outlet"></router-outlet>
+    <router-outlet #outlet="outlet"></router-outlet>
 </div>
 

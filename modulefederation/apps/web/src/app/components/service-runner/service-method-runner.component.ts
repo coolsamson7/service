@@ -11,225 +11,225 @@ import { v4 as uuidv4 } from 'uuid'
 import { ParameterType, Query, QueryAnalyzer, QueryParameter } from "../../json/query-analyzer"
 
 @Component({
-  selector: 'method-runner',
-  templateUrl: './service-method-runner.component.html',
-  styleUrls: ['./service-method-runner.component.scss']
+    selector: 'method-runner',
+    templateUrl: './service-method-runner.component.html',
+    styleUrls: ['./service-method-runner.component.scss']
 })
 export class ServiceMethodRunnerComponent implements OnInit {
-  // input
+    // input
 
 
-  @Input('model') model! : ComponentModel
-  @Input('service') service! : InterfaceDescriptor
-  @Input('method') method! : MethodDescriptor
+    @Input('model') model! : ComponentModel
+    @Input('service') service! : InterfaceDescriptor
+    @Input('method') method! : MethodDescriptor
 
-  @ViewChild('form') public form! : NgForm
+    @ViewChild('form') public form! : NgForm
 
-  query! : Query
-  result = ''
-  error = false
-  executedURL = ""
-  body! : QueryParameter
-  parameter = {}
-  uuid = uuidv4()
+    query! : Query
+    result = ''
+    error = false
+    executedURL = ""
+    body! : QueryParameter
+    parameter = {}
+    uuid = uuidv4()
 
-  resultModel : EditorModel = {
-    value: '',
-    language: "json",
-    schema: null,
-    uri: 'json://' + uuidv4() + '.schema'
-  }
-
-  bodyModel : EditorModel = {
-    value: '',
-    language: "json",
-    schema: null,
-    uri: null // will be set in onInit
-  }
-
-  // constructor
-
-  constructor(private componentService : ComponentService) {
-  }
-
-  // public
-
-  paramModel(param : any) : EditorModel {
-    return {
-      value: param.value,
-      language: "json",
-      schema: param.schema,
-      uri: this.uuid
-    }
-  }
-
-  isError(name : string) {
-    return this.form.form.controls[name].status != "VALID"
-  }
-
-  errorMessage(name : string) {
-    let errors = this.form.form.controls[name].errors
-    for (let error in errors) {
-      switch (error) {
-        case "required":
-          return name + " is required"
-
-        case "json":
-          return "schema violation: " + errors[error].messages[0]
-      }
-
-      return name + " violates " + error
+    resultModel : EditorModel = {
+        value: '',
+        language: "json",
+        schema: null,
+        uri: 'json://' + uuidv4() + '.schema'
     }
 
-    return "ouch"
-  }
-
-  enumValues(type : TypeDescriptor) {
-    // @ts-ignore
-    return this.model.models.find(descriptor => descriptor.name == type.name).properties.map(property => property.name)
-  }
-
-  inputType4(type : TypeDescriptor) : string {
-    switch (type.name) {
-      case "kotlin.String":
-        return "string"
-
-      case "kotlin.Short":
-      case "kotlin.Int":
-      case "kotlin.Long":
-      case "kotlin.Float":
-      case "kotlin.Double":
-        return "number"
-
-      case "kotlin.Boolean":
-        return "boolean"
-
-      case "java.util.Date":
-        return "date"
-
-      default:
-        let model = this.model.models.find(model => model.name == type.name)
-        if (model?.kind.includes("enum"))
-          return "enum"
-        else
-          return "json"
-    }
-  }
-
-  // private
-
-  execute() {
-    if (!this.form.valid) {
-      this.form.control.updateValueAndValidity()
-      this.form.control.markAllAsTouched()
-      return
+    bodyModel : EditorModel = {
+        value: '',
+        language: "json",
+        schema: null,
+        uri: null // will be set in onInit
     }
 
-    this.error = false
+    // constructor
 
-    let request : ServiceRequest = {
-      component: this.model.component!!.name,
-      service: this.service.name,
-      method: this.method.name,
-      parameters: []
+    constructor(private componentService : ComponentService) {
     }
 
-    for (let param of this.query.params) {
-      if (param === this.body) {
-        let body = JSON.parse(param.value)
+    // public
 
-        request.parameters.push({
-          name: param.name,
-          value: body
+    paramModel(param : any) : EditorModel {
+        return {
+            value: param.value,
+            language: "json",
+            schema: param.schema,
+            uri: this.uuid
+        }
+    }
+
+    isError(name : string) {
+        return this.form.form.controls[name].status != "VALID"
+    }
+
+    errorMessage(name : string) {
+        let errors = this.form.form.controls[name].errors
+        for (let error in errors) {
+            switch (error) {
+                case "required":
+                    return name + " is required"
+
+                case "json":
+                    return "schema violation: " + errors[error].messages[0]
+            }
+
+            return name + " violates " + error
+        }
+
+        return "ouch"
+    }
+
+    enumValues(type : TypeDescriptor) {
+        // @ts-ignore
+        return this.model.models.find(descriptor => descriptor.name == type.name).properties.map(property => property.name)
+    }
+
+    inputType4(type : TypeDescriptor) : string {
+        switch (type.name) {
+            case "kotlin.String":
+                return "string"
+
+            case "kotlin.Short":
+            case "kotlin.Int":
+            case "kotlin.Long":
+            case "kotlin.Float":
+            case "kotlin.Double":
+                return "number"
+
+            case "kotlin.Boolean":
+                return "boolean"
+
+            case "java.util.Date":
+                return "date"
+
+            default:
+                let model = this.model.models.find(model => model.name == type.name)
+                if (model?.kind.includes("enum"))
+                    return "enum"
+                else
+                    return "json"
+        }
+    }
+
+    // private
+
+    execute() {
+        if (!this.form.valid) {
+            this.form.control.updateValueAndValidity()
+            this.form.control.markAllAsTouched()
+            return
+        }
+
+        this.error = false
+
+        let request : ServiceRequest = {
+            component: this.model.component!!.name,
+            service: this.service.name,
+            method: this.method.name,
+            parameters: []
+        }
+
+        for (let param of this.query.params) {
+            if (param === this.body) {
+                let body = JSON.parse(param.value)
+
+                request.parameters.push({
+                    name: param.name,
+                    value: body
+                })
+            }
+            else request.parameters.push({
+                name: param.name,
+                value: param.value
+            })
+        }
+
+        let json = JSON.stringify(request, null, "\t")
+
+        this.componentService.executeMethod(request.component, json).subscribe({
+            next: (result) => {
+                if (typeof result === "object")
+                    this.result = JSON.stringify(result, null, "\t")
+                else
+                    this.result = result
+            },
+            error: (error) => {
+                this.error = true
+
+                if (error instanceof ServerError) {
+                    this.result = error.message
+                }
+                else {
+                    this.result = error.message
+                }
+            }
         })
-      }
-      else request.parameters.push({
-        name: param.name,
-        value: param.value
-      })
     }
 
-    let json = JSON.stringify(request, null, "\t")
+    // callbacks
 
-    this.componentService.executeMethod(request.component, json).subscribe({
-      next: (result) => {
-        if (typeof result === "object")
-          this.result = JSON.stringify(result, null, "\t")
-        else
-          this.result = result
-      },
-      error: (error) => {
-        this.error = true
+    onChange() {
+        this.updateURL()
+    }
 
-        if (error instanceof ServerError) {
-          this.result = error.message
+    ngOnInit() : void {
+        let uri = "json://" + this.service.name + "/" + this.uuid + ".schema"
+
+        this.bodyModel.uri = uri
+
+        this.query = new QueryAnalyzer(this.service, this.model).analyzeMethod(this.method)!!
+
+        for (let param of this.query.params) {
+            // @ts-ignore
+            this.parameter[param.name] = param
+            if (param.parameterType == ParameterType.BODY)
+                this.body = param
         }
-        else {
-          this.result = error.message
+
+        this.updateURL()
+    }
+
+    // implement OnInit
+
+    private updateURL() {
+        this.executedURL = "";
+
+        let template = this.query.url
+
+        let i = 0
+        let lbrace = template.indexOf("{")
+        while (lbrace >= 0) {
+            this.executedURL += template.substring(i, lbrace)
+
+            // find  }
+
+            let rbrace = template.indexOf("}", lbrace)
+            i = rbrace + 1
+
+            let variable = template.substring(lbrace + 1, rbrace)
+
+            // @ts-ignore
+            this.executedURL += encodeURI(this.parameter[variable].value)
+
+            lbrace = template.indexOf("{", rbrace)
         }
-      }
-    })
-  }
 
-  // callbacks
+        this.executedURL += template.substring(i)
 
-  onChange() {
-    this.updateURL()
-  }
+        if (this.query.params.find(param => param.parameterType == ParameterType.REQUEST_PARAM) != undefined) {
+            this.executedURL += "?"
+            let i = 0;
+            for (let param of this.query.params.filter(param => param.parameterType == ParameterType.REQUEST_PARAM)) {
+                if (i++ > 0)
+                    this.executedURL += "&"
 
-  ngOnInit() : void {
-    let uri = "json://" + this.service.name + "/" + this.uuid + ".schema"
-
-    this.bodyModel.uri = uri
-
-    this.query = new QueryAnalyzer(this.service, this.model).analyzeMethod(this.method)!!
-
-    for (let param of this.query.params) {
-      // @ts-ignore
-      this.parameter[param.name] = param
-      if (param.parameterType == ParameterType.BODY)
-        this.body = param
+                this.executedURL += param.name + "=" + encodeURI(param.value)
+            }
+        }
     }
-
-    this.updateURL()
-  }
-
-  // implement OnInit
-
-  private updateURL() {
-    this.executedURL = "";
-
-    let template = this.query.url
-
-    let i = 0
-    let lbrace = template.indexOf("{")
-    while (lbrace >= 0) {
-      this.executedURL += template.substring(i, lbrace)
-
-      // find  }
-
-      let rbrace = template.indexOf("}", lbrace)
-      i = rbrace + 1
-
-      let variable = template.substring(lbrace + 1, rbrace)
-
-      // @ts-ignore
-      this.executedURL += encodeURI(this.parameter[variable].value)
-
-      lbrace = template.indexOf("{", rbrace)
-    }
-
-    this.executedURL += template.substring(i)
-
-    if (this.query.params.find(param => param.parameterType == ParameterType.REQUEST_PARAM) != undefined) {
-      this.executedURL += "?"
-      let i = 0;
-      for (let param of this.query.params.filter(param => param.parameterType == ParameterType.REQUEST_PARAM)) {
-        if (i++ > 0)
-          this.executedURL += "&"
-
-        this.executedURL += param.name + "=" + encodeURI(param.value)
-      }
-    }
-  }
 }

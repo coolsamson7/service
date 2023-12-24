@@ -1,20 +1,20 @@
 <ng-container *ngIf="type != 'json'">
-  <mat-form-field [ngSwitch]="type" class="param">
-    <mat-label>{{parameter.name}}</mat-label>
+    <mat-form-field [ngSwitch]="type" class="param">
+        <mat-label>{{parameter.name}}</mat-label>
 
-    <ng-container *ngSwitchCase="'string'">
-      <input (ngModelChange)='newValue($event)' [(ngModel)]="parameter.value" [id]="parameter.name" matInput
-             name="{{parameter.name}}" required type="text"/>
-    </ng-container>
+        <ng-container *ngSwitchCase="'string'">
+            <input (ngModelChange)='newValue($event)' [(ngModel)]="parameter.value" [id]="parameter.name" matInput
+                   name="{{parameter.name}}" required type="text"/>
+        </ng-container>
 
-    <ng-container *ngSwitchCase="'number'">
-      <input (ngModelChange)='newValue($event)' [(ngModel)]="parameter.value" [id]="parameter.name" matInput
-             name="{{parameter.name}}" type="number"/>
-    </ng-container>
+        <ng-container *ngSwitchCase="'number'">
+            <input (ngModelChange)='newValue($event)' [(ngModel)]="parameter.value" [id]="parameter.name" matInput
+                   name="{{parameter.name}}" type="number"/>
+        </ng-container>
 
-    {{form | json}}
-    <!--mat-error *ngIf="!form.controls[parameter.name].valid">OUCH</mat-error-->
-  </mat-form-field>
+        {{form | json}}
+        <!--mat-error *ngIf="!form.controls[parameter.name].valid">OUCH</mat-error-->
+    </mat-form-field>
 </ng-container>
 
 <!--json-view *ngIf="type == 'json'" [schema]="parameter.schema" [(ngModel)]="parameter.value"  (ngModelChange)='newValue($event)'  name="{{parameter.name}}" [id]="parameter.name"></json-view-->

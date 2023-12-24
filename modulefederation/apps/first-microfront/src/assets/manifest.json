@@ -8,8 +8,13 @@
       "id": "",
       "label": "Microfrontend 1",
       "component": "RemoteEntryComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "public",
+        "private"
+      ]
     },
     {
       "id": "public-portal",
@@ -18,8 +23,12 @@
         "lazyModule": "PublicPortalModule"
       },
       "component": "PublicPortalComponent",
-      "tags": ["portal"],
-      "visibility": ["public"],
+      "tags": [
+        "portal"
+      ],
+      "visibility": [
+        "public"
+      ],
       "module": "PublicPortalModule"
     },
     {
@@ -29,8 +38,12 @@
         "lazyModule": "PrivatePortalModule"
       },
       "component": "PrivatePortalComponent",
-      "tags": ["portal"],
-      "visibility": ["private"],
+      "tags": [
+        "portal"
+      ],
+      "visibility": [
+        "private"
+      ],
       "module": "PrivatePortalModule"
     }
   ],

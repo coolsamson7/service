@@ -5,19 +5,19 @@ import { Observable } from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class CanActivateGuard implements CanActivate {
-  // constructor
+    // constructor
 
-  constructor(private router : Router) {
-  }
+    constructor(private router : Router) {
+    }
 
-  // implement CanActivate
+    // implement CanActivate
 
-  /**
-   * @inheritdoc
-   */
-  canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    let feature : FeatureData = route.data['feature']
+    /**
+     * @inheritdoc
+     */
+    canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        let feature : FeatureData = route.data['feature']
 
-    return feature.enabled == true
-  }
+        return feature.enabled == true
+    }
 }

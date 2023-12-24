@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FeatureData, FeatureRegistry, FolderData } from "@modulefederation/portal";
-import { INavbarData } from './feature-navigation.model';
+import { NavigationItem } from './feature-navigation.model';
 
 export interface SideNavToggle {
     screenWidth : number;
@@ -18,15 +18,13 @@ export class FeatureNavigationComponent implements OnInit {
 
     collapsed = false;
     screenWidth = 0;
-    navData : INavbarData[] = [];
+    navData : NavigationItem[] = [];
     multiple : boolean = false;
 
     // constructor
 
     constructor(public router : Router, private featureRegistry : FeatureRegistry) {
-        let features = this.featureRegistry.finder().withTag("navigation").find()
-
-        let mapFeature = (feature : FeatureData, parent : INavbarData) : INavbarData => {
+        let mapFeature = (feature : FeatureData, parent : NavigationItem) : NavigationItem => {
             let item = {
                 routeLink: feature.routerPath!!,
                 icon: feature.icon!!,
@@ -39,9 +37,9 @@ export class FeatureNavigationComponent implements OnInit {
             return item
         }
 
-        let mapFolder = (folder : FolderData, parent? : INavbarData) : INavbarData => {
-            let item : INavbarData = {
-                routeLink: "",// feature.routerPath!!,
+        let mapFolder = (folder : FolderData, parent? : NavigationItem) : NavigationItem => {
+            let item : NavigationItem = {
+                routeLink: "",
                 icon: folder.icon,
                 label: folder.label || folder.name,
                 items: []
@@ -67,17 +65,24 @@ export class FeatureNavigationComponent implements OnInit {
             return item
         }
 
-        let data = this.featureRegistry.folders.map(folder => mapFolder(folder, undefined))
+        let folderItems = this.featureRegistry.folders.map(folder => mapFolder(folder, undefined))
 
-        this.navData = data
+        // features
 
-        /* this.navData = features.map((feature)=> {
-         return {
-         routeLink: feature.routerPath!!,
-         icon: feature.icon!!,
-         label: feature.label!!,
-         items: []
-       }})*/
+        let features = this.featureRegistry.finder().withTag("navigation").withoutFolder().find()
+
+        let featureItems = features.map((feature) => {
+            return {
+                routeLink: feature.routerPath!!,
+                icon: feature.icon!!,
+                label: feature.label!!,
+                items: []
+            }
+        })
+
+        // done
+
+        this.navData = [...folderItems, ...featureItems]
     }
 
     // host listener
@@ -100,16 +105,16 @@ export class FeatureNavigationComponent implements OnInit {
         this.collapsed = false;
     }
 
-    handleClick(item : INavbarData) : void {
+    handleClick(item : NavigationItem) : void {
         this.shrinkItems(item);
         item.expanded = !item.expanded
     }
 
-    getActiveClass(data : INavbarData) : string {
+    getActiveClass(data : NavigationItem) : string {
         return this.router.url.includes(data.routeLink) ? 'active' : '';
     }
 
-    shrinkItems(item : INavbarData) : void {
+    shrinkItems(item : NavigationItem) : void {
         if (!this.multiple) {
             for (let modelItem of this.navData) {
                 if (item !== modelItem && modelItem.expanded) {

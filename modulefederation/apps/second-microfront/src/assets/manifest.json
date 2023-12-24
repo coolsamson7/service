@@ -8,8 +8,12 @@
       "id": "",
       "label": "Microfrontend 2",
       "component": "RemoteEntryComponent",
-      "tags": ["navigation"],
-      "visibility": ["private"]
+      "tags": [
+        "navigation"
+      ],
+      "visibility": [
+        "private"
+      ]
     }
   ],
   "folders": []

@@ -11,169 +11,169 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Feature, Manifest } from "@modulefederation/portal";
 
 @Component({
-  selector: 'microfrontends',
-  templateUrl: './microfrontends.component.html',
-  styleUrls: ['./microfrontends.component.scss']
+    selector: 'microfrontends',
+    templateUrl: './microfrontends.component.html',
+    styleUrls: ['./microfrontends.component.scss']
 })
 @Feature({
-  id: "microfrontends",
-  label: "",
-  icon: "folder",
-  visibility: ["public", "private"],
-  categories: [],
-  tags: ["navigation"],
-  permissions: [],
-  folder: "microfrontends" // TODO NEW
+    id: "microfrontends",
+    label: "",
+    icon: "folder",
+    visibility: ["public", "private"],
+    categories: [],
+    tags: ["navigation"],
+    permissions: [],
+    folder: "microfrontends" // TODO NEW
 })
 export class MirofrontendsComponent extends NavigationComponent {
-  // instance data
+    // instance data
 
-  manifests : Manifest[] = []
-  $manifests = new ReplaySubject<Manifest[]>(1);
+    manifests : Manifest[] = []
+    $manifests = new ReplaySubject<Manifest[]>(1);
 
-  // constructor
+    // constructor
 
-  constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs : Dialogs) {
-    super()
-  }
+    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs : Dialogs) {
+        super()
+    }
 
-  // public
+    // public
 
-  showSnackBar(message : string, action : string) {
-    this.snackBar.open(message, action);
-  }
+    showSnackBar(message : string, action : string) {
+        this.snackBar.open(message, action);
+    }
 
-  onChangedEnabled(manifest : Manifest) {
-    this.showSnackBar(manifest.name, manifest.enabled ? "disabled" : "enabled")
+    onChangedEnabled(manifest : Manifest) {
+        this.showSnackBar(manifest.name, manifest.enabled ? "disabled" : "enabled")
 
-    this.portalAdministrationService.enableMicrofrontend(manifest.name, !manifest.enabled).subscribe(result => console.log(result))
-  }
+        this.portalAdministrationService.enableMicrofrontend(manifest.name, !manifest.enabled).subscribe(result => console.log(result))
+    }
 
-  refresh() {
-    this.portalAdministrationService.refresh().subscribe(_ => {
-      this.loadManifests()
-    })
-  }
+    refresh() {
+        this.portalAdministrationService.refresh().subscribe(_ => {
+            this.loadManifests()
+        })
+    }
 
-  addManifest() {
-    const dialogRef = this.dialog.open(AddManifestDialog, {
-      data: {remote: ""},
-      autoFocus: "first-tabbable",
-      restoreFocus: true
-    });
+    addManifest() {
+        const dialogRef = this.dialog.open(AddManifestDialog, {
+            data: {remote: ""},
+            autoFocus: "first-tabbable",
+            restoreFocus: true
+        });
 
-    dialogRef.afterClosed().subscribe(remote => {
-      if (remote == "" || remote == undefined)
-        return
+        dialogRef.afterClosed().subscribe(remote => {
+            if (remote == "" || remote == undefined)
+                return
 
-      let url : URL | undefined = undefined
+            let url : URL | undefined = undefined
 
-      try {
-        url = new URL(remote)
-      } catch(error) {
-        this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
-        return
-      }
-
-      let address : Address = {
-        protocol: url.protocol,
-        host: url.hostname,
-        port: +url.port
-      }
-      this.portalAdministrationService.registerMicrofrontend(address).subscribe(result => {
-        if (result.manifest)
-          this.manifests.push(ManifestDecorator.decorate(result.manifest))
-
-        else {
-          switch (result.error) {
-            case "duplicate":
-              this.confirmationDialogs.ok("Add Microfrontend", "already registered")
-              break;
-            case "malformed_url":
-              this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
-              break;
-            case "unreachable":
-              this.confirmationDialogs.ok("Add Microfrontend", "could not fetch manifest metadata")
-              break;
-          }
-        }
-      })
-    });
-  }
-
-  loadManifestFrom(url : string) {
-    try {
-      let asUrl = new URL(url)
-
-      fetch(url + "/assets/manifest.json").then(async (response) => {
-        if (response.ok) {
-          let manifest = await response.json()
-
-          // check for duplicates
-
-          for (let manifest of this.manifests)
-            if (manifest.remoteEntry == url) {
-              this.confirmationDialogs.ok("Remote", "Already registered")
-              return
+            try {
+                url = new URL(remote)
+            } catch(error) {
+                this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+                return
             }
 
+            let address : Address = {
+                protocol: url.protocol,
+                host: url.hostname,
+                port: +url.port
+            }
+            this.portalAdministrationService.registerMicrofrontend(address).subscribe(result => {
+                if (result.manifest)
+                    this.manifests.push(ManifestDecorator.decorate(result.manifest))
 
-          ManifestDecorator.decorate(manifest)
-
-          this.manifests.push(manifest)
-        }
-        else {
-          this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
-        }
-      })
-    } catch(e) {
-      this.confirmationDialogs.ok("Add Remote", "Invalid URL")
-      return
+                else {
+                    switch (result.error) {
+                        case "duplicate":
+                            this.confirmationDialogs.ok("Add Microfrontend", "already registered")
+                            break;
+                        case "malformed_url":
+                            this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+                            break;
+                        case "unreachable":
+                            this.confirmationDialogs.ok("Add Microfrontend", "could not fetch manifest metadata")
+                            break;
+                    }
+                }
+            })
+        });
     }
-  }
 
-  removeManifest(manifest : Manifest) {
-    this.confirmationDialogs.okCancel("Remove Manifest", "Are you sure?").subscribe(result => {
-      if (result) {
-        this.manifests.splice(this.manifests.indexOf(manifest), 1)
+    loadManifestFrom(url : string) {
+        try {
+            let asUrl = new URL(url)
 
-        let url = new URL(manifest.remoteEntry!!)
-        let address : Address = {
-          protocol: url.protocol,
-          host: url.hostname,
-          port: +url.port
+            fetch(url + "/assets/manifest.json").then(async (response) => {
+                if (response.ok) {
+                    let manifest = await response.json()
+
+                    // check for duplicates
+
+                    for (let manifest of this.manifests)
+                        if (manifest.remoteEntry == url) {
+                            this.confirmationDialogs.ok("Remote", "Already registered")
+                            return
+                        }
+
+
+                    ManifestDecorator.decorate(manifest)
+
+                    this.manifests.push(manifest)
+                }
+                else {
+                    this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
+                }
+            })
+        } catch(e) {
+            this.confirmationDialogs.ok("Add Remote", "Invalid URL")
+            return
         }
-        this.portalAdministrationService.removeMicrofrontend(address).subscribe(_ => console.log("ok"))
-      }
-    })
-  }
+    }
 
-  saveManifest(manifest : Manifest) {
-    this.showSnackBar(manifest.name, "Saved")
+    removeManifest(manifest : Manifest) {
+        this.confirmationDialogs.okCancel("Remove Manifest", "Are you sure?").subscribe(result => {
+            if (result) {
+                this.manifests.splice(this.manifests.indexOf(manifest), 1)
 
-    this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
-  }
+                let url = new URL(manifest.remoteEntry!!)
+                let address : Address = {
+                    protocol: url.protocol,
+                    host: url.hostname,
+                    port: +url.port
+                }
+                this.portalAdministrationService.removeMicrofrontend(address).subscribe(_ => console.log("ok"))
+            }
+        })
+    }
 
-  override ngOnInit() {
-    super.ngOnInit()
+    saveManifest(manifest : Manifest) {
+        this.showSnackBar(manifest.name, "Saved")
 
-    this.introspectionService.getManifests().subscribe((manifests) =>
-      this.$manifests.next(this.manifests = this.decorateManifests(manifests))
-    )
-  }
+        this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
+    }
 
-  private decorateManifests(manifests : Manifest[]) : Manifest[] {
-    for (let manifest of manifests)
-      ManifestDecorator.decorate(manifest)
+    override ngOnInit() {
+        super.ngOnInit()
 
-    return manifests
-  }
+        this.introspectionService.getManifests().subscribe((manifests) =>
+            this.$manifests.next(this.manifests = this.decorateManifests(manifests))
+        )
+    }
 
-  // implement OnInit
+    private decorateManifests(manifests : Manifest[]) : Manifest[] {
+        for (let manifest of manifests)
+            ManifestDecorator.decorate(manifest)
 
-  private loadManifests() {
-    this.introspectionService.getManifests().subscribe((manifests) =>
-      this.$manifests.next(this.manifests = this.decorateManifests(manifests))
-    )
-  }
+        return manifests
+    }
+
+    // implement OnInit
+
+    private loadManifests() {
+        this.introspectionService.getManifests().subscribe((manifests) =>
+            this.$manifests.next(this.manifests = this.decorateManifests(manifests))
+        )
+    }
 }

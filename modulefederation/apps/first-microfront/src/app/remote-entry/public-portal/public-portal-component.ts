@@ -1,72 +1,72 @@
 import {
-  AboutDialogService,
-  AbstractFeature,
-  Feature,
-  FeatureData,
-  FeatureRegistry,
-  PortalManager,
-  SessionManager,
-  Ticket
+    AboutDialogService,
+    AbstractFeature,
+    Feature,
+    FeatureData,
+    FeatureRegistry,
+    PortalManager,
+    SessionManager,
+    Ticket
 } from "@modulefederation/portal";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Feature({
-  id: 'public-portal',
-  visibility: ["public"],
-  tags: ["portal"],
-  router: {
-    lazyModule: "PublicPortalModule"
-  }
+    id: 'public-portal',
+    visibility: ["public"],
+    tags: ["portal"],
+    router: {
+        lazyModule: "PublicPortalModule"
+    }
 })
 @Component({
-  selector: 'public-portal',
-  templateUrl: './public-portal-component.html',
-  styleUrls: ["./public-portal-component.scss"]
+    selector: 'public-portal',
+    templateUrl: './public-portal-component.html',
+    styleUrls: ["./public-portal-component.scss"]
 })
 export class PublicPortalComponent extends AbstractFeature implements OnInit {
-  // instance data
+    // instance data
 
-  features : FeatureData[] = []
+    features : FeatureData[] = []
 
-  // constructor
+    // constructor
 
-  constructor(private aboutDialogService : AboutDialogService, private router : Router, private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any,Ticket>, private portalManager : PortalManager) {
-    super();
+    constructor(private aboutDialogService : AboutDialogService, private router : Router, private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>, private portalManager : PortalManager) {
+        super();
 
-    featureRegistry.registry$.subscribe(_ => this.computeNavigation())
-  }
+        featureRegistry.registry$.subscribe(_ => this.computeNavigation())
+    }
 
-  // private
+    // private
 
-  about() {
-    this.aboutDialogService.show()
-  }
+    about() {
+        this.aboutDialogService.show()
+    }
 
-  // public
+    // public
 
-  login() {
-    this.sessionManager.openSession({
-      user: "admin",
-      password: "admin"
-    }).subscribe(
-      (session) => {
-        this.portalManager.loadDeployment(true).then(result =>
-          this.router.navigate([this.router.url]) // TODO
-        )
-      },
-      (error) => {
-        console.log("ouch")
-      })
-  }
+    login() {
+        this.sessionManager.openSession({
+            user: "admin",
+            password: "admin"
+        }).subscribe(
+            (session) => {
+                this.portalManager.loadDeployment(true).then(result =>
+                    this.router.navigate([this.router.url]) // TODO
+                )
+            },
+            (error) => {
+                console.log("ouch")
+            })
+    }
 
-  ngOnInit() : void {
-    this.computeNavigation()
-  }
+    ngOnInit() : void {
+        this.computeNavigation()
+    }
 
-  // implement OnInit
+    // implement OnInit
 
-  private computeNavigation() {
-    this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
-  }
+    private computeNavigation() {
+        this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
+    }
 }

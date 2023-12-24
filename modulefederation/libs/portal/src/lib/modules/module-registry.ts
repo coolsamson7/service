@@ -10,50 +10,50 @@ import { ModuleMetadata } from './module.interface';
  */
 @Injectable({providedIn: 'root'})
 export class ModuleRegistry {
-  // instance data
+    // instance data
 
-  /**
-   * the map of module meta-data
-   */
-  modules : { [name : string] : ModuleMetadata } = {}
+    /**
+     * the map of module meta-data
+     */
+    modules : { [name : string] : ModuleMetadata } = {}
 
-  // constructor
+    // constructor
 
-  /**
-   * create a new {@link ModuleRegistry}
-   */
-  constructor() {
-    ;(window as any)["modules"] = () => {
-      this.report()
+    /**
+     * create a new {@link ModuleRegistry}
+     */
+    constructor() {
+        ;(window as any)["modules"] = () => {
+            this.report()
+        }
     }
-  }
 
-  // public
+    // public
 
-  report() {
-    console.table(this.modules, ["name", "type", "version", "isLoaded"])
-  }
+    report() {
+        console.table(this.modules, ["name", "type", "version", "isLoaded"])
+    }
 
-  /**
-   * register module metadata
-   * @param metadata meta data
-   */
-  register(metadata : ModuleMetadata) {
-    // leave registered modules as is ( in case of a redeployment )
-    if (!this.modules[metadata.name])
-      this.modules[metadata.name] = metadata
-  }
+    /**
+     * register module metadata
+     * @param metadata meta data
+     */
+    register(metadata : ModuleMetadata) {
+        // leave registered modules as is ( in case of a redeployment )
+        if (!this.modules[metadata.name])
+            this.modules[metadata.name] = metadata
+    }
 
-  /**
-   * mark the specified module as loaded
-   * @param metadata the module meta-data
-   */
-  markAsLoaded(metadata : ModuleMetadata) {
-    metadata.isLoaded = true
+    /**
+     * mark the specified module as loaded
+     * @param metadata the module meta-data
+     */
+    markAsLoaded(metadata : ModuleMetadata) {
+        metadata.isLoaded = true
 
-    if (!this.modules[metadata.name])
-      this.register(metadata)
-    else
-      this.modules[metadata.name].isLoaded = true
-  }
+        if (!this.modules[metadata.name])
+            this.register(metadata)
+        else
+            this.modules[metadata.name].isLoaded = true
+    }
 }

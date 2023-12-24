@@ -1,98 +1,102 @@
 <div class="method">
-  <h3>Parameters</h3>
+    <h3>Parameters</h3>
 
-  <form #form="ngForm" class="parameter">
-    <!--query-parameter [form]="form" *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter-->
+    <form #form="ngForm" class="parameter">
+        <!--query-parameter [form]="form" *ngFor="let param of query.params" [model]="model" [parameter]="param" (changed)="onChange()"></query-parameter-->
 
-    <ng-container *ngFor="let param of query.params">
-      <!-- string -->
+        <ng-container *ngFor="let param of query.params">
+            <!-- string -->
 
-      <mat-form-field *ngIf="inputType4(param.type) == 'string'">
-        <mat-label>{{param.name}}</mat-label>
-        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param"
-               matInput
-               name="{{param.name}}" required type="text"/>
-        <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
-      </mat-form-field>
+            <mat-form-field *ngIf="inputType4(param.type) == 'string'">
+                <mat-label>{{param.name}}</mat-label>
+                <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                       [validateParameter]="param"
+                       matInput
+                       name="{{param.name}}" required type="text"/>
+                <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+            </mat-form-field>
 
-      <!-- number -->
+            <!-- number -->
 
-      <mat-form-field *ngIf="inputType4(param.type) == 'number'">
-        <mat-label>{{param.name}}</mat-label>
-        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [validateParameter]="param"
-               matInput
-               name="{{param.name}}" required type="number"/>
-        <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
-      </mat-form-field>
+            <mat-form-field *ngIf="inputType4(param.type) == 'number'">
+                <mat-label>{{param.name}}</mat-label>
+                <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                       [validateParameter]="param"
+                       matInput
+                       name="{{param.name}}" required type="number"/>
+                <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+            </mat-form-field>
 
-      <!-- boolean -->
+            <!-- boolean -->
 
-      <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
-        <mat-label>{{param.name}}</mat-label>
-        <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" name="{{param.name}}"
-                    name="{{param.name}}" required>
-          <mat-option [value]="false">False</mat-option>
-          <mat-option [value]="true">True</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
-      </mat-form-field>
+            <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
+                <mat-label>{{param.name}}</mat-label>
+                <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                            name="{{param.name}}"
+                            name="{{param.name}}" required>
+                    <mat-option [value]="false">False</mat-option>
+                    <mat-option [value]="true">True</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+            </mat-form-field>
 
-      <!-- enum -->
+            <!-- enum -->
 
-      <mat-form-field *ngIf="inputType4(param.type) == 'enum'">
-        <mat-label>{{param.name}}</mat-label>
-        <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" name="{{param.name}}"
-                    name="{{param.name}}" required>
-          <mat-option *ngFor="let value of enumValues(param.type)" [value]="value">{{value}}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
-      </mat-form-field>
+            <mat-form-field *ngIf="inputType4(param.type) == 'enum'">
+                <mat-label>{{param.name}}</mat-label>
+                <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                            name="{{param.name}}"
+                            name="{{param.name}}" required>
+                    <mat-option *ngFor="let value of enumValues(param.type)" [value]="value">{{value}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error>
+            </mat-form-field>
 
-      <!-- date -->
+            <!-- date -->
 
-      <mat-form-field *ngIf="inputType4(param.type) == 'date'">
-        <mat-label>>{{param.name}}</mat-label>
-        <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [matDatepicker]="picker"
-               matInput name="{{param.name}}">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle [for]="picker" matIconSuffix></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+            <mat-form-field *ngIf="inputType4(param.type) == 'date'">
+                <mat-label>>{{param.name}}</mat-label>
+                <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [matDatepicker]="picker"
+                       matInput name="{{param.name}}">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle [for]="picker" matIconSuffix></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
 
-      <!-- json -->
+            <!-- json -->
 
-      <div *ngIf="inputType4(param.type) == 'json'">
-        <monaco-editor (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
-                       [model]="paramModel(param)"
-                       [options]="{}" name="{{param.name}}"></monaco-editor>
-        <div *ngIf="form.touched && isError(param.name)" class="error">{{errorMessage(param.name)}}</div>
-      </div>
-    </ng-container>
-  </form>
+            <div *ngIf="inputType4(param.type) == 'json'">
+                <monaco-editor (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
+                               [model]="paramModel(param)"
+                               [options]="{}" name="{{param.name}}"></monaco-editor>
+                <div *ngIf="form.touched && isError(param.name)" class="error">{{errorMessage(param.name)}}</div>
+            </div>
+        </ng-container>
+    </form>
 
-  <h3>Query</h3>
+    <h3>Query</h3>
 
-  <div class="query">
-    <!-- [disabled]="!form.valid" -->
-    <button (click)="execute()" class="play" mat-icon-button>
-      <mat-icon class="icon">play_arrow</mat-icon>
-    </button>
+    <div class="query">
+        <!-- [disabled]="!form.valid" -->
+        <button (click)="execute()" class="play" mat-icon-button>
+            <mat-icon class="icon">play_arrow</mat-icon>
+        </button>
 
-    <div class="query-parameter">
-      <div class="url">
-        <span class="http-method">{{query.method}}</span>
-        <span>{{executedURL}}</span>
-      </div>
+        <div class="query-parameter">
+            <div class="url">
+                <span class="http-method">{{query.method}}</span>
+                <span>{{executedURL}}</span>
+            </div>
 
-      <div *ngIf="query.method == 'post'" class="body">
-        <monaco-editor [(ngModel)]="body.value" [id]="'body_value'" [model]="resultModel" [options]="{}"
-                       name="body_value"></monaco-editor>
-      </div>
+            <div *ngIf="query.method == 'post'" class="body">
+                <monaco-editor [(ngModel)]="body.value" [id]="'body_value'" [model]="resultModel" [options]="{}"
+                               name="body_value"></monaco-editor>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <h3>Result</h3>
+    <h3>Result</h3>
 
-  <monaco-editor [(ngModel)]="result" [id]="'result'" [model]="resultModel" [options]="{}"
-                 name="result"></monaco-editor>
+    <monaco-editor [(ngModel)]="result" [id]="'result'" [model]="resultModel" [options]="{}"
+                   name="result"></monaco-editor>
 </div>

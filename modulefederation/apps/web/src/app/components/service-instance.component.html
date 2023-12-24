@@ -2,27 +2,27 @@
 <hr>
 
 <div class="service-instance">
-  <mat-label>Host</mat-label>
-  <div>{{instance.host}}</div>
-  <mat-label>Port</mat-label>
-  <div>{{instance.port}}</div>
-  <mat-label>ID</mat-label>
-  <div>{{instance.instanceId}}</div>
-  <mat-label>Channels</mat-label>
-  <div class="channels">
-    <ng-container *ngFor="let channel of channels">
-      <div class="channel-name">{{channel.name}}</div>
-      <div class="channel-uri">{{channel.uri}}</div>
-    </ng-container>
-  </div>
+    <mat-label>Host</mat-label>
+    <div>{{instance.host}}</div>
+    <mat-label>Port</mat-label>
+    <div>{{instance.port}}</div>
+    <mat-label>ID</mat-label>
+    <div>{{instance.instanceId}}</div>
+    <mat-label>Channels</mat-label>
+    <div class="channels">
+        <ng-container *ngFor="let channel of channels">
+            <div class="channel-name">{{channel.name}}</div>
+            <div class="channel-uri">{{channel.uri}}</div>
+        </ng-container>
+    </div>
 
 
-  <mat-label>Health</mat-label>
+    <mat-label>Health</mat-label>
 
-  <div>
-    <mat-icon *ngIf="health == 'PASSING'" class="ok">check_circle</mat-icon>
-    <mat-icon *ngIf="health != 'PASSING'" class="nok">bug_report</mat-icon>
+    <div>
+        <mat-icon *ngIf="health == 'PASSING'" class="ok">check_circle</mat-icon>
+        <mat-icon *ngIf="health != 'PASSING'" class="nok">bug_report</mat-icon>
 
-    <div>{{health}}</div>
-  </div>
+        <div>{{health}}</div>
+    </div>
 </div>

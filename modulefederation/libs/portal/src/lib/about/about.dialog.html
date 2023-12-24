@@ -1,35 +1,35 @@
 <h1 mat-dialog-title>About</h1>
 <div mat-dialog-content>
-  <table [dataSource]="dataSource" class="table" mat-table>
+    <table [dataSource]="dataSource" class="table" mat-table>
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
 
-    <!-- name -->
+        <!-- name -->
 
-    <ng-container matColumnDef="name">
-      <th *matHeaderCellDef mat-header-cell>Name</th>
-      <td *matCellDef="let module" mat-cell> {{module.name}} </td>
-    </ng-container>
+        <ng-container matColumnDef="name">
+            <th *matHeaderCellDef mat-header-cell>Name</th>
+            <td *matCellDef="let module" mat-cell> {{module.name}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="type">
-      <th *matHeaderCellDef mat-header-cell>Type</th>
-      <td *matCellDef="let module" mat-cell> {{module.type}} </td>
-    </ng-container>
+        <ng-container matColumnDef="type">
+            <th *matHeaderCellDef mat-header-cell>Type</th>
+            <td *matCellDef="let module" mat-cell> {{module.type}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="version">
-      <th *matHeaderCellDef mat-header-cell>Version</th>
-      <td *matCellDef="let module" mat-cell> {{module.version}} </td>
-    </ng-container>
+        <ng-container matColumnDef="version">
+            <th *matHeaderCellDef mat-header-cell>Version</th>
+            <td *matCellDef="let module" mat-cell> {{module.version}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="isLoaded">
-      <th *matHeaderCellDef mat-header-cell>Loaded</th>
-      <td *matCellDef="let module" mat-cell> {{module.isLoaded}} </td>
-    </ng-container>
+        <ng-container matColumnDef="isLoaded">
+            <th *matHeaderCellDef mat-header-cell>Loaded</th>
+            <td *matCellDef="let module" mat-cell> {{module.isLoaded}} </td>
+        </ng-container>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-  </table>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
 </div>
 
 

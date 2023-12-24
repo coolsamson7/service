@@ -4,25 +4,26 @@ import { take } from "rxjs";
 import { FeatureRegistry } from "@modulefederation/portal";
 
 @Component({
-  selector: 'page-not-found',
-  templateUrl: './page-not-found-components.html',
-  //styleUrls: ['./page-not-found-components.scss'],
+    selector: 'page-not-found',
+    templateUrl: './page-not-found-components.html',
+    //styleUrls: ['./page-not-found-components.scss'],
 })
 export class PageNotFoundComponent {
-  // instance data
+    // instance data
 
-  path: string = "ouch";
+    path : string = "ouch";
 
-  // constructor
+    // constructor
 
-  constructor(private route: ActivatedRoute, private featureRegistry: FeatureRegistry) {}
+    constructor(private route : ActivatedRoute, private featureRegistry : FeatureRegistry) {
+    }
 
-  ngOnInit() {
-   this.route.data.pipe(take(1))
-      .subscribe(data => {
-        console.log(data)
-        this.path = data['path']
-      });
-  }
+    ngOnInit() {
+        this.route.data.pipe(take(1))
+            .subscribe(data => {
+                console.log(data)
+                this.path = data['path']
+            });
+    }
 
 }

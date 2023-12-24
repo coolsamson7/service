@@ -1,41 +1,41 @@
 import { Component, OnInit } from "@angular/core";
 
 export interface RouteElement {
-  label : String
-  route : string
+    label : String
+    route : string
 }
 
 @Component({
-  selector: 'navigation-component',
-  template: '<div></div>',
-  // styleUrls: ['./navigation-breadcrumb.component.scss'],
+    selector: 'navigation-component',
+    template: '<div></div>',
+    // styleUrls: ['./navigation-breadcrumb.component.scss'],
 })
 export class NavigationComponent implements OnInit {
-  // instance data
+    // instance data
 
-  public routes : RouteElement[] = []
+    public routes : RouteElement[] = []
 
-  // constructor
+    // constructor
 
-  constructor() {
-  }
+    constructor() {
+    }
 
-  // public
+    // public
 
-  topRouteElement() : RouteElement {
-    return this.routes[this.routes.length - 1];
-  }
+    topRouteElement() : RouteElement {
+        return this.routes[this.routes.length - 1];
+    }
 
-  pushRouteElement(route : RouteElement) {
-    this.routes.push(route);
-  }
+    pushRouteElement(route : RouteElement) {
+        this.routes.push(route);
+    }
 
-  popRouteElement(route : RouteElement) {
-    this.routes.splice(this.routes.indexOf(route, 0), 1);
-  }
+    popRouteElement(route : RouteElement) {
+        this.routes.splice(this.routes.indexOf(route, 0), 1);
+    }
 
-  // implement OnInit
+    // implement OnInit
 
-  ngOnInit() : void {
-  }
+    ngOnInit() : void {
+    }
 }

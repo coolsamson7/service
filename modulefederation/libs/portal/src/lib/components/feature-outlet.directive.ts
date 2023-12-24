@@ -1,106 +1,106 @@
 import {
-  Component,
-  ComponentRef,
-  Directive,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-  ViewContainerRef
+    Component,
+    ComponentRef,
+    Directive,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+    ViewContainerRef
 } from '@angular/core';
 import { FeatureRegistry } from '../feature-registry';
 import { FeatureData } from "../portal-manager";
 
 @Component({
-  selector: 'unknown-feature',
-  template: '<div>Unknown Feature {{feature}}</div>'
+    selector: 'unknown-feature',
+    template: '<div>Unknown Feature {{feature}}</div>'
 })
 export class UnknownFeatureComponent {
-  feature : string = ""
+    feature : string = ""
 }
 
 /**
  * this directive is able to render the specified feature in the surrounding container
  */
 @Directive({
-  selector: 'feature-outlet'
+    selector: 'feature-outlet'
 })
 export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
-  // inputs & outputs
+    // inputs & outputs
 
-  /**
-   * the feature id
-   */
-  @Input() feature : string = ""
+    /**
+     * the feature id
+     */
+    @Input() feature : string = ""
 
-  // instance data
+    // instance data
 
-  featureData : FeatureData | undefined
-  component? : ComponentRef<any> = undefined
+    featureData : FeatureData | undefined
+    component? : ComponentRef<any> = undefined
 
-  // constructor
+    // constructor
 
-  constructor(private featureRegistry : FeatureRegistry, private container : ViewContainerRef) {
-  }
-
-  // private
-
-  ngOnChanges(changes : SimpleChanges) : void {
-    if (changes['feature'] && !changes['feature'].isFirstChange())
-      this.setFeature(this.feature)
-  }
-
-  // implement OnChanges
-
-  ngOnInit() {
-    this.setFeature(this.feature)
-  }
-
-  // implement OnInit
-
-  ngOnDestroy() {
-    this.component?.destroy();
-    this.container.clear();
-  }
-
-  private setFeature(feature : string) {
-    // clear previous component
-
-    if (this.component) {
-      this.component?.destroy();
-      this.container.clear();
+    constructor(private featureRegistry : FeatureRegistry, private container : ViewContainerRef) {
     }
 
-    this.featureData = this.featureRegistry.findFeature(feature)
+    // private
 
-    if (this.featureData)
-      this.load()
-    else {
-      this.component = this.container.createComponent(UnknownFeatureComponent);
-      this.component.instance.feature = feature
-    }
-  }
-
-  // implement OnDestroy
-
-  private async load() {
-    // local function
-    let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
-      while (feature) {
-        if (feature.load)
-          return feature
-        else
-          feature = feature.$parent
-      }
-
-      return undefined
+    ngOnChanges(changes : SimpleChanges) : void {
+        if (changes['feature'] && !changes['feature'].isFirstChange())
+            this.setFeature(this.feature)
     }
 
-    let next : FeatureData | undefined
-    while ((next = nextLoader(this.featureData)) != undefined)
-      await next.load!!() // will set load to undefined in registerLazyRoutes
+    // implement OnChanges
 
-    this.component = this.container.createComponent(this.featureData?.ngComponent);
-  }
+    ngOnInit() {
+        this.setFeature(this.feature)
+    }
+
+    // implement OnInit
+
+    ngOnDestroy() {
+        this.component?.destroy();
+        this.container.clear();
+    }
+
+    private setFeature(feature : string) {
+        // clear previous component
+
+        if (this.component) {
+            this.component?.destroy();
+            this.container.clear();
+        }
+
+        this.featureData = this.featureRegistry.findFeature(feature)
+
+        if (this.featureData)
+            this.load()
+        else {
+            this.component = this.container.createComponent(UnknownFeatureComponent);
+            this.component.instance.feature = feature
+        }
+    }
+
+    // implement OnDestroy
+
+    private async load() {
+        // local function
+        let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
+            while (feature) {
+                if (feature.load)
+                    return feature
+                else
+                    feature = feature.$parent
+            }
+
+            return undefined
+        }
+
+        let next : FeatureData | undefined
+        while ((next = nextLoader(this.featureData)) != undefined)
+            await next.load!!() // will set load to undefined in registerLazyRoutes
+
+        this.component = this.container.createComponent(this.featureData?.ngComponent);
+    }
 }

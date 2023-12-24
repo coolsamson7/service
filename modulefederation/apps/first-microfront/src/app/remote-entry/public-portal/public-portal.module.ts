@@ -8,19 +8,19 @@ import { RouterLink, RouterOutlet } from "@angular/router";
 import { PublicPortalRouterModule } from "./public-portal-router.module";
 
 @NgModule({
-  declarations: [PublicPortalComponent],
-  imports: [
-    CommonModule,
-    PortalModule,
-    MatToolbarModule,
-    MatButtonModule,
+    declarations: [PublicPortalComponent],
+    imports: [
+        CommonModule,
+        PortalModule,
+        MatToolbarModule,
+        MatButtonModule,
 
-    RouterOutlet,
-    RouterLink,
+        RouterOutlet,
+        RouterLink,
 
-    PublicPortalRouterModule
-  ],
-  providers: [],
+        PublicPortalRouterModule
+    ],
+    providers: [],
 })
 export class PublicPortalModule {
 }

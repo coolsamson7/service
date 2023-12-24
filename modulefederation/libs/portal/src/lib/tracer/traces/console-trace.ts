@@ -6,18 +6,18 @@ import { TraceFormatter } from '../trace-formatter';
  * A <code>ConsoleTrace</code> will emit trace entries to the console.
  */
 export class ConsoleTrace extends Trace {
-  // constructor
+    // constructor
 
-  constructor(messageFormat : string) {
-    super(new TraceFormatter(messageFormat));
-  }
+    constructor(messageFormat : string) {
+        super(new TraceFormatter(messageFormat));
+    }
 
-  // implement Trace
+    // implement Trace
 
-  /**
-   * @inheritdoc
-   */
-  trace(entry : TraceEntry) : void {
-    console.log(this.format(entry));
-  }
+    /**
+     * @inheritdoc
+     */
+    trace(entry : TraceEntry) : void {
+        console.log(this.format(entry));
+    }
 }

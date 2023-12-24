@@ -12,20 +12,20 @@ import { NodesComponent } from "./nodes.component";
 import { NavigationBreadcrumbComponent } from "./navigation-breadcrumb.component";
 
 @NgModule({
-  declarations: [
-    NodesComponent,
-    NodeDetailsComponent,
-    NavigationBreadcrumbComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatListModule,
-    MatTabsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatIconModule
-  ]
+    declarations: [
+        NodesComponent,
+        NodeDetailsComponent,
+        NavigationBreadcrumbComponent
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatListModule,
+        MatTabsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatIconModule
+    ]
 })
 export class NodesModule {
 }

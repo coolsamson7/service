@@ -13,31 +13,31 @@ import { RegistryResult } from "../model/registry-result.interface";
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration/"})
 export class PortalAdministrationService extends AbstractHTTPService {
-  // constructor
+    // constructor
 
-  constructor(injector : Injector) {
-    super(injector)
-  }
+    constructor(injector : Injector) {
+        super(injector)
+    }
 
 
-  // public methods
-  public registerMicrofrontend(url : Address) : Observable<RegistryResult> {
-    return this.post<RegistryResult>(`register-microfrontend`, url)
-  }
+    // public methods
+    public registerMicrofrontend(url : Address) : Observable<RegistryResult> {
+        return this.post<RegistryResult>(`register-microfrontend`, url)
+    }
 
-  public removeMicrofrontend(url : Address) : Observable<any> {
-    return this.post<any>('remove-microfrontend', url)
-  }
+    public removeMicrofrontend(url : Address) : Observable<any> {
+        return this.post<any>('remove-microfrontend', url)
+    }
 
-  public saveManifest(manifest : Manifest) : Observable<Manifest> {
-    return this.post<Manifest>(`save-manifest`, manifest)
-  }
+    public saveManifest(manifest : Manifest) : Observable<Manifest> {
+        return this.post<Manifest>(`save-manifest`, manifest)
+    }
 
-  public enableMicrofrontend(name : string, enabled : boolean) : Observable<Manifest> {
-    return this.get<any>(`enable-microfrontend/${name}/${enabled}`)
-  }
+    public enableMicrofrontend(name : string, enabled : boolean) : Observable<Manifest> {
+        return this.get<any>(`enable-microfrontend/${name}/${enabled}`)
+    }
 
-  public refresh() : Observable<any> {
-    return this.get<any>(`refresh`)
-  }
+    public refresh() : Observable<any> {
+        return this.get<any>(`refresh`)
+    }
 }

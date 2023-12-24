@@ -1,5 +1,5 @@
 export interface Address {
-  protocol : string,
-  host : string,
-  port : number
+    protocol : string,
+    host : string,
+    port : number
 }

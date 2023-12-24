@@ -1,8 +1,23 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { fadeInOut } from './helper';
-import { INavbarData } from './feature-navigation.model';
+import { NavigationItem } from './feature-navigation.model';
+
+const fadeInOut = trigger('fadeInOut', [
+    transition(':enter', [
+        style({opacity: 0}),
+        animate('350ms',
+            style({opacity: 1})
+        )
+    ]),
+    transition(':leave', [
+        style({opacity: 1}),
+        animate('350ms',
+            style({opacity: 0})
+        )
+    ])
+])
+
 
 @Component({
     selector: 'sublevel-menu',
@@ -27,7 +42,7 @@ import { INavbarData } from './feature-navigation.model';
 export class SublevelMenuComponent {
     // inout & output
 
-    @Input() data : INavbarData = {
+    @Input() data : NavigationItem = {
         routeLink: '',
         icon: '',
         label: '',
@@ -59,7 +74,7 @@ export class SublevelMenuComponent {
         item.expanded = !item.expanded;
     }
 
-    getActiveClass(item : INavbarData) : string {
+    getActiveClass(item : NavigationItem) : string {
         return item.expanded && this.router.url.includes(item.routeLink)
             ? 'active-sublevel'
             : '';

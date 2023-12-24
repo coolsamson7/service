@@ -1,25 +1,25 @@
 <div class="annotation">
-  <span class="name">@{{name()}}</span>
-  <!-- one parameter -->
+    <span class="name">@{{name()}}</span>
+    <!-- one parameter -->
 
-  <span *ngIf="annotation.parameters.length == 1">
+    <span *ngIf="annotation.parameters.length == 1">
         &#40;
-    <!-- value -->
+        <!-- value -->
         <span *ngIf="annotation.parameters[0].name == 'value'" class="parameter"><literal
-          [value]="annotation.parameters[0].value"/></span>
-    <!-- other properties-->
+                [value]="annotation.parameters[0].value"/></span>
+        <!-- other properties-->
         <span *ngIf="annotation.parameters[0].name != 'value'" class="parameter">{{annotation.parameters[0].name}}=<literal
-          [value]="annotation.parameters[0].value"/></span>
+                [value]="annotation.parameters[0].value"/></span>
         &#41;
     </span>
 
-  <!-- n parameter -->
+    <!-- n parameter -->
 
-  <span *ngIf=" annotation.parameters.length > 1">
+    <span *ngIf=" annotation.parameters.length > 1">
         &#40;
         <ng-container *ngFor="let parameter of annotation.parameters; let i = index" class="parameter">
             <span *ngIf="i > 0">, </span>
-          {{parameter.name}}=
+            {{parameter.name}}=
             <span *ngIf="!isArray(parameter.value)">
                 <literal *ngIf="!isAnnotation(parameter.value)" [value]="parameter.value"/>
                 <annotation *ngIf="isAnnotation(parameter.value)" [annotation]="parameter.value"/>

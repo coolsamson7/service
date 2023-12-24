@@ -8,19 +8,19 @@ import { RouterLink, RouterOutlet } from "@angular/router";
 import { PrivatePortalRouterModule } from "./private-portal-router.module";
 
 @NgModule({
-  declarations: [PrivatePortalComponent],
-  imports: [
-    CommonModule,
-    PortalModule,
-    MatToolbarModule,
-    MatButtonModule,
+    declarations: [PrivatePortalComponent],
+    imports: [
+        CommonModule,
+        PortalModule,
+        MatToolbarModule,
+        MatButtonModule,
 
-    RouterOutlet,
-    RouterLink,
+        RouterOutlet,
+        RouterLink,
 
-    PrivatePortalRouterModule
-  ],
-  providers: [],
+        PrivatePortalRouterModule
+    ],
+    providers: [],
 })
 export class PrivatePortalModule {
 }

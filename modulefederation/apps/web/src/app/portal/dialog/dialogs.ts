@@ -4,161 +4,161 @@ import { ConfirmationDialog } from "./confirmation-dialog";
 import { Observable } from "rxjs";
 
 export interface ButtonConfiguration {
-  label : string,
-  result : any,
-  primary? : boolean
+    label : string,
+    result : any,
+    primary? : boolean
 }
 
 export class ConfirmationDialogBuilder {
-  // instance data
+    // instance data
 
-  configuration = {
-    type: "info",
-    title: "",
-    message: "",
-    buttons: []
-  }
+    configuration = {
+        type: "info",
+        title: "",
+        message: "",
+        buttons: []
+    }
 
-  // constructor
+    // constructor
 
-  constructor(private dialog : MatDialog) {
-  }
+    constructor(private dialog : MatDialog) {
+    }
 
-  // fluent
+    // fluent
 
-  /**
-   * set the dialog type
-   * @param type the type
-   */
-  type(type : "info" | "warning" | "error") : ConfirmationDialogBuilder {
-    this.configuration.type = type;
+    /**
+     * set the dialog type
+     * @param type the type
+     */
+    type(type : "info" | "warning" | "error") : ConfirmationDialogBuilder {
+        this.configuration.type = type;
 
-    return this;
-  }
+        return this;
+    }
 
-  /**
-   * set the dialog title
-   * @param title the title
-   */
-  title(title : string) : ConfirmationDialogBuilder {
-    this.configuration.title = title;
+    /**
+     * set the dialog title
+     * @param title the title
+     */
+    title(title : string) : ConfirmationDialogBuilder {
+        this.configuration.title = title;
 
-    return this;
-  }
+        return this;
+    }
 
-  /**
-   * set the dialog message
-   * @param message the message
-   */
-  message(message : string) : ConfirmationDialogBuilder {
-    this.configuration.message = message;
+    /**
+     * set the dialog message
+     * @param message the message
+     */
+    message(message : string) : ConfirmationDialogBuilder {
+        this.configuration.message = message;
 
-    return this;
-  }
+        return this;
+    }
 
-  /**
-   * add a button
-   * @param button the {@link ButtonConfiguration}
-   */
-  button(button : ButtonConfiguration) : ConfirmationDialogBuilder {
-    // @ts-ignore
-    this.configuration.buttons.push(button);
+    /**
+     * add a button
+     * @param button the {@link ButtonConfiguration}
+     */
+    button(button : ButtonConfiguration) : ConfirmationDialogBuilder {
+        // @ts-ignore
+        this.configuration.buttons.push(button);
 
-    return this;
-  }
+        return this;
+    }
 
-  // convenience
+    // convenience
 
-  /**
-   * add "ok"
-   */
-  public ok() : ConfirmationDialogBuilder {
-    return this
-      .button({
-        label: "Ok",
-        result: true
-      })
-  }
+    /**
+     * add "ok"
+     */
+    public ok() : ConfirmationDialogBuilder {
+        return this
+            .button({
+                label: "Ok",
+                result: true
+            })
+    }
 
-  /**
-   * add "ok" and "cancel" buttons
-   */
-  public okCancel() : ConfirmationDialogBuilder {
-    return this
-      .button({
-        label: "Ok",
-        result: true
-      })
-      .button({
-        label: "Cancel",
-        result: undefined
-      });
-  }
+    /**
+     * add "ok" and "cancel" buttons
+     */
+    public okCancel() : ConfirmationDialogBuilder {
+        return this
+            .button({
+                label: "Ok",
+                result: true
+            })
+            .button({
+                label: "Cancel",
+                result: undefined
+            });
+    }
 
-  // show
+    // show
 
-  /**
-   * show the dialog and return the button value
-   */
-  show() : Observable<any> {
-    const dialogRef = this.dialog.open(ConfirmationDialog, {
-      data: this.configuration
-    });
+    /**
+     * show the dialog and return the button value
+     */
+    show() : Observable<any> {
+        const dialogRef = this.dialog.open(ConfirmationDialog, {
+            data: this.configuration
+        });
 
-    return dialogRef.afterClosed()
-  }
+        return dialogRef.afterClosed()
+    }
 }
 
 @Injectable({providedIn: 'root'})
 export class Dialogs {
-  // constructor
+    // constructor
 
-  constructor(private dialog : MatDialog) {
-  }
+    constructor(private dialog : MatDialog) {
+    }
 
-  // public
+    // public
 
-  confirmationDialog() : ConfirmationDialogBuilder {
-    return new ConfirmationDialogBuilder(this.dialog)
-  }
+    confirmationDialog() : ConfirmationDialogBuilder {
+        return new ConfirmationDialogBuilder(this.dialog)
+    }
 
-  ok(title : string, message : string) : Observable<boolean> {
-    const dialogRef = this.dialog.open(ConfirmationDialog, {
-      data: {
-        title: title,
-        message: message,
-        buttons: [
-          {
-            label: "Ok",
-            result: true,
-            primary: true
-          }
-        ]
-      }
-    });
+    ok(title : string, message : string) : Observable<boolean> {
+        const dialogRef = this.dialog.open(ConfirmationDialog, {
+            data: {
+                title: title,
+                message: message,
+                buttons: [
+                    {
+                        label: "Ok",
+                        result: true,
+                        primary: true
+                    }
+                ]
+            }
+        });
 
-    return dialogRef.afterClosed()
-  }
+        return dialogRef.afterClosed()
+    }
 
-  okCancel(title : string, question : string) : Observable<boolean> {
-    const dialogRef = this.dialog.open(ConfirmationDialog, {
-      data: {
-        title: title,
-        message: question,
-        buttons: [
-          {
-            label: "Cancel",
-            result: false
-          },
-          {
-            label: "Ok",
-            result: true,
-            primary: true
-          },
-        ]
-      }
-    });
+    okCancel(title : string, question : string) : Observable<boolean> {
+        const dialogRef = this.dialog.open(ConfirmationDialog, {
+            data: {
+                title: title,
+                message: question,
+                buttons: [
+                    {
+                        label: "Cancel",
+                        result: false
+                    },
+                    {
+                        label: "Ok",
+                        result: true,
+                        primary: true
+                    },
+                ]
+            }
+        });
 
-    return dialogRef.afterClosed()
-  }
+        return dialogRef.afterClosed()
+    }
 }
