@@ -19,7 +19,7 @@ import {
     EnvironmentModule,
     HTTPErrorInterceptor,
     Manifest,
-    OIDCAuthentication,
+    OIDCAuthentication, OIDCModule, OIDCModuleConfig,
     OIDCSessionManager,
     PortalComponentsModule,
     PortalModule,
@@ -36,6 +36,7 @@ import { Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
+import { authConfig } from './auth.config';
 
 
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -94,6 +95,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
                 route.canDeactivate = [CanDeactivateGuard]
             }
+        }),
+
+        OIDCModule.forRoot({
+            authConfig: authConfig
         }),
 
         SecurityModule.forRoot({
