@@ -20,12 +20,16 @@ import { fadeInOut, INavbarData } from './helper';
             *ngIf="item.items && item.items.length > 0"
             [ngClass]="getActiveClass(item)"
           >
-            <i class="sublevel-link-icon fa fa-circle"></i>
+            <!--i class="sublevel-link-icon fa fa-circle"></i-->
+              <mat-icon class="sublevel-link-icon">lens</mat-icon>
             <span class="sublevel-link-text" @fadeInOut
                 *ngIf="collapsed">{{item.label}}</span>
-            <i *ngIf="item.items && collapsed" class="menu-collapse-icon"
+            <!--i *ngIf="item.items && collapsed" class="menu-collapse-icon"
               [ngClass]="!item.expanded ? 'fal fa-angle-right' : 'fal fa-angle-down'"
-            ></i>
+            ></i-->
+              <mat-icon *ngIf="item.items && collapsed" class="menu-collapse-icon">
+                  {{item.expanded ? 'expand_less' : 'expand_more'}}
+              </mat-icon>
           </a>
           <a class="sublevel-nav-link"
             *ngIf="!item.items || (item.items && item.items.length === 0)"
@@ -33,7 +37,8 @@ import { fadeInOut, INavbarData } from './helper';
             routerLinkActive="active-sublevel"
             [routerLinkActiveOptions]="{exact: true}"
           >
-            <i class="sublevel-link-icon fa fa-circle"></i>
+            <!--i class="sublevel-link-icon fa fa-circle"></i-->
+              <mat-icon class="sublevel-link-icon">lens</mat-icon>
             <span class="sublevel-link-text" @fadeInOut
                *ngIf="collapsed">{{item.label}}</span>
           </a>
