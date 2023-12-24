@@ -4,4 +4,5 @@ export interface NavigationItem {
     label : string;
     expanded? : boolean;
     items? : NavigationItem[];
+    visible? : boolean
 }

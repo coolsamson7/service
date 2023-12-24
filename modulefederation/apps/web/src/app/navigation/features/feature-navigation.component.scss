@@ -139,11 +139,16 @@
       border-radius: 0.625rem;
       transition: all .3s ease;
 
+      mat-icon {
+        width: unset;
+        height: unset;
+      }
+
       .sublevel-link-icon {
-        font-size: 4px;
-        width: 2rem;
-        min-width: 2rem;
-        margin: 0 0.5rem;
+        font-size: 8px;
+        //width: 2rem;
+        //min-width: 2rem;
+        //margin: 0 0.5rem;
         text-align: center;
       }
 

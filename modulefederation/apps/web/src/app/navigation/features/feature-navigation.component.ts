@@ -3,11 +3,6 @@ import { Router } from '@angular/router';
 import { FeatureData, FeatureRegistry, FolderData } from "@modulefederation/portal";
 import { NavigationItem } from './feature-navigation.model';
 
-export interface SideNavToggle {
-    screenWidth : number;
-    collapsed : boolean;
-}
-
 @Component({
     selector: 'feature-navigation',
     templateUrl: './feature-navigation.component.html',
@@ -45,27 +40,36 @@ export class FeatureNavigationComponent implements OnInit {
                 items: []
             }
 
-            // add to parent
-
-            if (parent)
-                parent.items!!.push(item)
-
             // features
 
             for (let feature of folder.features || [])
-                mapFeature(feature, item)
+                if (feature.enabled) {
+                    mapFeature(feature, item)
+
+                    item.visible = true
+                }
 
             // folder recursion
 
-            for (let child of folder.children || [])
-                mapFolder(child, item)
+            for (let child of folder.children || []) {
+                let childFolder = mapFolder(child, item)
+                if ( childFolder.visible)
+                    item.visible = true
+            }
+
+            // add to parent
+
+            if (parent && item.visible)
+                parent.items!!.push(item)
 
             // done
 
             return item
         }
 
-        let folderItems = this.featureRegistry.folders.map(folder => mapFolder(folder, undefined))
+        let folderItems = this.featureRegistry.folders
+            .map(folder => mapFolder(folder, undefined))
+            .filter(item => item.visible) // only folders that contain at least one enabled feature
 
         // features
 
@@ -76,6 +80,7 @@ export class FeatureNavigationComponent implements OnInit {
                 routeLink: feature.routerPath!!,
                 icon: feature.icon!!,
                 label: feature.label!!,
+                visible: true,
                 items: []
             }
         })
