@@ -1,8 +1,16 @@
-<mat-list role="list">
+<mat-nav-list role="list">
 
-    <a *ngFor="let comp of components" [routerLinkActive]="['is-active']" mat-list-item role="listitem"
+    <!--a *ngFor="let comp of components" [routerLinkActive]="['is-active']" mat-list-item class="item" role="listitem"
        routerLink="{{comp}}">
         <mat-icon>language</mat-icon>
-        {{comp}}
-    </a>
-</mat-list>
+        <span>{{comp}}</span>
+    </a-->
+
+    <mat-list-item *ngFor="let comp of components">
+        <a matListItemTitle [routerLinkActive]="['is-active']"  routerLink="{{comp}}" class="item">
+            <mat-icon>language</mat-icon>
+            <span>{{comp}}</span>
+        </a>
+
+    </mat-list-item>
+</mat-nav-list>

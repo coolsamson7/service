@@ -1,26 +1,6 @@
-.is-active {
-  background-color: rgb(120, 120, 120);
-}
-
-a:hover {
-  background-color: rgb(228, 236, 239);
-}
-
-.mat-nav-list .mat-list-item:focus,
-.mat-action-list .mat-list-item:focus,
-.mat-list-option:focus {
-  background: #76b900 !important;
-}
-
-.mat-list-item {
-  cursor: pointer;
-}
-
-
-.mat-list-item:focus {
-  border: solid blue 2px;
-}
-
-.active-item {
-  background-color: gray !important;
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
 }
