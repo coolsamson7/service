@@ -17,8 +17,6 @@ export function Injected(configuration?: InjectConfiguration) {
 
     if (!inject) inject = target.constructor.$$inject = {};
 
-    console.log( Reflect.getMetadata('design:type', target, propertyKey))
-
     const type = configuration?.type || Reflect.getMetadata('design:type', target, propertyKey);
 
     inject[propertyKey] = type;
