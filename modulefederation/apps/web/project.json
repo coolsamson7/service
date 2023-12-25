@@ -21,7 +21,12 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/web/src/favicon.ico",
-          "apps/web/src/assets"
+          "apps/web/src/assets",
+          {
+            "glob": "**/*",
+            "input": "node_modules/monaco-editor",
+            "output": "/assets/monaco/"
+          }
         ],
         "styles": [
           "apps/web/src/styles.scss"
