@@ -1,8 +1,13 @@
 import { ReplaySubject } from "rxjs";
 import { Injector, Type } from "@angular/core";
+import { ModuleRegistry } from "../modules";
 
 declare type Ctr<T> = {new (...args: any[]) : T}
-declare type Result<T> = (...args: any[]) => T
+type GetConstructorArgs<T> = T extends new (...args: infer U) => any ? U : never
+
+declare type Result<T> = (...args: GetConstructorArgs<T>) => T
+
+
 abstract class _AbstractModule {
     public static injectorSubject: ReplaySubject<Injector>;
 
@@ -30,7 +35,7 @@ abstract class _AbstractModule {
         };
 
         // @ts-ignore
-        return (...args : any[]) => {new clazz(...args)}
+        return (...args : GetConstructorArgs<T>) => {new clazz(...args)}
     }
 }
 
@@ -42,6 +47,10 @@ export function AbstractModule(injectorSubject: ReplaySubject<Injector> = new Re
 
         constructor(injector: Injector) {
             super();
+
+            let metadata = Reflect.get(this.constructor, "$$metadata")
+            if ( metadata )
+                injector.get(ModuleRegistry).markAsLoaded(metadata)
 
             injectorSubject.next(injector)
         }

@@ -1,7 +1,5 @@
 import { InjectionToken, Type } from '@angular/core';
 import { ModuleMetadata } from './module.interface';
-
-import { ModuleRegistry } from './module-registry';
 import { addProviders } from '../util/add-providers';
 
 /**
@@ -17,12 +15,6 @@ export function Module(metadata : ModuleMetadata, token : InjectionToken<ModuleM
             }
         ]);
 
-        /*import('./modules.module').then((m) => { TODO???
-            m.ModulesModule.injector.subscribe((injector) => {
-                const runtimeRegistry = injector.get(ModuleRegistry);
-
-                runtimeRegistry.markAsLoaded(metadata);
-            });
-        });*/
+        Reflect.set(componentClass, "$$metadata", metadata);
     };
 }

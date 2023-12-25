@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
@@ -13,6 +13,7 @@ import { PortalComponentModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
+    AbstractModule,
     CanDeactivateGuard,
     EndpointLocator,
     Environment,
@@ -137,9 +138,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         }],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-    constructor(sessionManager : SessionManager<any, any>) {
-        console.log(sessionManager)
+export class AppModule extends AbstractModule() {
+    constructor(injector: Injector) {
+        super(injector)
     }
 }
 

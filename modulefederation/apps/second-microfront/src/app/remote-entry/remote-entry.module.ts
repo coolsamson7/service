@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RemoteEntryComponent } from './remote-entry.component';
-import { Microfrontend, PortalComponentsModule, PortalModule } from "@modulefederation/portal";
+import { AbstractModule, Microfrontend, PortalComponentsModule, PortalModule } from "@modulefederation/portal";
 import { RemoteEntryRouterModule } from "./remote-entry-router.module";
 
 
@@ -13,5 +13,8 @@ import { RemoteEntryRouterModule } from "./remote-entry-router.module";
     imports: [CommonModule, RemoteEntryRouterModule, PortalModule, PortalComponentsModule],
     providers: [],
 })
-export class RemoteEntryModule {
+export class RemoteEntryModule extends AbstractModule() {
+    constructor(injector: Injector) {
+        super(injector);
+    }
 }

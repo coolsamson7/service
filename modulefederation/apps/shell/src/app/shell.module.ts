@@ -1,4 +1,4 @@
-import { Injectable, NgModule } from '@angular/core';
+import { Injectable, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ShellComponent } from './shell.component';
@@ -6,6 +6,7 @@ import { ShellComponent } from './shell.component';
 import { localRoutes } from "./local.routes";
 
 import {
+    AbstractModule,
     CanActivateGuard,
     CanDeactivateGuard,
     ConsoleTrace,
@@ -133,5 +134,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     ],
     bootstrap: [ShellComponent],
 })
-export class ShellModule {
+export class ShellModule extends AbstractModule() {
+    constructor(injector: Injector) {
+        super(injector);
+    }
 }

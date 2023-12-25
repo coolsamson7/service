@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ModuleMetadata } from './module.interface';
+import { TraceLevel, Tracer } from '../tracer';
 
 /**
  * A <code>ModuleRegistry</code> keeps track of - specifically decorated - modules, including their
@@ -23,6 +24,9 @@ export class ModuleRegistry {
      * create a new {@link ModuleRegistry}
      */
     constructor() {
+        if ( Tracer.ENABLED)
+            Tracer.Trace("portal", TraceLevel.FULL, "new module registry")
+
         ;(window as any)["modules"] = () => {
             this.report()
         }
@@ -39,9 +43,18 @@ export class ModuleRegistry {
      * @param metadata meta data
      */
     register(metadata : ModuleMetadata) {
+        if ( Tracer.ENABLED)
+            Tracer.Trace("portal", TraceLevel.FULL, "register module {0}", metadata.name)
+
         // leave registered modules as is ( in case of a redeployment )
-        if (!this.modules[metadata.name])
+
+        let entry = this.modules[metadata.name]
+        if (!entry)
             this.modules[metadata.name] = metadata
+        else {
+            // stupid timing problems
+            this.modules[metadata.name] = {...metadata, ...entry}
+        }
     }
 
     /**
@@ -49,11 +62,15 @@ export class ModuleRegistry {
      * @param metadata the module meta-data
      */
     markAsLoaded(metadata : ModuleMetadata) {
-        metadata.isLoaded = true
+        if ( Tracer.ENABLED)
+            Tracer.Trace("portal", TraceLevel.FULL, "loaded module {0}", metadata.name)
 
-        if (!this.modules[metadata.name])
-            this.register(metadata)
-        else
+        if (this.modules[metadata.name])
             this.modules[metadata.name].isLoaded = true
+        else {
+            metadata.isLoaded = true
+            this.modules[metadata.name] = metadata
+        }
+
     }
 }

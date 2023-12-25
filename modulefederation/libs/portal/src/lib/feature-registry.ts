@@ -161,7 +161,7 @@ export class FeatureRegistry {
             if (parent.children == undefined)
                 parent.children = [feature]
             else if (!parent.children.includes(feature)) {
-                console.log("add child " + feature.id + " to parent " + parent.id + " WTD???")
+                //console.log("add child " + feature.id + " to parent " + parent.id + " WTD???")
                 parent.children.push(feature)
             }
 
