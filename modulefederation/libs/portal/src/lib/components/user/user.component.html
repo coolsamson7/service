@@ -1,4 +1,6 @@
-<button (click)="sessionManager.login()" *ngIf="!sessionManager.hasSession()" mat-button>Login</button>
+<button (click)="sessionManager.login()" *ngIf="!sessionManager.hasSession()" mat-button>
+    <span class="label">Login</span>
+</button>
 
 <span *ngIf="sessionManager.hasSession()">
     <button [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
