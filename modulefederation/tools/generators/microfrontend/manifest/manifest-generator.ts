@@ -173,7 +173,13 @@ export class ManifestGenerator {
         for (const file of files)
             new DecoratorReader(file, decorator, true)
                 .read((data : DecoratorData) => {
-                    decorators[data.data.name] = data // TODO duplicate
+                    if ( !decorators[data.data.name])
+                        decorators[data.data.name] = data
+                    else {
+                        let file1 = decorators[data.data.name].file + ", line " + decorators[data.data.name].lineNumber
+                        let file2 = data.file + ", line " + data.lineNumber
+                        throw new Error("folder '" + data.data.name + "' found twice " + file1 + " " + file2)
+                    }
                 })
 
         let decorator4 = (name : string) => {
@@ -181,7 +187,7 @@ export class ManifestGenerator {
             if (decorator)
                 return decorator
             else
-                throw new Error("unknown folder " + name)
+                throw new Error("unknown folder '" + name + "'")
         }
 
         // name, label, icon?, parent?
@@ -226,8 +232,14 @@ export class ManifestGenerator {
 
         // create folder hierarchy
 
-        for (let decorator in decorators)
-            findFolder(decorator)
+        for (let decorator in decorators) {
+            try {
+                findFolder(decorator)
+            }
+            catch(error) {
+                throw new Error(error.message + " in " + decorators[decorator].file + ", line " + decorators[decorator].lineNumber)
+            }
+        }
 
         // return the list of root folders...
 
@@ -248,9 +260,14 @@ export class ManifestGenerator {
                 .read((data : DecoratorData) => {
                     features.push(data)
 
-                    //console.log("remember " + data.decorates + " as " + data.data.id)
+                    if ( !featureMap[data.data.id])
+                        featureMap[data.data.id] = data
+                    else {
+                        let file1 = featureMap[data.data.id].file + ", line " + featureMap[data.data.id].lineNumber
+                        let file2 = data.file + ", line " + data.lineNumber
 
-                    featureMap[data.data.id] = data
+                        throw new Error("feature '" + data.data.id + "' found twice " + file1 + " " + file2)
+                    }
                 })
 
         // sort
@@ -259,7 +276,7 @@ export class ManifestGenerator {
 
         const findFeatureDecorator = (name : string) : DecoratorData => {
             if (!featureMap[name])
-                throw new Error("no decorated feature named " + name)
+                throw new Error("no decorated feature named '" + name + "'")
 
             return featureMap[name]
         }
@@ -320,11 +337,21 @@ export class ManifestGenerator {
 
             let parent
             if (data.data.parent) {
-                parent = mapFeature(findFeatureDecorator(data.data.parent))
+                let decorator : DecoratorData
+                try {
+                    decorator = findFeatureDecorator(data.data.parent)
+                }
+                catch(error) {
+                    throw new Error(error.message + " in file " + data.file + ", line " + data.lineNumber)
+                }
+
+                parent = mapFeature(decorator)
+
 
                 if (!parent.children)
-                    parent.children = []
-                parent.children.push(feature)
+                    parent.children = [feature]
+                else
+                    parent.children.push(feature)
             }
 
             // done
