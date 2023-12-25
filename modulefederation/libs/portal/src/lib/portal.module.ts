@@ -1,11 +1,17 @@
 import { ReplaySubject } from "rxjs";
-import { APP_INITIALIZER, InjectionToken, Injector, ModuleWithProviders, NgModule } from "@angular/core";
+import {
+    APP_INITIALIZER,
+    InjectionToken, Injector,
+    ModuleWithProviders,
+    NgModule,
+} from "@angular/core";
 import { Route, Routes } from "@angular/router";
 import { PortalManager } from "./portal-manager";
 import { DeploymentLoader, Manifest } from "./deployment";
 import { ModulesModule } from "./modules";
 import { HttpClientModule } from "@angular/common/http";
 import { AboutModule } from "./about/about.module";
+import { AbstractModule } from "./injection";
 
 export type LoaderConfig = {
     remotes? : string[],
@@ -40,11 +46,11 @@ function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
     declarations: [],
     exports: []
 })
-export class PortalModule {
-    static injector = new ReplaySubject<Injector>(1);
+export class PortalModule extends AbstractModule() {
+    // constructor
 
-    constructor(injector : Injector) {
-        PortalModule.injector.next(injector);
+    constructor(injector: Injector) {
+        super(injector);
     }
 
     public static forRoot(config : PortalModuleConfig) : ModuleWithProviders<PortalModule> {

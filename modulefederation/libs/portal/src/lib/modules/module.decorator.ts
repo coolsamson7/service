@@ -17,12 +17,12 @@ export function Module(metadata : ModuleMetadata, token : InjectionToken<ModuleM
             }
         ]);
 
-        import('./modules.module').then((m) => {
+        /*import('./modules.module').then((m) => { TODO???
             m.ModulesModule.injector.subscribe((injector) => {
                 const runtimeRegistry = injector.get(ModuleRegistry);
 
                 runtimeRegistry.markAsLoaded(metadata);
             });
-        });
+        });*/
     };
 }

@@ -19,7 +19,7 @@ import {
     EnvironmentModule,
     HTTPErrorInterceptor,
     Manifest,
-    OIDCAuthentication, OIDCModule, OIDCModuleConfig,
+    OIDCAuthentication, OIDCModule,
     OIDCSessionManager,
     PortalComponentsModule,
     PortalModule,
@@ -37,6 +37,7 @@ import { Route } from "@angular/router";
 import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
+import { Injected } from "../../../../libs/portal/src/lib/injection/injected.decorator";
 
 
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -121,7 +122,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         })
     ],
     providers: [
-        {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+        {
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+            useValue: {duration: 2500}
+        },
         {
             provide: EndpointLocator,
             useValue: new ApplicationEndpointLocator(environment)
@@ -138,3 +142,24 @@ export class AppModule {
         console.log(sessionManager)
     }
 }
+
+// TEST
+
+class Foo {
+    // variables
+
+    @Injected()
+    locator!: EndpointLocator
+
+    bar!: SessionManager
+
+    // constructor
+
+    constructor(private id: string) {
+        console.log("created " + id)
+    }
+}
+
+let d = PortalModule.New(Foo, {bar: SessionManager})("foo")
+
+console.log(d)
