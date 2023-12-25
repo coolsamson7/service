@@ -1,2 +1,2 @@
-export * from "./inject.decorator"
+export * from "./injected.decorator"
 export * from "./abstract-module"
