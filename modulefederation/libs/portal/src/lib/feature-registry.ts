@@ -3,6 +3,7 @@ import { ReplaySubject } from "rxjs";
 import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
 import { FolderData } from "./folder.decorator";
+import { TraceLevel, Tracer } from "./tracer";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
 
@@ -12,12 +13,10 @@ export class FeatureRegistry {
 
     features : { [name : string] : FeatureData } = {};
     registry$ = new ReplaySubject<FeatureRegistry>(1);
+    folders : FolderData[] = []
+    path2Folder : { [key : string] : FolderData } = {}
 
     // constructor
-    folders : FolderData[] = []
-
-    // public
-    path2Folder : { [key : string] : FolderData } = {}
 
     constructor() {
         ;(window as any)["features"] = () => {
@@ -26,7 +25,7 @@ export class FeatureRegistry {
         }
     }
 
-    // NEW
+    // public
 
     report() {
         let table = []
@@ -65,8 +64,6 @@ export class FeatureRegistry {
             rememberPath(folder)
         }
     }
-
-    // NEW
 
     register(...features : FeatureConfig[]) {
         for (let feature of features)
@@ -135,6 +132,9 @@ export class FeatureRegistry {
     }
 
     private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {
+        if ( Tracer.ENABLED )
+            Tracer.Trace("portal", TraceLevel.FULL, "register feature {0}", featureConfig.id)
+
         // local function
 
         let key = (name : string, path : string) => {

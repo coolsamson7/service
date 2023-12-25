@@ -11,7 +11,7 @@ import {
     ConsoleTrace,
     EndpointLocator,
     Environment,
-    EnvironmentModule,
+    EnvironmentModule, PortalComponentsModule,
     PortalModule,
     SecurityModule,
     Shell,
@@ -107,6 +107,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 "portal": TraceLevel.FULL,
             }
         }),
+
+        PortalComponentsModule,
 
         PortalModule.forRoot({
             loader: {

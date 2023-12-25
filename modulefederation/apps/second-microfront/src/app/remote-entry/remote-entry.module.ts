@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RemoteEntryComponent } from './remote-entry.component';
-import { Microfrontend, PortalModule } from "@modulefederation/portal";
+import { Microfrontend, PortalComponentsModule, PortalModule } from "@modulefederation/portal";
 import { RemoteEntryRouterModule } from "./remote-entry-router.module";
 
 
@@ -10,7 +10,7 @@ import { RemoteEntryRouterModule } from "./remote-entry-router.module";
 })
 @NgModule({
     declarations: [RemoteEntryComponent],
-    imports: [CommonModule, RemoteEntryRouterModule, PortalModule],
+    imports: [CommonModule, RemoteEntryRouterModule, PortalModule, PortalComponentsModule],
     providers: [],
 })
 export class RemoteEntryModule {

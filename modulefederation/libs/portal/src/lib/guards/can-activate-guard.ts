@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
-import { FeatureData } from "@modulefederation/portal";
+
 import { Observable } from "rxjs";
+import { FeatureData } from "../portal-manager";
 
 @Injectable({providedIn: 'root'})
 export class CanActivateGuard implements CanActivate {

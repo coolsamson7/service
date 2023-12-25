@@ -11,7 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { CurrentFeatureComponent } from "./current-feature/current-feature.component";
 import { CurrentUserComponent } from "./user/user.component";
 import { FeatureNavigationComponent } from "./features/feature-navigation.component";
-import { FeatureOutletDirective } from "@modulefederation/portal";
+import { FeatureOutletDirective } from "./feature-outlet.directive";
 
 @NgModule({
     declarations: [

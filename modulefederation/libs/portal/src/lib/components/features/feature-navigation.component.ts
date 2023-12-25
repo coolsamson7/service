@@ -1,7 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FeatureData, FeatureRegistry, FolderData } from "@modulefederation/portal";
+
 import { NavigationItem } from './feature-navigation.model';
+import { FeatureData } from "../../portal-manager";
+import { FeatureRegistry } from "../../feature-registry";
+import { FolderData } from "../../folder.decorator";
 
 @Component({
     selector: 'feature-navigation',

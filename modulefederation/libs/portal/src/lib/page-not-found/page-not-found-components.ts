@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { take } from "rxjs";
-import { FeatureRegistry } from "@modulefederation/portal";
+import { FeatureRegistry } from "../feature-registry";
 
 @Component({
     selector: 'page-not-found',

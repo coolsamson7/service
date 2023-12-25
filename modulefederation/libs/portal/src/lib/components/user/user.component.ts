@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { SessionManager } from "@modulefederation/portal";
+import { SessionManager } from "../../security";
+
 
 @Component({
     selector: 'current-user',

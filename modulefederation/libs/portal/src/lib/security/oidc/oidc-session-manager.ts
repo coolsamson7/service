@@ -6,7 +6,7 @@ import { SessionManager } from "../session-manager";
 import { Ticket } from "../ticket.interface";
 import { OIDCModuleConfig, OIDCModuleConfigToken } from "./oidc-module";
 import { Router } from "@angular/router";
-import { Environment } from "@modulefederation/portal";
+import { Environment } from "../../common/util/environment.service";
 
 export interface OIDCTicket extends Ticket {
     token : string

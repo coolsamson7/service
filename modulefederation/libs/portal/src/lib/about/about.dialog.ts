@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
-import { ModuleMetadata, ModuleRegistry } from "@modulefederation/portal";
+import { ModuleMetadata } from "../modules/module.interface";
+import { ModuleRegistry } from "../modules/module-registry";
 
 @Component({
     selector: 'about-dialog',
