@@ -4,7 +4,7 @@
     <mat-toolbar class="toolbar">
         <mat-toolbar-row>
             <!-- save -->
-            <button (click)="save()" [disabled]="false" mat-icon-button>
+            <button (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
                 <mat-icon>save</mat-icon>
             </button>
 
@@ -37,8 +37,8 @@
                     <span>
                         {{message}}
                     </span>
+                    <span class="star" *ngIf="hasMessageChanges(message)">*</span>
                 </a>
-                <!--mat-divider></mat-divider-->
             </ng-container>
         </mat-nav-list>
 
@@ -48,7 +48,7 @@
             <form #form="ngForm" class="parameter" *ngIf="selectedMessages">
                 <mat-form-field *ngFor="let message of selectedMessages; let i = index">
                     <mat-label>{{this.locales[i]}}</mat-label>
-                    <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
+                    <input (ngModelChange)='onChange(message)' [ngClass]="{changed: isChanged(message), new: isNew(message)}" [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
                 </mat-form-field>
             </form>
         </div>

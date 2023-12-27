@@ -10,6 +10,7 @@ import { MatTreeModule } from "@angular/material/tree";
 import { MatButtonModule } from "@angular/material/button";
 import { NamespaceTreeComponent } from "./namespace-tree.component";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { MatMenuModule } from "@angular/material/menu";
         MatFormFieldModule,
         MatTreeModule,
         MatButtonModule,
-        MatIconModule
+        MatIconModule,
+        MatSnackBarModule
     ]
 })
 export class TranslationModule {

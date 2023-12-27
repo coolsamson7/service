@@ -17,14 +17,15 @@ import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
-import { matLegacySelectAnimations } from "@angular/material/legacy-select";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { Dialogs } from "../portal/dialog/dialogs";
 
 @Component({
     selector: 'translations',
     templateUrl: './translation-editor.component.html',
     styleUrls: ['./translation-editor.component.scss'],
     standalone: true,
-    imports: [NamespaceTreeComponent, CommonModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule]
+    imports: [NamespaceTreeComponent, CommonModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule]
 })
 @Feature({
     id: "translations",
@@ -39,7 +40,7 @@ export class TranslationEditorComponent implements OnInit {
     // instance data
 
     namespaces: NamespaceNode[] = []
-    selection?: NamespaceNode
+    selectedNamespace?: NamespaceNode
     messages : {[name: string] : Message[]} = {}
     selectedMessages?: Message[]
     locales: string[] = []
@@ -51,13 +52,14 @@ export class TranslationEditorComponent implements OnInit {
 
     // constructor
 
-    constructor(private messageAdministrationService: MessageAdministrationService, private translationService: TranslationService) {
+    constructor(private dialogs: Dialogs, private snackBar : MatSnackBar, private messageAdministrationService: MessageAdministrationService, private translationService: TranslationService) {
     }
 
     // callbacks
 
     save() {
-
+        this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(_=>
+        this.snackBar.open("Messages", "Saved"))
     }
 
     selectMessages(message: Message[]) {
@@ -76,7 +78,7 @@ export class TranslationEditorComponent implements OnInit {
                 id : undefined,
                 locale : locale,
                 name : name,
-                namespace : this.selection!!.path,
+                namespace : this.selectedNamespace!!.path,
                 value : ""
             }
         }
@@ -99,12 +101,27 @@ export class TranslationEditorComponent implements OnInit {
         return result
     }
 
-    select(node: NamespaceNode) {
-        console.log(this.namespaceChanges)
+    hasChanges() {
+        return this.namespaceChanges.newMessages.length > 0 || this.namespaceChanges.changedMessages.length > 0
+    }
 
-        if ( this.namespaceChanges.newMessages.length > 0 || this.namespaceChanges.changedMessages.length > 0)
-            this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(_=>
-            console.log("ok"))
+    hasMessageChanges(message: string) {
+        return this.namespaceChanges.newMessages.find(m => m.name == message) || this.namespaceChanges.changedMessages.find(m => m.name == message)
+    }
+
+    select(namespaceNode: NamespaceNode) {
+        if ( this.hasChanges()) {
+            this.dialogs.confirmationDialog()
+                .okCancel()
+                .title("Messages")
+                .message("Save changes first")
+                .show().subscribe(result => {
+                    this.save();
+                    this.select(namespaceNode)
+            })
+
+            return
+        }
 
         // start from scratch
 
@@ -114,7 +131,7 @@ export class TranslationEditorComponent implements OnInit {
             deletedMessages: []
         }
 
-        this.selection = node
+        this.selectedNamespace = namespaceNode
 
         // TODO TEST
 
@@ -154,20 +171,27 @@ console.log(translations)
             console.log(result)
         }
 
-        this.translationService.getTranslations("de_DE", node.path).subscribe(
-            translations => handleTranslations(node.path, translations)
+        this.translationService.getTranslations("de_DE", namespaceNode.path).subscribe(
+            translations => handleTranslations(namespaceNode.path, translations)
         )
 
         // TEST
 
-        if ( node ) {
-            this.messageAdministrationService.readAllMessages(node.path).subscribe(
+        if ( namespaceNode ) {
+            this.messageAdministrationService.readAllMessages(namespaceNode.path).subscribe(
                 messages => this.messages = this.computeMessages(messages)
             )
         }
     }
 
 
+    isChanged(message: Message):boolean {
+        return this.namespaceChanges.newMessages.includes(message) || this.namespaceChanges.changedMessages.includes(message)
+    }
+
+    isNew(message: Message):boolean {
+        return this.namespaceChanges.newMessages.includes(message)
+    }
 
     onChange(message: Message) {
         if ( message.id) {
@@ -218,6 +242,4 @@ console.log(translations)
 
         this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
     }
-
-    protected readonly matLegacySelectAnimations = matLegacySelectAnimations;
 }

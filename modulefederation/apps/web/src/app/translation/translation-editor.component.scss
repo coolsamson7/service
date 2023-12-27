@@ -17,13 +17,24 @@
 
     .list {
       .selected {
-        font-weight: bold;
         background-color: lightgray;
+      }
+
+      .star {
+        color: black;
       }
     }
 
     .parameter {
       padding: 10px;
+
+      .changed {
+        background-color: lightcoral;
+      }
+
+      .new {
+        background-color: forestgreen;
+      }
     }
   }
 
