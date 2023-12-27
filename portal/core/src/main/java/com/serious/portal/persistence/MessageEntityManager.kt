@@ -31,6 +31,7 @@ class MessageEntityManager() {
     private fun toEntity(message: Message) : MessageEntity {
         val entity = MessageEntity()
 
+        entity.id = message.id
         entity.name = message.name
         entity.namespace = message.namespace
         entity.locale = message.locale
@@ -73,11 +74,12 @@ class MessageEntityManager() {
             .resultList
     }
 
-    fun saveChanges(changes: MessageChanges) {
+    fun saveChanges(changes: MessageChanges) :List<Message> {
         // new
 
-        for ( newMessage in changes.newMessages) {
-            this.entityManager.persist(toEntity(newMessage))
+        val newMessages = changes.newMessages.map { m -> toEntity(m) }
+        for ( newMessage in newMessages) {
+            this.entityManager.persist(newMessage)
         }
 
         // changed
@@ -85,6 +87,14 @@ class MessageEntityManager() {
         for ( changedMessage in changes.changedMessages) {
             this.repository.save(toEntity(changedMessage))
         }
+
+        // make sure the new ids are generated
+
+        this.entityManager.flush()
+
+        // return the messages including th ecreated ids
+
+        return newMessages.map { entity -> toMessage(entity) }
     }
 
     fun readMessages(namespace: String, locale: String) :List<Message> {

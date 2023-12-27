@@ -6,7 +6,7 @@ package com.serious.portal
  */
 
 class Message(
-    var id: Long?,
+    var id: Long,
     var namespace : String,
     var name : String,
     var locale : String,

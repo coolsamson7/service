@@ -80,9 +80,10 @@ export class TranslationEditorComponent implements OnInit {
         })
     }
 
-    save() {
+    save(selectNode?: NamespaceNode) {
         this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(createdMessages=> {
-            console.log(createdMessages)
+            this.snackBar.open("Messages", "Saved")
+
             this.selectedNamespace?.messages!!.push(...createdMessages)
 
             this.namespaceChanges = {
@@ -91,9 +92,7 @@ export class TranslationEditorComponent implements OnInit {
                 deletedMessages: []
             }
 
-            this.select(this.selectedNamespace!!)
-
-            this.snackBar.open("Messages", "Saved")
+            this.select(selectNode ? selectNode : this.selectedNamespace!!)
         })
     }
 
@@ -173,8 +172,7 @@ export class TranslationEditorComponent implements OnInit {
                 .message("Save changes first")
                 .show().subscribe(result => {
                     if ( result ) {
-                        this.save();
-                        this.select(namespaceNode)
+                        this.save(namespaceNode);
                     }
             })
 

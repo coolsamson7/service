@@ -60,7 +60,7 @@ class MessageAdministrationServiceServiceImpl : MessageAdministrationService {
     }
 
     @Transactional
-    override fun saveChanges(changes: MessageChanges) {
-        messageEntityManager.saveChanges(changes)
+    override fun saveChanges(changes: MessageChanges) :List<Message> {
+        return messageEntityManager.saveChanges(changes)
     }
 }

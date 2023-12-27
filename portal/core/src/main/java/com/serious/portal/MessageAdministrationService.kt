@@ -43,6 +43,6 @@ interface MessageAdministrationService : Service {
 
     @PostMapping("save-changes")
     @ResponseBody
-    fun saveChanges(@RequestBody() changes: MessageChanges)
+    fun saveChanges(@RequestBody() changes: MessageChanges) :List<Message>
 }
 
