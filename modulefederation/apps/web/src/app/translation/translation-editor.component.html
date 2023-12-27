@@ -15,8 +15,8 @@
                 <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item>Namespace</button>
-                <button mat-menu-item>Message</button>
+                <button (click)="addNamespace()" [disabled]="false" mat-menu-item>Namespace</button>
+                <button (click)="addMessage()" [disabled]="selectedNamespace == undefined" mat-menu-item>Message</button>
             </mat-menu>
 
         </mat-toolbar-row>

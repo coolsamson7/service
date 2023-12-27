@@ -16,7 +16,7 @@ export interface ConfirmationModel {
 
 @Component({
     selector: 'confirmation-dialog',
-    templateUrl: 'confirmation-dialog.html',
+    templateUrl: './confirmation-dialog.html',
     styleUrls: ['./confirmation-dialog.scss']
 })
 export class ConfirmationDialog implements OnInit {

@@ -33,7 +33,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
     // constructor
 
-    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private confirmationDialogs : Dialogs) {
+    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private dialogs : Dialogs) {
         super()
     }
 
@@ -71,7 +71,11 @@ export class MirofrontendsComponent extends NavigationComponent {
             try {
                 url = new URL(remote)
             } catch(error) {
-                this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+                this.dialogs.confirmationDialog()
+                    .title("Add Microfrontend")
+                    .message("malformed url")
+                    .ok()
+                    .show()
                 return
             }
 
@@ -87,13 +91,25 @@ export class MirofrontendsComponent extends NavigationComponent {
                 else {
                     switch (result.error) {
                         case "duplicate":
-                            this.confirmationDialogs.ok("Add Microfrontend", "already registered")
+                            this.dialogs.confirmationDialog()
+                                .title("Add Microfrontend")
+                                .message("already registered")
+                                .ok()
+                                .show()
                             break;
                         case "malformed_url":
-                            this.confirmationDialogs.ok("Add Microfrontend", "malformed url")
+                            this.dialogs.confirmationDialog()
+                                .title("Add Microfrontend")
+                                .message("malformed url")
+                                .ok()
+                                .show()
                             break;
                         case "unreachable":
-                            this.confirmationDialogs.ok("Add Microfrontend", "could not fetch manifest metadata")
+                            this.dialogs.confirmationDialog()
+                                .title("Add Microfrontend")
+                                .message("could not fetch manifest metadata")
+                                .ok()
+                                .show()
                             break;
                     }
                 }
@@ -113,7 +129,11 @@ export class MirofrontendsComponent extends NavigationComponent {
 
                     for (let manifest of this.manifests)
                         if (manifest.remoteEntry == url) {
-                            this.confirmationDialogs.ok("Remote", "Already registered")
+                            this.dialogs.confirmationDialog()
+                                .title("Add Remote")
+                                .message("Already registered")
+                                .ok()
+                                .show()
                             return
                         }
 
@@ -123,17 +143,29 @@ export class MirofrontendsComponent extends NavigationComponent {
                     this.manifests.push(manifest)
                 }
                 else {
-                    this.confirmationDialogs.ok("Add Remote", "Error fetching manifest")
+                    this.dialogs.confirmationDialog()
+                        .title("Add Remote")
+                        .message("Error fetching manifest")
+                        .ok()
+                        .show()
                 }
             })
         } catch(e) {
-            this.confirmationDialogs.ok("Add Remote", "Invalid URL")
+            this.dialogs.confirmationDialog()
+                .title("Add Remote")
+                .message("Invalid URL")
+                .ok()
+                .show()
             return
         }
     }
 
     removeManifest(manifest : Manifest) {
-        this.confirmationDialogs.okCancel("Remove Manifest", "Are you sure?").subscribe(result => {
+        this.dialogs.confirmationDialog()
+            .title("Remove Manifest")
+            .message("Are you sure?")
+            .okCancel()
+            .show().subscribe(result => {
             if (result) {
                 this.manifests.splice(this.manifests.indexOf(manifest), 1)
 

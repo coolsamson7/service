@@ -57,9 +57,41 @@ export class TranslationEditorComponent implements OnInit {
 
     // callbacks
 
+    addNamespace() {
+        this.dialogs.inputDialog()
+            .title("Add Namespace")
+            .message("input")
+            .defaultValue("")
+            .okCancel().show().subscribe(name => {
+                console.log(name)
+        })
+    }
+
+    addMessage() {
+        this.dialogs.inputDialog()
+            .title("Add Message")
+            .message("input")
+            .defaultValue("")
+            .okCancel().show().subscribe(name => {
+            console.log(name)
+        })
+    }
+
     save() {
-        this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(_=>
-        this.snackBar.open("Messages", "Saved"))
+        this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(createdMessages=> {
+            console.log(createdMessages)
+            this.selectedNamespace?.messages!!.push(...createdMessages)
+
+            this.namespaceChanges = {
+                newMessages: [],
+                changedMessages: [],
+                deletedMessages: []
+            }
+
+            this.select(this.selectedNamespace!!)
+
+            this.snackBar.open("Messages", "Saved")
+        })
     }
 
     selectMessages(message: Message[]) {
@@ -116,8 +148,10 @@ export class TranslationEditorComponent implements OnInit {
                 .title("Messages")
                 .message("Save changes first")
                 .show().subscribe(result => {
-                    this.save();
-                    this.select(namespaceNode)
+                    if ( result ) {
+                        this.save();
+                        this.select(namespaceNode)
+                    }
             })
 
             return
@@ -136,7 +170,8 @@ export class TranslationEditorComponent implements OnInit {
         // TODO TEST
 
         let handleTranslations = (namespace: string, translations: Translation[]) => {
-console.log(translations)
+            console.log(translations)
+
             let result = {}
 
             let findOrCreate = (name: string, folders: any) => {
@@ -175,12 +210,18 @@ console.log(translations)
             translations => handleTranslations(namespaceNode.path, translations)
         )
 
-        // TEST
+        // end TEST
 
         if ( namespaceNode ) {
-            this.messageAdministrationService.readAllMessages(namespaceNode.path).subscribe(
-                messages => this.messages = this.computeMessages(messages)
-            )
+            if ( !namespaceNode.messages) {
+                this.messageAdministrationService.readAllMessages(namespaceNode.path).subscribe(
+                    messages => {
+                        namespaceNode.messages = messages
+                        this.messages = this.computeMessages(messages)
+                    }
+                )
+            }
+            else this.messages = this.computeMessages(namespaceNode.messages)
         }
     }
 

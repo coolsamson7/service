@@ -21,6 +21,7 @@ import { ConfirmationDialog } from "./dialog/confirmation-dialog";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ChipsComponent } from "./chips.component";
 import { Folder } from "@modulefederation/portal";
+import { InputDialog } from "./dialog/input-dialog";
 
 @Folder({
     name: "microfrontends",
@@ -33,6 +34,7 @@ import { Folder } from "@modulefederation/portal";
         MicrofrontendDetailsComponent,
         AddManifestDialog,
         ConfirmationDialog,
+        InputDialog,
         ChipsComponent
     ],
     imports: [
