@@ -46,9 +46,9 @@
 
         <div>
             <form #form="ngForm" class="parameter" *ngIf="selectedMessages">
-                <mat-form-field *ngFor="let message of selectedMessages; let i = index">
+                <mat-form-field [ngClass]="{changed: isChanged(message), new: isNew(message)}" *ngFor="let message of selectedMessages; let i = index">
                     <mat-label>{{this.locales[i]}}</mat-label>
-                    <input (ngModelChange)='onChange(message)' [ngClass]="{changed: isChanged(message), new: isNew(message)}" [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
+                    <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
                 </mat-form-field>
             </form>
         </div>

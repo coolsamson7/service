@@ -255,7 +255,7 @@ export class TranslationEditorComponent implements OnInit {
     }
 
     isNew(message: Message):boolean {
-        return this.namespaceChanges.newMessages.includes(message)
+        return message.id == undefined
     }
 
     onChange(message: Message) {
