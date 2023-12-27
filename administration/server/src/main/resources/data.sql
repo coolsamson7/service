@@ -1,0 +1,8 @@
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal', 'name.label', 'de_DE', 'Portal')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal', 'name.label', 'en_US', 'Portal')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'ok.label', 'de_DE', 'Ok')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'ok.label', 'en_US', 'Ok')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'cancel.label', 'de_DE', 'Abbrechen')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'cancel.label', 'en_US', 'Cancel')
+INSERT INTO LANGUAGE ( LOCALE) VALUES ('en_US')
+INSERT INTO LANGUAGE ( LOCALE) VALUES ('de_DE')

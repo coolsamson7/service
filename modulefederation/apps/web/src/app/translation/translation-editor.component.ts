@@ -219,10 +219,10 @@ export class TranslationEditorComponent implements OnInit {
                 let namespace = parent
                 let legs = translation.key.split(".")
                 for (let i = 0; i < legs.length - 1; i++)
-                    parent = findOrCreate(legs[i], namespace)
+                    namespace = findOrCreate(legs[i], namespace)
 
                 // @ts-ignore
-                parent[legs[legs.length - 1]] = translation.value
+                namespace[legs[legs.length - 1]] = translation.value
             }
 
             console.log(result)
