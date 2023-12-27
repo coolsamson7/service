@@ -4,6 +4,7 @@
     <mat-toolbar class="toolbar">
         <mat-toolbar-row>
             <!-- save -->
+
             <button (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
                 <mat-icon>save</mat-icon>
             </button>
@@ -18,7 +19,6 @@
                 <button (click)="addNamespace()" [disabled]="false" mat-menu-item>Namespace</button>
                 <button (click)="addMessage()" [disabled]="selectedNamespace == undefined" mat-menu-item>Message</button>
             </mat-menu>
-
         </mat-toolbar-row>
     </mat-toolbar>
 

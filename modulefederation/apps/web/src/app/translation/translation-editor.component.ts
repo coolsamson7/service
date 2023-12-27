@@ -73,7 +73,7 @@ export class TranslationEditorComponent implements OnInit {
             .message("input")
             .defaultValue("")
             .okCancel().show().subscribe(name => {
-            console.log(name)
+            this.newMessage(name)
         })
     }
 
@@ -100,6 +100,27 @@ export class TranslationEditorComponent implements OnInit {
 
     messageKeys(messages: {[name: string] : Message[]} ) {
         return Object.keys(messages)
+    }
+
+    newMessage(name: string) {
+        if ( name != "" && !this.messages[name]) {
+            let newMessage = (locale : string) : Message => {
+                return {
+                    id: undefined,
+                    locale: locale,
+                    name: name,
+                    namespace: this.selectedNamespace!!.path,
+                    value: ""
+                }
+            }
+
+            let newMessages = []
+
+            for (let i = 0; i < this.locales.length; i++)
+                newMessages.push(newMessage(this.locales[i]))
+
+            this.messages[name] = newMessages
+        }
     }
 
     computeMessages(messages: Message[]): {[name: string] : Message[]}  {
