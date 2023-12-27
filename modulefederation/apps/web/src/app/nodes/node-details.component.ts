@@ -11,7 +11,7 @@ import { Feature } from "@modulefederation/portal";
     providers: []
 })
 @Feature({
-    id: "nodes",
+    id: "node",
     parent: "nodes",
     router: {
         path: ":node"

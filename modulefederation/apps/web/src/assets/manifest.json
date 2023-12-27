@@ -1,9 +1,17 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "e702ed163412d7a46dde796eadde57be0229a419",
+  "commitHash": "4f9135d9b461348bcc6d9008afd1dd8d45417bbf",
   "module": "AppModule",
   "features": [
+    {
+      "id": "translations",
+      "label": "Translations",
+      "icon": "computer",
+      "component": "TranslationEditorComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
     {
       "id": "microfrontends",
       "label": "Microfrontends",
@@ -29,7 +37,17 @@
       "icon": "computer",
       "component": "NodesComponent",
       "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "visibility": ["public", "private"],
+      "children": [
+        {
+          "id": "node",
+          "label": "node",
+          "router": {
+            "path": ":node"
+          },
+          "component": "NodeDetailsComponent"
+        }
+      ]
     },
     {
       "id": "home",

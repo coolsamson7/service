@@ -3,11 +3,15 @@
 
 import { Routes, RouterModule } from '@angular/router';
 
+import { TranslationEditorComponent } from './translation/translation-editor.component';
+
 import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 import { MicrofrontendDetailsComponent } from './portal/microfrontend-details.component';
 
 import { NodesComponent } from './nodes/nodes.component';
+
+import { NodeDetailsComponent } from './nodes/node-details.component';
 
 import { HomeComponent } from './home/home-component';
 
@@ -20,8 +24,13 @@ import { ServiceInstanceComponent } from './components/service-instance.componen
 export const localRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'microfrontends',
+    redirectTo: 'translations',
     pathMatch: 'full',
+  },
+  {
+    path: 'translations',
+    component: TranslationEditorComponent,
+    children: [],
   },
   {
     path: 'microfrontends',
@@ -37,7 +46,13 @@ export const localRoutes: Routes = [
   {
     path: 'nodes',
     component: NodesComponent,
-    children: [],
+    children: [
+      {
+        path: ':node',
+        component: NodeDetailsComponent,
+        children: [],
+      },
+    ],
   },
   {
     path: 'home',

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController
     services = [
         PortalIntrospectionService::class,
         PortalAdministrationService::class,
-        PortalDeploymentService::class
+        PortalDeploymentService::class,
+        MessageAdministrationService::class,
+        TranslationService::class
     ])
 @RestController
 interface PortalComponent : Component {

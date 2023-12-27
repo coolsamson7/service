@@ -1,0 +1,30 @@
+.translations {
+
+
+  .toolbar {
+    .mat-mdc-button>.mat-icon {
+      height: unset;
+      margin-right: unset;
+      font-size: 24px;
+    }
+  }
+
+  .content {
+    display: flex;
+    .tree {
+      padding: 10px;
+    }
+
+    .list {
+      .selected {
+        font-weight: bold;
+        background-color: lightgray;
+      }
+    }
+
+    .parameter {
+      padding: 10px;
+    }
+  }
+
+}

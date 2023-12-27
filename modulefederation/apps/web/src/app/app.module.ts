@@ -39,6 +39,7 @@ import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
 import { Injected } from "../../../../libs/portal/src/lib/injection/injected.decorator";
+import { TranslationModule } from "./translation/translation.module";
 
 
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -80,6 +81,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         MatIconModule,
         AppRoutingModule,
         ComponentsModule,
+        TranslationModule,
         NodesModule,
         PortalComponentsModule,
         PortalComponentModule,

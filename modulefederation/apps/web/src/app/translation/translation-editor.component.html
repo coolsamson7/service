@@ -1,0 +1,56 @@
+<div class="translations">
+    <!-- toolbar -->
+
+    <mat-toolbar class="toolbar">
+        <mat-toolbar-row>
+            <!-- save -->
+            <button (click)="save()" [disabled]="false" mat-icon-button>
+                <mat-icon>save</mat-icon>
+            </button>
+
+            <!-- add -->
+
+            <button mat-button [matMenuTriggerFor]="menu">
+                <mat-icon>add</mat-icon>
+                <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item>Namespace</button>
+                <button mat-menu-item>Message</button>
+            </mat-menu>
+
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div class="content">
+
+        <!-- tree-->
+
+        <namespace-tree class="tree" [namespaces]="namespaces" (onSelectionChange)="select($event)"></namespace-tree>
+
+        <!--list -->
+
+        <mat-nav-list class="list" dense>
+            <ng-container *ngFor="let message of messageKeys(messages); let index = index">
+                <a (click)="selectMessages(messages[message])" [ngClass]="{selected: selectedMessages === messages[message]}" class="item" mat-list-item role="listitem">
+                    <!--mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon-->
+                    <span>
+                        {{message}}
+                    </span>
+                </a>
+                <!--mat-divider></mat-divider-->
+            </ng-container>
+        </mat-nav-list>
+
+        <!-- content -->
+
+        <div>
+            <form #form="ngForm" class="parameter" *ngIf="selectedMessages">
+                <mat-form-field *ngFor="let message of selectedMessages; let i = index">
+                    <mat-label>{{this.locales[i]}}</mat-label>
+                    <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
+                </mat-form-field>
+            </form>
+        </div>
+    </div>
+</div>
