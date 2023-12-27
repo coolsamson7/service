@@ -60,18 +60,21 @@ export class TranslationEditorComponent implements OnInit {
     addNamespace() {
         this.dialogs.inputDialog()
             .title("Add Namespace")
-            .message("input")
+            .message("Input namespace name")
+            .placeholder("namespace")
             .defaultValue("")
             .okCancel().show().subscribe(name => {
-                console.log(name)
+                if ( name && name != "")
+                    this.addNamespaceNode(name)
         })
     }
 
     addMessage() {
         this.dialogs.inputDialog()
             .title("Add Message")
-            .message("input")
+            .message("Input message name")
             .defaultValue("")
+            .placeholder("message")
             .okCancel().show().subscribe(name => {
             this.newMessage(name)
         })
@@ -268,6 +271,39 @@ export class TranslationEditorComponent implements OnInit {
 
     // private
 
+    private addNamespaceNode(namespace: string) {
+        // local function
+
+        let findOrCreateFolder = (name: string, folders: NamespaceNode[], prefix: string) => {
+            let folder = folders.find(folder => folder.name == name)
+
+            if (!folder)
+                folders.push(folder = {
+                    name: name,
+                    path: prefix + name,
+                    children: []
+                })
+
+            return folder
+        }
+
+        // add parent path
+
+        if ( this.selectedNamespace)
+            namespace = this.selectedNamespace.path + "." + namespace
+
+        // go
+
+        let parent = this.namespaces
+        let prefix = ""
+        for ( let leg of namespace.split(".")) {
+            parent = findOrCreateFolder(leg, parent, prefix).children
+            prefix += leg + "."
+        }
+
+        this.namespaces = [...this.namespaces]
+    }
+
     private setupNamespaces(namespaces: string[]) {
         let findOrCreateFolder = (name: string, folders: NamespaceNode[], prefix: string) => {
             let folder = folders.find(folder => folder.name == name)
@@ -289,10 +325,7 @@ export class TranslationEditorComponent implements OnInit {
             let prefix = ""
             for ( let leg of namespace.split(".")) {
                 parent = findOrCreateFolder(leg, parent, prefix).children
-                if ( prefix == "")
-                    prefix = leg + "."
-                else
-                    prefix += leg + "."
+                prefix += leg + "."
             }
         }
     }

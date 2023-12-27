@@ -1,18 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-
-export interface ConfirmationButton {
-    label : string;
-    result : any
-    primary? : boolean
-}
-
-export interface ConfirmationModel {
-    title : string;
-    type : string;
-    message : string;
-    buttons : ConfirmationButton[]
-}
+import { ConfirmationDialogConfig } from "./confirmation-dialog-builder";
+import { ButtonConfiguration } from "./dialogs";
 
 @Component({
     selector: 'confirmation-dialog',
@@ -22,7 +11,7 @@ export interface ConfirmationModel {
 export class ConfirmationDialog implements OnInit {
     constructor(
         public dialogRef : MatDialogRef<ConfirmationDialog>,
-        @Inject(MAT_DIALOG_DATA) public data : ConfirmationModel,
+        @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig,
     ) {
     }
 
@@ -41,7 +30,7 @@ export class ConfirmationDialog implements OnInit {
         return ""
     }
 
-    click(button : ConfirmationButton) : void {
+    click(button : ButtonConfiguration) : void {
         this.dialogRef.close(button.result);
     }
 

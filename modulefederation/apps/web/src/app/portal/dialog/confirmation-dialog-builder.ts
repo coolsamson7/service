@@ -3,10 +3,17 @@ import { Observable } from "rxjs";
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { ButtonConfiguration } from "./dialogs";
 
+export interface ConfirmationDialogConfig {
+    title : string;
+    type : string;
+    message : string;
+    buttons : ButtonConfiguration[]
+}
+
 export class ConfirmationDialogBuilder {
     // instance data
 
-    configuration = {
+    configuration : ConfirmationDialogConfig = {
         type: "info",
         title: "",
         message: "",
@@ -70,6 +77,7 @@ export class ConfirmationDialogBuilder {
         return this
             .button({
                 label: "Ok",
+                primary: true,
                 result: true
             })
     }
@@ -81,6 +89,7 @@ export class ConfirmationDialogBuilder {
         return this
             .button({
                 label: "Ok",
+                primary: true,
                 result: true
             })
             .button({

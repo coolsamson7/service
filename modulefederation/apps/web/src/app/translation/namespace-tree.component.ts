@@ -38,6 +38,14 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     constructor() {
     }
 
+    // private
+
+     refreshData() {
+        const data = this.dataSource.data
+        this.dataSource.data = []
+        this.dataSource.data = data
+    }
+
     // public
 
     select(node: NamespaceNode) {
@@ -59,5 +67,7 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     ngOnChanges(changes : SimpleChanges) : void {
         if (changes['namespaces'] && !changes['namespaces'].isFirstChange())
             this.dataSource.data = this.namespaces;
+
+        this.refreshData()
     }
 }

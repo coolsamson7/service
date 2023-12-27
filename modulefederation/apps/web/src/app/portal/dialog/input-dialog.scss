@@ -1,26 +1,8 @@
 
 .content {
-  display: inline-flex;
-  gap: 10px;
-
-  .warn {
-    color: yellow;
-    font-size: xx-large;
-  }
-
-  .info {
-    color: black;
-    font-size: xx-large;
-  }
-
-  .error {
-    color: red;
-    font-size: xx-large;
-  }
-
-  .mat-icon {
-    line-height: normal;
-  }
+  display: grid;
+  padding-top: 10px;
+  row-gap: 20px;
 
   .text {
     align-self: center;

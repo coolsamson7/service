@@ -94,6 +94,7 @@ export class InputDialogBuilder {
         return this
             .button({
                 label: "Ok",
+                primary: true,
                 result: true
             })
     }
@@ -105,6 +106,7 @@ export class InputDialogBuilder {
         return this
             .button({
                 label: "Ok",
+                primary: true,
                 result: true
             })
             .button({
