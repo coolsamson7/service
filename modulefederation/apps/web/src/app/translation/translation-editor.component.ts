@@ -1,9 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import {
-    Feature, I18nModule,
+    Dialogs,
+    Feature,
+    I18nModule,
     Message,
-    MessageAdministrationService, MessageChanges,
-    Translation,
+    MessageAdministrationService,
+    MessageChanges,
     TranslationService
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
@@ -18,7 +20,9 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { Dialogs } from "../../../../../libs/portal/src/lib/dialog/dialogs";
+
+type MessagesByType =  {[type: string] : Message[]}
+type MessageMap = {[prefix: string] :MessagesByType}
 
 @Component({
     selector: 'translations',
@@ -41,10 +45,12 @@ import { Dialogs } from "../../../../../libs/portal/src/lib/dialog/dialogs";
 export class TranslationEditorComponent implements OnInit {
     // instance data
 
+    types = ["label", "tooltip", "shortcut"]
     namespaces: NamespaceNode[] = []
     selectedNamespace?: NamespaceNode
-    messages : {[name: string] : Message[]} = {}
-    selectedMessages?: Message[]
+    messages : MessageMap = {}
+    selectedMessages?: MessagesByType
+    selectedPrefix?: string
     locales: string[] = []
     namespaceChanges : MessageChanges = {
         newMessages: [],
@@ -58,6 +64,14 @@ export class TranslationEditorComponent implements OnInit {
     }
 
     // callbacks
+
+    prefix(name: string) {
+        let index = name.indexOf(".") // e.g. bla.label
+        let prefix = name.substring(0, index) // e.g. bla
+        let suffix = name.substring(index+1) // e.g. "label"
+
+        return prefix
+    }
 
     addNamespace() {
         this.dialogs.inputDialog()
@@ -98,37 +112,37 @@ export class TranslationEditorComponent implements OnInit {
         })
     }
 
-    selectMessages(message: Message[]) {
+    selectMessages(message: MessagesByType) {
         this.selectedMessages = message
     }
 
-    messageKeys(messages: {[name: string] : Message[]} ) {
+    messageKeys(messages: MessageMap ) {
         return Object.keys(messages)
     }
 
     newMessage(name: string) {
         if ( name != "" && !this.messages[name]) {
-            let newMessage = (locale : string) : Message => {
+            let newMessage = (locale : string, type: string) : Message => {
                 return {
                     id: undefined,
                     locale: locale,
-                    name: name,
+                    name: name + "." + type,
                     namespace: this.selectedNamespace!!.path,
                     value: ""
                 }
             }
 
-            let newMessages = []
+            let messagesByType : MessagesByType = {}
 
-            for (let i = 0; i < this.locales.length; i++)
-                newMessages.push(newMessage(this.locales[i]))
+            for (let type of this.types)
+                messagesByType[type] =  this.locales.map(locale => newMessage(locale, type))
 
-            this.messages[name] = newMessages
+            this.messages[name] = messagesByType
         }
     }
 
-    computeMessages(messages: Message[]): {[name: string] : Message[]}  {
-        let result : {[name: string] : Message[]} = {}
+    computeMessages(messages: Message[]): MessageMap  {
+        let result : MessageMap = {}
 
         let newMessage = (locale: string, name: string):Message => {
             return {
@@ -140,19 +154,39 @@ export class TranslationEditorComponent implements OnInit {
             }
         }
 
+        // was name -> ["en", "de"]
+        // now name -> {
+        //   "label": ["en", "de],
+        //   "shortcut": [ "en", "de]
+        //}
+
         for ( let message of messages) {
-            let array = result[message.name]
+            let index = message.name.indexOf(".") // e.g. bla.label
+            let prefix = message.name.substring(0, index) // e.g. bla
+            let suffix = message.name.substring(index+1) // e.g. "label"
 
-            if (!array) {
+            let messagesByType = result[prefix]
+
+            if (!messagesByType) {
                 // prefill with "new" message, overwrite with the real messages
-                array =  []
-                for ( let i = 0; i < this.locales.length; i++)
-                    array.push(newMessage(this.locales[i], message.name))
 
-                result[message.name] = array
+                messagesByType =  {}
+
+                for (let type of this.types) {
+                    let localeArray = []
+
+                    for ( let locale of this.locales)
+                        localeArray.push(newMessage(locale, prefix + "." + type))
+
+                    messagesByType[type] = localeArray
+                }
+
+                result[prefix] = messagesByType
             }
 
-            array[this.locales.indexOf(message.locale)] = message
+            // add real message
+
+            messagesByType[suffix][this.locales.indexOf(message.locale)] = message
         }
 
         return result

@@ -46,11 +46,17 @@
         <!-- content -->
 
         <div>
-            <form #form="ngForm" class="parameter" *ngIf="selectedMessages">
-                <mat-form-field [ngClass]="{changed: isChanged(message), new: isNew(message)}" *ngFor="let message of selectedMessages; let i = index">
-                    <mat-label>{{this.locales[i]}}</mat-label>
-                    <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
-                </mat-form-field>
+            <form #form="ngForm" class="form" *ngIf="selectedMessages">
+                <div *ngFor="let type of types;" class="type-container">
+                    {{type}}
+                    <mat-divider/>
+                    <div class="input-container">
+                        <mat-form-field *ngFor="let message of selectedMessages[type]; let i = index" [ngClass]="{changed: isChanged(message), new: isNew(message)}" >
+                            <mat-label>{{this.locales[i]}}</mat-label>
+                            <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
+                        </mat-form-field>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

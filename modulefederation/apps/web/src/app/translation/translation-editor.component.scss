@@ -26,19 +26,26 @@
       }
     }
 
-    .parameter {
-      display: flex;
-      gap: 10px;
+    .form {
+
       padding: 10px;
 
-      .changed {
-        background-color: rgba(0, 89, 255, 0.3);
+      .type-container {
+
       }
 
-      .new {
-        background-color: rgba(0,255,0,0.3);
+      .input-container {
+        display: flex;
+        gap: 10px;
+
+        .changed {
+          background-color: rgba(0, 89, 255, 0.3);
+        }
+
+        .new {
+          background-color: rgba(0,255,0,0.3);
+        }
       }
     }
   }
-
 }
