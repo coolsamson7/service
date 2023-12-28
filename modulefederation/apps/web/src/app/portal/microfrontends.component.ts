@@ -5,7 +5,7 @@ import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { MatDialog } from "@angular/material/dialog";
 import { AddManifestDialog } from "./add-manifest-dialog";
-import { Dialogs } from "./dialog/dialogs";
+import { Dialogs } from "../../../../../libs/portal/src/lib/dialog/dialogs";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Feature, Manifest } from "@modulefederation/portal";

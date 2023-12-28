@@ -18,7 +18,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { Dialogs } from "../portal/dialog/dialogs";
+import { Dialogs } from "../../../../../libs/portal/src/lib/dialog/dialogs";
 
 @Component({
     selector: 'translations',

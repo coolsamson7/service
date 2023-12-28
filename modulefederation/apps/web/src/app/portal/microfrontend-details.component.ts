@@ -6,7 +6,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { Dialogs } from "./dialog/dialogs";
+import { Dialogs } from "../../../../../libs/portal/src/lib/dialog/dialogs";
 import { Feature, Manifest } from "@modulefederation/portal";
 
 @Component({

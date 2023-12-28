@@ -11,11 +11,11 @@
 
     <!-- locales -->
 
-    <div *ngFor="let locale of locales"(click)="switch(locale)">{{locale}}</div>
+    <div class="button" *ngFor="let locale of locales"(click)="switch(locale)">{{locale}}</div>
 
     <!-- login or logout -->
 
-    <div (click)="about()">About</div>
+    <div class="button"(click)="about()">About</div>
 
     <current-user></current-user>
 </portal-header>

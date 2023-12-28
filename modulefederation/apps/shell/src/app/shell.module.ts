@@ -12,7 +12,7 @@ import {
     ConsoleTrace,
     EndpointLocator,
     Environment,
-    EnvironmentModule, PortalComponentsModule,
+    EnvironmentModule, I18nResolver, PortalComponentsModule,
     PortalModule,
     SecurityModule,
     Shell,
@@ -35,30 +35,6 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/mater
 export class AppComponentRouterModule {
 }
 
-
-@Injectable({
-    providedIn: 'root'
-})
-export class I18nResolver implements Resolve<Observable<any>> {
-    // constructor
-
-    constructor(/*private translator: Translator*/) {
-    }
-
-    // implement Resolve
-
-    /**
-     * @inheritdoc
-     */
-    resolve(route : ActivatedRouteSnapshot) : Observable<any> {
-        let feature = route.data['feature']
-
-        //if (route.data.feature.i18n?.length) {
-        //  return forkJoin(route.data.metadata.i18n.map((namespace) => this.translator.loadNamespace(namespace)));
-
-        return of(true);
-    }
-}
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
