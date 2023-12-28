@@ -1,12 +1,13 @@
 package com.serious.portal.model
-
-import com.fasterxml.jackson.annotation.JsonInclude
-
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
+
+import com.fasterxml.jackson.annotation.JsonInclude
+
+
 
 /**
  * @author Andreas Ernst

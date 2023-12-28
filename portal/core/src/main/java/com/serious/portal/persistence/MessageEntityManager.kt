@@ -1,6 +1,6 @@
 package com.serious.portal.persistence
 /*
- * @COPYRIGHT (C) 2016 Andreas Ernst
+ * @COPYRIGHT (C) 2023 Andreas Ernst
  *
  * All rights reserved
  */
@@ -108,6 +108,22 @@ class MessageEntityManager() {
         return this.entityManager.createQuery("select m from MessageEntity m where m.namespace = :namespace", MessageEntity::class.java)
             .setParameter("namespace", namespace)
             .resultList.map { entity -> toMessage(entity) }
+    }
+
+    fun readDistinctNames(namespace: String) : List<String> {
+        return this.entityManager.createQuery("select distinct name from MessageEntity where namespace = :namespace", Tuple::class.java)
+            .setParameter("namespace", namespace)
+            .resultList.map { item -> item[0] as String }
+    }
+
+    fun readSpecificTranslations(namespace: String, locale: String, names: Collection<String>) : List<Translation> {
+        return this.entityManager.createQuery("select name, value from MessageEntity where namespace = :namespace and locale =:locale and name in :names ", Tuple::class.java)
+            .setParameter("namespace", namespace)
+            .setParameter("locale", locale)
+            .setParameter("names", names)
+            .resultList.map { item ->
+                Translation(item[0] as String, item[1] as String)
+            }
     }
 
     fun readTranslations(namespace: String, locale: String) :List<Translation> {
