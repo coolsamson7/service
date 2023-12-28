@@ -33,8 +33,6 @@ import { InputDialog } from "../../../../../libs/portal/src/lib/dialog/input-dia
         MirofrontendsComponent,
         MicrofrontendDetailsComponent,
         AddManifestDialog,
-        ConfirmationDialog,
-        InputDialog,
         ChipsComponent
     ],
     imports: [

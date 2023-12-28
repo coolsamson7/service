@@ -12,9 +12,9 @@ import {
     ConsoleTrace,
     EndpointLocator,
     Environment,
-    EnvironmentModule, I18nResolver, PortalComponentsModule,
+    EnvironmentModule, I18nModule, I18nResolver, LocaleModule, PortalComponentsModule,
     PortalModule,
-    SecurityModule,
+    SecurityModule, ServerTranslationLoader,
     Shell,
     TraceLevel,
     TracerModule
@@ -86,6 +86,15 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         }),
 
         PortalComponentsModule,
+
+        LocaleModule.forRoot({
+            locale: 'en-US',
+            supportedLocales: ['en-US', 'de-DE']
+        }),
+
+        I18nModule.forRoot({
+            loader: { type: ServerTranslationLoader }
+        }),
 
         PortalModule.forRoot({
             loader: {
