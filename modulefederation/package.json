@@ -21,6 +21,7 @@
     "@nx/angular": "^17.2.0",
     "angular-oauth2-oidc": "^17.0.1",
     "backbone": "^1.5.0",
+    "chevrotain": "^11.0.3",
     "graphlib": "^2.1.8",
     "jointjs": "^3.7.7",
     "monaco-editor": "^0.45.0",

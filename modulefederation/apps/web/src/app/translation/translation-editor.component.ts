@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import {
-    Feature,
+    Feature, I18nModule,
     Message,
     MessageAdministrationService, MessageChanges,
     Translation,
@@ -25,7 +25,7 @@ import { Dialogs } from "../portal/dialog/dialogs";
     templateUrl: './translation-editor.component.html',
     styleUrls: ['./translation-editor.component.scss'],
     standalone: true,
-    imports: [NamespaceTreeComponent, CommonModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule]
+    imports: [NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule]
 })
 @Feature({
     id: "translations",
@@ -188,51 +188,6 @@ export class TranslationEditorComponent implements OnInit {
         }
 
         this.selectedNamespace = namespaceNode
-
-        // TODO TEST
-
-        let handleTranslations = (namespace: string, translations: Translation[]) => {
-            console.log(translations)
-
-            let result = {}
-
-            let findOrCreate = (name: string, folders: any) => {
-                let folder = folders[name]
-
-                if (!folder) {
-                    folder = {}
-                    folders[name] = folder
-                }
-
-                return folder
-            }
-
-            // create namespace
-
-            let parent = result
-            for ( let leg of namespace.split("."))
-                parent = findOrCreate(leg, parent)
-
-            // add translations
-
-            for ( let translation of translations) {
-                let namespace = parent
-                let legs = translation.key.split(".")
-                for (let i = 0; i < legs.length - 1; i++)
-                    namespace = findOrCreate(legs[i], namespace)
-
-                // @ts-ignore
-                namespace[legs[legs.length - 1]] = translation.value
-            }
-
-            console.log(result)
-        }
-
-        this.translationService.getTranslations("de_DE", namespaceNode.path).subscribe(
-            translations => handleTranslations(namespaceNode.path, translations)
-        )
-
-        // end TEST
 
         if ( namespaceNode ) {
             if ( !namespaceNode.messages) {

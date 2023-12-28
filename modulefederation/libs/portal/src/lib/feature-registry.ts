@@ -1,14 +1,16 @@
 import { Injectable } from "@angular/core";
-import { ReplaySubject } from "rxjs";
+import { Observable, of, ReplaySubject } from "rxjs";
 import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
 import { FolderData } from "./folder.decorator";
 import { TraceLevel, Tracer } from "./tracer";
+import { OnLocaleChange, Translatable } from "./locale";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
 
 @Injectable({providedIn: 'root'})
-export class FeatureRegistry {
+//@Translatable({priority: 0})
+export class FeatureRegistry implements OnLocaleChange {
     // instance data
 
     features : { [name : string] : FeatureData } = {};
@@ -186,6 +188,14 @@ export class FeatureRegistry {
         for (let child of feature.children || [])
             this.registerFeature(child, feature, (path == "" ? feature.id : path + "." + feature.id) + ".");
     }
+
+    // implement OnLocaleChange
+
+    onLocaleChange(locale: Intl.Locale): Observable<any> {
+        console.log("onLocaleChange " + locale.toString())
+
+        return of()
+    }
 }
 
 export class FeatureFinder {
@@ -254,4 +264,5 @@ export class FeatureFinder {
             return true
         })
     }
+
 }

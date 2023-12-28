@@ -14,11 +14,12 @@ import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
     AbstractModule,
+    AssetTranslationLoader,
     CanDeactivateGuard,
     EndpointLocator,
     Environment,
     EnvironmentModule,
-    HTTPErrorInterceptor,
+    HTTPErrorInterceptor, I18nModule, LocaleModule,
     Manifest,
     OIDCAuthentication, OIDCModule,
     OIDCSessionManager,
@@ -40,6 +41,7 @@ import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
 import { Injected } from "../../../../libs/portal/src/lib/injection/injected.decorator";
 import { TranslationModule } from "./translation/translation.module";
+import { ServerTranslationLoader } from "../../../../libs/portal/src/lib/i18n/loader/server-translation-loader";
 
 
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -86,6 +88,15 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         PortalComponentsModule,
         PortalComponentModule,
         MaterialModule,
+
+        LocaleModule.forRoot({
+            locale: 'en-US',
+            supportedLocales: ['en-US', 'de-DE']
+        }),
+
+        I18nModule.forRoot({
+            loader: { type: ServerTranslationLoader }
+        }),
 
         PortalModule.forRoot({
             loader: {
