@@ -19,7 +19,7 @@ import {
     EndpointLocator,
     Environment,
     EnvironmentModule,
-    HTTPErrorInterceptor, I18nModule, LocaleModule,
+    HTTPErrorInterceptor, I18nModule, I18nResolver, LocaleModule,
     Manifest,
     OIDCAuthentication, OIDCModule,
     OIDCSessionManager,
@@ -106,7 +106,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             localRoutes: localRoutes,
             localManifest: localManifest as Manifest,
             decorateRoutes: (route : Route) => {
-                //route.resolve = {i18n: I18nResolver}
+                route.resolve = {i18n: I18nResolver}
                 //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
                 route.canDeactivate = [CanDeactivateGuard]
             }

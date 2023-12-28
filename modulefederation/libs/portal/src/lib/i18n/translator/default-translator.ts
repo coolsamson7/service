@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { forkJoin, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { LocaleManager, OnLocaleChange, Translatable } from '../../locale';
+import { LocaleManager, OnLocaleChange } from '../../locale';
 import { AbstractCachingTranslator, MissingTranslationHandler, TranslationTree } from '../translator';
 import { I18nLoader } from '../i18n.loader';
 
 /**
  * the {@link DefaultTranslator} is a caching translator that delegates loading requests to a {@link I18nLoader}
  */
-@Translatable({priority: -1})
 @Injectable({providedIn: 'root'})
 export class DefaultTranslator extends AbstractCachingTranslator implements OnLocaleChange {
     // instance data
@@ -25,7 +24,7 @@ export class DefaultTranslator extends AbstractCachingTranslator implements OnLo
     ) {
         super(missingTranslationHandler);
 
-        localeManager.subscribe(this, 0); // TODO!
+        localeManager.subscribe(this, -1);
     }
 
     // public

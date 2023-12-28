@@ -30,6 +30,8 @@ import { Dialogs } from "../portal/dialog/dialogs";
 @Feature({
     id: "translations",
     label: "Translations",
+    labelKey: "translations:title.label",
+    i18n: ["translations"],
     icon: "computer",
     visibility: ["public", "private"],
     categories: [],

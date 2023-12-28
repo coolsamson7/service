@@ -27,7 +27,7 @@ export class LocaleManager {
     // static methods
 
     constructor(@Inject(LocaleConfigInjectionToken) configuration : LocaleConfig) {
-        this.setLocale(configuration.locale || 'en');
+        this.setLocale(configuration.locale || 'en-US');
         this.supportedLocales = configuration.supportedLocales ?? [this.getLocale().baseName];
 
         this.locale$
@@ -36,6 +36,9 @@ export class LocaleManager {
                 concatMap((l) => l.onLocaleChange.onLocaleChange(this.locale$.value))
             )
             .subscribe();
+
+        // @ts-ignore
+        window['setLocale'] = (locale: string) => this.setLocale(locale);
     }
 
     // constructor
@@ -76,7 +79,8 @@ export class LocaleManager {
      * @param locale either  string or a Intl.Locale object
      */
     setLocale(locale : string | Intl.Locale) {
-        if (typeof locale == 'string') locale = new Intl.Locale(locale);
+        if (typeof locale == 'string')
+            locale = new Intl.Locale(locale);
 
         this.locale$.next(locale);
     }

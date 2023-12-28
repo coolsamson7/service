@@ -1,12 +1,14 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "4f9135d9b461348bcc6d9008afd1dd8d45417bbf",
+  "commitHash": "e273621fc63d1d262301a3e1536dfa8bb8789c06",
   "module": "AppModule",
   "features": [
     {
       "id": "translations",
       "label": "Translations",
+      "labelKey": "translations:title.label",
+      "i18n": ["translations"],
       "icon": "computer",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],

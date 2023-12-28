@@ -22,6 +22,8 @@ data class Feature(
     var parent : String? = null,
     var description : String? = null,
     var label : String? = null,
+    var labelKey : String? = null,
+    var i18n : Array<String>? = null,
     var folder : String? = null,
     var icon : String? = null,
     var component : String,

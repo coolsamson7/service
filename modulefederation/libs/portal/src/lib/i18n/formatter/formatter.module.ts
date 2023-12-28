@@ -2,6 +2,10 @@ import { Injector, NgModule } from '@angular/core';
 import { FormatterRegistry } from './formatter-registry';
 import { AbstractModule } from '../../injection';
 
+import "./impl/date-formatter"
+import "./impl/number-formatter"
+import "./impl/string-formatter"
+
 @NgModule({
     imports: []
 })

@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Translator } from './translator';
@@ -20,12 +20,11 @@ export class I18nResolver implements Resolve<Observable<any>> {
     /**
      * @inheritdoc
      */
-    resolve(route : ActivatedRouteSnapshot) : Observable<any> { // TODO
-        /*if (route.data.metadata.i18n?.length) {
-          return forkJoin(route.data.metadata.i18n.map((namespace) => this.translator.loadNamespace(namespace)));
-        }
-        else {*/
-        return of(true);
-        //}
+    resolve(route : ActivatedRouteSnapshot) : Observable<any> {
+        if (route.data['feature'].i18n?.length)
+          return forkJoin(route.data['feature'].i18n.map((namespace: string) => this.translator.loadNamespace(namespace)));
+
+        else
+            return of(true);
     }
 }

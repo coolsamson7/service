@@ -4,12 +4,12 @@ import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
 import { FolderData } from "./folder.decorator";
 import { TraceLevel, Tracer } from "./tracer";
-import { OnLocaleChange, Translatable } from "./locale";
+import { LocaleManager, OnLocaleChange, Translatable } from "./locale";
+import { Translator } from "./i18n";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
 
 @Injectable({providedIn: 'root'})
-//@Translatable({priority: 0})
 export class FeatureRegistry implements OnLocaleChange {
     // instance data
 
@@ -20,11 +20,17 @@ export class FeatureRegistry implements OnLocaleChange {
 
     // constructor
 
-    constructor() {
+    constructor(localeManager: LocaleManager, private translator: Translator) {
         ;(window as any)["features"] = () => {
             this.report()
             console.log(this.features)
         }
+
+        localeManager.subscribe(this, 0);
+
+        // initial setup
+
+        this.onLocaleChange(localeManager.getLocale())
     }
 
     // public
@@ -193,6 +199,13 @@ export class FeatureRegistry implements OnLocaleChange {
 
     onLocaleChange(locale: Intl.Locale): Observable<any> {
         console.log("onLocaleChange " + locale.toString())
+
+      for ( let featureName in this.features) {
+        let feature = this.features[featureName]
+
+        if ( feature.labelKey)
+          feature.label = this.translator.translate(feature.labelKey)
+      }
 
         return of()
     }

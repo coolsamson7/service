@@ -299,7 +299,9 @@ export class ManifestGenerator {
 
             feature = {
                 id: decorator.id,
-                label: decorator.label || decorator.id,
+                label: decorator.label || (decorator.labelKey ? "" : decorator.id),
+                labelKey: decorator.labelKey || "",
+                i18n: decorator.i18n || [],
                 icon: decorator.icon || "",
                 folder: decorator.folder || "",
                 router: decorator.router || null,

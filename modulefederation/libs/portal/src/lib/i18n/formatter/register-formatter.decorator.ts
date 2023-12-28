@@ -8,10 +8,12 @@ import { FormatterModule } from "./formatter.module";
  */
 export const RegisterFormatter = (type : string) : ClassDecorator => {
     return (formatterClass : any) => {
-        FormatterModule.injectorSubject.subscribe((injector) => {
-            const registry = injector.get(FormatterRegistry);
+        import('./formatter.module').then((m) => {
+            m.FormatterModule.injectorSubject.subscribe((injector) => {
+                const registry = injector.get(FormatterRegistry);
 
-            registry.register(type, injector.get(formatterClass));
-        });
+                registry.register(type, injector.get(formatterClass));
+            });
+        })
     }
 }

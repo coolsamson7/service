@@ -9,6 +9,10 @@
 
     <span class="stretch"></span>
 
+    <!-- locales -->
+
+    <div *ngFor="let locale of locales"(click)="switch(locale)">{{locale}}</div>
+
     <!-- login or logout -->
 
     <div (click)="about()">About</div>

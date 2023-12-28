@@ -1,7 +1,6 @@
 import { ɵNG_PROV_DEF } from '@angular/core';
 import { LocaleManager } from './locale.manager';
 import { Observable } from 'rxjs';
-import { LocaleModule } from "./locale.module";
 
 /**
  * translatable objects must implement this interface on order to get called about changes
@@ -35,28 +34,35 @@ export interface TranslatableConfig {
 export function Translatable(config : TranslatableConfig = {priority: 1}) {
     if (!config.priority) config.priority = 1;
 
+    let subscribe = (onLocaleChange: OnLocaleChange, config : TranslatableConfig): OnLocaleChange => {
+        import('./locale.module').then((m) => {
+            m.LocaleModule.injectorSubject.subscribe((injector) => {
+                const localeManager = injector.get(LocaleManager);
+
+                console.log("### subscribe ")
+
+                console.log(onLocaleChange)
+
+                localeManager.subscribe(onLocaleChange, config.priority);
+            });
+        });
+
+        return onLocaleChange
+    }
+
     return function translatable<T extends ConstructorFunction<OnLocaleChange>>(constructor : T) : any | void {
         // @ts-ignore
         const injectable = constructor[ɵNG_PROV_DEF];
 
         if (injectable) {
+            console.log("### register ")
+            console.log(injectable.factory)
             // If it's an Injectable, hook into its factory.
 
             const originalFactory = injectable.factory;
 
-            injectable.factory = function(t : any) {
-                import('./locale.module').then((m) => {
-                    m.LocaleModule.injectorSubject.subscribe((injector) => {
-                        const localeManager = injector.get(LocaleManager);
-
-                        // @ts-ignore
-                        window['setLocale'] = (locale) => localeManager.setLocale(locale);
-
-                        localeManager.subscribe(this.value, config.priority);
-                    });
-
-                    return originalFactory(t);
-                })
+            injectable.factory = function (t: any) { console.log("### call " + originalFactory)
+                return subscribe(originalFactory(t), config)
             };
         }
         else {
@@ -71,9 +77,6 @@ export function Translatable(config : TranslatableConfig = {priority: 1}) {
                     import('./locale.module').then((m) => {
                         m.LocaleModule.injectorSubject.subscribe((injector) => {
                             const localeManager = injector.get(LocaleManager);
-
-                            // @ts-ignore
-                            window["setLocale"] = (locale) => localeManager.setLocale(locale);
 
                             localeManager.subscribe(this, config.priority);
                         });

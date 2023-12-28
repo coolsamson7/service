@@ -4,5 +4,7 @@ INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.comma
 INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'ok.label', 'en-US', 'Ok')
 INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'cancel.label', 'de-DE', 'Abbrechen')
 INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('portal.commands', 'cancel.label', 'en-US', 'Cancel')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('translations', 'title.label', 'en-US', 'Translations')
+INSERT INTO MESSAGE (NAMESPACE, NAME, LOCALE, TRANSLATION) VALUES ('translations', 'title.label', 'de-DE', 'Übersetzungen')
 INSERT INTO LANGUAGE ( LOCALE) VALUES ('en-US')
 INSERT INTO LANGUAGE ( LOCALE) VALUES ('de-DE')

@@ -23,7 +23,7 @@ export type Visibility = "public" | "private"
 
 export interface FeatureConfig {
     /**
-     * enabeld status of a feature
+     * enabled status of a feature
      */
     enabled? : boolean
 
@@ -62,6 +62,15 @@ export interface FeatureConfig {
      * optional label. if not set, populated with the id
      */
     label? : string
+
+    /**
+     * optional label key
+     */
+    labelKey? : string
+    /**
+     * optional label key
+     */
+    i18n? : string[]
     /**
      * the name of the implementing component
      */
