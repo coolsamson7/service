@@ -49,8 +49,8 @@ export class TranslationEditorComponent implements OnInit {
     namespaces: NamespaceNode[] = []
     selectedNamespace?: NamespaceNode
     messages : MessageMap = {}
+    selectedName?: string
     selectedMessages?: MessagesByType
-    selectedPrefix?: string
     locales: string[] = []
     namespaceChanges : MessageChanges = {
         newMessages: [],
@@ -112,8 +112,9 @@ export class TranslationEditorComponent implements OnInit {
         })
     }
 
-    selectMessages(message: MessagesByType) {
-        this.selectedMessages = message
+    selectMessages(message: string) {
+        this.selectedName = message
+        this.selectedMessages = this.messages[message]
     }
 
     messageKeys(messages: MessageMap ) {
@@ -154,12 +155,6 @@ export class TranslationEditorComponent implements OnInit {
             }
         }
 
-        // was name -> ["en", "de"]
-        // now name -> {
-        //   "label": ["en", "de],
-        //   "shortcut": [ "en", "de]
-        //}
-
         for ( let message of messages) {
             let index = message.name.indexOf(".") // e.g. bla.label
             let prefix = message.name.substring(0, index) // e.g. bla
@@ -172,14 +167,8 @@ export class TranslationEditorComponent implements OnInit {
 
                 messagesByType =  {}
 
-                for (let type of this.types) {
-                    let localeArray = []
-
-                    for ( let locale of this.locales)
-                        localeArray.push(newMessage(locale, prefix + "." + type))
-
-                    messagesByType[type] = localeArray
-                }
+                for (let type of this.types)
+                    messagesByType[type] = this.locales.map(locale => newMessage(locale, prefix + "." + type))
 
                 result[prefix] = messagesByType
             }
@@ -188,6 +177,10 @@ export class TranslationEditorComponent implements OnInit {
 
             messagesByType[suffix][this.locales.indexOf(message.locale)] = message
         }
+
+        // done
+
+        console.log(result)
 
         return result
     }
@@ -234,7 +227,11 @@ export class TranslationEditorComponent implements OnInit {
                     }
                 )
             }
-            else this.messages = this.computeMessages(namespaceNode.messages)
+            else {
+                this.messages = this.computeMessages(namespaceNode.messages)
+                if ( this.selectedName )
+                    this.selectMessages(this.selectedName)
+            }
         }
     }
 
@@ -244,7 +241,7 @@ export class TranslationEditorComponent implements OnInit {
     }
 
     isNew(message: Message):boolean {
-        return message.id == undefined
+        return message.id == undefined || message.id == null
     }
 
     onChange(message: Message) {

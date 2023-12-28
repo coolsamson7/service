@@ -33,7 +33,7 @@
 
         <mat-nav-list class="list" dense>
             <ng-container *ngFor="let message of messageKeys(messages); let index = index">
-                <a (click)="selectMessages(messages[message])" [ngClass]="{selected: selectedMessages === messages[message]}" class="item" mat-list-item role="listitem">
+                <a (click)="selectMessages(message)" [ngClass]="{selected: selectedMessages === messages[message]}" class="item" mat-list-item role="listitem">
                     <!--mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon-->
                     <span>
                         {{message}}
