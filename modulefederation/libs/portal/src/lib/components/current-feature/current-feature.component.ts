@@ -1,21 +1,26 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { filter, map, switchMap } from "rxjs";
+import { Observable, filter, map, of, switchMap } from "rxjs";
+import { LocaleManager, OnLocaleChange } from "../../locale";
+import { FeatureConfig } from "../../feature-config";
 
 @Component({
     selector: 'current-feature',
     templateUrl: './current-feature.component.html',
     styleUrls: ['./current-feature.component.scss']
 })
-export class CurrentFeatureComponent {
+export class CurrentFeatureComponent implements OnLocaleChange {
     // instance data
 
-    label : string = ""
-    icon : string = ""
+    feature?: FeatureConfig
 
     // constructor
 
-    constructor(private router : Router, private activatedRoute : ActivatedRoute) {
+    constructor(private router : Router, private activatedRoute : ActivatedRoute, private localeManager: LocaleManager) {
+        // listen to locale changes
+
+        localeManager.subscribe(this)
+
         // listen to router events
 
         this.router.events
@@ -26,8 +31,13 @@ export class CurrentFeatureComponent {
                 switchMap(route => (route as any).data)
             )
             .subscribe((data : any) => {
-                this.label = data['feature'].label
-                this.icon = data['feature'].icon
+                this.feature = data['feature']
+                //this.label = data['feature'].label
+                //this.icon = data['feature'].icon
             });
+    }
+
+    onLocaleChange(locale: Intl.Locale): Observable<any> {
+        return of()
     }
 }

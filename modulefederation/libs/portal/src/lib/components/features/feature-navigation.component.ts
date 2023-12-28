@@ -5,13 +5,15 @@ import { NavigationItem } from './feature-navigation.model';
 import { FeatureData } from "../../portal-manager";
 import { FeatureRegistry } from "../../feature-registry";
 import { FolderData } from "../../folder.decorator";
+import { LocaleManager, OnLocaleChange } from "../../locale";
+import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'feature-navigation',
     templateUrl: './feature-navigation.component.html',
     styleUrls: ['./feature-navigation.component.scss']
 })
-export class FeatureNavigationComponent implements OnInit {
+export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
     // instance data
 
     collapsed = false;
@@ -21,7 +23,15 @@ export class FeatureNavigationComponent implements OnInit {
 
     // constructor
 
-    constructor(public router : Router, private featureRegistry : FeatureRegistry) {
+    constructor(public router : Router, private featureRegistry : FeatureRegistry, localeManager: LocaleManager) {
+        this.onLocaleChange(localeManager.getLocale())
+
+        localeManager.subscribe(this)
+    }
+
+    // implement OnLocaleChange
+
+    onLocaleChange(locale: Intl.Locale): Observable<any> {
         let mapFeature = (feature : FeatureData, parent : NavigationItem) : NavigationItem => {
             let item = {
                 routeLink: feature.routerPath!!,
@@ -56,7 +66,7 @@ export class FeatureNavigationComponent implements OnInit {
 
             for (let child of folder.children || []) {
                 let childFolder = mapFolder(child, item)
-                if ( childFolder.visible)
+                if (childFolder.visible)
                     item.visible = true
             }
 
@@ -91,6 +101,8 @@ export class FeatureNavigationComponent implements OnInit {
         // done
 
         this.navData = [...folderItems, ...featureItems]
+
+        return of()
     }
 
     // host listener
