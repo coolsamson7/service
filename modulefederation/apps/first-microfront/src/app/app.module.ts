@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import {
   ConsoleTrace,
-  EndpointLocator,
+  EndpointLocator, Environment,
   I18nModule,
   LocaleModule,
   Manifest,
@@ -19,7 +19,29 @@ import { environment } from "../environments/environment";
 import { appRoutes } from "./app.routes";
 import * as localManifest from "../assets/manifest.json"
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
-import { ApplicationEndpointLocator } from "../../../web/src/app/app.module";
+
+export class ApplicationEndpointLocator extends EndpointLocator {
+  // instance data
+
+  private environment : Environment
+
+  // constructor
+
+  constructor(environment : any) {
+    super()
+
+    this.environment = new Environment(environment)
+  }
+
+  // implement
+
+  getEndpoint(domain : string) : string {
+    if (domain == "admin")
+      return this.environment.get<string>("administration.server")!!
+    else
+      throw new Error("unknown domain " + domain)
+  }
+}
 
 @NgModule({
   declarations: [AppComponent],
