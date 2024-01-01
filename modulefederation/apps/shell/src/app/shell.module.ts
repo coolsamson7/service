@@ -1,4 +1,4 @@
-import { Injectable, Injector, NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ShellComponent } from './shell.component';
@@ -19,10 +19,9 @@ import {
     TraceLevel,
     TracerModule
 } from "@modulefederation/portal";
-import { ActivatedRouteSnapshot, Resolve, Route, RouterModule } from "@angular/router";
+import {  Route, RouterModule } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
-import { Observable, of } from "rxjs";
 import { environment } from "../environments/environment";
 import { SampleAuthentication } from "./security/sample-authentication";
 import { SampleAuthorization } from "./security/sample-authorization";
@@ -98,8 +97,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
         PortalModule.forRoot({
             loader: {
-                server: true,
-                //remotes: ["http://localhost:4201", "http://localhost:4202"]
+                //server: true,
+                remotes: ["http://localhost:4201", "http://localhost:4202"]
             },
             localRoutes: localRoutes,
             localManifest: localManifest,

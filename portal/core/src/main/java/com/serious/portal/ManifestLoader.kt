@@ -36,7 +36,7 @@ class ManifestLoader {
 
     // public
 
-    public fun load(url: URL) : Manifest {
+    public fun load(url: URL) : Manifest {//TODO
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 

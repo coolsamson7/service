@@ -8,8 +8,9 @@ package com.serious.service.channel.dispatch
 import org.springframework.stereotype.Component
 import java.lang.reflect.Method
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
- /**
+/**
  * A <code>MethodCache</code> is used to compute and cache method indices of classes.
   * Methods will be sorted by comparing their signature in order to be stable.
  */
@@ -40,7 +41,7 @@ class MethodCache {
 
     // instance data
 
-    private var class2Methods: MutableMap<Class<*>, ClassMethods> = HashMap()
+    private var class2Methods: MutableMap<Class<*>, ClassMethods> = ConcurrentHashMap()
 
     // public
     fun getIndex(clazz: Class<*>, method: Method): Int {

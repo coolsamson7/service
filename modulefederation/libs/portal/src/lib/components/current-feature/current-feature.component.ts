@@ -12,7 +12,11 @@ import { FeatureConfig } from "../../feature-config";
 export class CurrentFeatureComponent implements OnLocaleChange {
     // instance data
 
-    feature?: FeatureConfig
+    feature?: FeatureConfig = {
+        id: "",
+        label: "",
+        icon: ""
+    }
 
     // constructor
 
