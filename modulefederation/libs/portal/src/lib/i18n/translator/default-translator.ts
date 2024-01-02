@@ -5,6 +5,7 @@ import { map, tap } from 'rxjs/operators';
 import { LocaleManager, OnLocaleChange } from '../../locale';
 import { AbstractCachingTranslator, MissingTranslationHandler, TranslationTree } from '../translator';
 import { I18nLoader } from '../i18n.loader';
+import { Interpolator } from "../interpolator";
 
 /**
  * the {@link DefaultTranslator} is a caching translator that delegates loading requests to a {@link I18nLoader}
@@ -20,9 +21,10 @@ export class DefaultTranslator extends AbstractCachingTranslator implements OnLo
     constructor(
         private loader : I18nLoader,
         missingTranslationHandler : MissingTranslationHandler,
+        interpolator: Interpolator,
         localeManager : LocaleManager
     ) {
-        super(missingTranslationHandler);
+        super(missingTranslationHandler, interpolator);
 
         localeManager.subscribe(this, -1);
     }
@@ -37,16 +39,16 @@ export class DefaultTranslator extends AbstractCachingTranslator implements OnLo
 
     // override
 
-    translate$(key : string) : Observable<string> {
+    translate$(key : string, options: any = null) : Observable<string> {
         const {namespace, path} = this.extractNamespace(key);
 
         const translations = this.cachedNamespaces[namespace];
 
         if (translations)
-            return of(this.get(translations, path) || this.missingTranslationHandler.resolve(key));
+            return of(this.interpolate(this.get(translations, path), options) || this.missingTranslationHandler.resolve(key));
         else
             return this.loadNamespace(namespace).pipe(
-                map((namespace) => this.get(namespace, path) || this.missingTranslationHandler.resolve(key))
+                map((namespace) => this.interpolate(this.get(namespace, path), options) || this.missingTranslationHandler.resolve(key))
             );
     }
 

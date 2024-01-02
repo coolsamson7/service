@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Interpolator } from "./interpolator";
 
 export type TranslationTree = any;
 
@@ -37,14 +38,16 @@ export abstract class Translator {
     /**
      * return an observable containing the translated key or the transformed key in case of missing values
      * @param key the translation key
+     * @param options interpolator options
      */
-    abstract translate$(key : string) : Observable<string>;
+    abstract translate$(key : string, options?: any) : Observable<string>;
 
     /**
      * return the i18n value or the transformed key in case of missing values
      * @param key
+     * @param options interpolator options
      */
-    abstract translate(key : string) : string;
+    abstract translate(key : string, options?: any) : string;
 
     /**
      * return an observable containing all values for the specific namespace
@@ -69,7 +72,7 @@ export abstract class AbstractCachingTranslator extends Translator {
 
     // constructor
 
-    protected constructor(protected missingTranslationHandler : MissingTranslationHandler) {
+    protected constructor(protected missingTranslationHandler : MissingTranslationHandler, private interpolator: Interpolator) {
         super();
     }
 
@@ -84,18 +87,20 @@ export abstract class AbstractCachingTranslator extends Translator {
 
     // private
 
-    // namespace.name.type OR
+  protected interpolate(str?: string, options?: any) {
+      return options != null ? this.interpolator.interpolate(str!!, options) : str
+  }
 
     /**
      * @inheritdoc
      */
-    translate(key : string) : string {
+    translate(key : string, options: any = null) : string {
         const {namespace, path} = this.extractNamespace(key);
 
         const translation = this.get(this.cachedNamespaces[namespace], path);
 
         // @ts-ignore
-        return translation || this.missingTranslationHandler.resolve(key);
+        return this.interpolate(translation) || this.missingTranslationHandler.resolve(key);
     }
 
     // implement Translator

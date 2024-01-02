@@ -1,51 +1,55 @@
-import { map, Subscription, switchMap } from 'rxjs';
-import { Pipe, PipeTransform } from '@angular/core';
+import { first, map, Observable, of } from 'rxjs';
+import { OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { Translator } from './translator';
-import { Interpolator } from './interpolator';
-import { LocaleManager } from '../locale';
+import { LocaleManager, OnLocaleChange } from '../locale';
 
 /**
  * a pipe that will translate and possibly interpolate any placeholders given the current locale.
  */
 @Pipe({
-    name: 'translate',
-    pure: false // well, too bad....
+  name: 'translate',
+  pure: false
 })
-export class TranslatePipe implements PipeTransform {
-    // instance data
+export class TranslatePipe implements PipeTransform, OnDestroy, OnLocaleChange {
+  // instance data
 
-    private subscription : Subscription | null = null;
-    private translated = '';
+  private translated = '';
+  private lastKey = ""
+  unsubscribe : () => void
 
-    // constructor
+  // constructor
 
-    constructor(private i18n : Translator, private interpolator : Interpolator, private localeManager : LocaleManager) {
+  constructor(private i18n : Translator, localeManager: LocaleManager) {
+    this.unsubscribe = localeManager.subscribe(this)
+  }
+
+  // implement PipeTransform
+
+  /**
+   * @inheritdoc
+   */
+  transform(key : string, options? : any) : string {
+    if (key !== this.lastKey) {
+      this.i18n.translate$(key, options)
+        .pipe(first())
+        .subscribe((translated) => {
+          this.lastKey = key
+          this.translated = translated;
+        });
     }
 
-    // implement PipeTransform
+    return this.translated;
+  }
 
-    /**
-     * @inheritdoc
-     */
-    transform(key : string, options? : any) : string {
-        if (!key) return '- empty key - ';
+  onLocaleChange(locale: Intl.Locale): Observable<any> {
+    this.lastKey = ""
 
-        this.subscription?.unsubscribe();
+    return of()
+  }
 
-        // @ts-ignore
-        this.subscription = this.localeManager.locale$
-            .pipe(
-                switchMap(() => this.i18n.translate$(key)),
-                map((translated) => this.interpolate(translated, options))
-            )
-            .subscribe((translated) => {
-                this.translated = translated;
-            });
+  // implement OnDestroy
 
-        return this.translated;
-    }
-
-    private interpolate(text : string, options : any) {
-        return options ? this.interpolator.interpolate(text, options) : text;
-    }
+  ngOnDestroy() : void {
+    this.unsubscribe()
+  }
 }
