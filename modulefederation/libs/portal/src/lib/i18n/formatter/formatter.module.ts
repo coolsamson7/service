@@ -2,22 +2,18 @@ import { Injector, NgModule } from '@angular/core';
 import { FormatterRegistry } from './formatter-registry';
 import { AbstractModule } from '../../injection';
 
-import "./impl/date-formatter"
-import "./impl/number-formatter"
-import "./impl/string-formatter"
+import("./impl/date-formatter")
+  .then(result => console.log(result))
+import("./impl/number-formatter")
+  .then(result => console.log(result))
+import("./impl/string-formatter")
+  .then(result => console.log(result))
 
 @NgModule({
     imports: []
 })
 export class FormatterModule extends AbstractModule() {
-    static formatters : any = [];
-
     constructor(injector : Injector) {
         super(injector)
-
-        const registry = injector.get(FormatterRegistry);
-
-        for (const formatter of FormatterModule.formatters)
-            registry.register(formatter.type, injector.get(formatter.formatterClass));
     }
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { RegisterFormatter } from '../register-formatter.decorator';
-import { FormatOptions, ValueFormatter } from '../formatter.interfaces';
+import { Formatter } from '../formatter.decorator';
+import { FormatOptions, ValueFormatter } from '../value-formatter';
 import { LocaleManager } from '../../../locale';
 
 type StringFormatOptions = FormatOptions;
 
-/**npm start
+/**
  * formatter for strings
  */
-@RegisterFormatter('string')
+@Formatter('string')
 @Injectable({providedIn: 'root'})
 export class StringFormatter implements ValueFormatter<string, StringFormatOptions> {
     // constructor

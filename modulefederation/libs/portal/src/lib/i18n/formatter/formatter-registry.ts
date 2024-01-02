@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormatOptions, ValueFormatter } from './formatter.interfaces';
+import { FormatOptions, ValueFormatter } from './value-formatter';
 
 /**
  * The <code>FormatterRegistry</code> is the registry for known formatters and the main api for formatting requests.

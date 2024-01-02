@@ -1,7 +1,7 @@
-import { RegisterFormatter } from '../register-formatter.decorator';
 import { Injectable } from '@angular/core';
-import { ValueFormatter } from '../formatter.interfaces';
+import { ValueFormatter } from '../value-formatter';
 import { LocaleManager } from '../../../locale';
+import { Formatter } from "../formatter.decorator";
 
 /**
  * formatting options for dates
@@ -16,7 +16,7 @@ export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
 /**
  * formatter for dates according to the Intl.DateTimeFormat
  */
-@RegisterFormatter('date')
+@Formatter('date')
 @Injectable({providedIn: 'root'})
 export class DateFormatter implements ValueFormatter<Date, DateTimeFormatOptions> {
     // constructor

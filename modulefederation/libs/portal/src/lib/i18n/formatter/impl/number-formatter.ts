@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { RegisterFormatter } from '../register-formatter.decorator';
-import { ValueFormatter } from '../formatter.interfaces';
+import { Formatter } from '../formatter.decorator';
+import { ValueFormatter } from '../value-formatter';
 import { LocaleManager } from '../../../locale';
 
 /**
@@ -16,7 +16,7 @@ export interface NumberFormatOptions extends Intl.NumberFormatOptions {
 /**
  * formatter for numbers
  */
-@RegisterFormatter('number')
+@Formatter('number')
 @Injectable({providedIn: 'root'})
 export class NumberFormatter implements ValueFormatter<number, NumberFormatOptions> {
     // constructor

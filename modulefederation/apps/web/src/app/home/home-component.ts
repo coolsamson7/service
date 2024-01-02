@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { Feature } from "@modulefederation/portal";
+import { AnalyticsDisableModule } from "@angular/cli/src/commands/analytics/settings/cli";
 
 @Component({
     selector: 'home',
@@ -15,4 +16,7 @@ import { Feature } from "@modulefederation/portal";
     permissions: []
 })
 export class HomeComponent {
+  value = 10
+  me ="Andi"
+  today = new Date()
 }

@@ -6,7 +6,7 @@ import { FormatterModule } from "./formatter.module";
  * @param type the name
  * @constructor
  */
-export const RegisterFormatter = (type : string) : ClassDecorator => {
+export const Formatter = (type : string) : ClassDecorator => {
     return (formatterClass : any) => {
         import('./formatter.module').then((m) => {
             m.FormatterModule.injectorSubject.subscribe((injector) => {
