@@ -9,13 +9,15 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCommonModule } from "@angular/material/core";
 import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
     selector: 'input-dialog',
     templateUrl: './input-dialog.html',
     styleUrls: ['./input-dialog.scss'],
     standalone: true,
-    imports: [MatCommonModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, MatFormFieldModule]
+    imports: [CommonModule, MatCommonModule, MatInputModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, MatFormFieldModule]
 })
 export class InputDialog implements OnInit {
     // instance data

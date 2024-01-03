@@ -2,6 +2,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { ButtonConfiguration } from "./dialogs";
+import { Translator } from "../i18n";
+import { ShortcutManager } from "../shortcuts";
 
 export interface ConfirmationDialogConfig {
     title : string;
@@ -22,7 +24,7 @@ export class ConfirmationDialogBuilder {
 
     // constructor
 
-    constructor(private dialog : MatDialog) {
+    constructor(private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
     }
 
     // fluent
@@ -76,7 +78,7 @@ export class ConfirmationDialogBuilder {
     public ok() : ConfirmationDialogBuilder {
         return this
             .button({
-                label: "Ok",
+                label: this.translator.translate("portal.commands:ok.label"),
                 primary: true,
                 result: true
             })
@@ -88,12 +90,12 @@ export class ConfirmationDialogBuilder {
     public okCancel() : ConfirmationDialogBuilder {
         return this
             .button({
-                label: "Ok",
+                label: this.translator.translate("portal.commands:ok.label"),
                 primary: true,
                 result: true
             })
             .button({
-                label: "Cancel",
+                label: this.translator.translate("portal.commands:cancel.label"),
                 result: undefined
             });
     }
