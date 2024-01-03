@@ -8,7 +8,14 @@ import { MatCommonModule } from "@angular/material/core";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { Dialogs, Feature, FeatureData, FeatureRegistry, PortalComponentsModule } from "@modulefederation/portal";
+import {
+  Dialogs,
+  Feature,
+  FeatureData,
+  FeatureRegistry,
+  I18nModule,
+  PortalComponentsModule
+} from "@modulefederation/portal";
 import { MatListModule } from "@angular/material/list";
 import { Observable, of } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -46,7 +53,7 @@ export interface PreferencesDialogConfig {
   templateUrl: './preferences-dialog.html',
   styleUrls: ['./preferences-dialog.scss'],
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatListModule, PortalComponentsModule]
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatListModule, PortalComponentsModule, I18nModule]
 })
 export class PreferencesDialog implements OnInit {
   // instance data
@@ -84,13 +91,16 @@ export class PreferencesDialog implements OnInit {
   }
 
   ok() {
-    //this.dialogRef.close("this.value");
+    if (this.selectedComponent?.isDirty())
+      this.selectedComponent?.canSave().subscribe(ok => {
+        if (ok)
+          this.dialogRef.close(true);
+      })
   }
 
   cancel() {
-
+    this.dialogRef.close(false);
   }
-
 
   // implement OnInit
   ngOnInit() : void {
@@ -98,14 +108,14 @@ export class PreferencesDialog implements OnInit {
 
     if (button)
       this.dialogRef.keydownEvents().subscribe(event => {
-        //if (event.key === "Escape") {
-        //    this.cancel();
-        //}
+        if (event.key === "Escape") {
+            this.cancel();
+        }
 
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
 
-          this.dialogRef.close("this.value");
+          this.ok()
         }
       });
   }

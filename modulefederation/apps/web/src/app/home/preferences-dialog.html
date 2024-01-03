@@ -15,11 +15,11 @@
   </div>
 </div>
 <div align="end" mat-dialog-actions>
-  <button (click)="ok()" [mat-dialog-close]="true" mat-button mat-raised-button color="primary">
-    Ok
+  <button (click)="ok()" mat-button mat-raised-button color="primary">
+    {{"portal.commands:ok.label" | translate}}
   </button>
-  <button (click)="cancel()" [mat-dialog-close]="false" mat-button>
-    Cancel
+  <button (click)="cancel()" mat-button>
+    {{"portal.commands:cancel.label" | translate}}
   </button>
 </div>
 
