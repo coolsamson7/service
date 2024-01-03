@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import {
   Dialogs,
   Feature,
   I18nModule,
   Message,
   MessageAdministrationService,
-  MessageChanges,
+  MessageChanges, ShortcutManager,
   TranslationService
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
@@ -20,6 +20,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 type MessagesByType = { [type : string] : Message[] }
 type MessageMap = { [prefix : string] : MessagesByType }
@@ -30,7 +31,7 @@ type MessageMap = { [prefix : string] : MessagesByType }
   styleUrls: ['./translation-editor.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
-  imports: [NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule]
+  imports: [NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule]
 })
 @Feature({
   id: "translations",
@@ -43,7 +44,7 @@ type MessageMap = { [prefix : string] : MessagesByType }
   tags: ["navigation"],
   permissions: []
 })
-export class TranslationEditorComponent implements OnInit {
+export class TranslationEditorComponent implements OnInit, OnDestroy {
   // instance data
 
   types = ["label", "tooltip", "shortcut"] // dynamic?
@@ -61,7 +62,7 @@ export class TranslationEditorComponent implements OnInit {
 
   // constructor
 
-  constructor(private dialogs : Dialogs, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService, private translationService : TranslationService) {
+  constructor(private shortcutManager: ShortcutManager, private dialogs : Dialogs, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService, private translationService : TranslationService) {
   }
 
   // callbacks
@@ -196,8 +197,6 @@ export class TranslationEditorComponent implements OnInit {
 
     // done
 
-    console.log(result)
-
     return result
   }
 
@@ -326,8 +325,6 @@ export class TranslationEditorComponent implements OnInit {
       if (!this.namespaceChanges.newMessages.includes(message))
         this.namespaceChanges.newMessages.push(message)
     }
-
-    console.log(this.namespaceChanges)
   }
 
   // private
@@ -393,9 +390,24 @@ export class TranslationEditorComponent implements OnInit {
 
   // implement OnInit
 
+  saveShortut?: () => void
+  revertShortut?: () => void
+
   ngOnInit() : void {
     this.messageAdministrationService.readLocales().subscribe(locales => this.locales = locales)
 
     this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
+
+    this.saveShortut = this.shortcutManager.register({
+      onShortcut: () => this.save(),
+      handles: (event) => this.hasChanges(),
+      shortcut: "ctrl+s"
+    })
+  }
+
+  // implement OnDestroy
+
+  ngOnDestroy(): void {
+    this.saveShortut!!()
   }
 }
