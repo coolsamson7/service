@@ -17,8 +17,6 @@ export class ServerTranslationLoader implements I18nLoader {
         // local function
 
         let handleTranslations = (namespace: string, translations: Translation[]) => {
-            console.log(translations)
-
             let result = {}
 
             let findOrCreate = (name: string, folders: any) => {
@@ -49,8 +47,6 @@ export class ServerTranslationLoader implements I18nLoader {
                 // @ts-ignore
                 namespace[legs[legs.length - 1]] = translation.value
             }
-
-            console.log(result)
 
             return result
         }
