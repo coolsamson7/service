@@ -6,14 +6,14 @@ import { NumberFormatter } from "./impl/number-formatter";
 
 
 @NgModule({
-    imports: []
+  imports: []
 })
 export class FormatterModule extends AbstractModule() {
-    constructor(injector : Injector) {
-        super(injector)
+  constructor(injector : Injector) {
+    super(injector)
 
-      DateFormatter
-      StringFormatter
-      NumberFormatter
-    }
+    DateFormatter
+    StringFormatter
+    NumberFormatter
+  }
 }

@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { catchError, shareReplay } from 'rxjs/operators';
-import { I18nLoader } from '../i18n.loader';
+import { I18nLoader } from '../i18n-loader';
 import { TranslationLoaderConfig, TranslationLoaderConfigInjectionToken } from '../i18n.module';
 import { TraceLevel, Tracer } from "../../tracer";
 

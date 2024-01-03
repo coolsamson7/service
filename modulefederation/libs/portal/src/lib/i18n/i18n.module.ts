@@ -1,10 +1,11 @@
 import { InjectionToken, ModuleWithProviders, NgModule, Type } from '@angular/core';
-import { I18nLoader } from './i18n.loader';
-import { DefaultMissingTranslationHandler, MissingTranslationHandler, Translator } from './translator';
+import { I18nLoader } from './i18n-loader';
+import { Translator } from './translator';
 import { TranslatePipe } from './translate.pipe';
 import { FormatterModule } from './formatter';
-import { DefaultTranslator } from './translator/default-translator';
+import { DefaultMissingTranslationHandler, StandardTranslator } from './standard-translator';
 import { LocaleModule } from '../locale';
+import { MissingTranslationHandler } from "./missing-translation-handler";
 
 /**
  * @ignore
@@ -113,7 +114,7 @@ export class I18nModule {
                 },
                 {
                     provide: Translator,
-                    useClass: config.translator?.type || DefaultTranslator
+                    useClass: config.translator?.type || StandardTranslator
                 },
                 {
                     provide: MissingTranslationHandler,
