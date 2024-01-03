@@ -1,5 +1,7 @@
+import "reflect-metadata";
+
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, Injector, NgModule } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
@@ -18,7 +20,7 @@ import {
   CanDeactivateGuard,
   EndpointLocator,
   Environment,
-  EnvironmentModule,
+  EnvironmentModule, ErrorModule,
   HTTPErrorInterceptor, I18nModule, I18nResolver, Injected, LocaleModule,
   Manifest,
   OIDCAuthentication, OIDCModule,
@@ -41,7 +43,6 @@ import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
 import { TranslationModule } from "./translation/translation.module";
 import { GlobalErrorHandler } from './error/global-error-handler';
-
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -87,6 +88,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         PortalComponentsModule,
         PortalComponentModule,
         MaterialModule,
+        ErrorModule,
 
         LocaleModule.forRoot({
             locale: 'en-US',

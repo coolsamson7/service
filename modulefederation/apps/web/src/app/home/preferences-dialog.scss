@@ -1,0 +1,14 @@
+.content {
+  display: flex;
+  gap: 10px;
+
+  .list {
+    .selected {
+      background-color: lightgray;
+    }
+  }
+
+  .feature {
+    padding: 8px 0;
+  }
+}

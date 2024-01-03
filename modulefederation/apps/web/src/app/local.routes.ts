@@ -13,6 +13,10 @@ import { NodesComponent } from './nodes/nodes.component';
 
 import { NodeDetailsComponent } from './nodes/node-details.component';
 
+import { LanguagePreferences } from './home/preferences-dialog';
+
+import { OtherPreferences } from './home/preferences-dialog';
+
 import { HomeComponent } from './home/home-component';
 
 import { ComponentsComponent } from './components/components.component';
@@ -53,6 +57,16 @@ export const localRoutes: Routes = [
         children: [],
       },
     ],
+  },
+  {
+    path: 'language-preferences',
+    component: LanguagePreferences,
+    children: [],
+  },
+  {
+    path: 'other-preferences',
+    component: OtherPreferences,
+    children: [],
   },
   {
     path: 'home',

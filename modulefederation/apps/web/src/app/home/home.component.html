@@ -1,4 +1,8 @@
 <div>
     {{ "portal:welcome.label" | translate: { me: me, today: today} }}
+
+  <button mat-button (click)="throwString()">String error</button>
+  <button mat-button (click)="throwError()">Error</button>
+  <button mat-button (click)="preferences()">preferences</button>
 </div>
 

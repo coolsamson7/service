@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from "@angular/core";
-import { ErrorManager } from "./error-manager";
+import { ErrorManager } from "@modulefederation/portal";
 
 @Injectable({ providedIn: 'root' })
 export class GlobalErrorHandler extends ErrorHandler {
@@ -13,6 +13,5 @@ export class GlobalErrorHandler extends ErrorHandler {
 
   override handleError(error: any) {
     this.errorManager.handle(error)
-    throw error;
   }
 }

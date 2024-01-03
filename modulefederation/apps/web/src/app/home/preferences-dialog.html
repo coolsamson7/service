@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div class="content" mat-dialog-content>
+  <!-- list -->
+
+  <mat-nav-list class="list" dense>
+      <a *ngFor="let feature of features; let index = index" (click)="selectFeature(feature)" [ngClass]="{selected: selectedFeature === feature}" class="feature" mat-list-item role="listitem">
+        {{feature.label}}
+      </a>
+  </mat-nav-list>
+
+  <!-- feature -->
+
+  <div class="feature">
+    <feature-outlet *ngIf="selectedFeature" [feature]="selectedFeature.id"></feature-outlet>
+  </div>
+</div>
+<div align="end" mat-dialog-actions>
+  <button (click)="ok()" [mat-dialog-close]="true" mat-button mat-raised-button color="primary">
+    Ok
+  </button>
+  <button (click)="cancel()" [mat-dialog-close]="false" mat-button>
+    Cancel
+  </button>
+</div>
+

@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "e273621fc63d1d262301a3e1536dfa8bb8789c06",
+  "commitHash": "2fa4ce2eb45b8df7502a045f90cbaa04bdb11cf6",
   "module": "AppModule",
   "features": [
     {
@@ -50,6 +50,18 @@
           "component": "NodeDetailsComponent"
         }
       ]
+    },
+    {
+      "id": "language-preferences",
+      "label": "Language",
+      "component": "LanguagePreferences",
+      "tags": ["preferences"]
+    },
+    {
+      "id": "other-preferences",
+      "label": "Other",
+      "component": "OtherPreferences",
+      "tags": ["preferences"]
     },
     {
       "id": "home",
