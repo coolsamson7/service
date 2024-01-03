@@ -5,6 +5,7 @@ import { MatTreeModule, MatTreeNestedDataSource } from "@angular/material/tree";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 export interface NamespaceNode {
     children : NamespaceNode[]
@@ -18,7 +19,7 @@ export interface NamespaceNode {
     templateUrl: './namespace-tree.component.html',
     styleUrls: ['./namespace-tree.component.scss'],
     standalone: true,
-    imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule],
 })
 export class NamespaceTreeComponent implements OnInit, OnChanges {
     // input

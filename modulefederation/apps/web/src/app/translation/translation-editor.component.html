@@ -1,63 +1,83 @@
 <div class="translations">
-    <!-- {{"portal.commands:cancel.label" | translate}} -->
+  <!-- {{"portal.commands:cancel.label" | translate}} -->
 
-    <!-- toolbar -->
+  <!-- toolbar -->
 
-    <mat-toolbar class="toolbar">
-        <mat-toolbar-row>
-            <!-- save -->
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <!-- save -->
 
-            <button (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
-                <mat-icon>save</mat-icon>
+      <button (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
+        <mat-icon>save</mat-icon>
+      </button>
+
+      <!-- revert -->
+
+      <button (click)="revert()" [disabled]="!hasChanges()" mat-icon-button>
+        <mat-icon>undo</mat-icon>
+      </button>
+
+      <!-- add -->
+
+      <button [matMenuTriggerFor]="menu" mat-button>
+        <mat-icon>add</mat-icon>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button (click)="addNamespace()" [disabled]="false" mat-menu-item>Namespace</button>
+        <button (click)="addMessage()" [disabled]="selectedNamespace == undefined" mat-menu-item>Message</button>
+      </mat-menu>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content">
+    <!-- tree-->
+
+    <namespace-tree (onSelectionChange)="select($event)" [namespaces]="namespaces" class="tree"></namespace-tree>
+
+    <!--list -->
+
+    <mat-nav-list class="list" dense>
+      <ng-container *ngFor="let message of messageKeys(messages); let index = index">
+        <a (click)="selectMessages(message)" [ngStyle]="messagesStyle(message)" [ngClass]="{selected: selectedMessages === messages[message]}" class="messages" mat-list-item role="listitem">
+          <span class="item">
+              {{message}}
+          </span>
+
+          <!--button *ngIf="hasMessageChanges(message)" class="changed" aria-label="Changed" mat-icon-button matSuffix>
+            <mat-icon>star</mat-icon>
+          </button-->
+
+          <button (click)="deleteAllMessages(message)" aria-label="Clear" class="delete" mat-icon-button matSuffix>
+            <mat-icon>close</mat-icon>
+          </button>
+        </a>
+      </ng-container>
+    </mat-nav-list>
+
+    <!-- content -->
+
+    <div>
+      <form #form="ngForm" *ngIf="selectedMessages" class="form" [ngStyle]="gridStyle()">
+        <ng-container *ngFor="let type of types;">
+          <span class="type">{{type}}</span>
+          <span></span>
+
+          <mat-form-field *ngFor="let message of selectedMessages[type]; let i = index" [ngClass]="{changed: isChanged(message), new: isNew(message), deleted: isDeleted(message)}" class="message">
+            <mat-label>{{this.locales[i]}}</mat-label>
+            <input class="input" (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale"
+                   [name]="message.name+message.locale" matInput type="text"/>
+
+            <!-- delete button -->
+
+            <button (click)="deleteMessage(message)" *ngIf="!isNew(message)" aria-label="Clear" class="delete" mat-icon-button
+                    matSuffix>
+              <mat-icon>close</mat-icon>
             </button>
-
-            <!-- add -->
-
-            <button mat-button [matMenuTriggerFor]="menu">
-                <mat-icon>add</mat-icon>
-                <mat-icon>arrow_drop_down</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-                <button (click)="addNamespace()" [disabled]="false" mat-menu-item>Namespace</button>
-                <button (click)="addMessage()" [disabled]="selectedNamespace == undefined" mat-menu-item>Message</button>
-            </mat-menu>
-        </mat-toolbar-row>
-    </mat-toolbar>
-
-    <div class="content">
-        <!-- tree-->
-
-        <namespace-tree class="tree" [namespaces]="namespaces" (onSelectionChange)="select($event)"></namespace-tree>
-
-        <!--list -->
-
-        <mat-nav-list class="list" dense>
-            <ng-container *ngFor="let message of messageKeys(messages); let index = index">
-                <a (click)="selectMessages(message)" [ngClass]="{selected: selectedMessages === messages[message]}" class="item" mat-list-item role="listitem">
-                    <!--mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon-->
-                    <span>
-                        {{message}}
-                    </span>
-                    <span class="star" *ngIf="hasMessageChanges(message)">*</span>
-                </a>
-            </ng-container>
-        </mat-nav-list>
-
-        <!-- content -->
-
-        <div>
-            <form #form="ngForm" class="form" *ngIf="selectedMessages">
-                <div *ngFor="let type of types;" class="type-container">
-                    {{type}}
-                    <mat-divider/>
-                    <div class="input-container">
-                        <mat-form-field *ngFor="let message of selectedMessages[type]; let i = index" [ngClass]="{changed: isChanged(message), new: isNew(message)}" >
-                            <mat-label>{{this.locales[i]}}</mat-label>
-                            <input (ngModelChange)='onChange(message)' [(ngModel)]="message.value" [id]="message.name+message.locale" matInput [name]="message.name+message.locale" required type="text"/>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </form>
-        </div>
+          </mat-form-field>
+        </ng-container>
+      </form>
     </div>
+  </div>
 </div>

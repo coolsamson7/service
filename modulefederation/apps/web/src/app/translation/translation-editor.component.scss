@@ -2,7 +2,7 @@
 
 
   .toolbar {
-    .mat-mdc-button>.mat-icon {
+    .mat-mdc-button > .mat-icon {
       height: unset;
       margin-right: unset;
       font-size: 24px;
@@ -11,6 +11,7 @@
 
   .content {
     display: flex;
+
     .tree {
       padding: 10px;
     }
@@ -24,26 +25,93 @@
         color: black;
         float: right;
       }
+
+      .messages {
+        .star {
+          float: right;
+
+          .mat-icon {
+            height: 20px;
+            width: 20px;
+            font-size: 20px;
+
+          }
+        }
+
+        .delete {
+          visibility: hidden;
+          float: right;
+
+          .mat-icon {
+            height: 20px;
+            width: 20px;
+            font-size: 20px;
+
+          }
+        }
+
+        .mat-list .mat-list-item .mat-list-item-content {
+          justify-content: flex-start;
+          align-self: center;
+        }
+      }
+
+      .messages:hover {
+        .delete {
+          visibility: visible;
+        }
+      }
     }
 
     .form {
-
       padding: 10px;
 
-      .type-container {
-
+      .type {
+        font-weight: bold;
       }
 
-      .input-container {
-        display: flex;
-        gap: 10px;
+      .message:hover {
+        .delete {
+          visibility: visible;
+        }
+      }
 
-        .changed {
-          background-color: rgba(0, 89, 255, 0.3);
+      .new {
+        border-left-style: solid;
+        border-left-width: 4px;
+        border-left-color: rgba(0, 255, 0, 0.3);
+      }
+
+      .changed {
+        border-left-style: solid;
+        border-left-width: 4px;
+        border-left-color: rgba(0, 89, 255, 0.3);
+        //background-color: rgba(0, 89, 255, 0.3);
+      }
+
+      .deleted {
+        border-left-style: solid;
+        border-left-width: 4px;
+        border-left-color: rgba(238, 104, 99, 0.3);
+      }
+
+      .message {
+        .mdc-text-field {
+          border-left-style: solid;
+          border-left-color: red;
+          border-left-width: 2px;
+          border-top-left-radius: unset;
         }
 
-        .new {
-          background-color: rgba(0,255,0,0.3);
+        .delete {
+          visibility: hidden;
+
+          .mat-icon {
+            height: 20px;
+            width: 20px;
+            font-size: 20px;
+            line-height: 20px;
+          }
         }
       }
     }

@@ -30,13 +30,17 @@
  * under the same parent.
  */
 .namespace-tree div[role=group] > .mat-tree-node {
-  padding-left: 40px;
+  padding-left: 0px;
 }
 
 
 .node {
   cursor: pointer;
   padding-right: 10px;
+
+  .invisible {
+    visibility: hidden
+  }
 }
 
 .background-highlight {
