@@ -15,13 +15,10 @@ import { MatLineModule, MatOptionModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatDialogModule } from "@angular/material/dialog";
-import { AddManifestDialog } from "./add-manifest-dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { ConfirmationDialog } from "../../../../../libs/portal/src/lib/dialog/confirmation-dialog";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ChipsComponent } from "./chips.component";
 import { Folder } from "@modulefederation/portal";
-import { InputDialog } from "../../../../../libs/portal/src/lib/dialog/input-dialog";
 
 @Folder({
     name: "microfrontends",
@@ -32,7 +29,6 @@ import { InputDialog } from "../../../../../libs/portal/src/lib/dialog/input-dia
     declarations: [
         MirofrontendsComponent,
         MicrofrontendDetailsComponent,
-        AddManifestDialog,
         ChipsComponent
     ],
     imports: [

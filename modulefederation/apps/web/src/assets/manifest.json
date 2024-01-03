@@ -8,7 +8,7 @@
       "id": "translations",
       "label": "Translations",
       "labelKey": "translations:title.label",
-      "i18n": ["translations"],
+      "i18n": ["translations", "portal.commands"],
       "icon": "computer",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { Injector, NgModule } from '@angular/core';
+import { ErrorHandler, Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
@@ -13,21 +13,21 @@ import { PortalComponentModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
-    AbstractModule,
-    AssetTranslationLoader,
-    CanDeactivateGuard,
-    EndpointLocator,
-    Environment,
-    EnvironmentModule,
-    HTTPErrorInterceptor, I18nModule, I18nResolver, LocaleModule,
-    Manifest,
-    OIDCAuthentication, OIDCModule,
-    OIDCSessionManager,
-    PortalComponentsModule,
-    PortalModule,
-    SecurityModule,
-    SessionManager,
-    Shell
+  AbstractModule,
+  AssetTranslationLoader,
+  CanDeactivateGuard,
+  EndpointLocator,
+  Environment,
+  EnvironmentModule,
+  HTTPErrorInterceptor, I18nModule, I18nResolver, Injected, LocaleModule,
+  Manifest,
+  OIDCAuthentication, OIDCModule,
+  OIDCSessionManager,
+  PortalComponentsModule,
+  PortalModule,
+  SecurityModule, ServerTranslationLoader,
+  SessionManager,
+  Shell
 } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
@@ -39,9 +39,8 @@ import { Route } from "@angular/router";
 import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
-import { Injected } from "../../../../libs/portal/src/lib/injection/injected.decorator";
 import { TranslationModule } from "./translation/translation.module";
-import { ServerTranslationLoader } from "../../../../libs/portal/src/lib/i18n/loader/server-translation-loader";
+import { GlobalErrorHandler } from './error/global-error-handler';
 
 
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -136,6 +135,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         })
     ],
     providers: [
+        {
+          provide: ErrorHandler,
+          useClass: GlobalErrorHandler
+        },
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: {duration: 2500}
