@@ -27,20 +27,25 @@
       }
 
       .messages {
-        .star {
-          float: right;
+        padding-right: 0px;
 
-          .mat-icon {
-            height: 20px;
-            width: 20px;
-            font-size: 20px;
 
+        .mdc-list-item__content {
+          .mdc-list-item__primary-text {
+            display: flex;
+            align-items: center;
           }
+        }
+
+        .item {
+          flex-grow: 2;
         }
 
         .delete {
           visibility: hidden;
           float: right;
+
+          padding: unset;
 
           .mat-icon {
             height: 20px;
@@ -96,13 +101,6 @@
       }
 
       .message {
-        .mdc-text-field {
-          border-left-style: solid;
-          border-left-color: red;
-          border-left-width: 2px;
-          border-top-left-radius: unset;
-        }
-
         .delete {
           visibility: hidden;
 

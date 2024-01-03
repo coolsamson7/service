@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import {
   Dialogs,
   Feature,
@@ -29,6 +29,7 @@ type MessageMap = { [prefix : string] : MessagesByType }
   templateUrl: './translation-editor.component.html',
   styleUrls: ['./translation-editor.component.scss'],
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule]
 })
 @Feature({
