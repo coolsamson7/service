@@ -1,37 +1,58 @@
 import { Component, HostListener, Injectable } from '@angular/core';
 import {
-  AboutDialogService,
-  Environment, ErrorContext,
+  AboutDialogService, ErrorContext,
   ErrorHandler, HandleError,
   LocaleManager,
   ShortcutManager
 } from "@modulefederation/portal";
 import { MessageBus } from "./message-bus/message-bus";
+import { tap } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { ErrorDialog } from "./error/error-dialog";
+import { ErrorEntry } from "./error/global-error-handler";
+import { ErrorStorage } from "./error/error-storage";
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
 export class Handler {
   // constructor
 
-  constructor(private messageBus: MessageBus) {
+  constructor(private errorStorage: ErrorStorage, private dialog: MatDialog, private messageBus: MessageBus, private shortcutManager: ShortcutManager) {
 
+  }
+
+  // private
+
+  private openDialog(error: ErrorEntry) {
+    this.errorStorage.add(error)
+    this.shortcutManager.pushLevel()
+
+    let configuration = {
+      title: "Errors",
+      error: error
+    }
+
+    const dialogRef = this.dialog.open(ErrorDialog, {
+      data: configuration
+    });
+
+    return dialogRef.afterClosed().pipe(tap(() => this.shortcutManager.popLevel()))
   }
 
   // handler
 
   @HandleError()
   handleAnyError(e: any, context: ErrorContext) {
-    console.log(e)
+    this.openDialog({error: e, context: context, date: new Date()})
   }
   @HandleError()
   handleStringError(e: string, context: ErrorContext) {
-    console.log(e)
+    this.openDialog({error: e, context: context, date: new Date()})
   }
   @HandleError()
   handleError(e: Error, context: ErrorContext) {
-    // log it
+    this.openDialog({error: e, context: context, date: new Date()})
 
-    console.log(e.message)
     //this.logger.error('caught error {0}: {1}', e.name, e.message);
 
     // and broadcast

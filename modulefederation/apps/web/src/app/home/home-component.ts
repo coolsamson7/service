@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
-import { Feature, InputDialog, ShortcutManager, Translator } from "@modulefederation/portal";
-import { AnalyticsDisableModule } from "@angular/cli/src/commands/analytics/settings/cli";
+import { Feature, ShortcutManager, Translator } from "@modulefederation/portal";
 import { MatDialog } from "@angular/material/dialog";
 import { tap } from "rxjs/operators";
 import { PreferencesDialog } from "./preferences-dialog";
@@ -42,6 +41,8 @@ export class HomeComponent {
     }
 
     const dialogRef = this.dialog.open(PreferencesDialog, {
+      height: '40%',
+      width: '60%',
       data: configuration
     });
 

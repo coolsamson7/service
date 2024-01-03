@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "2fa4ce2eb45b8df7502a045f90cbaa04bdb11cf6",
+  "commitHash": "81d547ec590de46f25852c6755bbe3551de1c388",
   "module": "AppModule",
   "features": [
     {
@@ -69,6 +69,14 @@
       "icon": "home",
       "component": "HomeComponent",
       "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "error",
+      "label": "Error",
+      "icon": "home",
+      "component": "ErrorComponent",
+      "tags": ["error", "navigation"],
       "visibility": ["public", "private"]
     },
     {

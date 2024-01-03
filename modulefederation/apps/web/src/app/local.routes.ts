@@ -19,6 +19,8 @@ import { OtherPreferences } from './home/preferences-dialog';
 
 import { HomeComponent } from './home/home-component';
 
+import { ErrorComponent } from './error/error-feature';
+
 import { ComponentsComponent } from './components/components.component';
 
 import { ComponentDetailsComponent } from './components/component-details.component';
@@ -71,6 +73,11 @@ export const localRoutes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    children: [],
+  },
+  {
+    path: 'error',
+    component: ErrorComponent,
     children: [],
   },
   {
