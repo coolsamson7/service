@@ -67,9 +67,14 @@ export class LocaleManager {
      * @param onLocaleChange the listener
      * @param priority the priority. Smaller priorities are called earlier.
      */
-    subscribe(onLocaleChange : OnLocaleChange, priority : number = 10) : void {
-        this.listeners.push({onLocaleChange: onLocaleChange, priority: priority});
+    subscribe(onLocaleChange : OnLocaleChange, priority : number = 10) : () => void {
+      let listener = {onLocaleChange: onLocaleChange, priority: priority}
+        this.listeners.push(listener);
         this.dirty = true;
+
+        return () => {
+          this.listeners.splice(this.listeners.indexOf(listener, 1))
+        }
     }
 
     // public

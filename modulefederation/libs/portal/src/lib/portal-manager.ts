@@ -2,7 +2,7 @@ import { Inject, Injectable, Injector } from "@angular/core";
 
 import { LoadChildrenCallback, Route, Router, Routes } from "@angular/router";
 import { loadRemoteModule, setRemoteDefinitions } from "@nrwl/angular/mf";
-import { PortalModuleConfig, PortalModuleConfigToken } from "./portal.module";
+import { PortalModule, PortalModuleConfig, PortalModuleConfigToken } from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
 import { Deployment } from "./deployment/deployment-model";
 import { ModuleRegistry } from "./modules";
@@ -11,6 +11,7 @@ import { DeploymentLoader, HTTPDeploymentLoader, LocalDeploymentLoader, Manifest
 import { TraceLevel, Tracer } from "./tracer";
 import { PathResolveService } from "./page-not-found/page-not-found-resolver";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found-components";
+import { ReplaySubject } from "rxjs";
 
 /**
  * the runtime data of feature
@@ -35,11 +36,11 @@ export interface FeatureData extends FeatureConfig {
 
 @Injectable({providedIn: 'root'})
 export class PortalManager {
-    // static
+  // static data
 
-    static instance : PortalManager
+  static instance= new ReplaySubject<PortalManager>(1)
 
-    // instance data
+  // instance data
 
     deployment : Deployment = {
         modules: {}
@@ -49,18 +50,18 @@ export class PortalManager {
 
     // constructor
 
-    constructor(
+  constructor(
         @Inject(PortalModuleConfigToken) private portalConfig : PortalModuleConfig,
         private featureRegistry : FeatureRegistry,
         private moduleRegistry : ModuleRegistry,
         private router : Router,
         private injector : Injector
     ) {
-        PortalManager.instance = this
     }
 
     static registerLazyRoutes(feature : string, routes : Routes) : Routes {
-        PortalManager.instance.registerLazyRoutes(feature, routes)
+      PortalManager.instance.subscribe(injector =>
+        injector.registerLazyRoutes(feature, routes))
 
         return routes
     }
@@ -141,7 +142,9 @@ export class PortalManager {
         }
 
         let findFeature4 = (route : string) => {
-            return features.find(feature => featureRoute(feature) == route)
+            return features.find(feature => {
+              return featureRoute(feature) == route
+            })
         }
 
         // go
@@ -267,7 +270,6 @@ export class PortalManager {
                 else
                     this.featureRegistry.register(...manifest.features)
 
-
                 // remember
 
                 this.deployment.modules[module] = manifest
@@ -329,6 +331,10 @@ export class PortalManager {
         // fill feature registry
 
         this.fillFeatureRegistry(deployment, this.deployment)
+
+        // inform guys interested in me ( like registerLazyRoutes )
+
+        PortalManager.instance.next(this)
 
         // setup routes
 

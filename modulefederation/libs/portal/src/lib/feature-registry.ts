@@ -106,8 +106,12 @@ export class FeatureRegistry implements OnLocaleChange {
     getFeature(id : string) : FeatureData {
         let feature = this.features[id]
 
-        if (!feature)
-            throw new Error(`unknown feature ${id}`)
+        if (!feature) {
+          feature = this.features[""]
+
+          if (!feature)
+          throw new Error(`unknown feature ${id}`)
+        }
 
         return feature
     }

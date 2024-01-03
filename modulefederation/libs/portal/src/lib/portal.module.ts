@@ -12,6 +12,7 @@ import { ModulesModule } from "./modules";
 import { HttpClientModule } from "@angular/common/http";
 import { AboutModule } from "./about/about.module";
 import { AbstractModule } from "./injection";
+import { CommonModule } from "@angular/common";
 
 export type LoaderConfig = {
     remotes? : string[],
@@ -34,7 +35,7 @@ function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
 }
 
 @NgModule({
-    imports: [ModulesModule, HttpClientModule, AboutModule],
+    imports: [CommonModule, ModulesModule, HttpClientModule, AboutModule],
     providers: [
         {
             provide: APP_INITIALIZER,
@@ -50,9 +51,12 @@ export class PortalModule extends AbstractModule() {
     // constructor
     constructor(injector: Injector) {
         super(injector);
+
+      console.log("create PortalMpodule ")
     }
 
     public static forRoot(config : PortalModuleConfig) : ModuleWithProviders<PortalModule> {
+      console.log("PortalMpodule.forRoot ")
         return {
             ngModule: PortalModule,
             providers: [
