@@ -1,8 +1,58 @@
-<div>
-  <div *ngFor="let error of storage.errors">
-    {{error.error}}
-    <span *ngIf="error.context">
-      {{error.context.$type}}
-    </span>
+<div class="errors">
+  <!-- toolbar -->
+
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <!-- save -->
+
+      <button  matTooltip="save changes" (click)="clear()" [disabled]="storage.errors.length == 0" mat-icon-button>
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+
+  <div class="content">
+    <!-- list -->
+
+    <mat-nav-list class="list" dense>
+      <ng-container *ngFor="let error of storage.errors; let index = index">
+        <a (click)="selectError(error)" [ngClass]="{selected: selectedError === error}" class="error" mat-list-item role="listitem">
+          <span class="item">
+              {{error.error}}
+          </span>
+        </a>
+      </ng-container>
+    </mat-nav-list>
+
+
+    <!-- details -->
+
+    <div class="details" *ngIf="selectedError">
+      <!-- date -->
+
+      <div class="label">Date</div>
+      <div>{{selectedError.date}}</div>
+
+      <!-- label -->
+
+      <div class="label">Error</div>
+      <div>{{errorClass(selectedError)}}</div>
+
+      <!-- message -->
+
+      <div class="label">Message</div>
+      <div>{{errorMessage(selectedError)}}</div>
+
+      <!-- context -->
+
+      <div class="label">Context</div>
+      <div>{{errorContext(selectedError)}}</div>
+
+      <!-- stack -->
+
+      <div class="label">Stack</div>
+      <textarea *ngIf="errorStack(selectedError)">{{errorStack(selectedError)}}</textarea>
+    </div>
   </div>
 </div>

@@ -9,7 +9,7 @@
       "label": "Translations",
       "labelKey": "translations:title.label",
       "i18n": ["translations", "portal.commands"],
-      "icon": "computer",
+      "icon": "language",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"]
@@ -74,7 +74,7 @@
     {
       "id": "error",
       "label": "Error",
-      "icon": "home",
+      "icon": "bug_report",
       "component": "ErrorComponent",
       "tags": ["error", "navigation"],
       "visibility": ["public", "private"]

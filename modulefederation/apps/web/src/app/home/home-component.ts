@@ -3,6 +3,7 @@ import { Feature, ShortcutManager, Translator } from "@modulefederation/portal";
 import { MatDialog } from "@angular/material/dialog";
 import { tap } from "rxjs/operators";
 import { PreferencesDialog } from "./preferences-dialog";
+import { PortalAdministrationService } from "../portal/service";
 
 @Component({
     selector: 'home',
@@ -22,7 +23,7 @@ export class HomeComponent {
   me ="Andi"
   today = new Date()
 
-  constructor(private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
+  constructor(private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
   }
 
   throwString() {
@@ -31,6 +32,18 @@ export class HomeComponent {
 
   throwError() {
     throw new Error("aua")
+  }
+
+  throwDeclaredServerError() {
+    this.portalAdministrationService.throwDeclaredException().subscribe(_ => console.log())
+  }
+
+  throwServerError() {
+    this.portalAdministrationService.throwException().subscribe(_ => console.log())
+  }
+
+  callBadURL() {
+    this.portalAdministrationService.callBadURL().subscribe(_ => console.log())
   }
 
   preferences() {

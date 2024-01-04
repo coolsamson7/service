@@ -44,7 +44,7 @@ export abstract class AbstractCachingTranslator extends Translator {
   // private
 
   protected interpolate(str?: string, options?: any) {
-    return options != null ? this.interpolator.interpolate(str!!, options) : str
+    return str ? options != null ? this.interpolator.interpolate(str!!, options) : str : str
   }
 
   /**

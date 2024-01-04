@@ -40,4 +40,20 @@ export class PortalAdministrationService extends AbstractHTTPService {
     public refresh() : Observable<any> {
         return this.get<any>(`refresh`)
     }
+
+    // TEST TODO
+
+  public throwDeclaredException() : Observable<any> {
+    return this.get<any>(`throwDeclared`)
+  }
+
+  public throwException() : Observable<any> {
+    return this.get<any>(`throw`)
+  }
+
+  public callBadURL() : Observable<any> {
+    return this.get<any>(`xxx`)
+  }
+
+
 }

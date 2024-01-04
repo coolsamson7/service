@@ -88,6 +88,12 @@ class MessageEntityManager() {
             this.repository.save(toEntity(changedMessage))
         }
 
+        // deleted
+
+        for ( deletedMessage in changes.deletedMessages) {
+            this.repository.deleteById(deletedMessage.id)
+        }
+
         // make sure the new ids are generated
 
         this.entityManager.flush()

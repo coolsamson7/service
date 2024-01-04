@@ -1,8 +1,13 @@
+/**
+ * any unexpected error
+ */
 export class FatalError extends Error {
-    constructor(message : string) {
-        super(message);
+  // constructor
 
-        // Set the prototype explicitly.
-        //Object.setPrototypeOf(this, FooError.prototype);
+    constructor(message : string, cause?: Error) {
+        super(message, {cause: cause});
+
+        if ( cause )
+          this.stack = cause.stack
     }
 }

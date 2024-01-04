@@ -88,16 +88,24 @@ export class ConfirmationDialogBuilder {
      * add "ok" and "cancel" buttons
      */
     public okCancel() : ConfirmationDialogBuilder {
-        return this
-            .button({
-                label: this.translator.translate("portal.commands:ok.label"),
-                primary: true,
-                result: true
-            })
-            .button({
-                label: this.translator.translate("portal.commands:cancel.label"),
-                result: undefined
-            });
+      let buttons : ButtonConfiguration[] = [
+        {
+          label: "portal.commands:ok.label",
+          primary: true,
+          result: true
+        },
+        {
+          label: "portal.commands:cancel.label",
+          result: undefined
+        }
+      ]
+
+      for ( let button of buttons)
+        this.translator.translate$(button.label).subscribe((label) => button.label = label)
+
+      buttons.map(config => this.button(config))
+
+      return this
     }
 
     // show

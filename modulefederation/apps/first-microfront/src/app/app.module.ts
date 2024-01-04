@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import {
   ConsoleTrace,
@@ -19,6 +18,7 @@ import { environment } from "../environments/environment";
 import { appRoutes } from "./app.routes";
 import * as localManifest from "../assets/manifest.json"
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
+import { AppRouterModule } from "./app-router.module";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
@@ -67,6 +67,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       }
     }),
 
+    PortalModule,
     PortalComponentsModule,
 
     LocaleModule.forRoot({
@@ -78,17 +79,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       loader: {type: ServerTranslationLoader}
     }),
 
-    RouterModule.forRoot(
-      [
-        {
-          path: '',
-          loadChildren: () =>
-            import('./remote-entry/remote-entry.module').then(
-              (m) => m.RemoteEntryModule
-            ),
-        },
-      ],
-    ),
+    AppRouterModule,
   ],
   providers: [
     {

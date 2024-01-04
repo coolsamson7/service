@@ -97,8 +97,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
         PortalModule.forRoot({
             loader: {
-                //server: true,
-                remotes: ["http://localhost:4201", "http://localhost:4202"]
+                server: true,
+                //remotes: []//"http://localhost:4201", "http://localhost:4202"]
             },
             localRoutes: localRoutes,
             localManifest: localManifest,

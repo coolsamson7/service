@@ -9,6 +9,7 @@ import com.serious.portal.model.*
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import org.springframework.web.bind.annotation.*
+import java.lang.NullPointerException
 
 
 @ServiceInterface
@@ -31,4 +32,14 @@ interface PortalAdministrationService : Service {
 
     @GetMapping("refresh")
     fun refresh()
+
+    // TEST TODO
+    @RequestMapping(path = ["throwDeclared"], method = [RequestMethod.GET])
+    @ResponseBody
+    @Throws(NullPointerException::class)
+    fun throwDeclaredException(): String
+
+    @RequestMapping(path = ["throw"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun throwException(): String
 }

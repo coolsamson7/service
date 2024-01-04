@@ -1,9 +1,13 @@
-
+/**
+ * an expected server side error (e.g. that is part of the signature )
+ */
 export class ApplicationError extends Error {
-    constructor(public clazz : string, message : string) {
-        super(message);
+  // constructor
 
-        // Set the prototype explicitly.
-        //Object.setPrototypeOf(this, FooError.prototype);
-    }
+  constructor(public clazz : string, message : string, cause? : Error) {
+    super(message, {cause: cause});
+
+    if (cause)
+      this.stack = cause.stack
+  }
 }

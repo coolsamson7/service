@@ -8,6 +8,7 @@ import { ErrorEntry } from "./global-error-handler";
 
 export interface ErrorDialogConfig {
   title: string,
+  message: string,
   error: ErrorEntry
 }
 @Component({
@@ -30,6 +31,15 @@ export class ErrorDialog implements OnInit {
   }
 
   // callbacks
+
+  formatError(error: ErrorEntry):string {
+    if ( error.error instanceof Error) {
+      return error.error.constructor.name + ": " + error.error.message
+    }
+    else {
+      return error.error
+    }
+  }
 
   ok() {
     this.dialogRef.close(true);

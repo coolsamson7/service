@@ -11,7 +11,6 @@ import { PublicPortalRouterModule } from "./public-portal-router.module";
     declarations: [PublicPortalComponent],
     imports: [
         CommonModule,
-        PortalModule,
         MatToolbarModule,
         MatButtonModule,
 

@@ -28,7 +28,8 @@ export class Handler {
     this.shortcutManager.pushLevel()
 
     let configuration = {
-      title: "Errors",
+      title: "Error",
+      message: "Caught fatal error",
       error: error
     }
 
@@ -52,8 +53,6 @@ export class Handler {
   @HandleError()
   handleError(e: Error, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
-
-    //this.logger.error('caught error {0}: {1}', e.name, e.message);
 
     // and broadcast
 

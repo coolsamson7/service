@@ -38,7 +38,7 @@ type MessageMap = { [prefix : string] : MessagesByType }
   label: "Translations",
   labelKey: "translations:title.label",
   i18n: ["translations", "portal.commands"],
-  icon: "computer",
+  icon: "language",
   visibility: ["public", "private"],
   categories: [],
   tags: ["navigation"],

@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <div class="content" mat-dialog-content>
-  {{data.error.date}} {{data.error.error}} {{data.error.context}}
+  <h4>{{data.message}}</h4>
+  <div>{{formatError(data.error)}}</div>
 </div>
 <div align="end" mat-dialog-actions>
   <button (click)="ok()" mat-button mat-raised-button color="primary">
