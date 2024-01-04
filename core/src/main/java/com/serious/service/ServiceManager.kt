@@ -41,9 +41,9 @@ class ServiceManager @Autowired internal constructor(
     // instance data
 
     @JvmField
-    var applicationContext: ApplicationContext? = null
+    final var applicationContext: ApplicationContext? = null
     @JvmField
-    var componentDescriptors: MutableMap<String, ComponentDescriptor<Component>> = HashMap()
+    final var componentDescriptors: MutableMap<String, ComponentDescriptor<Component>> = HashMap()
     var proxies: MutableMap<String, Service> = ConcurrentHashMap()
     @Autowired
     lateinit var exceptionManager : ExceptionManager

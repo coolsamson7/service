@@ -34,9 +34,9 @@ class ChannelManager : ApplicationContextAware {
     // instance data
 
     @JvmField
-    var applicationContext: ApplicationContext? = null
+    final var applicationContext: ApplicationContext? = null
     @JvmField
-    var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
+    final var channelFactories: MutableMap<String, ChannelFactory> = HashMap()
     var channels: MutableMap<String, Channel> = ConcurrentHashMap()
     private var channelCustomizers: ArrayList<ChannelCustomizer<out Channel>> = ArrayList()
 

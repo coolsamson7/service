@@ -42,11 +42,10 @@ class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) : Defa
 
                 bean = try {
                     processor.postProcessBeforeInitialization(bean, beanName)
-                }
-                finally {
+                } finally {
                     if (processor is BeanFactoryAware)
-                            (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
-                }
+                        (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
+                }!!
             }
             return bean
         }
@@ -58,11 +57,10 @@ class ChildBeanFactory(parentBeanFactory: ConfigurableApplicationContext) : Defa
                 if (processor is BeanFactoryAware) (processor as BeanFactoryAware).setBeanFactory(beanFactory)
                 bean = try {
                     processor.postProcessAfterInitialization(bean, beanName)
-                }
-                finally {
+                } finally {
                     if (processor is BeanFactoryAware)
-                            (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
-                }
+                        (processor as BeanFactoryAware).setBeanFactory(parentBeanFactory)
+                }!!
             }
             return bean
         }
