@@ -125,7 +125,7 @@ class MethodAnalyzer {
         }
 
         protected fun getParameterNames(method: Method): Array<String> {
-            return parameterNameDiscoverer.getParameterNames(method)
+            return parameterNameDiscoverer.getParameterNames(method)!!
         }
     }
 
@@ -320,9 +320,9 @@ class MethodAnalyzer {
 
      private fun createMapResponseHandler(method: Method) : ResponseHandler {
          return { spec: WebClient.ResponseSpec ->
-                 spec
-                     .bodyToMono(MapTypeReference(method.genericReturnType))
-                     .block()
+             spec
+                 .bodyToMono(MapTypeReference(method.genericReturnType))
+                 .block()!!
          }
      }
 
@@ -341,7 +341,7 @@ class MethodAnalyzer {
             { spec: WebClient.ResponseSpec ->
                 spec
                     .bodyToMono(method.returnType)
-                    .block()
+                    .block()!!
             }
         }
         else if (MutableCollection::class.java.isAssignableFrom(method.returnType)) {
@@ -361,7 +361,7 @@ class MethodAnalyzer {
         }
 
         else {
-            { spec: WebClient.ResponseSpec -> spec.bodyToMono(method.returnType).block() }
+            { spec: WebClient.ResponseSpec -> spec.bodyToMono(method.returnType).block()!! }
         }
 
         // done
