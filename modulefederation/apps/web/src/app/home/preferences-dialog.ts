@@ -93,6 +93,7 @@ export class PreferencesDialog implements OnInit {
         if (ok)
           this.dialogRef.close(true);
       })
+    else this.dialogRef.close(true);
   }
 
   cancel() {

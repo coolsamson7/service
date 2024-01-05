@@ -5,54 +5,53 @@
     <mat-toolbar-row>
       <!-- save -->
 
-      <button  matTooltip="save changes" (click)="clear()" [disabled]="storage.errors.length == 0" mat-icon-button>
+      <button matTooltip="save changes" (click)="clear()" [disabled]="storage.errors.length == 0" mat-icon-button>
         <mat-icon>clear</mat-icon>
       </button>
     </mat-toolbar-row>
   </mat-toolbar>
 
-
-  <div class="content">
-    <!-- list -->
-
-    <mat-nav-list class="list" dense>
-      <ng-container *ngFor="let error of storage.errors; let index = index">
-        <a (click)="selectError(error)" [ngClass]="{selected: selectedError === error}" class="error" mat-list-item role="listitem">
+  <as-split class="content" direction="horizontal" unit="percent">
+    <as-split-area size="10">
+      <mat-nav-list class="list" dense>
+        <ng-container *ngFor="let error of storage.errors; let index = index">
+          <a (click)="selectError(error)" [ngClass]="{selected: selectedError === error}" class="error" mat-list-item
+             role="listitem">
           <span class="item">
               {{error.error}}
           </span>
-        </a>
-      </ng-container>
-    </mat-nav-list>
+          </a>
+        </ng-container>
+      </mat-nav-list>
+    </as-split-area>
 
+    <as-split-area size="90">
+      <div class="details" *ngIf="selectedError">
+        <!-- date -->
 
-    <!-- details -->
+        <div class="label">Date</div>
+        <div>{{selectedError.date}}</div>
 
-    <div class="details" *ngIf="selectedError">
-      <!-- date -->
+        <!-- label -->
 
-      <div class="label">Date</div>
-      <div>{{selectedError.date}}</div>
+        <div class="label">Error</div>
+        <div>{{errorClass(selectedError)}}</div>
 
-      <!-- label -->
+        <!-- message -->
 
-      <div class="label">Error</div>
-      <div>{{errorClass(selectedError)}}</div>
+        <div class="label">Message</div>
+        <div>{{errorMessage(selectedError)}}</div>
 
-      <!-- message -->
+        <!-- context -->
 
-      <div class="label">Message</div>
-      <div>{{errorMessage(selectedError)}}</div>
+        <div class="label">Context</div>
+        <div>{{errorContext(selectedError)}}</div>
 
-      <!-- context -->
+        <!-- stack -->
 
-      <div class="label">Context</div>
-      <div>{{errorContext(selectedError)}}</div>
-
-      <!-- stack -->
-
-      <div class="label">Stack</div>
-      <textarea *ngIf="errorStack(selectedError)">{{errorStack(selectedError)}}</textarea>
-    </div>
-  </div>
+        <div class="label">Stack</div>
+        <textarea *ngIf="errorStack(selectedError)">{{errorStack(selectedError)}}</textarea>
+      </div>
+    </as-split-area>
+  </as-split>
 </div>

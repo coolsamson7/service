@@ -3,7 +3,7 @@
 </button>
 
 <span *ngIf="sessionManager.hasSession()">
-    <button [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
+    <button class="label" [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="localeMenu">Locale...</button>
       <button (click)="openPreferences()" mat-menu-item>Preferences...</button>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { Feature } from "@modulefederation/portal";
 import { ErrorStorage } from "./error-storage";
 import { CommonModule } from "@angular/common";
@@ -9,13 +9,15 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
 import { ErrorEntry } from "./global-error-handler";
+import { AngularSplitModule } from "angular-split";
 
 @Component({
   selector: 'error',
   templateUrl: './error-feature.html',
   styleUrls: ['./error-feature.scss'],
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatToolbarModule, MatTooltipModule, MatFormFieldModule, MatListModule]
+  encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, AngularSplitModule, MatButtonModule, MatIconModule, MatToolbarModule, MatTooltipModule, MatFormFieldModule, MatListModule]
 })
 @Feature({
   id: "error",

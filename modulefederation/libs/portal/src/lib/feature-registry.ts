@@ -202,13 +202,12 @@ export class FeatureRegistry implements OnLocaleChange {
     // implement OnLocaleChange
 
     onLocaleChange(locale: Intl.Locale): Observable<any> {
-        console.log("onLocaleChange " + locale.toString())
-
       for ( let featureName in this.features) {
         let feature = this.features[featureName]
 
         if ( feature.labelKey)
-          feature.label = this.translator.translate(feature.labelKey)
+          this.translator.translate$(feature.labelKey)
+            .subscribe(translation => feature.label = translation)
       }
 
         return of()

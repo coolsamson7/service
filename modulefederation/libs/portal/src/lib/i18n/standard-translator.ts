@@ -157,7 +157,7 @@ export class StandardTranslator extends AbstractCachingTranslator implements OnL
     /**
      * @inheritdoc
      */
-    onLocaleChange(locale : Intl.Locale) : Observable<any> { console.log("######### " + locale.toString());
+    onLocaleChange(locale : Intl.Locale) : Observable<any> {
         this.locale = locale;
 
         const namespaces = Object.keys(this.cachedNamespaces);

@@ -3,10 +3,11 @@
 
   }
 
-  .content {
-    display: flex;
-    gap: 10px;
+  as-split .as-split-gutter {
+        height: unset !important;
+  }
 
+  .content {
     .list {
       .selected {
         background-color: lightgray;
