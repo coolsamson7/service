@@ -5,6 +5,8 @@
 <span *ngIf="sessionManager.hasSession()">
     <button [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
     <mat-menu #menu="matMenu">
+      <button (click)="openPreferences()" mat-menu-item>Preferences...</button>
+      <mat-divider></mat-divider>
       <button (click)="sessionManager.logout()" mat-menu-item>Logout</button>
     </mat-menu>
 </span>

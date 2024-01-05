@@ -9,7 +9,6 @@ import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import {
-  Dialogs,
   Feature,
   FeatureData,
   FeatureRegistry,
@@ -18,7 +17,6 @@ import {
 } from "@modulefederation/portal";
 import { MatListModule } from "@angular/material/list";
 import { Observable, of } from "rxjs";
-import { tap } from "rxjs/operators";
 
 
 export abstract class PreferencesFeature {
@@ -35,7 +33,6 @@ export abstract class PreferencesFeature {
   }
 
   save() : void {
-    console.log("save")
   }
 
   canSave() : Observable<boolean> {
@@ -104,54 +101,20 @@ export class PreferencesDialog implements OnInit {
 
   // implement OnInit
   ngOnInit() : void {
-    let button = undefined//this.data.buttons.find(button => button.primary)
+    this.dialogRef.keydownEvents().subscribe(event => {
+      if (event.key === "Escape") {
+        this.cancel();
+      }
 
-    if (button)
-      this.dialogRef.keydownEvents().subscribe(event => {
-        if (event.key === "Escape") {
-            this.cancel();
-        }
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
 
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-
-          this.ok()
-        }
-      });
+        this.ok()
+      }
+    });
   }
 }
 
-
-@Feature({
-  i18n: [],
-  id: "language-preferences",
-  label: "Language",
-  tags: ["preferences"]
-})
-@Component({
-  selector: 'language-preferences',
-  templateUrl: './language-preferences.html',
-  standalone: true,
-  imports: [CommonModule, MatCommonModule, MatInputModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, MatFormFieldModule, MatListModule]
-})
-export class LanguagePreferences extends PreferencesFeature {
-  constructor(dialog : PreferencesDialog, private dialogs: Dialogs) {
-    super(dialog, Reflect.get(LanguagePreferences, '$$feature') as FeatureData)
-  }
-
-  override isDirty() : boolean {
-    return true
-  }
-
-  override canSave() : Observable<boolean> {
-    return this.dialogs.confirmationDialog()
-      .title("Dirty changes")
-      .message("Do you want to save?")
-      .okCancel()
-      .show()
-      .pipe(tap(ok => {if (ok) this.save()}))
-  }
-}
 
 @Feature({
   i18n: [],

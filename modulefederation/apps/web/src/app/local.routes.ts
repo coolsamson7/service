@@ -13,9 +13,9 @@ import { NodesComponent } from './nodes/nodes.component';
 
 import { NodeDetailsComponent } from './nodes/node-details.component';
 
-import { LanguagePreferences } from './home/preferences-dialog';
-
 import { OtherPreferences } from './home/preferences-dialog';
+
+import { LocalePreferences } from './home/locale-preferences';
 
 import { HomeComponent } from './home/home-component';
 
@@ -61,13 +61,13 @@ export const localRoutes: Routes = [
     ],
   },
   {
-    path: 'language-preferences',
-    component: LanguagePreferences,
+    path: 'other-preferences',
+    component: OtherPreferences,
     children: [],
   },
   {
-    path: 'other-preferences',
-    component: OtherPreferences,
+    path: 'language-preferences',
+    component: LocalePreferences,
     children: [],
   },
   {

@@ -1,0 +1,11 @@
+<div class="dialog">
+  <form #form="ngForm" class="form">
+    <mat-form-field *ngIf="userProfile">
+      <mat-label>Locale</mat-label>
+      <mat-select  [(ngModel)]="userProfile.locale" (ngModelChange)="changed()" id="locale" name="locale">
+        <mat-option *ngFor="let locale of locales" [value]="locale">{{locale}}</mat-option>
+      </mat-select>
+      <!--mat-error *ngIf="form.touched && isError(param.name)">{{errorMessage(param.name)}}</mat-error-->
+    </mat-form-field>
+  </form>
+</div>

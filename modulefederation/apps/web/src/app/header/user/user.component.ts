@@ -1,10 +1,11 @@
 import { Component } from "@angular/core";
-import { LocaleManager, Session, SessionManager, Ticket } from "@modulefederation/portal";
+import { Dialogs, LocaleManager, Session, SessionManager, ShortcutManager, Ticket } from "@modulefederation/portal";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
 import { UserProfileAdministrationService } from "../../user/user-profile-administration-service.service";
-
+import { MatDividerModule } from "@angular/material/divider";
+import { PreferencesDialog } from "../../home/preferences-dialog";
 
 
 @Component({
@@ -12,12 +13,12 @@ import { UserProfileAdministrationService } from "../../user/user-profile-admini
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.scss'],
     standalone: true,
-  imports: [CommonModule, MatButtonModule, MatMenuModule]
+  imports: [CommonModule, MatButtonModule, MatMenuModule, MatDividerModule]
 })
 export class UserComponent {
     // constructor
 
-    constructor(private localeManager: LocaleManager, public sessionManager : SessionManager, private userProfileAdministrationService : UserProfileAdministrationService) {
+    constructor(private dialogs : Dialogs, localeManager: LocaleManager, public sessionManager : SessionManager, userProfileAdministrationService : UserProfileAdministrationService) {
       sessionManager.addListener({
         closed(session : Session<any, Ticket>) : void {
         },
@@ -36,4 +37,14 @@ export class UserComponent {
         }
       })
     }
+
+    // public
+
+  openPreferences() {
+    let configuration = {
+      title: "Preferences"
+    }
+
+    return this.dialogs.open(PreferencesDialog, configuration);
+  }
 }

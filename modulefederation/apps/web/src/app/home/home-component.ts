@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import { Feature, ShortcutManager, Translator } from "@modulefederation/portal";
-import { MatDialog } from "@angular/material/dialog";
-import { tap } from "rxjs/operators";
-import { PreferencesDialog } from "./preferences-dialog";
+import { Feature } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 
 @Component({
@@ -23,7 +20,7 @@ export class HomeComponent {
   me ="Andi"
   today = new Date()
 
-  constructor(private portalAdministrationService : PortalAdministrationService, private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
+  constructor(private portalAdministrationService : PortalAdministrationService) {
   }
 
   throwString() {
@@ -44,22 +41,5 @@ export class HomeComponent {
 
   callBadURL() {
     this.portalAdministrationService.callBadURL().subscribe(_ => console.log())
-  }
-
-  preferences() {
-    this.shortcutManager.pushLevel()
-
-    let configuration = {
-      title: "Preferences"
-    }
-
-    const dialogRef = this.dialog.open(PreferencesDialog, {
-      height: '40%',
-      width: '60%',
-      data: configuration
-    });
-
-    return dialogRef.afterClosed().pipe(tap(() => this.shortcutManager.popLevel()))
-
   }
 }
