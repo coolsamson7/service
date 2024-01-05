@@ -17,14 +17,33 @@ interface Listener {
  */
 @Injectable({providedIn: 'root'})
 export class LocaleManager {
-    // instance data
+  // static
+
+    /**
+     * return the browser locale
+     */
+    static getBrowserLocale() : Intl.Locale {
+      if (navigator.languages && navigator.languages.length)
+        return new Intl.Locale(navigator.languages[0]);  // latest versions of Chrome and Firefox set this correctly
+
+      else { // @ts-ignore
+        if (navigator['userLanguage']) { // @ts-ignore
+          return new Intl.Locale(navigator['userLanguage']);
+        }  // IE only
+
+        else
+          return new Intl.Locale(navigator.language);
+      } // latest versions of Chrome, Firefox, and Safari set this correctly
+    }
+
+  // instance data
 
     locale$ : BehaviorSubject<Intl.Locale> = new BehaviorSubject<Intl.Locale>(new Intl.Locale('en'));
     supportedLocales : string[];
     listeners : Listener[] = [];
     dirty = false;
 
-    // static methods
+    // constructor
 
     constructor(@Inject(LocaleConfigInjectionToken) configuration : LocaleConfig) {
         this.setLocale(configuration.locale || 'en-US');
@@ -39,25 +58,6 @@ export class LocaleManager {
 
         // @ts-ignore
         window['setLocale'] = (locale: string) => this.setLocale(locale);
-    }
-
-    // constructor
-
-    /**
-     * return the browser locale
-     */
-    static getBrowserLocale() : Intl.Locale {
-        if (navigator.languages && navigator.languages.length)
-            return new Intl.Locale(navigator.languages[0]);  // latest versions of Chrome and Firefox set this correctly
-
-        else { // @ts-ignore
-            if (navigator['userLanguage']) { // @ts-ignore
-                return new Intl.Locale(navigator['userLanguage']);
-            }  // IE only
-
-            else
-                return new Intl.Locale(navigator.language);
-        } // latest versions of Chrome, Firefox, and Safari set this correctly
     }
 
     // private
@@ -87,7 +87,8 @@ export class LocaleManager {
         if (typeof locale == 'string')
             locale = new Intl.Locale(locale);
 
-        this.locale$.next(locale);
+        if (this.locale$.value.toString() != locale.toString())
+          this.locale$.next(locale);
     }
 
     /**

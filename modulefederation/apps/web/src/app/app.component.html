@@ -9,15 +9,17 @@
 
     <span class="stretch"></span>
 
-    <!-- locales -->
+    <!-- TODO: locales -->
 
     <div class="button" *ngFor="let locale of locales"(click)="switch(locale)">{{locale}}</div>
 
-    <!-- login or logout -->
+    <!-- about -->
 
     <div class="button"(click)="about()">About</div>
 
-    <current-user></current-user>
+    <!-- login or logout -->
+
+    <user></user>
 </portal-header>
 
 <mat-sidenav-container autosize class="example-container">

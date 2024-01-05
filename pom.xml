@@ -199,7 +199,7 @@
     <!-- modules -->
 
     <modules>
-        <module>web</module>
+        <!--module>web</module-->
         <module>core</module>
         <module>portal</module>
         <module>channel</module>

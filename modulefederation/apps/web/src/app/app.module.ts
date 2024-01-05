@@ -43,6 +43,7 @@ import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
 import { TranslationModule } from "./translation/translation.module";
 import { GlobalErrorHandler } from './error/global-error-handler';
+import { UserComponent } from "./header/user/user.component";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -60,7 +61,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     // implement
 
     getEndpoint(domain : string) : string {
-        if (domain == "admin")
+        if (domain.startsWith("admin"))
             return this.environment.get<string>("administration.server")!!
         else
             throw new Error("unknown domain " + domain)
@@ -96,7 +97,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         }),
 
         I18nModule.forRoot({
-            loader: { type: ServerTranslationLoader }
+            loader: {type: ServerTranslationLoader}
         }),
 
         PortalModule.forRoot({
@@ -134,7 +135,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
                 sendAccessToken: true
             }
-        })
+        }),
+        UserComponent
     ],
     providers: [
         {
