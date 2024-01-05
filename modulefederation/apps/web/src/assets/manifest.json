@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "81d547ec590de46f25852c6755bbe3551de1c388",
+  "commitHash": "0f7c6d41421bf3aadf3a6cbb51d61b0f2bbc7d5b",
   "module": "AppModule",
   "features": [
     {
@@ -52,15 +52,15 @@
       ]
     },
     {
-      "id": "language-preferences",
-      "label": "Language",
-      "component": "LanguagePreferences",
-      "tags": ["preferences"]
-    },
-    {
       "id": "other-preferences",
       "label": "Other",
       "component": "OtherPreferences",
+      "tags": ["preferences"]
+    },
+    {
+      "id": "language-preferences",
+      "label": "Language",
+      "component": "LocalePreferences",
       "tags": ["preferences"]
     },
     {

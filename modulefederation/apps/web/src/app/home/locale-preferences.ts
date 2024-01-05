@@ -52,11 +52,12 @@ export class LocalePreferences extends PreferencesFeature {
   }
 
   changed() {
-    console.log("hh")
   }
+
   // override PreferencesFeature
 
   override save() {
+    this.localeManager.setLocale(this.userProfile!!.locale)
     this.userProfileAdministrationService.updateProfile(this.userProfile!!).subscribe()
   }
 

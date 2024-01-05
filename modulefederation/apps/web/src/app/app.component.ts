@@ -18,7 +18,6 @@ export class Handler {
   // constructor
 
   constructor(private errorStorage: ErrorStorage, private dialog: MatDialog, private messageBus: MessageBus, private shortcutManager: ShortcutManager) {
-
   }
 
   // private
@@ -89,10 +88,6 @@ export class AppComponent {
   }
 
     // public
-
-    switch(locale: string) {
-        this.localeManager.setLocale(new Intl.Locale(locale))
-    }
 
     about() {
         this.aboutService.show()

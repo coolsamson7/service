@@ -5,8 +5,13 @@
 <span *ngIf="sessionManager.hasSession()">
     <button [matMenuTriggerFor]="menu" mat-button>{{sessionManager.getUser().name}}</button>
     <mat-menu #menu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="localeMenu">Locale...</button>
       <button (click)="openPreferences()" mat-menu-item>Preferences...</button>
       <mat-divider></mat-divider>
       <button (click)="sessionManager.logout()" mat-menu-item>Logout</button>
     </mat-menu>
+
+  <mat-menu #localeMenu="matMenu">
+    <button *ngFor="let locale of locales" mat-menu-item (click)="selectLocale(locale)">{{locale}}</button>
+</mat-menu>
 </span>

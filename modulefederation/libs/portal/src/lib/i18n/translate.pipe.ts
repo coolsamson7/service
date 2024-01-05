@@ -29,11 +29,13 @@ export class TranslatePipe implements PipeTransform, OnDestroy, OnLocaleChange {
    * @inheritdoc
    */
   transform(key : string, options? : any) : string {
-    if (key !== this.lastKey) {
+    if (key != this.lastKey) {
+      this.lastKey = key
+
       this.i18n.translate$(key, options)
         .pipe(first())
         .subscribe((translated) => {
-          this.lastKey = key
+          //this.lastKey = key
           this.translated = translated;
         });
     }
