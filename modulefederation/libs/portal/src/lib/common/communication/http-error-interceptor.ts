@@ -14,15 +14,12 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
   // private
 
   private translateError(error : HttpErrorResponse) : Error {
-
-    //error.message
-    //error.status
-
     console.log(error)
 
+    if ( !error.error)
+      throw new HTTPCommunicationError(error.status, error.message, error)
 
-
-    if (error.error instanceof ErrorEvent) {
+    else if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
       return new HTTPCommunicationError(error.status, error.message, error);
     }
@@ -30,12 +27,8 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
       if (error.error['@class']) {
         // expected or unexpected server side exceptions
 
-
-
         if (error.status == 512) // framework server error
           return new ServerError(error.error['@class'], error.error.detailMessage, error);
-
-
 
         else //if (error.status == 210) // framework application error
           return new ApplicationError(error.error['@class'], error.error.detailMessage, error);
@@ -49,7 +42,7 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
       // dunno...
 
       else
-        return new ServerError("unknown", "error", error);
+        return new ServerError(error.name, error.message, error);
     }
   }
 
