@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { LocaleManager, OnLocaleChange } from '../locale';
 import { Translations, Translator } from './translator';
 import { I18nLoader } from './i18n-loader';
@@ -128,7 +128,14 @@ export class StandardTranslator extends AbstractCachingTranslator implements OnL
     loadNamespace(namespace : string) : Observable<Translations> {
         return this.loader
             .loadNamespace(this.locale, namespace)
-            .pipe(tap((translations) => (this.cachedNamespaces[namespace] = translations)));
+            .pipe(
+              catchError((err) => {
+                // make sure that we don't end up in an endlsess loop
+                this.cachedNamespaces[namespace] = {}
+                throw err
+              }),
+              tap((translations) => (this.cachedNamespaces[namespace] = translations))
+            );
     }
 
     // override
