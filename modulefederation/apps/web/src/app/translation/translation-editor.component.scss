@@ -71,6 +71,72 @@
     .form {
       padding: 10px;
 
+      .locale:hover {
+        .delete {
+          visibility: visible;
+        }
+        .add {
+          visibility: visible;
+        }
+      }
+
+      .type:hover {
+        .delete {
+          visibility: visible;
+        }
+        .add {
+          visibility: visible;
+        }
+      }
+
+      .type {
+        display: flex;
+        align-items: center;
+
+        .mat-mdc-icon-button {
+          padding: unset;
+          font-size: unset;
+          width: unset;
+          height: unset;
+        }
+
+        .icon {
+          transform: scale(.8);
+        }
+
+        .add {
+          visibility: hidden;
+        }
+
+        .delete {
+          visibility: hidden;
+        }
+      }
+
+      .locale {
+        display: flex;
+        align-items: center;
+
+        .mat-mdc-icon-button {
+          padding: unset;
+          font-size: unset;
+          width: unset;
+          height: unset;
+        }
+
+        .icon {
+          transform: scale(.8);
+        }
+
+        .delete {
+          visibility: hidden;
+        }
+
+        .add {
+          visibility: hidden;
+        }
+      }
+
       .type {
         font-weight: bold;
       }

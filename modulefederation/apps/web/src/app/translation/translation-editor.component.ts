@@ -5,7 +5,7 @@ import {
   I18nModule,
   Message,
   MessageAdministrationService,
-  MessageChanges, ShortcutManager,
+  MessageChanges, ShortcutManager, StringBuilder,
   TranslationService
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
@@ -114,9 +114,29 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
 
   save(selectNode? : NamespaceNode) {
     this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(createdMessages => {
-      this.snackBar.open("Messages", "Saved")
+      let builder = new StringBuilder()
+
+      // compute message
+      if (this.namespaceChanges.newMessages.length > 0)
+        builder.append("added " + this.namespaceChanges.newMessages.length + " ")
+
+      if (this.namespaceChanges.deletedMessages.length > 0)
+        builder.append("deleted " + this.namespaceChanges.deletedMessages.length + " ")
+
+      if (this.namespaceChanges.changedMessages.length > 0)
+        builder.append("changed " + this.namespaceChanges.changedMessages.length + " ")
+
+      builder.append("message(s)")
+
+      // snack snack
+
+      this.snackBar.open("Messages", builder.toString())
+
+      // adjust local arrays
 
       this.selectedNamespace?.messages!!.push(...createdMessages)
+      for ( let deletedMessage of this.namespaceChanges.deletedMessages)
+        this.selectedNamespace?.messages?.splice(this.selectedNamespace?.messages?.indexOf(deletedMessage), 1)
 
       this.namespaceChanges = {
         newMessages: [],
@@ -156,6 +176,8 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
         messagesByType[type] = this.locales.map(locale => newMessage(locale, type))
 
       this.messages[name] = messagesByType
+
+      this.selectMessages(name)
     }
   }
 

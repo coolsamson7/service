@@ -60,9 +60,37 @@
 
     <div>
       <form #form="ngForm" *ngIf="selectedMessages" class="form" [ngStyle]="gridStyle()">
+        <!-- locale header -->
+
+        <div class="locale" *ngFor="let locale of locales;let last = last;">
+          <span>{{locale}}</span>
+
+          <button *ngIf="last" aria-label="Clear" class="add" mat-icon-button matSuffix>
+            <mat-icon class="icon">add</mat-icon>
+          </button>
+
+          <button aria-label="Clear" class="delete" mat-icon-button matSuffix>
+            <mat-icon class="icon">close</mat-icon>
+          </button>
+        </div>
+
+        <!-- the values -->
+
         <ng-container *ngFor="let type of types;">
-          <span class="type">{{type}}</span>
-          <span></span>
+          <!-- the type qualifier -->
+          <span class="type">
+            <span>{{type}}</span>
+            <button class="add" mat-icon-button matSuffix>
+              <mat-icon class="icon">add</mat-icon>
+            </button>
+
+            <button aria-label="Clear" class="delete" mat-icon-button matSuffix>
+              <mat-icon class="icon">close</mat-icon>
+            </button>
+          </span>
+          <span>
+            <!-- empty -->
+          </span>
 
           <mat-form-field *ngFor="let message of selectedMessages[type]; let i = index" [ngClass]="{changed: isChanged(message), new: isNew(message), deleted: isDeleted(message)}" class="message">
             <mat-label>{{this.locales[i]}}</mat-label>
