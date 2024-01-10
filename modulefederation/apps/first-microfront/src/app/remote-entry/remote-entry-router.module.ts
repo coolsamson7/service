@@ -7,10 +7,6 @@ import { PortalManager } from '@modulefederation/portal';
 
 import { RemoteEntryComponent } from './remote-entry.component';
 
-// nix
-
-// nix
-
 export const routes: Routes = [
   {
     path: '',
