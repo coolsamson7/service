@@ -1,20 +1,15 @@
 {
   "name": "first-microfront",
   "version": "0.1",
-  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
+  "commitHash": "b64270a9a15caca856f785bbd043efcd18a9cc40",
   "module": "RemoteEntryModule",
   "features": [
     {
       "id": "",
       "label": "Microfrontend 1",
       "component": "RemoteEntryComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "public",
-        "private"
-      ]
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
     },
     {
       "id": "public-portal",
@@ -23,12 +18,8 @@
         "lazyModule": "PublicPortalModule"
       },
       "component": "PublicPortalComponent",
-      "tags": [
-        "portal"
-      ],
-      "visibility": [
-        "public"
-      ],
+      "tags": ["portal"],
+      "visibility": ["public"],
       "module": "PublicPortalModule"
     },
     {
@@ -38,13 +29,21 @@
         "lazyModule": "PrivatePortalModule"
       },
       "component": "PrivatePortalComponent",
-      "tags": [
-        "portal"
-      ],
-      "visibility": [
-        "private"
-      ],
-      "module": "PrivatePortalModule"
+      "tags": ["portal"],
+      "visibility": ["private"],
+      "module": "PrivatePortalModule",
+      "children": [
+        {
+          "id": "lazy-child",
+          "label": "lazy-child",
+          "router": {
+            "lazyModule": "LazyChildModule"
+          },
+          "component": "LazyComponent",
+          "visibility": ["private", "public"],
+          "module": "LazyChildModule"
+        }
+      ]
     }
   ],
   "folders": []

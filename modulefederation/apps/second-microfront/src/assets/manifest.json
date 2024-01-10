@@ -1,19 +1,15 @@
 {
   "name": "second-microfront",
   "version": "0.1",
-  "commitHash": "53ac02df14cffc28a8243d907849b43681f6faba",
+  "commitHash": "b64270a9a15caca856f785bbd043efcd18a9cc40",
   "module": "RemoteEntryModule",
   "features": [
     {
       "id": "",
       "label": "Microfrontend 2",
       "component": "RemoteEntryComponent",
-      "tags": [
-        "navigation"
-      ],
-      "visibility": [
-        "private"
-      ]
+      "tags": ["navigation"],
+      "visibility": ["private"]
     }
   ],
   "folders": []
