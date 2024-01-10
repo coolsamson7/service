@@ -85,6 +85,7 @@ export class ManifestWriter {
         .optional("visibility", [])
         .optional("featureToggles", [])
         .remove("relative")
+        .remove("fqn")
         .remove("file")
 
     // constructor

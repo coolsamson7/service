@@ -41,6 +41,6 @@ export class RoutesWriter {
                     feature.module.name,
                     feature.module.file.path,
                     [feature],
-                    true)
+                    false)
     }
 }

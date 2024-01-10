@@ -4,8 +4,34 @@ export class RouteModuleWriter {
     constructor() {
     }
 
-    async write(host : Tree, manifest : any, forModule : string, inFolder : string, features : any[], isChild : boolean) {
-        // write router module
+    // private
+
+      private relativeImport(current : string, target : string, separator : string = "/") : string {
+            if (current == target)
+                return "./"
+
+            let check = current
+            let result = ""
+
+            while (!target.startsWith(check)) {
+                check = check.substring(0, check.lastIndexOf(separator))
+
+                result += "../"
+            }
+
+            if (result.length > 0)
+                result += target.substring(check.length)
+            else
+                result += "." + target.substring(check.length)
+
+            return result + separator
+        }
+
+
+    // public
+
+    async write(host : Tree, manifest : any, forModule : string, inFolder : string, features : any[], rootModule : boolean) {
+      // write router module
 
         const routesTemplatePath = 'tools/generators/microfrontend/router-module/templates';
 
@@ -22,36 +48,43 @@ export class RouteModuleWriter {
             fileName = fileName.substring(0, fileName.length - "-module".length)
 
         let featureName
-        if (isChild)
-            featureName = manifest.module.name + "." + features[0].id
+        if (!rootModule)
+            featureName =  features[0].fqn//TODO manifest.module.name + "." + features[0].id // TODO
 
-        let requiresRedirect = !isChild
+        let requiresRedirect = rootModule
         for (let feature of features)
             if (feature.id == "" || feature.router?.path == "")
                 requiresRedirect = false
 
+        let execute  = {
+          moduleImportPath: (feature: any) => {
+            let path = this.relativeImport(inFolder, feature.module.file.path)
+
+            path += feature.module.file.file.substring(0, feature.module.file.file.length - 3) // strip .ts
+
+             return path
+          },
+
+          importPath: (feature: any) => {
+              let path = this.relativeImport(inFolder, feature.module.file.path)
+
+             path += feature.file.file.substring(0, feature.file.file.length - 3) // strip .ts
+
+            return path
+          }
+        }
+
         generateFiles(host, routesTemplatePath, inFolder, {
+            execute: execute,
             manifest,
             requiresRedirect,
             featureName,
-            isChild,
+            rootModule,
+            isChild: false,
             moduleName: moduleNames.className,
             features: features,
             fileName: fileName,
             tmpl: '', // remove __tmpl__ from file endings
         });
-
-        // recursion for any lazy modules
-
-        if (!isChild)
-            for (let feature of features)
-                if (feature.module)
-                    this.write(
-                        host,
-                        manifest,
-                        feature.module.name,
-                        feature.module.file.path,
-                        [feature],
-                        true)
     }
 }

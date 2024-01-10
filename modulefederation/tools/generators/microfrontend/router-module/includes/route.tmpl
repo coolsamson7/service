@@ -1,14 +1,26 @@
  {
-  <% if (feature.module && !isChild) { %>
-      path: '<%- feature.router?.path || feature.id -%>',
-      loadChildren: () => import('<%= feature.module.relative %><%= feature.module.file.file.substring(0, feature.module.file.file.lastIndexOf(".")) %>').then(m => m.<%= feature.module.name %> )
-  <% } else { %>
-         path: '<%- isChild ? "" : (feature.router?.path || feature.id) -%>',
-         component: <%= feature.component %>,
-         children: [
-           <% for (let child of (feature.children || [])) { %>
-             <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: child }) -%>
-           <% } %>
-         ]
-   <% } %>
+ <% if (feature.module) { %>
+ <% if (isChild || rootModule) { %>
+       path: '<%- feature.router?.path || feature.id -%>',
+       loadChildren: () => import('<%=  execute.moduleImportPath(feature)  %>').then(m => m.<%= feature.module.name %> )
+ <% } else { %>
+          path: '<%- !isChild ? "" : (feature.router?.path || feature.id) -%>',
+          component: <%= feature.component %>,
+          children: [
+            <% for (let child of (feature.children || [])) { %>
+              <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
+            <% } %>
+          ]
+ <% } %>
+ <% } else { %>
+   path: '<%- !isChild ? "" : (feature.router?.path || feature.id) -%>',
+          component: <%= feature.component %>,
+          children: [
+            <% for (let child of (feature.children || [])) { %>
+              <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
+            <% } %>
+          ]
+ <% } %>
+
+
   },

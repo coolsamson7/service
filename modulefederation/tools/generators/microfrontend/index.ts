@@ -29,8 +29,45 @@ export default async function(host : Tree, schema : MicrofrontendSchema) {
 
     if (schema.type == "shell")
         await new RoutesWriter().write(host, manifest)
-    else
-        await new RouteModuleWriter().write(host, manifest, manifest.module.ngModule, path(manifest.module.file), manifest.features, false)
+    else {
+        let writer = new RouteModuleWriter()
+
+        await writer.write(host, manifest, manifest.module.ngModule, path(manifest.module.file), manifest.features, true /* root module */)
+
+        let queue = manifest.features.filter(feature => feature.module).map(feature => {
+          return {
+            name: manifest.module.name + "." + feature.id,
+            feature: feature
+            }
+          })
+
+        while ( queue.length > 0) {
+           let {name, feature} = queue[0]
+
+           feature.fqn = name
+
+           // remove from queue
+
+           queue.splice(0, 1)
+
+           if ( feature.module )
+             // process
+
+             await writer.write(
+                    host,
+                     manifest,
+                     feature.module.name,
+                     feature.module.file.path,
+                     [feature],
+                     false // root module
+                     )
+
+           // push children
+
+           for ( let child of feature.children || [])
+              queue.push({name: name + "." + child.id, feature: child})
+        } // while
+    }
 
     // webpack
 

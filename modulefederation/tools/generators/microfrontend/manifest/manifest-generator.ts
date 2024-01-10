@@ -298,6 +298,7 @@ export class ManifestGenerator {
             // create feature
 
             feature = {
+                fqn: decorator.id, // new
                 id: decorator.id,
                 label: decorator.label || (decorator.labelKey ? "" : decorator.id),
                 labelKey: decorator.labelKey || "",
@@ -322,6 +323,7 @@ export class ManifestGenerator {
                 let lazyModuleFile = this.findFile4Module(decorator.router?.lazyModule)
 
                 let file = this.file(lazyModuleFile)
+
                 feature.module = {
                     name: decorator.router?.lazyModule,
                     file: file,
@@ -348,7 +350,6 @@ export class ManifestGenerator {
                 }
 
                 parent = mapFeature(decorator)
-
 
                 if (!parent.children)
                     parent.children = [feature]
