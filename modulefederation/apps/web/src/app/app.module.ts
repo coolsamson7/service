@@ -73,8 +73,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 })
 @NgModule({
     declarations: [
-        AppComponent,
-        HomeComponent,
+        AppComponent
     ],
     imports: [
         MatSnackBarModule,
@@ -139,10 +138,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         UserComponent
     ],
     providers: [
-        {
+        /*{
           provide: ErrorHandler,
           useClass: GlobalErrorHandler
-        },
+        },*/
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: {duration: 2500}

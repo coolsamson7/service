@@ -22,8 +22,8 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-type MessagesByType = { [type : string] : Message[] }
-type MessageMap = { [prefix : string] : MessagesByType }
+type MessagesByType = { [type : string] : Message[] } // label -> Messge
+type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
 
 @Component({
   selector: 'translations',
@@ -50,7 +50,7 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
   types = ["label", "tooltip", "shortcut"] // dynamic?
   namespaces : NamespaceNode[] = []
   selectedNamespace? : NamespaceNode
-  messages : MessageMap = {}
+  messages : MessageMap = {} // ok -> {label: [], ...}
   selectedName? : string
   selectedMessages? : MessagesByType
   locales : string[] = []
@@ -243,6 +243,82 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
       this.namespaceChanges.deletedMessages.find(m => m.name.startsWith(message)) !== undefined
   }
 
+  addType() {
+    this.dialogs.inputDialog()
+      .title("New Type")
+      .inputType("text")
+      .defaultValue("")
+      .okCancel()
+      .show().subscribe((type) => {
+      if ( type && type.length > 0 ) {
+        // TODO: check list, check whatever
+
+        this.types.push(type)
+
+        this.selectedMessages!![type] = this.locales.map(locale => {
+          return {
+            id: undefined,
+            name: this.selectedName + "." + type,
+            value: "",
+            locale: locale,
+            namespace: this.selectedNamespace!!.path // ??
+          } as Message
+        })
+      }
+    })
+  }
+
+  deleteType(type: string) {
+    this.types.splice(this.types.indexOf(type), 1)
+
+    // TODO: dirty, etc
+    delete this.selectedMessages!![type]
+  }
+
+  addLocale() {
+    this.dialogs.inputDialog()
+      .title("New Locale")
+      .inputType("text")
+      .defaultValue("")
+      .okCancel()
+      .show().subscribe((locale) => {
+        if ( locale ) {
+          // TODO better selection
+          this.locales.push(locale)
+
+          for ( let type of Object.keys(this.selectedMessages!!)) { // label -> []
+            let newMessage : Message = {...this.selectedMessages!![type][0]}
+
+            newMessage.id = undefined
+            newMessage.locale = locale
+            newMessage.value = ""
+
+            this.selectedMessages!![type].push(newMessage)
+          }
+        }
+    })
+  }
+
+  deleteLocale(locale: string) {
+    // TODO only if no changes
+    this.dialogs.confirmationDialog()
+      .title("Delete Locale")
+      .message("Are you sure?")
+      .okCancel()
+      .show()
+      .subscribe(result => {
+        if ( result ) {
+          let index = this.locales.indexOf(locale)
+
+          this.locales.splice(index, 1)
+
+          for ( let type of Object.keys(this.selectedMessages!!)) { // label -> []
+            this.selectedMessages!![type].splice(index, 1)
+          }
+        }
+      })
+  }
+
   select(namespaceNode : NamespaceNode) {
     if (this.hasChanges()) {
       this.dialogs.confirmationDialog()
@@ -315,6 +391,10 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
         'grid-column-gap': '10px',
         'grid-row-gap': '5px'
       };
+  }
+
+  columnFiller():string {
+    return "span " + (this.locales.length - 1);
   }
 
   deleteMessage(message : Message) {

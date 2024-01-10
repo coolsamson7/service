@@ -65,11 +65,11 @@
         <div class="locale" *ngFor="let locale of locales;let last = last;">
           <span>{{locale}}</span>
 
-          <button *ngIf="last" aria-label="Clear" class="add" mat-icon-button matSuffix>
+          <button *ngIf="last" (click)="addLocale()" aria-label="Add" class="add" mat-icon-button matSuffix>
             <mat-icon class="icon">add</mat-icon>
           </button>
 
-          <button aria-label="Clear" class="delete" mat-icon-button matSuffix>
+          <button (click)="deleteLocale(locale)" aria-label="Clear" class="delete" mat-icon-button matSuffix>
             <mat-icon class="icon">close</mat-icon>
           </button>
         </div>
@@ -80,15 +80,15 @@
           <!-- the type qualifier -->
           <span class="type">
             <span>{{type}}</span>
-            <button class="add" mat-icon-button matSuffix>
+            <button (click)="addType()" class="add" mat-icon-button matSuffix>
               <mat-icon class="icon">add</mat-icon>
             </button>
 
-            <button aria-label="Clear" class="delete" mat-icon-button matSuffix>
+            <button (click)="deleteType(type)" aria-label="Clear" class="delete" mat-icon-button matSuffix>
               <mat-icon class="icon">close</mat-icon>
             </button>
           </span>
-          <span>
+          <span [ngStyle]="{'grid-column': columnFiller()}">
             <!-- empty -->
           </span>
 

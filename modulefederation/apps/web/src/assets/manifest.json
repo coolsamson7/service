@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "0f7c6d41421bf3aadf3a6cbb51d61b0f2bbc7d5b",
+  "commitHash": "b64270a9a15caca856f785bbd043efcd18a9cc40",
   "module": "AppModule",
   "features": [
     {
