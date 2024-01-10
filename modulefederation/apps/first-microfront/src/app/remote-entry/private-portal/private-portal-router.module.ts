@@ -7,8 +7,6 @@ import { PortalManager } from '@modulefederation/portal';
 
 import { PrivatePortalComponent } from './private-portal-component';
 
-import { LazyComponent } from './lazy-child.component';
-
 export const routes: Routes = [
   {
     path: '',
@@ -17,9 +15,7 @@ export const routes: Routes = [
       {
         path: 'lazy-child',
         loadChildren: () =>
-          import('./private-portal/child/lazy-child.module').then(
-            (m) => m.LazyChildModule
-          ),
+          import('./child/lazy-child.module').then((m) => m.LazyChildModule),
       },
     ],
   },
