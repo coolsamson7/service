@@ -15,7 +15,8 @@
       "id": "public-portal",
       "label": "public-portal",
       "router": {
-        "lazyModule": "PublicPortalModule"
+        "lazyModule": "PublicPortalModule",
+        "reuse":  true
       },
       "component": "PublicPortalComponent",
       "tags": ["portal"],

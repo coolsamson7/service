@@ -1,11 +1,20 @@
-import { Component } from "@angular/core";
-import { Feature } from "@modulefederation/portal";
+import { Component, Injector, forwardRef } from "@angular/core";
+import { AbstractFeature, Feature, WithCommands, Command } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
+import { CommonModule } from "@angular/common";
+import { NgModelSuggestionsDirective, ObjectSuggestionProvider } from "./suggestion.directive";
+import { FormsModule } from "@angular/forms";
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss']
+    styleUrls: ['./home.component.scss'],
+    standalone: true,
+    imports: [CommonModule, NgModelSuggestionsDirective, FormsModule],
+    providers: [{ 
+      provide: AbstractFeature, 
+      useExisting: forwardRef(() => HomeComponent) 
+    }]
 })
 @Feature({
     id: "home",
@@ -15,12 +24,35 @@ import { PortalAdministrationService } from "../portal/service";
     tags: ["navigation"],
     permissions: []
 })
-export class HomeComponent {
-  value = 10
+export class HomeComponent extends WithCommands(AbstractFeature) {
+  value = "10"
   me ="Andi"
   today = new Date()
 
-  constructor(private portalAdministrationService : PortalAdministrationService) {
+  suggestionProvider = new ObjectSuggestionProvider({
+    foo: {
+      bar: {
+        baz: "baz",
+        bazong: "bazong"
+      }
+    }
+  })
+
+  constructor(private portalAdministrationService : PortalAdministrationService, injector: Injector) {
+    super(injector)
+
+    // TEST
+
+    this.test("hello")
+  }
+
+  @Command({
+    label: "Test"
+  })
+  test(message: string) {
+    console.log(message + " world")
+
+    return message + " world"
   }
 
   throwString() {

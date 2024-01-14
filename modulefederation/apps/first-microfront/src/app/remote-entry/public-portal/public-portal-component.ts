@@ -31,8 +31,8 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
 
     // constructor
 
-    constructor(private aboutDialogService : AboutDialogService, private router : Router, private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>, private portalManager : PortalManager) {
-        super();
+    constructor(injector: Injector, private aboutDialogService : AboutDialogService, private router : Router, private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>, private portalManager : PortalManager) {
+        super(injector);
 
         featureRegistry.registry$.subscribe(_ => this.computeNavigation())
     }
@@ -60,7 +60,7 @@ export class PublicPortalComponent extends AbstractFeature implements OnInit {
             })
     }
 
-    ngOnInit() : void {
+    override ngOnInit() : void {
         this.computeNavigation()
     }
 

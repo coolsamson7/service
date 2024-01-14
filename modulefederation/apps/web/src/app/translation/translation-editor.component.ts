@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, Injector, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import {
+  AbstractFeature,
   Dialogs,
   Feature,
   I18nModule,
@@ -44,7 +45,7 @@ type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
   tags: ["navigation"],
   permissions: []
 })
-export class TranslationEditorComponent implements OnInit, OnDestroy {
+export class TranslationEditorComponent extends AbstractFeature implements OnInit, OnDestroy {
   // instance data
 
   types = ["label", "tooltip", "shortcut"] // dynamic?
@@ -62,7 +63,8 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
 
   // constructor
 
-  constructor(private shortcutManager: ShortcutManager, private dialogs : Dialogs, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService, private translationService : TranslationService) {
+  constructor(injector: Injector, private shortcutManager: ShortcutManager, private dialogs : Dialogs, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService, private translationService : TranslationService) {
+    super(injector)
   }
 
   // callbacks
@@ -495,7 +497,9 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
   saveShortut?: () => void
   revertShortut?: () => void
 
-  ngOnInit() : void {
+  override ngOnInit() : void {
+    super.ngOnInit()
+
     this.messageAdministrationService.readLocales().subscribe(locales => this.locales = locales)
 
     this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
@@ -509,7 +513,9 @@ export class TranslationEditorComponent implements OnInit, OnDestroy {
 
   // implement OnDestroy
 
-  ngOnDestroy(): void {
-    this.saveShortut!!()
+  override ngOnDestroy(): void {
+    super.ngOnDestroy()
+
+    this.saveShortut!!() // TODO
   }
 }

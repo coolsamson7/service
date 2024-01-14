@@ -1,5 +1,5 @@
 <div>
-   {{ "portal:welcome.label" | translate: { me: me, today: today} }}
+   <!--{{ "portal:welcome.label" | translate: { me: me, today: today} }}-->
 
   <button mat-button (click)="throwString()">String error</button>
   <button mat-button (click)="throwError()">Error</button>
@@ -7,5 +7,12 @@
   <button mat-button (click)="throwDeclaredServerError()">server error</button>
   <button mat-button (click)="throwServerError()">fatal server error</button>
   <button mat-button (click)="callBadURL()">bad url</button>
+
+  <input name="value" type="text" [(ngModel)]="value" [suggestionProvider]="suggestionProvider"
+
+    autocomplete="off"
+    autofocus
+    class="input"
+  />
 </div>
 

@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './home/home-component';
 import { MaterialModule } from './material/material.module';
 import { NodesModule } from './nodes/nodes.module';
 import { PortalComponentModule } from './portal/portal.module';
@@ -16,11 +15,13 @@ import { SharedModule } from './auth/auth.guard';
 import { environment } from "../environments/environment"
 import {
   AbstractModule,
-  AssetTranslationLoader,
   CanDeactivateGuard,
+  CommandModule,
+  ConsoleTrace,
   EndpointLocator,
   Environment,
   EnvironmentModule, ErrorModule,
+  FeatureReuseStrategy,
   HTTPErrorInterceptor, I18nModule, I18nResolver, Injected, LocaleModule,
   Manifest,
   OIDCAuthentication, OIDCModule,
@@ -29,14 +30,16 @@ import {
   PortalModule,
   SecurityModule, ServerTranslationLoader,
   SessionManager,
-  Shell
+  Shell,
+  TraceLevel,
+  TracerModule
 } from "@modulefederation/portal";
 import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatIconModule } from "@angular/material/icon";
 
 import { localRoutes } from "./local.routes";
-import { Route } from "@angular/router";
+import { Route, RouteReuseStrategy } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
@@ -90,6 +93,15 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         MaterialModule,
         ErrorModule,
 
+        TracerModule.forRoot({
+            enabled: true,
+            trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
+            paths: {
+              "portal": TraceLevel.FULL,
+              "controller": TraceLevel.FULL,
+            }
+          }),
+
         LocaleModule.forRoot({
             locale: 'en-US',
             supportedLocales: ['en-US', 'de-DE']
@@ -112,6 +124,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 route.canDeactivate = [CanDeactivateGuard]
             }
         }),
+        
+        CommandModule.forRoot(),
 
         OIDCModule.forRoot({
             authConfig: authConfig
@@ -142,6 +156,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
           provide: ErrorHandler,
           useClass: GlobalErrorHandler
         },*/
+        {
+           provide: RouteReuseStrategy,
+           useClass: FeatureReuseStrategy
+        },
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: {duration: 2500}

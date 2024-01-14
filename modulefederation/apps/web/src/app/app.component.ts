@@ -1,7 +1,7 @@
-import { Component, HostListener, Injectable } from '@angular/core';
+import { Component, HostListener, Injectable, Injector, OnInit, forwardRef } from '@angular/core';
 import {
-  AboutDialogService, ErrorContext,
-  ErrorHandler, HandleError,
+  AboutDialogService, AbstractFeature, ErrorContext,
+  ErrorHandler, Feature, HandleError,
   LocaleManager,
   ShortcutManager
 } from "@modulefederation/portal";
@@ -65,21 +65,22 @@ export class Handler {
     });
   }
 }
-
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent extends AbstractFeature {
     // instance data
 
     locales: string[] = []
 
     // constructor
 
-    constructor(private aboutService: AboutDialogService, private localeManager: LocaleManager, private shortcutManager: ShortcutManager) {
-        this.locales = localeManager.supportedLocales
+    constructor(private aboutService: AboutDialogService, private localeManager: LocaleManager, private shortcutManager: ShortcutManager, injector: Injector) {
+      super(injector)
+
+      this.locales = localeManager.supportedLocales
     }
 
   @HostListener('window:keydown', ['$event'])
