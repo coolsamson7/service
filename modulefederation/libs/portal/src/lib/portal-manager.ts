@@ -2,7 +2,7 @@ import { Inject, Injectable, Injector } from "@angular/core";
 
 import { LoadChildrenCallback, Route, Router, Routes } from "@angular/router";
 import { loadRemoteModule, setRemoteDefinitions } from "@nrwl/angular/mf";
-import { PortalModule, PortalModuleConfig, PortalModuleConfigToken } from "./portal.module";
+import { PortalModuleConfig, PortalModuleConfigToken } from "./portal.module";
 import { FeatureRegistry } from "./feature-registry";
 import { Deployment } from "./deployment/deployment-model";
 import { ModuleRegistry } from "./modules";
@@ -87,14 +87,14 @@ export class PortalManager {
 
         // local functions
 
-        let rootFeature = this.featureRegistry.getFeature(feature)
-        let rootRoute = routes.find(route => route.redirectTo == undefined)
+        const rootFeature = this.featureRegistry.getFeature(feature)
+        const rootRoute = routes.find(route => route.redirectTo == undefined)
 
         // we just loaded it, so set it to undefined
 
         rootFeature.load = undefined
 
-        this.link(rootRoute!!, rootFeature)
+        this.link(rootRoute!!, rootFeature) // TODO FALSCH: children werden nicht berücksichtigt?
 
         this.linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo == undefined), rootFeature.children || [])
     }
@@ -120,7 +120,7 @@ export class PortalManager {
         if (route.component) {
             feature.ngComponent = route.component
 
-            let componentType : any = route.component
+            const componentType : any = route.component
 
             componentType['$$feature'] = feature
         }
@@ -137,11 +137,11 @@ export class PortalManager {
     private linkRoutes(routes : Routes, features : FeatureData[]) {
         // local functions
 
-        let featureRoute = (feature : FeatureConfig) => {
+        const featureRoute = (feature : FeatureConfig) => {
             return feature.router?.path ? feature.router.path : feature.id
         }
 
-        let findFeature4 = (route : string) => {
+        const findFeature4 = (route : string) => {
             return features.find(feature => {
               return featureRoute(feature) == route
             })
@@ -151,10 +151,10 @@ export class PortalManager {
 
         let index = 0
         while (index < routes.length) {
-            let route = routes[index++]
+            const route = routes[index++]
 
             if (!route.redirectTo) { // leave redirects
-                let feature = findFeature4(route.path!!)
+                const feature = findFeature4(route.path!!)
 
                 if (feature) {
                     this.link(route, feature)
@@ -210,13 +210,13 @@ export class PortalManager {
         if (!merge) {
             // patch local routes
 
-            let localModule = Object.values(modules).find(module => module.remoteEntry == undefined)
-            let localFeatures = localModule!!.features
+            const localModule = Object.values(modules).find(module => module.remoteEntry == undefined)
+            const localFeatures = localModule!!.features
 
             this.linkRoutes(localRoutes, localFeatures)
         }
 
-        let pageNotFoundRoute : Route = {
+        const pageNotFoundRoute : Route = {
             path: '**',
             pathMatch: 'full',
             resolve: {
@@ -225,7 +225,7 @@ export class PortalManager {
             component: PageNotFoundComponent
         }
 
-        let routes = [...localRoutes, ...lazyRoutes/*,  pageNotFoundRoute*/]
+        const routes = [...localRoutes, ...lazyRoutes/*,  pageNotFoundRoute*/]
 
         // done
 
@@ -233,14 +233,14 @@ export class PortalManager {
     }
 
     private fillFeatureRegistry(deployment : Deployment, previousDeployment : Deployment) {
-        let disabledModules = {...previousDeployment.modules}
+        const disabledModules = {...previousDeployment.modules}
 
-        for (let module in deployment.modules) {
+        for (const module in deployment.modules) {
             delete disabledModules[module]
 
-            let manifest = deployment.modules[module]
+            const manifest = deployment.modules[module]
 
-            let prevManifest = this.deployment.modules[module]
+            const prevManifest = this.deployment.modules[module]
             if (prevManifest) {
                 // forget about local features, since they never change
 
@@ -251,7 +251,7 @@ export class PortalManager {
 
                     // we need to merge ( e.g. the enabled status )
 
-                    let rootFeature : FeatureData = manifest.features.find(feature => feature.id == "")!!
+                    const rootFeature : FeatureData = manifest.features.find(feature => feature.id == "")!!
                     // append the rest as children
                     rootFeature.children = manifest.features.filter(feature => feature.id != "")!!
 
@@ -278,8 +278,8 @@ export class PortalManager {
 
         // all modules that are not part of the deployment anymore are disabled!
 
-        for (let disabled in disabledModules) {
-            let manifest = this.deployment.modules[disabled]
+        for (const disabled in disabledModules) {
+            const manifest = this.deployment.modules[disabled]
 
             if (manifest.type == "microfrontend")
                 this.featureRegistry.disable(manifest.name)
@@ -300,7 +300,7 @@ export class PortalManager {
         if (!merge) {
             // add local manifest
 
-            let localManifest = ManifestDecorator.decorate(this.portalConfig.localManifest)
+            const localManifest = ManifestDecorator.decorate(this.portalConfig.localManifest)
 
             localManifest.type = "shell"
             localManifest.isLoaded = true
@@ -310,10 +310,10 @@ export class PortalManager {
 
         // set remote definitions
 
-        let remotes : any = {}
+        const remotes : any = {}
 
-        for (let moduleName in deployment.modules) {
-            let module = ManifestDecorator.decorate(deployment.modules[moduleName])
+        for (const moduleName in deployment.modules) {
+            const module = ManifestDecorator.decorate(deployment.modules[moduleName])
 
             module.isLoaded = false
 

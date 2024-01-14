@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, concatMap, from, mergeMap } from 'rxjs';
 import { LocaleConfig, LocaleConfigInjectionToken } from './locale.module';
-import { OnLocaleChange } from './translatable.decorator';
+import { OnLocaleChange } from './locale-aware.mixin';
 
 /**
  * @ignore

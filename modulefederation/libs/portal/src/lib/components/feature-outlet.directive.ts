@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { FeatureRegistry } from '../feature-registry';
 import { FeatureData } from "../portal-manager";
+import { TraceLevel, Tracer } from '../tracer';
 
 @Component({
     selector: 'unknown-feature',
@@ -32,7 +33,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
     /**
      * the feature id
      */
-    @Input() feature : string = ""
+    @Input() feature = ""
 
     // instance data
 
@@ -76,6 +77,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
 
         if (this.featureData)
             this.load()
+        
         else {
             this.component = this.container.createComponent(UnknownFeatureComponent);
             this.component.instance.feature = feature
@@ -85,8 +87,10 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
     // implement OnDestroy
 
     private async load() {
+        
         // local function
-        let nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
+
+        const nextLoader = (feature? : FeatureData) : FeatureData | undefined => {
             while (feature) {
                 if (feature.load)
                     return feature
@@ -97,9 +101,16 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
             return undefined
         }
 
+        if ( Tracer.ENABLED)
+            Tracer.Trace("feature", TraceLevel.FULL, "load feature {0}", this.feature)
+
         let next : FeatureData | undefined
-        while ((next = nextLoader(this.featureData)) != undefined)
+        while ((next = nextLoader(this.featureData)) != undefined) {
+            if ( Tracer.ENABLED)
+               Tracer.Trace("feature", TraceLevel.FULL, "lazy load {0}", next.path)
+
             await next.load!!() // will set load to undefined in registerLazyRoutes
+        }
 
         this.component = this.container.createComponent(this.featureData?.ngComponent);
     }

@@ -1,8 +1,16 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpResponse
+} from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, finalize, Observable } from "rxjs";
 import { ApplicationError, CommunicationError, HTTPCommunicationError, ServerError } from "../error";
 import { ErrorManager } from "../../error";
+import { tap } from "rxjs/operators";
 
 @Injectable()
 export class HTTPErrorInterceptor implements HttpInterceptor {
@@ -53,6 +61,12 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
 
     return next.handle(request)
       .pipe(
+        tap((response) => {
+          if ( response instanceof HttpResponse) {
+            if (response.status == 210)
+              throw new ApplicationError(response.body['@class'], response.body['detailMessage'])
+          }
+        }),
         catchError((error : HttpErrorResponse) => {
           console.log(error)
 

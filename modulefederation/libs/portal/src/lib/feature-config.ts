@@ -1,3 +1,5 @@
+import { ɵDirectiveDef } from "@angular/core";
+
 /**
  * additional router configuration for a feature
  */
@@ -99,4 +101,11 @@ export interface FeatureConfig {
      * optional router hints
      */
     router? : RouterConfig
+
+    // TODO
+
+     /**
+   * @ignore
+   */
+  componentDefinition?: ɵDirectiveDef<any>; // ɵDirectiveDef
 }

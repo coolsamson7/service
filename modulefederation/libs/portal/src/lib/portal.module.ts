@@ -1,4 +1,3 @@
-import { ReplaySubject } from "rxjs";
 import {
     APP_INITIALIZER,
     InjectionToken, Injector,
@@ -51,12 +50,9 @@ export class PortalModule extends AbstractModule() {
     // constructor
     constructor(injector: Injector) {
         super(injector);
-
-      console.log("create PortalMpodule ")
     }
 
     public static forRoot(config : PortalModuleConfig) : ModuleWithProviders<PortalModule> {
-      console.log("PortalMpodule.forRoot ")
         return {
             ngModule: PortalModule,
             providers: [

@@ -4,7 +4,7 @@ import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
 import { FolderData } from "./folder.decorator";
 import { TraceLevel, Tracer } from "./tracer";
-import { LocaleManager, OnLocaleChange, Translatable } from "./locale";
+import { LocaleManager, OnLocaleChange } from "./locale";
 import { Translator } from "./i18n";
 
 export type FeatureFilter = (feature : FeatureData) => boolean
@@ -36,10 +36,10 @@ export class FeatureRegistry implements OnLocaleChange {
     // public
 
     report() {
-        let table = []
+        const table = []
 
-        for (let path in this.features) {
-            let feature = this.features[path]
+        for (const path in this.features) {
+            const feature = this.features[path]
 
             table.push({
                 name: path,
@@ -58,33 +58,33 @@ export class FeatureRegistry implements OnLocaleChange {
     }
 
     registerFolders(...folders : FolderData[]) {
-        let rememberPath = (folder : FolderData, prefix : string = "") => {
+        const rememberPath = (folder : FolderData, prefix : string = "") => {
             this.path2Folder[prefix + folder.name] = folder
 
-            for (let child of folder.children || [])
+            for (const child of folder.children || [])
                 rememberPath(child, prefix + folder.name + ".")
         }
 
         // remember paths
 
-        for (let folder of folders) {
+        for (const folder of folders) {
             this.folders.push(folder)
             rememberPath(folder)
         }
     }
 
     register(...features : FeatureConfig[]) {
-        for (let feature of features)
+        for (const feature of features)
             if (!(feature as FeatureData).$parent)
                 this.registerFeature(feature, undefined, "")
     }
 
     registerRemote(microfrontend : string, ...features : FeatureConfig[]) {
-        let rootFeature = features.find(feature => feature.id == "")
+        const rootFeature = features.find(feature => feature.id == "")
         if (rootFeature)
             this.registerFeature(rootFeature, undefined, microfrontend)
 
-        for (let feature of features)
+        for (const feature of features)
             if (feature !== rootFeature && !(feature as FeatureData).$parent)
                 this.registerFeature(feature, rootFeature, microfrontend + ".")
     }
@@ -139,7 +139,7 @@ export class FeatureRegistry implements OnLocaleChange {
         // recursion
 
         if (feature.children)
-            for (let child of feature.children)
+            for (const child of feature.children)
                 this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!!)
     }
 
@@ -149,18 +149,18 @@ export class FeatureRegistry implements OnLocaleChange {
 
         // local function
 
-        let key = (name : string, path : string) => {
+        const key = (name : string, path : string) => {
             if (path.length == 0)
                 return name
             else
                 return path + name
         }
 
-        let feature = featureConfig as FeatureData
+        const feature = featureConfig as FeatureData
 
         // add
 
-        let name = key(feature.id, path)
+        const name = key(feature.id, path)
 
         this.features[name] = feature
 
@@ -183,7 +183,7 @@ export class FeatureRegistry implements OnLocaleChange {
         // link folder?
 
         if (feature.folder) {
-            let folder = this.path2Folder[feature.folder]
+            const folder = this.path2Folder[feature.folder]
 
             // TODO CHECK null
 
@@ -195,15 +195,15 @@ export class FeatureRegistry implements OnLocaleChange {
 
         // recursion
 
-        for (let child of feature.children || [])
-            this.registerFeature(child, feature, (path == "" ? feature.id : path + "." + feature.id) + ".");
+        for (const child of feature.children || [])
+            this.registerFeature(child, feature, (path == "" ? feature.id : path + feature.id) + ".");
     }
 
     // implement OnLocaleChange
 
     onLocaleChange(locale: Intl.Locale): Observable<any> {
-      for ( let featureName in this.features) {
-        let feature = this.features[featureName]
+      for ( const featureName in this.features) {
+        const feature = this.features[featureName]
 
         if ( feature.labelKey)
           this.translator.translate$(feature.labelKey)
@@ -273,7 +273,7 @@ export class FeatureFinder {
 
     find() : FeatureData[] {
         return this.featureRegistry.findFeatures((feature) => {
-            for (let filter of this.filters)
+            for (const filter of this.filters)
                 if (!filter(feature))
                     return false
 

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { StringBuilder } from "../common";
 import { PropertyDescriptor, PropertyType } from "./property-descriptor";
 
 interface MethodDecoratorSpec {
-  decorator: MethodDecorator
+  decorator: Function
   arguments: any
 }
 
@@ -46,20 +47,20 @@ export class MethodDescriptor extends PropertyDescriptor {
       .append(this.name)
       .append("()")
 
-    if (this.returnType) builder.append(": ").append(this.returnType!.name)
+    if (this.returnType) builder.append(": ").append(this.returnType?.name)
 
     builder.append("\n")
   }
 
-  hasDecorator(decorator: MethodDecorator): boolean {
+  hasDecorator(decorator: Function): boolean {
     return this.decorators.find((spec) => spec.decorator == decorator) !== undefined
   }
 
-  getDecorator(decorator: MethodDecorator): MethodDecoratorSpec | undefined {
+  getDecorator(decorator: Function): MethodDecoratorSpec | undefined {
     return this.decorators.find((spec) => spec.decorator == decorator)
   }
 
-  addDecorator(decorator: MethodDecorator, args: any[]) {
+  addDecorator(decorator: Function, args: any[]) {
     this.decorators.push({
       decorator: decorator,
       arguments: args,

@@ -1,7 +1,4 @@
-export * from "./abstract-feature"
 export * from "./feature-outlet.directive"
-
-export * from "./abstract-feature"
 export * from "./burger/burger.component"
 export * from "./current-feature/current-feature.component"
 export * from "./features"

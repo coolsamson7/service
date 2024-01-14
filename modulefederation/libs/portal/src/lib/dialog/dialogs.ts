@@ -4,7 +4,6 @@ import { InputDialogBuilder } from "./input-dialog-builder";
 import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { Translator } from "../i18n";
 import { ShortcutManager } from "../shortcuts";
-import { PreferencesDialog } from "../../../../../apps/web/src/app/home/preferences-dialog";
 import { tap } from "rxjs/operators";
 import { ComponentType } from "@angular/cdk/overlay";
 

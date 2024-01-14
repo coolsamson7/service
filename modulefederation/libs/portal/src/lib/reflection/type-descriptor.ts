@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/member-ordering */
 import { StringBuilder } from "../common"
 import { TraceLevel, Tracer } from "../tracer"
 import { MethodDescriptor } from "./method-descriptor";
@@ -21,12 +23,13 @@ export declare interface Type<T> extends Function {
  *    <li>applied decorators for the class, methods and properties</li>
  * </ul>
  */
-export class TypeDescriptor<T> {
+export class TypeDescriptor<T=any> {
     // static
 
     static forType<T>(type: Type<T>): TypeDescriptor<T> {
-        let typeDescriptor = type.prototype["__descriptor"]
-        if (!typeDescriptor) type.prototype["__descriptor"] = typeDescriptor = new TypeDescriptor<T>(type)
+        let typeDescriptor = Reflect.get(type, "$descriptor")
+        if (!typeDescriptor) 
+           Reflect.set(type, "$descriptor", typeDescriptor = new TypeDescriptor<T>(type))
 
         return typeDescriptor
     }
@@ -35,7 +38,10 @@ export class TypeDescriptor<T> {
 
     // instance data
 
+    superClass: TypeDescriptor<T> | undefined = undefined
+
     public typeDecorators: ClassDecorator[] = []
+    private allProperties : { [name: string]: PropertyDescriptor } = {}
     private properties: { [name: string]: PropertyDescriptor } = {}
     private injectors: Injector[] = []
     private decorators: Decorator[] = []
@@ -80,16 +86,10 @@ export class TypeDescriptor<T> {
         return this
     }
 
-    public addMethodDecorator(target: any, property: string, decorator: PropertyDecorator, ...args: any[]): TypeDescriptor<T> {
+
+    public addMethodDecorator(target: any, property: string, decorator: Function, ...args: any[]): TypeDescriptor<T> {
         if (Tracer.ENABLED)
-            Tracer.Trace(
-                "type",
-                TraceLevel.FULL,
-                "add method decorator {0} to method {1}.{2}",
-                decorator.name,
-                this.type.name,
-                property
-            )
+            Tracer.Trace("type", TraceLevel.FULL, "add method decorator {0} to method {1}.{2}", decorator.name, this.type.name, property )
 
         const method = this.getMethod(property)
 
@@ -132,8 +132,14 @@ export class TypeDescriptor<T> {
         return this
     }
 
-    public getMethods(): MethodDescriptor[] {
-        return <MethodDescriptor[]>Object.values(this.properties).filter((property) => property.is(PropertyType.METHOD))
+    public filterMethods(filter: (method: MethodDescriptor) => boolean, all = true) : MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties)
+            .filter((property) => property.is(PropertyType.METHOD))
+            .filter(method => filter(<MethodDescriptor>method))
+    }
+
+    public getMethods(all: boolean = true): MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.METHOD))
     }
 
     public getProperties(): FieldDescriptor[] {
@@ -144,12 +150,8 @@ export class TypeDescriptor<T> {
         return <MethodDescriptor>Object.values(this.properties).find((property) => property.is(PropertyType.CONSTRUCTOR))
     }
 
-    public getFields(): FieldDescriptor[] {
-        return <FieldDescriptor[]>Object.values(this.properties).filter((property) => property.is(PropertyType.FIELD))
-    }
-
-    public getMethod(name: string): MethodDescriptor | undefined {
-        return  this.properties[name]?.asMethodDescriptor()
+    public getMethod(name: string, all: boolean = true): MethodDescriptor | undefined {
+        return  (all ? this.allProperties : this.properties)[name]?.asMethodDescriptor()
     }
 
     public getField(name: string): FieldDescriptor | undefined {
@@ -158,42 +160,19 @@ export class TypeDescriptor<T> {
 
     // private
 
-    private findProperties(type: Type<T>): string[] {
-        const re = new RegExp(/(?:this\.)(.+?(?= ))/g)
+    private analyze(type: Type<T>) {
+        // super class
 
-        const find = (val: any, parent = false): string[] => {
-            const isFunction = Object.prototype.toString.call(val) == "[object Function]"
-            if (isFunction) {
-                let result: string[] = []
-                if (parent) {
-                    const proto = Object.getPrototypeOf(val.prototype)
-                    if (proto) {
-                        result = result.concat(find(proto.constructor, parent))
-                    }
-                }
+        const prototype = Object.getPrototypeOf(type)
 
-                result = result
-                    .concat(val.toString().match(re))
-                    .filter((r) => r !== null && r !== undefined)
-                    .map((r: string) => r.substring("this.".length))
+        if (prototype?.constructor.name != "Object" && prototype?.constructor.name != "Function") {
+            this.superClass = TypeDescriptor.forType(Object.getPrototypeOf(type))
 
-                return result
-            } else {
-                if (typeof val == "object") return Object.getOwnPropertyNames(val)
-            }
-
-            return val !== null ? [val.tostring()] : []
+            this.allProperties = {...this.superClass?.allProperties}
         }
 
-        return find(type)
-    }
-
-    private analyze(type: Type<T>) {
-        // properties
-
-        //for (const property of this.findProperties(type)) this.properties[property] = new FieldDescriptor(property)
-
         // methods
+
         const descriptors = Object.getOwnPropertyDescriptors(type.prototype)
 
         for (const propertyName in descriptors) {
@@ -210,6 +189,8 @@ export class TypeDescriptor<T> {
                 )
             }
         } // for
+
+        this.allProperties = { ...this.allProperties, ...this.properties}
     }
 
     // public
@@ -219,9 +200,14 @@ export class TypeDescriptor<T> {
 
         for (const decorator of this.typeDecorators) builder.append("@").append(decorator.name).append("()\n")
 
-        builder.append("class ").append(this.type.name).append("{\n")
+        builder.append("class ").append(this.type.name);
 
-        for (const field of this.getFields()) {
+        if ( this.superClass)
+            builder.append(" extends ").append(this.superClass.type.name)
+        
+        builder.append("{\n")
+
+        for (const field of this.getProperties()) {
             field.report(builder)
             builder.append("\n")
         }
