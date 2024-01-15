@@ -103,27 +103,21 @@ export class AppComponent extends WithState(AbstractFeature) {
       this.state = this.stateStorage.load("portal" /* TODO */, this.sessionManager.currentSession());
       if ( this.state) 
          this.applyState(this.state.data)
-      else {
-         this.state = {
-          owner: this.stateID(),
-          data: {},
-          children: []
-        };
-
-        this.writeState(this.state.data)
-        this.saveState()
-      }
+      else
+         this.state = this.createState()
    }
 
    override saveState() {
+      this.storeState()
+
       this.stateStorage.save(this.state!, "portal" /* TODO */, this.sessionManager.currentSession());
    }
 
     // implement Stateful
 
     override applyState(state: any) : void {
-     if (state.url)
-      this.router.navigate([state.url]);
+      if (state.url)
+        this.router.navigate([state.url]);
     }
 
     override writeState(state: any) : void {

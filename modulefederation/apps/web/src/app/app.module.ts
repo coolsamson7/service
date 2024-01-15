@@ -133,7 +133,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         }),
 
         StateModule.forRoot({
-            
         }),
 
         SecurityModule.forRoot({

@@ -9,7 +9,7 @@ export interface State {
     /**
      * any object describing the internal state
      */
-    data?: any;
+    data: any;
     /**
      * the array of child states
      */

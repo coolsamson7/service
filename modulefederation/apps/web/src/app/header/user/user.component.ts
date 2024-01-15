@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { DialogService, Dialogs, LocaleManager, Session, SessionManager, ShortcutManager, Ticket } from "@modulefederation/portal";
+import { DialogService, LocaleManager, Session, SessionManager, Ticket } from "@modulefederation/portal";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
@@ -24,14 +24,16 @@ export class UserComponent {
 
     // constructor
     constructor(private dialogs : DialogService, private localeManager: LocaleManager, public sessionManager : SessionManager, private userProfileAdministrationService : UserProfileAdministrationService) {
-       let outerThis = this
+       const outerThis = this
     sessionManager.addListener({
         closed(session : Session<any, Ticket>) : void {
         },
+
         closing(session : Session<any, Ticket>) : void {
         },
+
         opened(session : Session<any, Ticket>) : void {
-          let user = session.user.preferred_username
+          const user = session.user.preferred_username
 
           userProfileAdministrationService.readProfile(user).subscribe(userProfile => {
             outerThis.userProfile = userProfile
@@ -51,12 +53,12 @@ export class UserComponent {
 
   selectLocale(locale: string) {
     this.localeManager.setLocale(locale)
-    this.userProfile!!.locale = locale
-    this.userProfileAdministrationService.updateProfile(this.userProfile!!)
+    this.userProfile!.locale = locale
+    this.userProfileAdministrationService.updateProfile(this.userProfile!)
   }
 
   openPreferences() {
-    let configuration = {
+    const configuration = {
       data: {
         title: "Preferences"
       }

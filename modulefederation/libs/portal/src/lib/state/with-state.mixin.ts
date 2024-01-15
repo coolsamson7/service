@@ -19,12 +19,12 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
             super(args);
 
             this.afterContentInit(() => this.setupState())
-            this.onDestroy(() => this.triggerWriteState())
+            this.onDestroy(() => this.storeState())
         }
 
         // private
 
-        private rootStateManager() : StateManager{
+        private rootStateManager() : StateManager {
             let manager = this as StateManager
             while (manager.parentStateManager())
                 manager = manager.parentStateManager()!
@@ -46,21 +46,20 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
               if (this.state) 
                 this.applyState(this.state.data);
               else {
-                parent.addChildState((this.state = this.createState()))
+                parent.addChildState((this.createState()))
 
-                this.writeState(this.state?.data)
+                this.storeState()
               }
             } 
             else {
-              // no parent controller, but has state from constructor or predefined state object
-        
-
+              // no parent, but has state from constructor or predefined state object
+    
               if (this.state)
                 this.applyState(this.state.data);
               else {
-                this.state = this.createState();
+                this.createState();
 
-                this.triggerWriteState()
+                this.storeState()
               }
             }
           }
@@ -69,20 +68,6 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
           
         private matchingIDs(id1: any, id2: any): boolean {
             return id1.component == id2.component // TODO isEqual(id1, id2);
-        }
-    
-        private createState(previousStateData?: any): State {
-            return {
-                owner: this.stateID(),
-                data: previousStateData ? this.mergeState({}, previousStateData) : {},
-                children: []
-            };
-        }
-
-        private triggerWriteState() {
-            this.writeState(this.state?.data)
-
-           //this.rootStateManager().???
         }
     
         private addChildState(state: State): void {
@@ -100,10 +85,29 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
     
         // implement Stateful
 
+        loadState() {
+            // noop
+        }
 
-        loadState() {}
+        saveState() {
+            // noop
+        }
 
-        saveState() {}
+        storeState() : void {
+            this.writeState(this.state?.data)
+
+            this.rootStateManager().saveState()
+        }
+
+        createState(previousStateData?: any): State {
+            this.state = {
+                owner: this.stateID(),
+                data: previousStateData ? this.mergeState({}, previousStateData) : {},
+                children: []
+            };
+
+            return this.state
+        }
 
         applyState(state: any) : void {
             // noop
