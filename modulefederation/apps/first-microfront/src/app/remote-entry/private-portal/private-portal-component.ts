@@ -8,7 +8,7 @@ import {
     SessionManager,
     Ticket
 } from "@modulefederation/portal";
-import { Component, OnInit } from "@angular/core";
+import { Component, Injector, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Feature({
@@ -24,14 +24,14 @@ import { Router } from "@angular/router";
     templateUrl: './private-portal-component.html',
     styleUrls: ["./private-portal-component.scss"]
 })
-export class PrivatePortalComponent extends AbstractFeature implements OnInit {
+export class PrivatePortalComponent extends AbstractFeature {
     // instance data
 
     features : FeatureData[] = []
 
     // constructor
-    constructor(private portalManager : PortalManager, private router : Router, private sessionManager : SessionManager<any, Ticket>, private featureRegistry : FeatureRegistry, private aboutDialogService : AboutDialogService) {
-        super();
+    constructor(injector: Injector, private portalManager : PortalManager, private router : Router, private sessionManager : SessionManager<any, Ticket>, private featureRegistry : FeatureRegistry, private aboutDialogService : AboutDialogService) {
+        super(injector);
 
         featureRegistry.registry$.subscribe(_ => this.computeNavigation())
     }
@@ -56,7 +56,9 @@ export class PrivatePortalComponent extends AbstractFeature implements OnInit {
 
     // private
 
-    ngOnInit() : void {
+    override ngOnInit() : void {
+        super.ngOnInit()
+
         this.computeNavigation()
     }
 

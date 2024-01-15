@@ -72,7 +72,7 @@ export class PortalManager {
         if (this.portalConfig.loader.server)
             loader = this.injector.get(HTTPDeploymentLoader)
         else
-            loader = new LocalDeploymentLoader(...this.portalConfig.loader.remotes!!)
+            loader = new LocalDeploymentLoader(...this.portalConfig.loader.remotes!)
 
         return loader
             .load()
@@ -94,9 +94,19 @@ export class PortalManager {
 
         rootFeature.load = undefined
 
-        this.link(rootRoute!!, rootFeature) // TODO FALSCH: children werden nicht berücksichtigt?
+        this.link(rootRoute!, rootFeature)
 
-        this.linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo == undefined), rootFeature.children || [])
+        if ( rootFeature["$parent"] ) {
+            // we are a lazy module
+        
+            if ( rootFeature.children?.length )
+                this.linkRoutes(routes[0].children!, rootFeature.children)
+        }
+        else {
+            // we are a mfe root module
+
+            this.linkRoutes(routes.filter(route => route !== rootRoute && route.redirectTo == undefined), rootFeature.children || [])
+        }
     }
 
     private decorateRoute(route : Route) {
@@ -154,7 +164,7 @@ export class PortalManager {
             const route = routes[index++]
 
             if (!route.redirectTo) { // leave redirects
-                const feature = findFeature4(route.path!!)
+                const feature = findFeature4(route.path!)
 
                 if (feature) {
                     this.link(route, feature)
@@ -162,10 +172,10 @@ export class PortalManager {
                     // recursion
 
                     if (route.children && route.children.length > 0)
-                        this.linkRoutes(route.children, feature.children!!)
+                        this.linkRoutes(route.children, feature.children!)
                 }
                 else {
-                    console.log("did not find feature for path " + route.path!!)
+                    console.log("did not find feature for path " + route.path!)
                     //throw new Error("did not find feature for path " + route.path!!)
                 }
             } // if
@@ -211,7 +221,7 @@ export class PortalManager {
             // patch local routes
 
             const localModule = Object.values(modules).find(module => module.remoteEntry == undefined)
-            const localFeatures = localModule!!.features
+            const localFeatures = localModule!.features
 
             this.linkRoutes(localRoutes, localFeatures)
         }
@@ -251,9 +261,9 @@ export class PortalManager {
 
                     // we need to merge ( e.g. the enabled status )
 
-                    const rootFeature : FeatureData = manifest.features.find(feature => feature.id == "")!!
+                    const rootFeature : FeatureData = manifest.features.find(feature => feature.id == "")!
                     // append the rest as children
-                    rootFeature.children = manifest.features.filter(feature => feature.id != "")!!
+                    rootFeature.children = manifest.features.filter(feature => feature.id != "")!
 
                     this.featureRegistry.mergeFeature(this.featureRegistry.getFeature(manifest.name), rootFeature)
                 }

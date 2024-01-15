@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 @Feature({
@@ -9,15 +9,10 @@ import { AbstractFeature, Feature } from "@modulefederation/portal";
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent extends AbstractFeature implements OnInit {
+export class HomeComponent extends AbstractFeature {
     // constructor
 
-    constructor() {
-        super();
-    }
-
-    // implement OnInit
-
-    ngOnInit() {
+    constructor(injector: Injector) {
+        super(injector);
     }
 }

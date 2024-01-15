@@ -8,7 +8,7 @@ import {
     SessionManager,
     Ticket
 } from "@modulefederation/portal";
-import { Component, OnInit } from "@angular/core";
+import { Component, Injector, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Feature({
