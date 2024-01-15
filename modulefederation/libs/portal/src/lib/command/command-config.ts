@@ -14,11 +14,7 @@ export enum LockType {
     /**
      * lock the view
      */
-    VIEW,
-    /**
-     * lock the application
-     */
-    APP
+    VIEW
   }
 
   export interface CommandConfig {
@@ -27,7 +23,7 @@ export enum LockType {
      */
     command?: string;
      /**
-     * the - optional - group of the command. This will influence the toolbar layout!
+     * the - optional - group of the commands that may be disabled
      */
     group?: string;
     /**
@@ -41,7 +37,7 @@ export enum LockType {
     /**
      * the - optional - shortcut of the command
      */
-    shortCut?: string;
+    shortcut?: string;
     /**
      * the - optional - icon name of the command
      */

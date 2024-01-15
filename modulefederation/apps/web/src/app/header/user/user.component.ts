@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Dialogs, LocaleManager, Session, SessionManager, ShortcutManager, Ticket } from "@modulefederation/portal";
+import { DialogService, Dialogs, LocaleManager, Session, SessionManager, ShortcutManager, Ticket } from "@modulefederation/portal";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
@@ -23,7 +23,7 @@ export class UserComponent {
   locales : string[]
 
     // constructor
-    constructor(private dialogs : Dialogs, private localeManager: LocaleManager, public sessionManager : SessionManager, private userProfileAdministrationService : UserProfileAdministrationService) {
+    constructor(private dialogs : DialogService, private localeManager: LocaleManager, public sessionManager : SessionManager, private userProfileAdministrationService : UserProfileAdministrationService) {
        let outerThis = this
     sessionManager.addListener({
         closed(session : Session<any, Ticket>) : void {
@@ -57,9 +57,11 @@ export class UserComponent {
 
   openPreferences() {
     let configuration = {
-      title: "Preferences"
+      data: {
+        title: "Preferences"
+      }
     }
 
-    return this.dialogs.open(PreferencesDialog, configuration);
+    return this.dialogs.openDialog(PreferencesDialog, configuration);
   }
 }

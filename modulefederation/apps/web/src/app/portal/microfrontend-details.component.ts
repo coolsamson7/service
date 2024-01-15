@@ -6,7 +6,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { Dialogs, Feature, Manifest } from "@modulefederation/portal";
+import { DialogService, Feature, Manifest } from "@modulefederation/portal";
 
 @Component({
     selector: 'microfrontend-details',
@@ -71,7 +71,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : Dialogs) {
+    constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
         microfrontendsComponent.pushRouteElement(this.element)
 
         this.formGroup = this.formBuilder.group({

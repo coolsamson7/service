@@ -11,9 +11,15 @@ import { CommandInterceptor } from "./command-interceptor";
 import { Command } from "./command.decorator";
 import { Commands } from "./commands";
 import { ExecutionContext } from "./execution-context";
+import { CommandError } from "./command-error";
+import { ShortcutManager } from "../shortcuts";
 
 
 type Constructor<T = any> =  new (...args: any[]) => T;
+
+interface CommandData extends CommandConfig {
+   method: string
+}
 
  
 export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :Constructor<Commands> &  T  {
@@ -77,7 +83,11 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
 
             //if (!command && this.parent?.config.inheritCommands) return this.parent.findCommand(commandName);
             //else
-             return command;
+
+            if ( command )
+                return command;
+            else 
+                throw new CommandError("no command " + commandName)
         }
 
         /**
@@ -97,7 +107,22 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
 
         // private
 
-        private add(commandConfig: CommandConfig) {
+        private registerShortcut(command: CommandDescriptor) {
+           const unsubscribe = this.injector.get(ShortcutManager).register({
+                shortcut: command.shortcut!,
+                onShortcut: () => {
+                  return command.run();
+                }
+              })
+
+        
+            // delete on destroy
+        
+            this.onDestroy(unsubscribe!);
+
+        }
+
+        private addCommand(commandConfig: CommandConfig) {
             const inheritedCommand = this.findCommand(commandConfig.command!);
 
             // create by factory
@@ -112,7 +137,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
 
             // shortcut needed?
 
-            //TODO if (command.shortCut) this.registerShortcut(command);
+            if (command.shortcut) this.registerShortcut(command);
 
             // done
 
@@ -122,7 +147,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
         private collectCommands(): void {
             const type = TypeDescriptor.forType(this.constructor as Type<any>)
 
-            const configs: { [type: string]: CommandConfig } = {};
+            const configs: { [type: string]: CommandData } = {};
 
         
             // local function that collects commands from all superclasses and additionally
@@ -148,7 +173,9 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
                 // check decorators bottom up
         
               for (const method of clazz.filterMethods((method) => method.hasDecorator(Command), false)) {
-                const command : CommandConfig = method.getDecorator(Command)?.arguments[0]
+                const command : CommandData = method.getDecorator(Command)?.arguments[0]
+
+                command.method = method.name
     
                 if (configs[command.command!])
                     // a decorator overrides a parent decorator
@@ -170,16 +197,12 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
               if (Tracer.ENABLED)
                 Tracer.Trace('command', TraceLevel.HIGH, 'add command {0}', config.command);
         
-              const commandInstance = this.add(config); 
+              const commandInstance = this.addCommand(config); 
         
-              // replace the function :-) // TODO comamnd name != method name!!!
+              // replace the function :-)
         
-             (<any>this)[config.command!] = (...args: any[]) => commandInstance.run(...args);
+             (<any>this)[config.method!] = (...args: any[]) => commandInstance.run(...args);
             }
           }
-    
-        // implement Commands
-     
-       
     }, WithCommands)
   }

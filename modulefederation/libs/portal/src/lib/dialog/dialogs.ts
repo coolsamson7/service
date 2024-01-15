@@ -6,6 +6,7 @@ import { Translator } from "../i18n";
 import { ShortcutManager } from "../shortcuts";
 import { tap } from "rxjs/operators";
 import { ComponentType } from "@angular/cdk/overlay";
+import { Observable } from "rxjs";
 
 export interface ButtonConfiguration {
     label : string,
@@ -13,8 +14,17 @@ export interface ButtonConfiguration {
     primary? : boolean
 }
 
+export interface Dialogs {
+  openDialog<T>(component: ComponentType<T>, configuration: any) : Observable<any>
+
+  confirmationDialog() : ConfirmationDialogBuilder
+
+  inputDialog() : InputDialogBuilder
+}
+
+
 @Injectable({providedIn: 'root'})
-export class Dialogs {
+export class DialogService implements Dialogs {
     // constructor
 
     constructor(private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
@@ -22,26 +32,20 @@ export class Dialogs {
 
     // public
 
-  open<T>(component: ComponentType<T>, configuration: any) {
+  openDialog<T>(component: ComponentType<T>, configuration: any) : Observable<any> {
     this.shortcutManager.pushLevel()
 
-    const dialogRef = this.dialog.open(component, {
-      //height: '40%', TODO
-      //width: '60%',
-      data: configuration
-    });
-
-    return dialogRef.afterClosed()
+    return  this.dialog.open(component, configuration).afterClosed()
       .pipe(
         tap(() => this.shortcutManager.popLevel())
       )
   }
 
     confirmationDialog() : ConfirmationDialogBuilder {
-        return new ConfirmationDialogBuilder(this.dialog, this.translator, this.shortcutManager)
+        return new ConfirmationDialogBuilder(this, this.translator)
     }
 
     inputDialog() : InputDialogBuilder {
-        return new InputDialogBuilder(this.dialog, this.translator, this.shortcutManager)
+        return new InputDialogBuilder(this, this.translator)
     }
 }

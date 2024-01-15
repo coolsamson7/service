@@ -2,7 +2,6 @@ import { forwardRef, Type, ɵDirectiveDef, ɵNG_COMP_DEF, ɵɵProvidersFeature a
 
 const identity = (...args: any[]) => args[0]
 
-
 import { FeatureConfig } from "./feature-config";
 import { AbstractFeature } from './feature/abstract-feature';
 
@@ -25,25 +24,27 @@ export function Feature(config : FeatureConfig) {
           providersFeature([])(componentDef);
         }
     
-        // Take the original providers resolver
-    
-        const originalProvidersResolver = componentDef.providersResolver;
-    
-        componentDef.providersResolver = (def: ɵDirectiveDef<any>, processProvidersFn?: (providers: Provider[]) => Provider[]) => {
-          originalProvidersResolver(def, (providers: Provider[]) => {
-            const processedProviders = (processProvidersFn || identity)(providers);
-            
-            return [
-              ...processedProviders,
-    
-              // Add one more provider to the list
-    
-              { 
-                provide: AbstractFeature, 
-                useExisting: forwardRef(() => clazz) 
-              }
-            ];
-          });
+        if ( clazz instanceof AbstractFeature) {
+            // Take the original providers resolver
+        
+            const originalProvidersResolver = componentDef.providersResolver;
+        
+            componentDef.providersResolver = (def: ɵDirectiveDef<any>, processProvidersFn?: (providers: Provider[]) => Provider[]) => {
+            originalProvidersResolver(def, (providers: Provider[]) => {
+                const processedProviders = (processProvidersFn || identity)(providers);
+                
+                return [
+                ...processedProviders,
+        
+                // Add one more provider to the list
+        
+                { 
+                    provide: AbstractFeature, 
+                    useExisting: forwardRef(() => clazz) 
+                }
+                ];
+            });
+        }
         };
       };
     }

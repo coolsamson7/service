@@ -3,7 +3,7 @@ import { CommandConfig } from './command-config';
 import { Injectable, InjectFlags, Injector } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
 import { CommandDescriptor } from './command-descriptor';
-import { CommandModuleConfig, CommandConfigToken } from './command.module';
+import { CommandConfigToken } from './command.module';
 import { Commands } from './commands';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
 import { ExecutionContext } from './execution-context';
@@ -11,7 +11,6 @@ import { ExecutionContext } from './execution-context';
 /**
  * this interceptor is there to set and restore the current execution context
  */
-@Injectable({ providedIn: 'root' })
 export class CommandContextInterceptor implements CommandInterceptor {
   // implement CommandInterceptor
 
@@ -80,14 +79,15 @@ export class CommandCallFunctionInterceptor extends AbstractCommandInterceptor {
 export class CommandFactory {
   // instance data
 
-  private commandConfig: CommandModuleConfig;
+  private interceptors: CommandInterceptor[]
 
   // constructor
 
   constructor(private injector: Injector) {
-    this.commandConfig = injector.get(CommandConfigToken, undefined, InjectFlags.Optional) || {
-      interceptors: []
-    };
+    this.interceptors = [
+        new CommandContextInterceptor(),
+        ...injector.get(CommandConfigToken, {  interceptors: [] }, InjectFlags.Optional) .interceptors.map(type => this.injector.get(type))
+    ]
   }
 
   // public
@@ -117,19 +117,15 @@ export class CommandFactory {
 
     command.commands = commands;
 
-    // push/pop context
-
-    command.interceptors.push(this.injector.get(CommandContextInterceptor));
-
     // set static interceptors
 
-    command.interceptors.push(...this.commandConfig.interceptors.map((type) => this.injector.get(type)));
+    command.interceptors.push(...this.interceptors);
 
-    // add command interceptors
+    // add command interceptors from manager
 
     command.interceptors.push(...commands.addCommandInterceptors(commandConfig));
 
-    // add function call
+    // add method call
 
     command.interceptors.push(new CommandCallFunctionInterceptor(commandConfig.action  as Function));
 

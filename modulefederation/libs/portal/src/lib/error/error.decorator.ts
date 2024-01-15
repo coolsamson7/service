@@ -1,4 +1,4 @@
-import { Type, TypeDescriptor } from "../reflection"
+import { TypeDescriptor } from "../reflection"
 
 import { ErrorManager } from "./error-manager"
 import { Constructor } from "../common/lang/constructor.type";

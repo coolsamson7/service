@@ -1,13 +1,14 @@
-import { Component, Injector, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, Injector, ViewEncapsulation } from "@angular/core";
 import {
   AbstractFeature,
-  Dialogs,
+  Command,
   Feature,
   I18nModule,
   Message,
   MessageAdministrationService,
-  MessageChanges, ShortcutManager, StringBuilder,
-  TranslationService
+  MessageChanges, StringBuilder,
+  WithCommands,
+  WithDialogs
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
 import { CommonModule } from "@angular/common";
@@ -45,7 +46,7 @@ type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
   tags: ["navigation"],
   permissions: []
 })
-export class TranslationEditorComponent extends AbstractFeature implements OnInit, OnDestroy {
+export class TranslationEditorComponent extends WithDialogs(WithCommands(AbstractFeature)) {
   // instance data
 
   types = ["label", "tooltip", "shortcut"] // dynamic?
@@ -63,22 +64,22 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
   // constructor
 
-  constructor(injector: Injector, private shortcutManager: ShortcutManager, private dialogs : Dialogs, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService, private translationService : TranslationService) {
+  constructor(injector: Injector, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService) {
     super(injector)
   }
 
   // callbacks
 
   prefix(name : string) {
-    let index = name.indexOf(".") // e.g. bla.label
-    let prefix = name.substring(0, index) // e.g. bla
-    let suffix = name.substring(index + 1) // e.g. "label"
+    const index = name.indexOf(".") // e.g. bla.label
+    const prefix = name.substring(0, index) // e.g. bla
+    const suffix = name.substring(index + 1) // e.g. "label"
 
     return prefix
   }
 
   addNamespace() {
-    this.dialogs.inputDialog()
+    this.inputDialog()
       .title("Add Namespace")
       .message("Input namespace name")
       .placeholder("namespace")
@@ -92,7 +93,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   }
 
   addMessage() {
-    this.dialogs.inputDialog()
+    this.inputDialog()
       .title("Add Message")
       .message("Input message name")
       .defaultValue("")
@@ -104,6 +105,9 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
       })
   }
 
+  @Command({
+    shortcut: "ctrl+z"
+  })
   revert() {
     this.namespaceChanges = {
       newMessages: [],
@@ -111,12 +115,18 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
       deletedMessages: []
     }
 
-    this.select(this.selectedNamespace!!)
+    this.select(this.selectedNamespace!)
   }
 
+  @Command({
+    shortcut: "ctrl+s"
+  })
   save(selectNode? : NamespaceNode) {
+    if (!this.hasChanges())
+      return
+
     this.messageAdministrationService.saveChanges(this.namespaceChanges).subscribe(createdMessages => {
-      let builder = new StringBuilder()
+      const builder = new StringBuilder()
 
       // compute message
       if (this.namespaceChanges.newMessages.length > 0)
@@ -136,8 +146,8 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
       // adjust local arrays
 
-      this.selectedNamespace?.messages!!.push(...createdMessages)
-      for ( let deletedMessage of this.namespaceChanges.deletedMessages)
+      this.selectedNamespace?.messages!.push(...createdMessages)
+      for ( const deletedMessage of this.namespaceChanges.deletedMessages)
         this.selectedNamespace?.messages?.splice(this.selectedNamespace?.messages?.indexOf(deletedMessage), 1)
 
       this.namespaceChanges = {
@@ -146,7 +156,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
         deletedMessages: []
       }
 
-      this.select(selectNode ? selectNode : this.selectedNamespace!!)
+      this.select(selectNode ? selectNode : this.selectedNamespace!)
     })
   }
 
@@ -162,19 +172,19 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
   newMessage(name : string) {
     if (name != "" && !this.messages[name]) {
-      let newMessage = (locale : string, type : string) : Message => {
+      const newMessage = (locale : string, type : string) : Message => {
         return {
           id: undefined,
           locale: locale,
           name: name + "." + type,
-          namespace: this.selectedNamespace!!.path,
+          namespace: this.selectedNamespace!.path,
           value: ""
         }
       }
 
-      let messagesByType : MessagesByType = {}
+      const messagesByType : MessagesByType = {}
 
-      for (let type of this.types)
+      for (const type of this.types)
         messagesByType[type] = this.locales.map(locale => newMessage(locale, type))
 
       this.messages[name] = messagesByType
@@ -184,22 +194,22 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   }
 
   computeMessages(messages : Message[]) : MessageMap {
-    let result : MessageMap = {}
+    const result : MessageMap = {}
 
-    let newMessage = (locale : string, name : string) : Message => {
+    const newMessage = (locale : string, name : string) : Message => {
       return {
         id: undefined,
         locale: locale,
         name: name,
-        namespace: this.selectedNamespace!!.path,
+        namespace: this.selectedNamespace!.path,
         value: ""
       }
     }
 
-    for (let message of messages) {
-      let index = message.name.indexOf(".") // e.g. bla.label
-      let prefix = message.name.substring(0, index) // e.g. bla
-      let suffix = message.name.substring(index + 1) // e.g. "label"
+    for (const message of messages) {
+      const index = message.name.indexOf(".") // e.g. bla.label
+      const prefix = message.name.substring(0, index) // e.g. bla
+      const suffix = message.name.substring(index + 1) // e.g. "label"
 
       let messagesByType = result[prefix]
 
@@ -208,7 +218,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
         messagesByType = {}
 
-        for (let type of this.types)
+        for (const type of this.types)
           messagesByType[type] = this.locales.map(locale => newMessage(locale, prefix + "." + type))
 
         result[prefix] = messagesByType
@@ -231,8 +241,8 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   }
 
   deleteAllMessages(message : string) {
-    for ( let type in this.selectedMessages) {
-      for (let message of this.selectedMessages[type]) {
+    for ( const type in this.selectedMessages) {
+      for (const message of this.selectedMessages[type]) {
         if ( !this.isNew(message)) // ?? new
           this.deleteMessage(message)
       }
@@ -246,7 +256,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   }
 
   addType() {
-    this.dialogs.inputDialog()
+    this.inputDialog()
       .title("New Type")
       .inputType("text")
       .defaultValue("")
@@ -257,13 +267,13 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
         this.types.push(type)
 
-        this.selectedMessages!![type] = this.locales.map(locale => {
+        this.selectedMessages![type] = this.locales.map(locale => {
           return {
             id: undefined,
             name: this.selectedName + "." + type,
             value: "",
             locale: locale,
-            namespace: this.selectedNamespace!!.path // ??
+            namespace: this.selectedNamespace!.path // ??
           } as Message
         })
       }
@@ -274,11 +284,11 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
     this.types.splice(this.types.indexOf(type), 1)
 
     // TODO: dirty, etc
-    delete this.selectedMessages!![type]
+    delete this.selectedMessages![type]
   }
 
   addLocale() {
-    this.dialogs.inputDialog()
+    this.inputDialog()
       .title("New Locale")
       .inputType("text")
       .defaultValue("")
@@ -288,14 +298,14 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
           // TODO better selection
           this.locales.push(locale)
 
-          for ( let type of Object.keys(this.selectedMessages!!)) { // label -> []
-            let newMessage : Message = {...this.selectedMessages!![type][0]}
+          for ( const type of Object.keys(this.selectedMessages!)) { // label -> []
+            const newMessage : Message = {...this.selectedMessages![type][0]}
 
             newMessage.id = undefined
             newMessage.locale = locale
             newMessage.value = ""
 
-            this.selectedMessages!![type].push(newMessage)
+            this.selectedMessages![type].push(newMessage)
           }
         }
     })
@@ -303,19 +313,19 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
   deleteLocale(locale: string) {
     // TODO only if no changes
-    this.dialogs.confirmationDialog()
+    this.confirmationDialog()
       .title("Delete Locale")
       .message("Are you sure?")
       .okCancel()
       .show()
       .subscribe(result => {
         if ( result ) {
-          let index = this.locales.indexOf(locale)
+          const index = this.locales.indexOf(locale)
 
           this.locales.splice(index, 1)
 
-          for ( let type of Object.keys(this.selectedMessages!!)) { // label -> []
-            this.selectedMessages!![type].splice(index, 1)
+          for ( const type of Object.keys(this.selectedMessages!)) { // label -> []
+            this.selectedMessages![type].splice(index, 1)
           }
         }
       })
@@ -323,7 +333,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
   select(namespaceNode : NamespaceNode) {
     if (this.hasChanges()) {
-      this.dialogs.confirmationDialog()
+      this.confirmationDialog()
         .okCancel()
         .title("Messages")
         .message("Save changes first")
@@ -436,7 +446,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   private addNamespaceNode(namespace : string) {
     // local function
 
-    let findOrCreateFolder = (name : string, folders : NamespaceNode[], prefix : string) => {
+    const findOrCreateFolder = (name : string, folders : NamespaceNode[], prefix : string) => {
       let folder = folders.find(folder => folder.name == name)
 
       if (!folder)
@@ -458,7 +468,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
     let parent = this.namespaces
     let prefix = ""
-    for (let leg of namespace.split(".")) {
+    for (const leg of namespace.split(".")) {
       parent = findOrCreateFolder(leg, parent, prefix).children
       prefix += leg + "."
     }
@@ -467,7 +477,7 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
   }
 
   private setupNamespaces(namespaces : string[]) {
-    let findOrCreateFolder = (name : string, folders : NamespaceNode[], prefix : string) => {
+    const findOrCreateFolder = (name : string, folders : NamespaceNode[], prefix : string) => {
       let folder = folders.find(folder => folder.name == name)
 
       if (!folder)
@@ -482,10 +492,10 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
     this.namespaces = []
 
-    for (let namespace of namespaces) {
+    for (const namespace of namespaces) {
       let parent = this.namespaces
       let prefix = ""
-      for (let leg of namespace.split(".")) {
+      for (const leg of namespace.split(".")) {
         parent = findOrCreateFolder(leg, parent, prefix).children
         prefix += leg + "."
       }
@@ -494,8 +504,6 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
 
   // implement OnInit
 
-  saveShortut?: () => void
-  revertShortut?: () => void
 
   override ngOnInit() : void {
     super.ngOnInit()
@@ -503,19 +511,5 @@ export class TranslationEditorComponent extends AbstractFeature implements OnIni
     this.messageAdministrationService.readLocales().subscribe(locales => this.locales = locales)
 
     this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
-
-    this.saveShortut = this.shortcutManager.register({
-      onShortcut: () => this.save(),
-      handles: (event) => this.hasChanges(),
-      shortcut: "ctrl+s"
-    })
-  }
-
-  // implement OnDestroy
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy()
-
-    this.saveShortut!!() // TODO
   }
 }

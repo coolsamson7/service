@@ -1,10 +1,7 @@
-import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
 import { InputDialog } from "./input-dialog";
-import { ButtonConfiguration } from "./dialogs";
+import { ButtonConfiguration, DialogService } from "./dialogs";
 import { Translator } from "../i18n";
-import { ShortcutManager } from "../shortcuts";
-import { tap } from "rxjs/operators";
 
 export interface InputDialogConfig {
     title: string,
@@ -30,7 +27,7 @@ export class InputDialogBuilder {
 
     // constructor
 
-    constructor(private dialog : MatDialog, private translator: Translator, private shortcutManager: ShortcutManager) {
+    constructor(private dialog : DialogService, private translator: Translator) {
     }
 
     // fluent
@@ -124,12 +121,8 @@ export class InputDialogBuilder {
      * show the dialog and return the button value
      */
     show() : Observable<any> {
-      this.shortcutManager.pushLevel()
-
-        const dialogRef = this.dialog.open(InputDialog, {
+      return this.dialog.openDialog(InputDialog, {
             data: this.configuration
         });
-
-        return dialogRef.afterClosed().pipe(tap(() => this.shortcutManager.popLevel()))
     }
 }

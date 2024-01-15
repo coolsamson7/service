@@ -5,7 +5,7 @@ import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Dialogs, Feature, Manifest } from "@modulefederation/portal";
+import { DialogService, Feature, Manifest } from "@modulefederation/portal";
 
 @Component({
     selector: 'microfrontends',
@@ -30,7 +30,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
     // constructor
 
-    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialogs : Dialogs) {
+    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialogs : DialogService) {
         super()
     }
 

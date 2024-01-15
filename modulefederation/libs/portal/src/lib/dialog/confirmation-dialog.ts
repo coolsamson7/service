@@ -40,6 +40,7 @@ export class ConfirmationDialog implements OnInit {
     }
 
     // implement OnInit
+    
     ngOnInit() : void {
         let button = this.data.buttons.find(button => button.primary)
 
