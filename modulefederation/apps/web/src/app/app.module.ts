@@ -31,6 +31,7 @@ import {
   SecurityModule, ServerTranslationLoader,
   SessionManager,
   Shell,
+  StateModule,
   TraceLevel,
   TracerModule
 } from "@modulefederation/portal";
@@ -129,6 +130,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
         OIDCModule.forRoot({
             authConfig: authConfig
+        }),
+
+        StateModule.forRoot({
+            
         }),
 
         SecurityModule.forRoot({

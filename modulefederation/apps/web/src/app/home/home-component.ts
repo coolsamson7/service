@@ -1,5 +1,5 @@
 import { Component, Injector, forwardRef } from "@angular/core";
-import { AbstractFeature, Feature, WithCommands, Command } from "@modulefederation/portal";
+import { AbstractFeature, Feature, WithCommands, Command, WithState } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { NgModelSuggestionsDirective, ObjectSuggestionProvider } from "./suggestion.directive";
@@ -24,7 +24,7 @@ import { FormsModule } from "@angular/forms";
     tags: ["navigation"],
     permissions: []
 })
-export class HomeComponent extends WithCommands(AbstractFeature) {
+export class HomeComponent extends WithState(WithCommands(AbstractFeature)) {
   value = "10"
   me ="Andi"
   today = new Date()
@@ -45,6 +45,19 @@ export class HomeComponent extends WithCommands(AbstractFeature) {
 
     this.test("hello")
   }
+
+  // implement Stateful
+
+  override applyState(state: any) : void {
+    const foo = state.foo
+    console.log(foo)
+  }
+
+  override writeState(state: any) : void {
+    state.foo = "foo"
+  }
+
+  // commands
 
   @Command({
     label: "Test"

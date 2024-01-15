@@ -1,9 +1,13 @@
-import { Component, HostListener, Injectable, Injector, OnInit, forwardRef } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Component, HostListener, Injectable, Injector, forwardRef } from '@angular/core';
 import {
   AboutDialogService, AbstractFeature, ErrorContext,
   ErrorHandler, Feature, HandleError,
   LocaleManager,
-  ShortcutManager
+  SessionManager,
+  ShortcutManager,
+  StateStorage,
+  WithState
 } from "@modulefederation/portal";
 import { MessageBus } from "./message-bus/message-bus";
 import { tap } from "rxjs/operators";
@@ -11,6 +15,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
@@ -45,10 +50,12 @@ export class Handler {
   handleAnyError(e: any, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
   }
+
   @HandleError()
   handleStringError(e: string, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
   }
+
   @HandleError()
   handleError(e: Error, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
@@ -65,28 +72,70 @@ export class Handler {
     });
   }
 }
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
+    providers: [{ 
+      provide: AbstractFeature, 
+      useExisting: forwardRef(() => AppComponent) 
+    }]
 })
-export class AppComponent extends AbstractFeature {
+export class AppComponent extends WithState(AbstractFeature) {
     // instance data
 
     locales: string[] = []
 
     // constructor
 
-    constructor(private aboutService: AboutDialogService, private localeManager: LocaleManager, private shortcutManager: ShortcutManager, injector: Injector) {
+    constructor(private router: Router, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
       super(injector)
 
       this.locales = localeManager.supportedLocales
+
+      this.onInit(() => this.loadState())
     }
 
-  @HostListener('window:keydown', ['$event'])
-  public handleKeydown(e : any) {
-    this.shortcutManager.handleKeydown(e);
-  }
+    // private
+
+   override loadState() {
+      this.state = this.stateStorage.load("portal" /* TODO */, this.sessionManager.currentSession());
+      if ( this.state) 
+         this.applyState(this.state.data)
+      else {
+         this.state = {
+          owner: this.stateID(),
+          data: {},
+          children: []
+        };
+
+        this.writeState(this.state.data)
+        this.saveState()
+      }
+   }
+
+   override saveState() {
+      this.stateStorage.save(this.state!, "portal" /* TODO */, this.sessionManager.currentSession());
+   }
+
+    // implement Stateful
+
+    override applyState(state: any) : void {
+     if (state.url)
+      this.router.navigate([state.url]);
+    }
+
+    override writeState(state: any) : void {
+      state.url = this.router?.url;
+    }
+
+    // host listeners
+
+    @HostListener('window:keydown', ['$event'])
+    public handleKeydown(e : any) {
+      this.shortcutManager.handleKeydown(e);
+    }
 
     // public
 
