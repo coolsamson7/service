@@ -1,4 +1,5 @@
-import { ModuleWithProviders, NgModule } from "@angular/core";
+import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
+import { InjectProperty, TypeDescriptor } from "../../reflection";
 
 export class Environment {
     // constructor
@@ -42,5 +43,13 @@ export class EnvironmentModule {
             providers: [{provide: Environment, useValue: new Environment(environment)}],
             ngModule: EnvironmentModule,
         };
+    }
+}
+
+export function Value(key: string, defaultValue: any = undefined): any {
+    return function (target: any, propertyKey: string) {
+        TypeDescriptor.forType(target.constructor)
+            .addPropertyDecorator(target, propertyKey, Value as any)
+            .addInjector(new InjectProperty(propertyKey, (injector: Injector) => injector.get(Environment).get(key, defaultValue)))
     }
 }

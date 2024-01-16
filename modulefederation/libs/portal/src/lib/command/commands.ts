@@ -8,6 +8,8 @@ export interface Commands {
 
     findCommand(command: string) : CommandDescriptor | undefined
 
+    callSuper<T=any>(...args: any[]) : T
+
     getCommand(command: string): CommandDescriptor
 
     setCommandEnabled(command: string, value: boolean): Commands

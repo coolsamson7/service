@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { GConstructor } from "../common/lang/constructor.type";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../mixin/mixin";
+import { hasMixin, registerMixins } from "../mixin/mixin";
 import { State } from "./state";
 import { Stateful } from "./stateful";
 
@@ -17,6 +17,9 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
       
         constructor(...args: any[]) {
             super(args);
+
+            if (this.parent && !hasMixin(this.parent, WithState))
+               throw new Error("parent must include WithState")
 
             this.afterContentInit(() => this.setupState())
             this.onDestroy(() => this.storeState())

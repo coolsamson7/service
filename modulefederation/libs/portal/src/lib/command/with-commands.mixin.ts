@@ -21,9 +21,12 @@ interface CommandData extends CommandConfig {
    method: string
 }
 
+export interface WithCommandsConfig {
+    inheritCommands: boolean
+}
  
-export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :Constructor<Commands> &  T  {
-    return registerMixins(class extends base implements Commands {
+export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<Commands> &  T  {
+    return registerMixins(class CommandManager extends base implements Commands {
         // instance data
 
         private commands: { [key: string]: CommandDescriptor } = {};
@@ -41,11 +44,22 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
             this.collectCommands()
         }
 
+        // private
+
+        private parentCommandManager() : CommandManager | undefined {
+            let parent = this.parent
+            while ( parent ) {
+               if ( parent instanceof CommandManager)
+                  return parent as CommandManager
+
+                  parent = parent.parent
+            }
+
+            return undefined
+        }
+
         // implement Commands
 
-        /**
-         * return <code>true</code>, if there are pending executions, <code>false</code> otherwise.
-         */
         pendingExecutions(): boolean {
             return this.pending.length > 0;
         }
@@ -58,43 +72,46 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T) :C
             this.pending.splice(this.pending.indexOf(context), 1);
         }
 
-        /**
-         * call any inherited command
-         * @param args
-         *
-        callSuper(...args: any[]): any {
+        callSuper<T=any>(...args: any[]) : T {
             if (this.currentExecutionContext) {
-            if (this.currentExecutionContext.command.superCommand)
-                return this.currentExecutionContext.command.superCommand.run(args);
-            else throw new NoSuperCommandException(this.currentExecutionContext.command.name);
-            } else throw new NoCurrentCommandExecutionException();
-        }*/
+                const currentCommand = this.currentExecutionContext.command
+
+                if (currentCommand.superCommand)
+                    return currentCommand.superCommand.run(args) as T;
+                else 
+                    throw new CommandError("no super command " + currentCommand.name);
+            }
+            else throw new CommandError("no current command execution");
+        }
 
         findCommand(commandName: string): CommandDescriptor | undefined {
             const command = this.commands[commandName];
 
-            //if (!command && this.parent?.config.inheritCommands) return this.parent.findCommand(commandName);
-            //else
-             return command;
+            if ( command )
+                return command
+            else {
+                const parent = this.parentCommandManager()
+                if (config.inheritCommands && parent)
+                    return parent.findCommand(commandName)
+            }
+
+             return undefined;
         }
 
         getCommand(commandName: string): CommandDescriptor {
             const command = this.commands[commandName];
 
-            //if (!command && this.parent?.config.inheritCommands) return this.parent.findCommand(commandName);
-            //else
-
             if ( command )
                 return command;
-            else 
-                throw new CommandError("no command " + commandName)
+            else {
+                const parent = this.parentCommandManager()
+                if (config.inheritCommands && parent)
+                    return parent.getCommand(commandName)
+                else 
+                    throw new CommandError("no command " + commandName)
+            }
         }
 
-        /**
-         * set the enabled status of the specific command
-         * @param command the command name
-         * @param value the enabled status
-         */
         setCommandEnabled(command: string, value: boolean): Commands {
             this.getCommand(command).enabled = value;
 

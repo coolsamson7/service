@@ -7,7 +7,8 @@ import { PropertyType } from "./property-descriptor";
 import { PropertyDescriptor } from "./property-descriptor";
 import { FieldDescriptor } from "./field-descriptor";
 import { Decorator } from "./decorator";
-import { Injector } from "./injector";
+import { InjectProperty } from "./injector";
+import { Injector } from "@angular/core";
 
 export declare const Type: FunctionConstructor
 
@@ -43,7 +44,7 @@ export class TypeDescriptor<T=any> {
     public typeDecorators: ClassDecorator[] = []
     private allProperties : { [name: string]: PropertyDescriptor } = {}
     private properties: { [name: string]: PropertyDescriptor } = {}
-    private injectors: Injector[] = []
+    private injectors: InjectProperty[] = []
     private decorators: Decorator[] = []
 
     // constructor
@@ -64,10 +65,11 @@ export class TypeDescriptor<T=any> {
         return Reflect.construct(this.getConstructor().method, args)
     }
 
-    public inject(target: T): T {
+    public inject(target: T, injector: Injector): T {
         if (Tracer.ENABLED) Tracer.Trace("type", TraceLevel.HIGH, "inject ", typeof target)
 
-        for (const injector of this.injectors) injector.inject(target)
+        for (const injectProperty of this.injectors) 
+            injectProperty.inject(target, injector)
 
         return target
     }
@@ -126,7 +128,7 @@ export class TypeDescriptor<T=any> {
         return this
     }
 
-    public addInjector(injector: Injector): TypeDescriptor<T> {
+    public addInjector(injector: InjectProperty): TypeDescriptor<T> {
         this.injectors.push(injector)
 
         return this

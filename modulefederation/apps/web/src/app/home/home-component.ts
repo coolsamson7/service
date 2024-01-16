@@ -24,7 +24,10 @@ import { FormsModule } from "@angular/forms";
     tags: ["navigation"],
     permissions: []
 })
-export class HomeComponent extends WithState(WithCommands(AbstractFeature)) {
+
+
+
+export class HomeComponent extends WithState(WithCommands(AbstractFeature, {inheritCommands: false})) {
   value = "10"
   me ="Andi"
   today = new Date()

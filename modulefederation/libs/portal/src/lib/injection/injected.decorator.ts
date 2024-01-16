@@ -1,4 +1,7 @@
 import 'reflect-metadata';
+import { TypeDescriptor } from '../reflection';
+import { InjectProperty } from '../reflection/injector';
+import { Injector } from '@angular/core';
 
 /**
  * we still need to add the type manually.
@@ -13,12 +16,10 @@ export interface InjectConfiguration {
  */
 export function Injected(configuration?: InjectConfiguration) {
   return function (target: any, propertyKey: string) {
-    let inject = target.constructor.$$inject;
-
-    if (!inject) inject = target.constructor.$$inject = {};
-
     const type = configuration?.type || Reflect.getMetadata('design:type', target, propertyKey);
 
-    inject[propertyKey] = type;
+    TypeDescriptor.forType(target.constructor)
+      .addPropertyDecorator(target, propertyKey, Injected as any)
+      .addInjector(new InjectProperty(propertyKey, (injector: Injector) => injector.get(type, undefined, {})))
   };
 }

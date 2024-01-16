@@ -9,18 +9,18 @@ import { State } from "./state";
 export abstract class StateStorage {
   /**
    * load the state of a portal
-   * @param portalId the id of the portal
+   * @param application the id of the application
    * @param session the current session
    */
-  abstract load(portalId: string, session?: Session): State
+  abstract load(application: string, session?: Session): State
 
   /**
    * save the sate 
    * @param state the state object
-   * @param portalId the portal id
+   * @param application the application name
    * @param session the current session
    */
-  abstract save(state: State, portalId: string, session?: Session): void
+  abstract save(state: State, application: string, session?: Session): void
 }
 
 
@@ -31,10 +31,10 @@ export class LocalStorageStateStorage extends StateStorage {
   /**
    * @inheritdoc
    */
-  load(portalId: string, session?: Session): State {
+  load(application: string, session?: Session): State {
     if (Tracer.ENABLED) Tracer.Trace('state', TraceLevel.MEDIUM, 'load state from local storage');
 
-    const key = this.getKey(portalId, session);
+    const key = this.getKey(application, session);
 
     return JSON.parse(localStorage.getItem(key) || 'null') as State;
   }
@@ -42,18 +42,18 @@ export class LocalStorageStateStorage extends StateStorage {
   /**
    * @inheritdoc
    */
-  save(state: State, portalId: string, session?: Session) {
+  save(state: State, application: string, session?: Session) {
     if (Tracer.ENABLED) Tracer.Trace('state', TraceLevel.MEDIUM, 'save state to local storage');
 
-    const key = this.getKey(portalId, session);
+    const key = this.getKey(application, session);
 
     localStorage.setItem(key, JSON.stringify(state))
   }
 
   // private
 
-  private getKey(portalId: string, session?: Session): string {
-    let key = `portal-${portalId}`
+  private getKey(application: string, session?: Session): string {
+    let key = `${application}`
 
     if (session) key = key + `-${session.user.account}`
 
