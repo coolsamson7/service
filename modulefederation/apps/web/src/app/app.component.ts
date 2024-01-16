@@ -108,7 +108,7 @@ export class AppComponent extends WithState(AbstractFeature) {
    }
 
    override saveState() {
-      this.storeState()
+      this.writeState(this.state?.data)
 
       this.stateStorage.save(this.state!, "portal" /* TODO */, this.sessionManager.currentSession());
    }

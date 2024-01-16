@@ -18,7 +18,7 @@ export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :G
       // constructor
       
       constructor(...args: any[]) {
-        super(args);
+        super(...args);
 
         this.dialogs = inject(DialogService)
         }

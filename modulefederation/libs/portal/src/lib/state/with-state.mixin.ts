@@ -16,7 +16,7 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
         // constructor
       
         constructor(...args: any[]) {
-            super(args);
+            super(...args);
 
             if (this.parent && !hasMixin(this.parent, WithState))
                throw new Error("parent must include WithState")
