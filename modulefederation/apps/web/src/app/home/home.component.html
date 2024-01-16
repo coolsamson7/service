@@ -8,11 +8,6 @@
   <button mat-button (click)="throwServerError()">fatal server error</button>
   <button mat-button (click)="callBadURL()">bad url</button>
 
-  <input name="value" type="text" [(ngModel)]="value" [suggestionProvider]="suggestionProvider"
-
-    autocomplete="off"
-    autofocus
-    class="input"
-  />
+  <suggestion-tree [object]="object"></suggestion-tree>
 </div>
 

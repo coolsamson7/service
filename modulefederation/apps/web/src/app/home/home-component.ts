@@ -4,13 +4,14 @@ import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { NgModelSuggestionsDirective, ObjectSuggestionProvider } from "./suggestion.directive";
 import { FormsModule } from "@angular/forms";
+import { SuggestionTreeComponent } from "./suggestion-tree";
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [CommonModule, NgModelSuggestionsDirective, FormsModule],
+    imports: [CommonModule, NgModelSuggestionsDirective, FormsModule, SuggestionTreeComponent],
     providers: [{ 
       provide: AbstractFeature, 
       useExisting: forwardRef(() => HomeComponent) 
@@ -24,22 +25,26 @@ import { FormsModule } from "@angular/forms";
     tags: ["navigation"],
     permissions: []
 })
-
-
-
 export class HomeComponent extends WithState(WithCommands(AbstractFeature, {inheritCommands: false})) {
+  object = {
+    foo: {
+      arsch: {
+        selber: "selber"
+      },
+      bar: {
+        bazong: "bazong"
+      },
+      baz: {
+        bazong: "bazong"
+      },
+      zot: {
+        goo: "hh"
+      }
+    }
+  }
   value = "10"
   me ="Andi"
   today = new Date()
-
-  suggestionProvider = new ObjectSuggestionProvider({
-    foo: {
-      bar: {
-        baz: "baz",
-        bazong: "bazong"
-      }
-    }
-  })
 
   constructor(private portalAdministrationService : PortalAdministrationService, injector: Injector) {
     super(injector)
