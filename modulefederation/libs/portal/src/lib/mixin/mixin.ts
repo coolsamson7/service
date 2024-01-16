@@ -1,9 +1,13 @@
-
 export function registerMixins(clazz: any, mixin: Function) : any {
     const prototype = Object.getPrototypeOf(clazz)
   
-    if ( prototype.constructor.name !== "Object")
-      clazz.constructor["$mixins"] = [... prototype.constructor["$mixins"] || [], mixin]
+    if ( prototype.constructor.name !== "Object") {
+      const mixins =  [... prototype.constructor["$mixins"] || []]
+      if ( !mixins.includes(mixin))
+        mixins.push(mixin)
+
+      clazz.constructor["$mixins"] = mixins
+    }
     
     else 
       clazz.constructor["$mixins"] = [mixin]
