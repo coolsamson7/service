@@ -14,21 +14,21 @@
   <mat-tree *ngIf="isFocused" [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
     <!-- This is the tree node template for leaf nodes -->
 
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-      <!-- use a disabled button to provide padding for tree leaf -->
-
-      <button mat-icon-button disabled></button>
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding class="node">
+      <span class="toggle-placeholder" ></span>
       <span (click)="selectNode(node)" class="node" [ngClass]="{translation: node.type === 'translation', inPath: node.inPath === true, third: true}"> {{node.name}}</span>
     </mat-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
 
-    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
-      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding  class="node" [ngClass]="{'node-expanded': treeControl.isExpanded(node), 'node-collapsed': !treeControl.isExpanded(node)}">
+      <span class="toggle"></span>
+
+      <!--button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
         <mat-icon class="mat-icon-rtl-mirror">
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
-      </button>
+      </button-->
       <span (click)="selectNode(node)" class="node" [ngClass]="{translation: node.type === 'translation', inPath: node.inPath === true, third: true}"> {{node.name}}</span>
     </mat-tree-node>
   </mat-tree>

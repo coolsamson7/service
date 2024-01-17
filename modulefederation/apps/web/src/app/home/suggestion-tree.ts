@@ -188,14 +188,6 @@ export class SuggestionTreeComponent implements OnInit {
 
                 // TODO: fehlt das was?
                }
-
-               folder.children?.push(...translationsForNamespace(namespace).map(translation => {
-                return {
-                    type: "translation",
-                    name: translation,
-                    path: prefix.substring(0, prefix.length - 1) + ":" + name,
-                } as TreeNode
-                }))
             } // if
         }
     
