@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { ControlValueAccessor } from "@angular/forms";
 import { Directive, HostListener, Input } from "@angular/core";
 import { ElementRef } from "@angular/core";
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
-var noop = () => {
+const noop = () => {
   // ...
 };
 
@@ -61,14 +62,14 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   // public
 
   @HostListener("blur", ['$event'])
-  public handleBlur( event: Event ) : void {
+  public handleBlur( _event: Event ) : void {
     this.clearActiveSuggestion();
     this.onTouchedCallback();
   }
 
   // I handle the input event on the Input element.
   @HostListener("input", ['$event'])
-  public handleInput( event: KeyboardEvent ) : void {
+  public handleInput( _event: KeyboardEvent ) : void {
     const previousValue = this.value;
     const newValue = this.elementRef.nativeElement.value;
     const selectionStart = this.elementRef.nativeElement.selectionStart;
@@ -100,6 +101,10 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
           // continues to type, the selected text will naturally be removed.
           this.elementRef.nativeElement.selectionStart = selectionStart;
           this.elementRef.nativeElement.selectionEnd = this.activeSuggestion.length;
+
+          // TEST
+
+          this.handleInput(_event)
         }
       }
     }
@@ -120,7 +125,7 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
 
     // If the key event represents an acceptance of the active suggestion, commit the
     // suggestion to the current value and emit the change.
-    if ( this.isAcceptSuggestionEvent( event ) ) {
+    if ( this.acceptSuggestionEvent( event ) ) {
       event.preventDefault();
 
       // Save the Input value back into our internal "source of truth" value.
@@ -132,6 +137,10 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
       this.onChangeCallback( this.value );
 
       // Any other key should remove the active suggestion entirely.
+
+        // TEST
+
+        this.handleInput(event)
     }
     else {
       this.clearActiveSuggestion();
@@ -140,7 +149,7 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
 
   // I handle the mousedown event on the Input element.
   @HostListener("mousedown")
-  public handleMousedown( event: Event ) : void {
+  public handleMousedown( _event: Event ) : void {
     // A mouse-action may alter the "selection" within the current Input element. As
     // such, let's remove any active suggestion so that we don't accidentally commit
     // it to the Input value.
@@ -168,7 +177,7 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   public writeValue( value: string ) : void {
     // NOTE: This normalization step is copied from the default Accessory, which
     // seems to be protecting against null values.
-    var normalizedValue = ( value || "" );
+    const normalizedValue = ( value || "" );
 
     if ( this.value !== normalizedValue ) {
       this.value = this.elementRef.nativeElement.value = normalizedValue;
@@ -190,9 +199,9 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   private getFirstMatchingSuggestion( prefix: string ) : string | null {
     const normalizedPrefix = prefix.toLowerCase();
 
-    let suggestions = this.suggestionProvider!!.provide(normalizedPrefix)
+    const suggestions = this.suggestionProvider!.provide(normalizedPrefix)
 
-    for ( var suggestion of suggestions ) {
+    for ( const suggestion of suggestions ) {
       // Skip over any suggestions that don't have enough content to matter.
       if ( suggestion.length <= normalizedPrefix.length ) {
         continue;
@@ -208,10 +217,8 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
     return null ;
   }
 
-  // I determine if the given keyboard event represents a desire by the user to
-  // accept the currently active suggestion.
-  private isAcceptSuggestionEvent( event: KeyboardEvent ) : boolean {
 
+  private acceptSuggestionEvent( event: KeyboardEvent ) : boolean {
     return(
       ( event.key === "Tab" ) ||
       ( event.key === "ArrowRight" ) ||
@@ -246,48 +253,43 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
 
   // implement SuggestionProvider
 
-  provide(input : string) : string[] {
-    let legs = input.split(".")
+  provide(input : string) : string[] { console.log("suggestions for " + input)
+    const legs = input.split(".")
 
     let object = this.values
     let index = 0
-    let length = legs.length
+    const length = legs.length
     let lastMatch = this.values
 
     while (object != null && index < length) {
       lastMatch = object
       object = Reflect.get(object, legs[index++])
-    }
+    } // while
 
-    if (index && index == length) {
-      let suggestions: string[] = []
+    if (index == length) {
+      // we reached the last leg, so good so far
+      const suggestions: string[] = []
 
       if ( object ) {
-        for (let key in object)
+        // and it as a match
+        // add all children as possible suffixes
+
+        for (const key in object)
           suggestions.push(input + "." + key)
       }
       else if ( lastMatch != undefined) {
         // check if we have a valid prefix
 
-        for ( let key in lastMatch) {
-          if (key.startsWith(legs[index-1])) {
-            return [input + key.substring(legs[index-1].length)]
-          }
-          else return []
-        }
-      }
+        for ( const key in lastMatch) {
+          const lastLeg = legs[index-1]
+
+          if (key.startsWith(lastLeg))
+            suggestions.push(input + key.substring(lastLeg.length))
+        } // for
+      } // if
 
       return suggestions
     }
     else return []
   }
 }
-
-console.log(new ObjectSuggestionProvider({
-  foo: {
-    bar: {
-      baz: "baz",
-      bazong: "bazong"
-    }
-  }
-}).provide("foo.bar"))

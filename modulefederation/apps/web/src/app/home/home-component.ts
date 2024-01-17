@@ -2,7 +2,7 @@ import { Component, Injector, forwardRef } from "@angular/core";
 import { AbstractFeature, Feature, WithCommands, Command, WithState } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
-import { NgModelSuggestionsDirective, ObjectSuggestionProvider } from "./suggestion.directive";
+import { NgModelSuggestionsDirective } from "./suggestion.directive";
 import { FormsModule } from "@angular/forms";
 import { SuggestionTreeComponent } from "./suggestion-tree";
 
@@ -42,6 +42,8 @@ export class HomeComponent extends WithState(WithCommands(AbstractFeature, {inhe
       }
     }
   }
+
+  namespaces = ["foo.bar", "foo.baz", "bar.foo"]
   value = "10"
   me ="Andi"
   today = new Date()
