@@ -13,7 +13,7 @@
   <ng-template
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="true">
+    [cdkConnectedOverlayOpen]="isFocused">
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tree">
         <!-- This is the tree node template for leaf nodes -->
     

@@ -52,7 +52,7 @@ export class NodeSuggestionProvider implements SuggestionProvider {
   
     // implement SuggestionProvider
   
-    provide(input : string) : string[] { console.log("suggestions for " + input)
+    provide(input : string) : string[] {
       const legs = input.replace(":", ".").split(".")
 
       const checkNode = (node: TreeNode) : TreeNode => {
@@ -151,10 +151,12 @@ export class SuggestionTreeComponent implements OnInit {
    // private
 
     createTree(namespaces: string[]) {
+        namespaces.sort((one, two) => (one < two ? -1 : 1))
+
         // local functions
 
-        const translationsForNamespace = (_namespace: string) : string[] => {
-            return ["ok", "cancel"]
+        const translationsForNamespace = (_namespace: string) : string[] => { // TODO
+            return ["ok", "cancel"].sort((one, two) => (one < two ? -1 : 1))
         }
 
         const findOrCreateFolder = (name : string, folders : TreeNode[], prefix : string, namespace: string) => {
@@ -171,8 +173,6 @@ export class SuggestionTreeComponent implements OnInit {
             if (folder.path == namespace) { // TODO: lazy, aber ich brauche leeres child!!!
                folder.load = () => {
                 delete folder?.load 
-
-                console.log("load translations ")
 
                 const translations = translationsForNamespace(namespace).map(translation => {
                     return {
@@ -210,12 +210,10 @@ export class SuggestionTreeComponent implements OnInit {
         }
     }
 
-  // private
-
   // public
 
   selectNode(node:Node) {
-console.log(node)
+    console.log(node)
   }
 
   focus(focus: boolean) {
@@ -284,14 +282,11 @@ console.log(node)
 
   filterTree(filterText: string) {
     this.dataSource.data = this.filterRecursive(filterText, this.nodes) || [];
-
-    console.log(this.dataSource.data)
   }
 
   // filter string from mat input filter
 
   applyFilter(filter: string) {
-    console.log("apply tree filter " + filter)
     this.filterTree(filter);
 
     // show / hide based on state of filter string
@@ -306,8 +301,8 @@ console.log(node)
    // implement OnInit
 
    ngOnInit(): void {
-    this.createTree(this.namespaces)
-    this.suggestionProvider = new NodeSuggestionProvider(this.nodes)
-    this.dataSource.data = this.nodes;
+        this.createTree(this.namespaces)
+        this.suggestionProvider = new NodeSuggestionProvider(this.nodes)
+        this.dataSource.data = this.nodes;
     }
 }
