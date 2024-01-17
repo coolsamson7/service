@@ -16,6 +16,7 @@ import {
   MatTreeModule
 } from '@angular/material/tree';
 import { NgModelSuggestionsDirective, SuggestionProvider } from './suggestion.directive';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 // TODO
 // cursor up / down scrollt zwischen möglichkeitne ( check -> sortiert!!! )
@@ -106,7 +107,7 @@ export class NodeSuggestionProvider implements SuggestionProvider {
   templateUrl: './suggestion-tree.html',
   styleUrls: ['./suggestion-tree.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective],
+  imports: [CommonModule, OverlayModule, FormsModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective],
   encapsulation: ViewEncapsulation.None,
 })
 export class SuggestionTreeComponent implements OnInit {
