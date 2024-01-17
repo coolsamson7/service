@@ -26,7 +26,8 @@
     
         <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding  matTreeNodePaddingIndent="20" class="node" [ngClass]="{'node-expanded': treeControl.isExpanded(node), 'node-collapsed': !treeControl.isExpanded(node)}">
           <span class="toggle"></span>
-          <span (click)="selectNode(node)" class="node" [ngClass]="{translation: node.type === 'translation', inPath: node.inPath === true, third: true}"> {{node.name}}</span>
+          <mat-icon>{{treeControl.isExpanded(node) ? "expand_more" : "chevron_right"}}</mat-icon>
+          <span (click)="selectNode(node)" class="node" [ngClass]="{translation: node.type === 'translation', inPath: node.inPath === true}"> {{node.name}}</span>
         </mat-tree-node>
       </mat-tree>
   </ng-template>
