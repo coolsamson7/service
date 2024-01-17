@@ -21,22 +21,23 @@ import { NgModelSuggestionsDirective, SuggestionProvider } from './suggestion.di
 // cursor up / down scrollt zwischen möglichkeitne ( check -> sortiert!!! )
 // anzeige baum prefix ( bold? ) 
 // baum dense
-// tree nur, wenn fokus
 // baum-selektion -> input! + cursor
-// lazy loading translations!
 // - breite baum??? evtl. anderes chevron?
 
 interface TreeNode {
-    type: "namespace" | "translation",
+    type: "namespace" | "translation" | "folder",
     name: string,
     path: string,
-    children?: TreeNode[]
+    load?: () => void,
+    inPath?: boolean,
+    children?: TreeNode[] // hier sind translations und sub namesaces drin....!!!
 }
 
 // the internal tree node structure
 
 interface Node {
-    type: "namespace" | "translation",
+    type: "namespace" | "translation" | "folder",
+    inPath?: boolean,
     expandable: boolean,
     name: string,
     level: number
@@ -52,7 +53,13 @@ export class NodeSuggestionProvider implements SuggestionProvider {
   
     provide(input : string) : string[] { console.log("suggestions for " + input)
       const legs = input.replace(":", ".").split(".")
-     
+
+      const checkNode = (node: TreeNode) : TreeNode => {
+        if ( node.load)
+           node.load()
+
+           return node
+      }
   
       let nodes : TreeNode[] | undefined = this.nodes
       let index = 0
@@ -61,7 +68,7 @@ export class NodeSuggestionProvider implements SuggestionProvider {
   
       while (nodes != null && index < length) {
         lastNodes = nodes
-        nodes = nodes.find(node => node.name == legs[index])?.children
+        nodes = nodes.find(node => checkNode(node).name == legs[index])?.children // TODO more calls??
         index++
       } // while
   
@@ -109,14 +116,17 @@ export class SuggestionTreeComponent implements OnInit {
 
     // instance data
 
+    isFocused = false
+
     value = ""
     suggestionProvider? : SuggestionProvider
 
-  private transformer = (node: TreeNode, level: number) => {
+  private transformer = (node: TreeNode, level: number) : Node => {
     return {
-      expandable: !!node.children && node.children.length > 0,
+      expandable: node.load != undefined || (!!node.children && node.children.length > 0), // TODO?
       name: node.name,
       type: node.type,
+      inPath: node.inPath,
       level: level
     };
   };
@@ -151,13 +161,34 @@ export class SuggestionTreeComponent implements OnInit {
     
           if (!folder) {
             folders.push(folder = {
-                type: "namespace",
+                type: prefix + name == namespace ? "folder" : "namespace",
                 name: name,
                 path: prefix + name,
                 children: []
                 })
 
-            if (folder.path == namespace) {
+            if (folder.path == namespace) { // TODO: lazy, aber ich brauche leeres child!!!
+               folder.load = () => {
+                delete folder?.load 
+
+                console.log("load translations ")
+
+                const translations = translationsForNamespace(namespace).map(translation => {
+                    return {
+                        type: "translation",
+                        name: translation,
+                        path: prefix.substring(0, prefix.length - 1) + ":" + name,
+                    } as TreeNode
+                })
+
+                if ( !folder!.children)
+                   folder!.children = []
+
+                folder?.children?.push(...translations)
+
+                // TODO: fehlt das was?
+               }
+
                folder.children?.push(...translationsForNamespace(namespace).map(translation => {
                 return {
                     type: "translation",
@@ -190,6 +221,14 @@ export class SuggestionTreeComponent implements OnInit {
 
   // public
 
+  selectNode(node:Node) {
+console.log(node)
+  }
+
+  focus(focus: boolean) {
+    this.isFocused = focus
+  }
+
   hasChild(_: number, node: Node) {
    return node.expandable
   }
@@ -204,6 +243,7 @@ export class SuggestionTreeComponent implements OnInit {
     const copy = (property?: TreeNode, withChildren = true) => {
         if ( property ) {
             property = Object.assign({}, property)
+
             if ( !withChildren)
                 property.children = undefined
             else if (property.children ) {
@@ -215,29 +255,32 @@ export class SuggestionTreeComponent implements OnInit {
         else return undefined
     }
 
-    const filter = (properties: TreeNode[], index: number) :  TreeNode[] | undefined => {
+    const filter = (nodes: TreeNode[], index: number) :  TreeNode[] | undefined => {
         const leg = legs[index]
         const last = index == legs.length - 1
 
         if ( !last ) {
-            let property = properties.find(property => property.name == leg)
+            let node = nodes.find(property => property.name == leg)
 
-            if ( property ) {
+            if ( node ) {
+                if ( node.load ) node.load()
+
                 // recursion?
 
-                const children = property?.children?.length ?  filter(property.children, index + 1) : undefined
+                const children = node?.children?.length ?  filter(node.children, index + 1) : undefined
 
-                property = copy(property, false)!
-                property.children = children
+                node = copy(node, false)!
+                node.children = children
+                node.inPath = true
 
-                return [property] 
+                return [node] 
             } // if
             else return undefined
         }
         else {
-            return properties
-                .filter(property => property.name.startsWith(leg))
-                .map(property => copy(property, property.name == leg)!)
+            return nodes
+                .filter(node => node.name.startsWith(leg))
+                .map(node => copy(node, node.name == leg)!)
         }
     }
 
