@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider } from "@modulefederation/portal";
+import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
 
 @Component({
@@ -30,6 +30,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     // instance data
 
     @ViewChild(I18NTreeComponent) tree! : I18NTreeComponent
+    @ViewChild("input") input!: ElementRef;
 
     suggestionProvider? : SuggestionProvider// = new NodeSuggestionProvider()
 
@@ -73,6 +74,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     formGroup : FormGroup
     labelKey = ""
+    labelTranslation = ""
 
     dirty = {}
     isDirty = false
@@ -82,13 +84,14 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private messageAdministrationService : MessageAdministrationService, private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
+    constructor(private translator: Translator, private messageAdministrationService : MessageAdministrationService, private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
         microfrontendsComponent.pushRouteElement(this.element)
 
         this.formGroup = this.formBuilder.group({
                 id: [''],
                 label: [''],
                 labelKey: [''],
+                labelTranslation: [''],
                 description: [''],
                 visibility: [[]],
                 permissions: [[]],
@@ -108,6 +111,12 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             this.tree?.applyFilter(this.labelKey)
     }
 
+    focusLabelTranslation(focused: boolean) {
+        this.labelKeyIsFocused = focused
+
+        setTimeout(() => this.input.nativeElement.focus(), 0)
+    }
+
     save() {
         // copy values from
 
@@ -115,7 +124,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         this.selectedFeature!.enabled = this.enabled[index]
 
-        for (const propertyName in this.dirty) { // @ts-ignore
+        for (const propertyName in this.dirty)
+         if (propertyName !== "labelTranslation") { // @ts-ignore
             this["selectedFeature"][propertyName] = this.dirty[propertyName]
         }
 
@@ -223,6 +233,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             id: feature.id,
             label: feature.label,
             labelKey:  this.labelKey,
+            labelTranslation:  this.labelTranslation,
             description: feature.description,
             visibility: feature.visibility,
             categories: feature.categories,
@@ -236,6 +247,11 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     changedLabelKey() {
         this.tree?.applyFilter(this.labelKey)
+
+        this.translator.translate$(this.labelKey).subscribe(translation => {
+            this.labelTranslation = translation
+            //console.log(translation)
+        })
         //this.formGroup.get("labelKey")?.setValue(this.labelKey)
     }
 
@@ -267,7 +283,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         for (const propertyName in value) {
             // @ts-ignore
-            if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
+            if (propertyName !== "labelTranslation" && !equals(this.selectedFeature[propertyName], value[propertyName])) {
                 // @ts-ignore
                 dirty[propertyName] = value[propertyName]
                 this.isDirty = true

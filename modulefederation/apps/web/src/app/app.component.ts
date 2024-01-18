@@ -73,6 +73,10 @@ export class Handler {
   }
 }
 
+interface ApplicationState {
+   url?: string
+}
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',

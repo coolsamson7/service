@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { equals } from "../common";
 import { GConstructor } from "../common/lang/constructor.type";
 import { AbstractFeature } from "../feature";
 import { hasMixin, registerMixins } from "../mixin/mixin";
@@ -66,12 +67,6 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
               }
             }
           }
-
-        // TODO
-          
-        private matchingIDs(id1: any, id2: any): boolean {
-            return id1.component == id2.component // TODO isEqual(id1, id2);
-        }
     
         private addChildState(state: State): void {
             if (this.state?.children) 
@@ -83,7 +78,7 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
         private findState4(manager: StateManager): State | undefined {
             const id = manager.stateID();
 
-            return (this.state?.children || []).find((state) => this.matchingIDs(state.owner, id));
+            return (this.state?.children || []).find((state) => equals(state.owner, id));
         }
     
         // implement Stateful

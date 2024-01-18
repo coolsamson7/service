@@ -86,12 +86,27 @@
 
                             <mat-form-field>
                                 <mat-label>Label Translation</mat-label>
-                                <input matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="labelKey" (ngModelChange)="changedLabelKey()" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
-                                formControlName="labelKey"    
+
+                                <!--- the translation -->
+
+                                <input [ngStyle]="{'display':labelKeyIsFocused ? 'none' : 'block'}" matInput id="labelTranslation" name="labelTranslation" type="text" [ngModel]="labelTranslation" placeholder="Label"  
+                                    (focus)="focusLabelTranslation(true)"  formControlName="labelTranslation" 
+                                />
+
+                                <!-- the key -->
+
+                                <input #input [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="labelKey" (ngModelChange)="changedLabelKey()" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
+                                formControlName="labelKey" 
+                                autofocus   
                                 autocomplete="off"
-                                    (focus)="focusLabelKey(true)" 
+                                 
                                     (focusout)="focusLabelKey(false)"
                                 />
+
+                                <button *ngIf="!labelKeyIsFocused" mat-icon-button matSuffix>
+                                    <mat-icon>{{true ? 'language' : 'language'}}</mat-icon>
+                                </button>
+
                                 <i18n-tree [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" [namespaces]="namespaces" class="tree" #tree>
                                 </i18n-tree>
                             
