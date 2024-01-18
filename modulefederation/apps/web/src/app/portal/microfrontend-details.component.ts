@@ -6,7 +6,9 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { DialogService, Feature, Manifest } from "@modulefederation/portal";
+import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService } from "@modulefederation/portal";
+import { I18NTreeComponent } from "./widgets/i18n-tree";
+import { SuggestionProvider } from "./widgets/suggestion.directive";
 
 @Component({
     selector: 'microfrontend-details',
@@ -28,6 +30,10 @@ import { DialogService, Feature, Manifest } from "@modulefederation/portal";
 export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     // instance data
 
+    @ViewChild(I18NTreeComponent) tree! : I18NTreeComponent
+
+    suggestionProvider? : SuggestionProvider// = new NodeSuggestionProvider()
+
     manifest : Manifest = {
         commitHash: "",
         features: [],
@@ -45,6 +51,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     uuid = uuidv4() // will be set in onInit
 
+    namespaces: string[] = []
+
     model : EditorModel = {
         value: 'hallo',
         language: "json",
@@ -56,7 +64,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     @ViewChild('form') public form! : NgForm
 
-    selectedFeature? : any
+    selectedFeature? : FeatureConfig
 
     allPermissions : string[] = [];
     allTags : string[] = [];
@@ -71,12 +79,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
+    constructor(private messageAdministrationService : MessageAdministrationService, private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
         microfrontendsComponent.pushRouteElement(this.element)
 
         this.formGroup = this.formBuilder.group({
                 id: [''],
                 label: [''],
+                labelKey: [''],
                 description: [''],
                 visibility: [[]],
                 permissions: [[]],
@@ -88,14 +97,20 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.formGroup.get('id')?.disable();
     }
 
+    // TODO
+
+    focus(focus: boolean) {
+            // TODO
+    }
+
     save() {
         // copy values from
 
-        let index = this.manifest.features.indexOf(this.selectedFeature!!)
+        const index = this.manifest.features.indexOf(this.selectedFeature!)
 
-        this.selectedFeature!!.enabled = this.enabled[index]
+        this.selectedFeature!.enabled = this.enabled[index]
 
-        for (let propertyName in this.dirty) { // @ts-ignore
+        for (const propertyName in this.dirty) { // @ts-ignore
             this["selectedFeature"][propertyName] = this.dirty[propertyName]
         }
 
@@ -105,46 +120,46 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         // new state
 
-        this.selectFeature(this.selectedFeature!!)
+        this.selectFeature(this.selectedFeature!)
     }
 
     revert() {
-        this.enabled = this.manifest.features.map(feature => feature.enabled!!)
+        this.enabled = this.manifest.features.map(feature => feature.enabled!)
         // will trigger isDirty calculation
-        this.selectFeature(this.selectedFeature!!)
+        this.selectFeature(this.selectedFeature!)
     }
 
     setManifests(manifests : Manifest[]) : Manifest[] {
         // local functions
 
-        let analyzeFeature = (feature : any) => {
+        const analyzeFeature = (feature : any) => {
             // recursion
 
             if (feature.children)
-                for (let child of feature.children)
+                for (const child of feature.children)
                     analyzeFeature(child)
 
             // collect info
 
-            for (let permission of feature.permissions || [])
+            for (const permission of feature.permissions || [])
                 if (!this.allPermissions.includes(permission))
                     this.allPermissions.push(permission)
 
-            for (let tag of feature.tags || [])
+            for (const tag of feature.tags || [])
                 if (!this.allTags.includes(tag))
                     this.allTags.push(tag)
 
-            for (let category of feature.categories || [])
+            for (const category of feature.categories || [])
                 if (!this.allCategories.includes(category))
                     this.allCategories.push(category)
         }
 
-        let analyzeManifest = (manifest : Manifest) => {
-            for (let feature of manifest.features)
+        const analyzeManifest = (manifest : Manifest) => {
+            for (const feature of manifest.features)
                 analyzeFeature(feature)
         }
 
-        for (let manifest of manifests)
+        for (const manifest of manifests)
             analyzeManifest(manifest)
 
         // done
@@ -160,7 +175,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         // @ts-ignore
         this.microfrontendsComponent.$manifests
             .subscribe(manifests =>
-                this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)!!))
+                this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)!))
     }
 
     reallySetManifest(manifest : Manifest) {
@@ -182,7 +197,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
                 .title("Switch feature")
                 .message("Please save first")
                 .okCancel()
-                .show().subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
+                .show()
+                .subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
                 if (result == true) {
                     this.save()
                     this.isDirty = false
@@ -194,9 +210,14 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         this.selectedFeature = feature
 
+        // TODO
+
+        feature.labelKey = ""
+
         this.formGroup.setValue({
             id: feature.id,
             label: feature.label,
+            labelKey: feature.labelKey,
             description: feature.description,
             visibility: feature.visibility,
             categories: feature.categories,
@@ -222,17 +243,17 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             if (a.length != b.length)
                 return false
 
-            let sorted = b.sort()
+            const sorted = b.sort()
             return a.sort().every((element : any, index : number) => element == sorted[index]);
         }
 
         const equals = (a : any, b : any) => Array.isArray(a) ? equalArrays(a, b) : a == b
 
-        let dirty = {}
+        const dirty = {}
 
         this.isDirty = false
 
-        for (let propertyName in value) {
+        for (const propertyName in value) {
             // @ts-ignore
             if (!equals(this.selectedFeature[propertyName], value[propertyName])) {
                 // @ts-ignore
@@ -243,8 +264,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         // compare enabled
 
-        let index = this.manifest.features.indexOf(this.selectedFeature!!)
-        if (this.selectedFeature!!.enabled !== this.enabled[index]) {
+        const index = this.manifest.features.indexOf(this.selectedFeature!)
+        if (this.selectedFeature!.enabled !== this.enabled[index]) {
             this.isDirty = true
             // @ts-ignore
             dirty["enabled"] = this.enabled[index]
@@ -262,6 +283,11 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         })
 
         this.formGroup.valueChanges.subscribe(value => this.checkChanges(value))
+
+        this.messageAdministrationService.readNamespaces().subscribe(namespaces => {
+            this.namespaces = namespaces
+            this.suggestionProvider = undefined
+        })
     }
 
     // implement OnDestroy

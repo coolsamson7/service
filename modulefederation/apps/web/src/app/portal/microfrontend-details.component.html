@@ -66,7 +66,7 @@
 
                         <!-- details -->
 
-                        <form #form *ngIf="selectedFeature != undefined" [formGroup]="formGroup" class="feature-details"
+                        <form #form *ngIf="selectedFeature !== undefined" [formGroup]="formGroup" class="feature-details"
                               novalidate>
                             <!-- id -->
 
@@ -81,6 +81,32 @@
                                 <mat-label>Label</mat-label>
                                 <input formControlName="label" id="label" matInput name="label" type="text">
                             </mat-form-field>
+
+                            <!-- i18n -->
+
+                            <mat-form-field>
+                                <mat-label>Filter</mat-label>
+                                <input matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="this.selectedFeature!.labelKey" (ngModelChange)="tree.applyFilter(selectedFeature!.labelKey!)" [suggestionProvider]="tree.suggestionProvider" placeholder="Label" #input
+                                formControlName="labelKey"    
+                                autocomplete="off"
+                                    autofocus
+                                    class="input"
+                                    (focus)="focus(true)" 
+                                    (focusout)="focus(false)"
+                                    cdkOverlayOrigin #trigger
+                                />
+                                <i18n-tree [namespaces]="namespaces" class="tree" #tree>
+                                </i18n-tree>
+                            
+                                <!--ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="trigger"
+                                    [cdkConnectedOverlayOpen]="isFocused">
+                                    <i18n-tree [namespaces]="namespaces" class="tree" #tree>
+                                    </i18n-tree>
+                                </ng-template-->
+                            </mat-form-field>
+                            
 
                             <!-- description -->
 

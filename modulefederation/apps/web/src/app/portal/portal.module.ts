@@ -19,6 +19,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ChipsComponent } from "./chips.component";
 import { Folder } from "@modulefederation/portal";
+import { I18NTreeComponent } from "./widgets/i18n-tree";
+import { NgModelSuggestionsDirective } from "./widgets/suggestion.directive";
 
 @Folder({
     name: "microfrontends",
@@ -29,7 +31,7 @@ import { Folder } from "@modulefederation/portal";
     declarations: [
         MirofrontendsComponent,
         MicrofrontendDetailsComponent,
-        ChipsComponent
+        ChipsComponent,
     ],
     imports: [
         CommonModule,
@@ -50,6 +52,8 @@ import { Folder } from "@modulefederation/portal";
         MatLineModule,
         MatDialogModule,
         MatToolbarModule,
+        I18NTreeComponent,
+        NgModelSuggestionsDirective
     ]
 })
 export class PortalComponentModule {
