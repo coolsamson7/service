@@ -6,9 +6,8 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
-import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService } from "@modulefederation/portal";
+import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
-import { SuggestionProvider } from "./widgets/suggestion.directive";
 
 @Component({
     selector: 'microfrontend-details',
@@ -66,16 +65,20 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     selectedFeature? : FeatureConfig
 
+
     allPermissions : string[] = [];
     allTags : string[] = [];
     allCategories : string[] = [];
     allVisibilities : string[] = ['public', 'private'];
 
     formGroup : FormGroup
+    labelKey = ""
 
     dirty = {}
     isDirty = false
     enabled : boolean[] = []
+
+    labelKeyIsFocused: boolean = false
 
     // constructor
 
@@ -97,10 +100,12 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.formGroup.get('id')?.disable();
     }
 
-    // TODO
 
-    focus(focus: boolean) {
-            // TODO
+    focusLabelKey(focused: boolean) {
+        this.labelKeyIsFocused = focused
+
+        if ( focused )
+            this.tree?.applyFilter(this.labelKey)
     }
 
     save() {
@@ -212,12 +217,12 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         // TODO
 
-        feature.labelKey = ""
+        this.labelKey =  feature.labelKey || ""
 
         this.formGroup.setValue({
             id: feature.id,
             label: feature.label,
-            labelKey: feature.labelKey,
+            labelKey:  this.labelKey,
             description: feature.description,
             visibility: feature.visibility,
             categories: feature.categories,
@@ -225,6 +230,13 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             permissions: feature.permissions,
             //enabled: feature.enabled
         })
+
+        this.tree?.filterTree( this.labelKey)
+    }
+
+    changedLabelKey() {
+        this.tree?.applyFilter(this.labelKey)
+        //this.formGroup.get("labelKey")?.setValue(this.labelKey)
     }
 
     toggleEnabled(index : number) {

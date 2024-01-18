@@ -18,9 +18,8 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { ChipsComponent } from "./chips.component";
-import { Folder } from "@modulefederation/portal";
+import { Folder, NgModelSuggestionsDirective } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
-import { NgModelSuggestionsDirective } from "./widgets/suggestion.directive";
 
 @Folder({
     name: "microfrontends",

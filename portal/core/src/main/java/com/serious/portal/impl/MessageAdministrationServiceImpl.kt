@@ -59,6 +59,10 @@ class MessageAdministrationServiceServiceImpl : MessageAdministrationService {
         return messageEntityManager.readAllMessages(namespace)
     }
 
+    override fun readMessageNames(@PathVariable namespace: String) : List<String> {
+        return messageEntityManager.readDistinctNames(namespace)
+    }
+
     @Transactional
     override fun readNamespaces() : List<String> {
         return messageEntityManager.readNamespaces()

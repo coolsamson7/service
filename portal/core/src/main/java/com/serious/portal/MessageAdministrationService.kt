@@ -33,6 +33,10 @@ interface MessageAdministrationService : Service {
     @ResponseBody
     fun readAllMessages(@PathVariable namespace: String) : List<Message>
 
+    @GetMapping("read-messages-names/{namespace}")
+    @ResponseBody
+    fun readMessageNames(@PathVariable namespace: String) : List<String>
+
     @GetMapping("read-namespaces")
     @ResponseBody
     fun readNamespaces() : List<String>

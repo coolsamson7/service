@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class MessageEntityManager() {
+class MessageEntityManager {
     // instance data
 
     @PersistenceContext
@@ -115,6 +115,7 @@ class MessageEntityManager() {
             .setParameter("namespace", namespace)
             .resultList.map { entity -> toMessage(entity) }
     }
+
 
     fun readDistinctNames(namespace: String) : List<String> {
         return this.entityManager.createQuery("select distinct name from MessageEntity where namespace = :namespace", Tuple::class.java)

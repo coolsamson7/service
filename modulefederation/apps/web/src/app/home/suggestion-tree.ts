@@ -18,12 +18,6 @@ import {
 import { NgModelSuggestionsDirective, SuggestionProvider } from './suggestion.directive';
 import { OverlayModule } from '@angular/cdk/overlay';
 
-// TODO
-// cursor up / down scrollt zwischen möglichkeitne ( check -> sortiert!!! )
-// anzeige baum prefix ( bold? ) 
-// baum dense
-// baum-selektion -> input! + cursor
-// - breite baum??? evtl. anderes chevron?
 
 interface TreeNode {
     type: "namespace" | "translation" | "folder",

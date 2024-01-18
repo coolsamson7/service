@@ -45,6 +45,10 @@ export class MessageAdministrationService extends AbstractHTTPService {
         return this.get<string[]>(`read-namespaces`)
     }
 
+    public readMessageNames(namespace: string) : Observable<string[]> {
+        return this.get<string[]>(`read-messages-names/${namespace}`)
+    }
+
     public readLocales() : Observable<string[]> {
         return this.get<string[]>(`read-locales`)
     }

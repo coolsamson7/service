@@ -85,17 +85,14 @@
                             <!-- i18n -->
 
                             <mat-form-field>
-                                <mat-label>Filter</mat-label>
-                                <input matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="this.selectedFeature!.labelKey" (ngModelChange)="tree.applyFilter(selectedFeature!.labelKey!)" [suggestionProvider]="tree.suggestionProvider" placeholder="Label" #input
+                                <mat-label>Label Translation</mat-label>
+                                <input matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="labelKey" (ngModelChange)="changedLabelKey()" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
                                 formControlName="labelKey"    
                                 autocomplete="off"
-                                    autofocus
-                                    class="input"
-                                    (focus)="focus(true)" 
-                                    (focusout)="focus(false)"
-                                    cdkOverlayOrigin #trigger
+                                    (focus)="focusLabelKey(true)" 
+                                    (focusout)="focusLabelKey(false)"
                                 />
-                                <i18n-tree [namespaces]="namespaces" class="tree" #tree>
+                                <i18n-tree [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" [namespaces]="namespaces" class="tree" #tree>
                                 </i18n-tree>
                             
                                 <!--ng-template
@@ -106,7 +103,6 @@
                                     </i18n-tree>
                                 </ng-template-->
                             </mat-form-field>
-                            
 
                             <!-- description -->
 

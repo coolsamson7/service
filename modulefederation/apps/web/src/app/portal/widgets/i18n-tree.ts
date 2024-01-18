@@ -15,8 +15,10 @@ import {
   MatTreeFlattener,
   MatTreeModule
 } from '@angular/material/tree';
-import { NgModelSuggestionsDirective, SuggestionProvider } from './suggestion.directive';
+
 import { OverlayModule } from '@angular/cdk/overlay';
+import { MessageAdministrationService, NgModelSuggestionsDirective, SuggestionProvider } from '@modulefederation/portal';
+import { Observable } from 'rxjs';
 
 
 interface TreeNode {
@@ -47,7 +49,16 @@ export class NodeSuggestionProvider implements SuggestionProvider {
     // implement SuggestionProvider
   
     provide(input : string) : string[] {
-      const legs = input.replace(":", ".").split(".")
+      const colon = input.indexOf(":")
+      let legs : string[]
+  
+      if ( colon > 0) {
+        legs = input.substring(0, colon).split(".")
+        legs.push(input.substring(colon + 1))
+      }
+      else 
+        legs = input.split(".")
+
 
       const checkNode = (node: TreeNode) : TreeNode => {
         if ( node.load)
@@ -109,10 +120,10 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
     @Input() namespaces: string[] = []
 
-
     // instance data
 
     isFocused = false
+    lastFilter = ""
 
     
    transformer = (node: TreeNode, level: number) : Node => {
@@ -143,6 +154,11 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
   suggestionProvider = new NodeSuggestionProvider(this.nodes)
 
+  // constructor
+
+  constructor(private messageService: MessageAdministrationService) {
+  }
+
    // private
 
     createTree(namespaces: string[]) {
@@ -150,8 +166,9 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
         // local functions
 
-        const translationsForNamespace = (_namespace: string) : string[] => { // TODO
-            return ["ok", "cancel"].sort((one, two) => (one < two ? -1 : 1))
+        const translationsForNamespace = (namespace: string) : Observable<string[]> => {
+            return this.messageService.readMessageNames(namespace)
+            //return ["ok", "cancel"].sort((one, two) => (one < two ? -1 : 1))
         }
 
         const findOrCreateFolder = (name : string, folders : TreeNode[], prefix : string, namespace: string) => {
@@ -165,24 +182,30 @@ export class I18NTreeComponent implements OnInit, OnChanges {
                 children: []
                 })
 
-            if (folder.path == namespace) { // TODO: lazy, aber ich brauche leeres child!!!
+            if (folder.path == namespace) { // TODO: lazy, aber ich brauche leeres child!!! oder?
                folder.load = () => {
                 delete folder?.load 
 
-                const translations = translationsForNamespace(namespace).map(translation => {
-                    return {
+                translationsForNamespace(namespace).subscribe(names => {
+                  // sort alphabetically
+
+                  names.sort((one, two) => (one < two ? -1 : 1))
+
+                  if ( folder!.children === undefined)
+                    folder!.children = []
+
+                  folder?.children.push(...names.map(name => {  
+                      return {
                         type: "translation",
-                        name: translation,
+                        name: name,
                         path: prefix.substring(0, prefix.length - 1) + ":" + name,
                     } as TreeNode
+                  }))
+
+                  // filter again!
+                  
+                  this.filterTree(this.lastFilter)
                 })
-
-                if ( !folder!.children)
-                   folder!.children = []
-
-                folder?.children?.push(...translations)
-
-                // TODO: fehlt das was?
                }
             } // if
         }
@@ -220,7 +243,20 @@ export class I18NTreeComponent implements OnInit, OnChanges {
   filterRecursive(filterText: string, array: TreeNode[]) {
     if (!filterText) return array
 
-    const legs = filterText.toLowerCase().replace(":", ".").split(".")
+    console.log("filter " + filterText)
+
+    filterText = filterText.toLowerCase()
+
+    const colon = filterText.indexOf(":")
+    let legs : string[]
+
+    if ( colon > 0) {
+      legs = filterText.substring(0, colon).split(".")
+      legs.push(filterText.substring(colon + 1))
+    }
+    else 
+      legs = filterText.split(".")
+
 
     // make a copy of the data so we don't mutate the original
 
@@ -268,13 +304,17 @@ export class I18NTreeComponent implements OnInit, OnChanges {
         }
     }
 
-    return filter(array, 0)
+    let result =  filter(array, 0)
+
+    console.log(result)
+
+    return result
   }
 
   // pass mat input string to recursive function and return data
 
-  filterTree(filterText: string) {
-    this.dataSource.data = this.filterRecursive(filterText, this.nodes) || [];
+  filterTree(filter: string) {
+    this.dataSource.data = this.filterRecursive(this.lastFilter = filter, this.nodes) || [];
   }
 
   // filter string from mat input filter
