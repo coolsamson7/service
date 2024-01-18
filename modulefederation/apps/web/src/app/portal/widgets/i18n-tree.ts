@@ -270,6 +270,8 @@ export class I18NTreeComponent implements OnInit, OnChanges {
                 property.children = property.children!.map(child => copy(child, false)) as TreeNode[]
             }
 
+            property.inPath = withChildren
+
             return property
         }
         else return undefined
