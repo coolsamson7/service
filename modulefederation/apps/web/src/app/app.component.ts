@@ -86,7 +86,7 @@ interface ApplicationState {
       useExisting: forwardRef(() => AppComponent) 
     }]
 })
-export class AppComponent extends WithState(AbstractFeature) {
+export class AppComponent extends WithState<ApplicationState>()(AbstractFeature) {
     // instance data
 
     locales: string[] = []
@@ -119,12 +119,12 @@ export class AppComponent extends WithState(AbstractFeature) {
 
     // implement Stateful
 
-    override applyState(state: any) : void {
+    override applyState(state: ApplicationState) : void {
       if (state.url)
         this.router.navigate([state.url]);
     }
 
-    override writeState(state: any) : void {
+    override writeState(state: ApplicationState) : void {
       state.url = this.router?.url;
     }
 

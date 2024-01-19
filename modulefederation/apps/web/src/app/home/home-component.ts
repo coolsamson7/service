@@ -25,7 +25,7 @@ import { SuggestionTreeComponent } from "./suggestion-tree";
     tags: ["navigation"],
     permissions: []
 })
-export class HomeComponent extends WithState(WithCommands(AbstractFeature, {inheritCommands: false})) {
+export class HomeComponent extends WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false})) {
   object = {
     foo: {
       arsch: {

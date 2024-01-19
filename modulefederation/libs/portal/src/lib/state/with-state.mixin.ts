@@ -8,8 +8,9 @@ import { State } from "./state";
 import { Stateful } from "./stateful";
 
 
-export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Stateful> &  T  {
-    return registerMixins(class StateManager extends base implements Stateful {
+export function WithState<S>() {
+    return function <T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Stateful> &  T  {
+    return registerMixins(class StateManager extends base implements Stateful<S> {
         // instance data
 
         state?: State
@@ -107,11 +108,11 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
             return this.state
         }
 
-        applyState(state: any) : void {
+        applyState(state: S) : void {
             // noop
         }
         
-        writeState(state: any) : void {
+        writeState(state: S) : void {
             // noope
         }
 
@@ -126,3 +127,4 @@ export function WithState<T extends GConstructor<AbstractFeature>>(base: T) :GCo
         }
     }, WithState)
   }
+}

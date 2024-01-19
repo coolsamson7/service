@@ -1,13 +1,13 @@
 import { State } from "./state"
 
-export interface Stateful {
+export interface Stateful<S=any> {
     state?: State
 
     storeState() : void
 
-    applyState(state: any) : void 
+    applyState(state: S) : void 
 
-    writeState(state: any) : void
+    writeState(state: S) : void
 
     mergeState(newStateData: any, previousStateData: any): void
 
