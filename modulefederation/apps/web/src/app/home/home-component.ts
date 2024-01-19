@@ -2,16 +2,14 @@ import { Component, Injector, forwardRef } from "@angular/core";
 import { AbstractFeature, Feature, WithCommands, Command, WithState } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
-import { NgModelSuggestionsDirective } from "./suggestion.directive";
 import { FormsModule } from "@angular/forms";
-import { SuggestionTreeComponent } from "./suggestion-tree";
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [CommonModule, NgModelSuggestionsDirective, FormsModule, SuggestionTreeComponent],
+    imports: [CommonModule, FormsModule],
     providers: [{ 
       provide: AbstractFeature, 
       useExisting: forwardRef(() => HomeComponent) 
@@ -26,24 +24,6 @@ import { SuggestionTreeComponent } from "./suggestion-tree";
     permissions: []
 })
 export class HomeComponent extends WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false})) {
-  object = {
-    foo: {
-      arsch: {
-        selber: "selber"
-      },
-      bar: {
-        bazong: "bazong"
-      },
-      baz: {
-        bazong: "bazong"
-      },
-      zot: {
-        goo: "hh"
-      }
-    }
-  }
-
-  namespaces = ["foo.bar", "foo.baz", "bar.foo"]
   value = "10"
   me ="Andi"
   today = new Date()
