@@ -1,0 +1,27 @@
+:host {
+  height: 100%;
+}
+
+.loaded-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.viewport {
+  overflow-y: scroll;
+  flex: 1;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.busy {
+  ::ng-deep {
+    * {
+      cursor: progress !important;
+    }
+  }
+}

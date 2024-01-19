@@ -7,6 +7,7 @@ export class ExecutionContext {
     running = false
     result: any = undefined
     error: any = undefined
+    data : any  = {}
   
     // constructor
   

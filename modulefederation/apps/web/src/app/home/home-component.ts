@@ -1,5 +1,5 @@
-import { Component, Injector, forwardRef } from "@angular/core";
-import { AbstractFeature, Feature, WithCommands, Command, WithState } from "@modulefederation/portal";
+import { Component, Injector } from "@angular/core";
+import { AbstractFeature, Feature, WithCommands, Command, WithState, WithView, ViewComponent, LockType } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -9,11 +9,7 @@ import { FormsModule } from "@angular/forms";
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [CommonModule, FormsModule],
-    providers: [{ 
-      provide: AbstractFeature, 
-      useExisting: forwardRef(() => HomeComponent) 
-    }]
+    imports: [CommonModule, FormsModule, ViewComponent]
 })
 @Feature({
     id: "home",
@@ -23,17 +19,18 @@ import { FormsModule } from "@angular/forms";
     tags: ["navigation"],
     permissions: []
 })
-export class HomeComponent extends WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false})) {
+export class HomeComponent extends WithView(WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false}))) {
   value = "10"
   me ="Andi"
   today = new Date()
 
   constructor(private portalAdministrationService : PortalAdministrationService, injector: Injector) {
     super(injector)
+  }
 
-    // TEST
-
-    this.test("hello")
+  busy = false
+  toggleBusy() {
+    this.setBusy(this.busy = !this.busy)
   }
 
   // implement Stateful
@@ -50,10 +47,27 @@ export class HomeComponent extends WithState<any>()(WithCommands(AbstractFeature
   // commands
 
   @Command({
+    label: "Long Running"
+  })
+  longRunning() : Promise<any> {
+    return new Promise((resolve) => setTimeout(() => resolve('done'), 5000));
+  }
+
+  @Command({
+    label: "Lock",
+    lock: "view"
+  })
+  lockView() : Promise<any> {
+    return new Promise((resolve) => setTimeout(() => resolve('done'), 5000));
+  }
+
+  @Command({
     label: "Test"
   })
   test(message: string) {
     console.log(message + " world")
+
+    console.log(this.view)
 
     return message + " world"
   }

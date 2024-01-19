@@ -57,7 +57,7 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
   // constructor
 
   /**
-   * create a new Controller.
+   * create a new AbstractFeature.
    * @param injector the appropriate injector that will be used internally to inject objects
    */
   constructor(injector: Injector) {

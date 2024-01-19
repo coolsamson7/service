@@ -1,0 +1,11 @@
+<div class="wrapper view" [ngClass]="{'busy': isBusy}">
+  <overlay *ngIf="hasOverlay" [message]="progress"></overlay>
+
+  <div class="loaded-content">
+    <!-- main content <-->
+
+    <section class="viewport">
+      <ng-content></ng-content>
+    </section>
+  </div>
+</div>

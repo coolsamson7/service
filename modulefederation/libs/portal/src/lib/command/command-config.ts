@@ -2,22 +2,9 @@
 /**
  * possible lock types for commands.
  */
-export enum LockType {
-    /**
-     * lock the command
-     */
-    COMMAND,
-    /**
-     * lock all commands of the same grouo
-     */
-    GROUP,
-    /**
-     * lock the view
-     */
-    VIEW
-  }
+export type LockType = "command" | "group" | "view"
 
-  export interface CommandConfig {
+export interface CommandConfig {
     /**
      * the command name
      */
