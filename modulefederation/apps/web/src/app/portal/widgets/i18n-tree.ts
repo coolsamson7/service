@@ -243,8 +243,6 @@ export class I18NTreeComponent implements OnInit, OnChanges {
   filterRecursive(filterText: string, array: TreeNode[]) {
     if (!filterText) return array
 
-    console.log("filter " + filterText)
-
     filterText = filterText.toLowerCase()
 
     const colon = filterText.indexOf(":")
@@ -307,8 +305,6 @@ export class I18NTreeComponent implements OnInit, OnChanges {
     }
 
     let result =  filter(array, 0)
-
-    console.log(result)
 
     return result
   }

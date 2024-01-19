@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
@@ -76,11 +77,11 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     labelKey = ""
     labelTranslation = ""
 
-    dirty = {}
+    dirty : any = {}
     isDirty = false
     enabled : boolean[] = []
 
-    labelKeyIsFocused: boolean = false
+    labelKeyIsFocused = false
 
     // constructor
 
@@ -125,8 +126,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.selectedFeature!.enabled = this.enabled[index]
 
         for (const propertyName in this.dirty)
-         if (propertyName !== "labelTranslation") { // @ts-ignore
-            this["selectedFeature"][propertyName] = this.dirty[propertyName]
+         if (propertyName !== "labelTranslation") {
+            (<any>this.selectedFeature)[propertyName] = this.dirty[propertyName] || false
         }
 
         // save
@@ -186,8 +187,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     setManifest(manifestName : string) {
         this.model.uri = 'json://' + this.uuid + manifestName + '.schema'
 
-        // @ts-ignore
-        // @ts-ignore
         this.microfrontendsComponent.$manifests
             .subscribe(manifests =>
                 this.reallySetManifest(this.setManifests(manifests).find((manifest) => manifest.name == manifestName)!))
@@ -197,8 +196,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.manifest = manifest
         this.manifestJSON = JSON.stringify(manifest, null, 2)
 
-        // @ts-ignore
-        this.enabled = manifest.features.map(feature => feature.enabled)
+        this.enabled = manifest.features.map(feature => feature.enabled == true)
 
         if (manifest.features.length > 0)
             this.selectFeature(manifest.features[0])
@@ -225,9 +223,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         this.selectedFeature = feature
 
-        // TODO
-
         this.labelKey =  feature.labelKey || ""
+        this.labelTranslation = ""
+        this.labelKeyIsFocused = false
 
         this.formGroup.setValue({
             id: feature.id,
@@ -248,11 +246,10 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     changedLabelKey() {
         this.tree?.applyFilter(this.labelKey)
 
-        this.translator.translate$(this.labelKey).subscribe(translation => {
-            this.labelTranslation = translation
-            //console.log(translation)
-        })
-        //this.formGroup.get("labelKey")?.setValue(this.labelKey)
+        if (this.labelKey.indexOf(":") > 0)
+            this.translator.translate$(this.labelKey).subscribe(translation => {
+                this.labelTranslation = translation
+            })
     }
 
     toggleEnabled(index : number) {
@@ -277,14 +274,12 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
         const equals = (a : any, b : any) => Array.isArray(a) ? equalArrays(a, b) : a == b
 
-        const dirty = {}
+        const dirty : any = {}
 
         this.isDirty = false
 
         for (const propertyName in value) {
-            // @ts-ignore
-            if (propertyName !== "labelTranslation" && !equals(this.selectedFeature[propertyName], value[propertyName])) {
-                // @ts-ignore
+            if (propertyName !== "labelTranslation" && !equals((<any>this.selectedFeature)[propertyName], value[propertyName])) {
                 dirty[propertyName] = value[propertyName]
                 this.isDirty = true
             }
@@ -295,7 +290,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         const index = this.manifest.features.indexOf(this.selectedFeature!)
         if (this.selectedFeature!.enabled !== this.enabled[index]) {
             this.isDirty = true
-            // @ts-ignore
             dirty["enabled"] = this.enabled[index]
         }
 
