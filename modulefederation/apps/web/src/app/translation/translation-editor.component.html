@@ -1,19 +1,17 @@
 <div class="translations">
-  <!-- {{"portal.commands:cancel.label" | translate}} -->
-
   <!-- toolbar -->
 
   <mat-toolbar class="toolbar">
     <mat-toolbar-row>
       <!-- save -->
 
-      <button  matTooltip="save changes" (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
+      <button  [matTooltip]="getCommand('save').tooltip!" (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
         <mat-icon>save</mat-icon>
       </button>
 
       <!-- revert -->
 
-      <button  matTooltip="revert changes" (click)="revert()" [disabled]="!hasChanges()" mat-icon-button>
+      <button  [matTooltip]="getCommand('revert').tooltip!" (click)="revert()" [disabled]="!hasChanges()" mat-icon-button>
         <mat-icon>undo</mat-icon>
       </button>
 

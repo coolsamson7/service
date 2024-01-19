@@ -38,6 +38,10 @@ export enum LockType {
      * the - optional - shortcut of the command
      */
     shortcut?: string;
+     /**
+     * the - optional - tooltip of the command
+     */
+     tooltip?: string;
     /**
      * the - optional - icon name of the command
      */

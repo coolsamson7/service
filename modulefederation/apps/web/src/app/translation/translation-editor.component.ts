@@ -106,7 +106,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
   }
 
   @Command({
-    shortcut: "ctrl+z"
+    i18n: "portal.commands:revert",
   })
   revert() {
     this.namespaceChanges = {
@@ -119,7 +119,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
   }
 
   @Command({
-    shortcut: "ctrl+s"
+    i18n: "portal.commands:save",
   })
   save(selectNode? : NamespaceNode) {
     if (!this.hasChanges())

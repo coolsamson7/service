@@ -8,6 +8,7 @@ import { Commands } from './commands';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
 import { ExecutionContext } from './execution-context';
 import { Translator } from '../i18n';
+import { get } from '../common';
 
 /**
  * this interceptor is there to set and restore the current execution context
@@ -115,7 +116,7 @@ export class CommandFactory {
 
       if ( translations ) {
         if ( prefix.indexOf(".") > 0)
-          commandConfig.label = translations[prefix] // todO get!
+          commandConfig.label = get(translations, prefix)
         else {
           translations = translations[prefix]
           if ( translations )
@@ -123,6 +124,7 @@ export class CommandFactory {
           .forEach(name => {
             switch (name) {
               case "label":
+              case "tooltip":
               case "shortcut":
                 (<any>commandConfig)[name] = translations[name]
                 break;

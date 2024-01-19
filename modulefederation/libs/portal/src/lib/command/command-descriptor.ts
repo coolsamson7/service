@@ -30,6 +30,7 @@ export class CommandDescriptor {
     name: string
     group?: string;
     label?: string;
+    tooltip?: string;
     shortcut?: string;
     icon?: string;
     enabled: boolean;
@@ -49,6 +50,7 @@ export class CommandDescriptor {
       this.group = config.group;
       this.icon = config.icon;
       this.label = config.label ? config.label : config.command;
+      this.tooltip = config.tooltip;
       this.shortcut = config.shortcut;
       this.enabled = config.enabled ? config.enabled : true;
       this.i18n = config.i18n;
