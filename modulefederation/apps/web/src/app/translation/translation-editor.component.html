@@ -5,15 +5,11 @@
     <mat-toolbar-row>
       <!-- save -->
 
-      <!--button  [matTooltip]="getCommand('save').tooltip!" (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
-        <mat-icon>save</mat-icon>
-      </button-->
-
-      <command-button [command]="getCommand('save')"></command-button>
+      <command-button command="save"></command-button>
 
       <!-- revert -->
 
-      <command-button [command]="getCommand('revert')"></command-button>
+      <command-button command="revert"></command-button>
 
       <!-- add -->
 

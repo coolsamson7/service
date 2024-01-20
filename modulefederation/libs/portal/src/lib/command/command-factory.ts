@@ -4,11 +4,12 @@ import { Injectable, InjectFlags, Injector } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
 import { CommandDescriptor } from './command-descriptor';
 import { CommandConfigToken } from './command.module';
-import { Commands } from './commands';
+import { CommandManager } from './commands';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
 import { ExecutionContext } from './execution-context';
 import { Translator } from '../i18n';
 import { get } from '../common';
+import { CommandAdministration } from './with-commands.mixin';
 
 /**
  * this interceptor is there to set and restore the current execution context
@@ -101,7 +102,7 @@ export class CommandFactory {
    * @param commandConfig the command config
    * @param controller the controller
    */
-  public createCommand(commandConfig: CommandConfig, commands: Commands): CommandDescriptor {
+  public createCommand(commandConfig: CommandConfig, commands: CommandAdministration): CommandDescriptor {
     if (Tracer.ENABLED)
       Tracer.Trace('commands', TraceLevel.HIGH, 'create command {0}', commandConfig.command);
 

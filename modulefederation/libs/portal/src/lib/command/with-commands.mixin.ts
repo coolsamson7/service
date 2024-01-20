@@ -9,7 +9,7 @@ import { CommandDescriptor } from "./command-descriptor";
 import { CommandFactory } from "./command-factory";
 import { CommandInterceptor } from "./command-interceptor";
 import { Command } from "./command.decorator";
-import { Commands } from "./commands";
+import { CommandManager } from "./commands";
 import { ExecutionContext } from "./execution-context";
 import { CommandError } from "./command-error";
 import { ShortcutManager } from "../shortcuts";
@@ -24,9 +24,28 @@ interface CommandData extends CommandConfig {
 export interface WithCommandsConfig {
     inheritCommands: boolean
 }
+
+export interface CommandAdministration extends CommandManager {
+    currentExecutionContext?: ExecutionContext;
+
+    pendingExecutions(): boolean 
+
+    pushExecutionContext(context: ExecutionContext): void 
+
+    popExecutionContext(context: ExecutionContext): void
+}
  
-export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<Commands> &  T  {
-    return registerMixins(class CommandManager extends base implements Commands {
+export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager> &  T  {
+   /*@Component({
+        selector: "command-manager",
+        template: '',
+        providers: [  
+            { 
+            provide: AbstractFeature, 
+            useExisting: forwardRef(() => CommandManager) 
+        }]
+    })*/
+    class Manager extends base implements CommandAdministration {
         // instance data
 
         private commands: { [key: string]: CommandDescriptor } = {};
@@ -46,11 +65,11 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
         // private
 
-        private parentCommandManager() : CommandManager | undefined {
+        private parentCommandManager() : Manager | undefined {
             let parent = this.parent
             while ( parent ) {
-               if ( parent instanceof CommandManager)
-                  return parent as CommandManager
+               if ( parent instanceof Manager)
+                  return parent as Manager
 
                   parent = parent.parent
             }
@@ -112,10 +131,10 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             }
         }
 
-        setCommandEnabled(command: string, value: boolean): Commands {
+        setCommandEnabled(command: string, value: boolean): CommandManager {
             this.getCommand(command).enabled = value;
 
-            return this as Commands;
+            return this as CommandManager;
         }
 
         addCommandInterceptors(commandConfig: CommandConfig): CommandInterceptor[] {
@@ -143,7 +162,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
             // create by factory
 
-            const command = this.commandFactory.createCommand(commandConfig, this as Commands);
+            const command = this.commandFactory.createCommand(commandConfig, this as CommandAdministration);
 
             if (inheritedCommand) command.superCommand = inheritedCommand;
 
@@ -220,5 +239,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
              (<any>this)[config.method!] = (...args: any[]) => commandInstance.run(...args);
             }
           }
-    }, WithCommands)
+    }//, WithCommands)
+
+    return registerMixins(Manager, WithCommands)
   }

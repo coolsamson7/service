@@ -2,7 +2,7 @@ import { ViewChild, Component } from "@angular/core";
 import { AbstractFeature } from "../feature";
 import { registerMixins } from "../mixin/mixin";
 import { ViewComponent } from "./view.component";
-import { CommandConfig, Commands, ExecutionContext } from "../command";
+import { CommandConfig, CommandManager, ExecutionContext } from "../command";
 import { CommandInterceptor } from "../command/command-interceptor";
 
 type Constructor<T = any> =  new (...args: any[]) => T;
@@ -80,7 +80,7 @@ export interface WithView {
     showMessage(message: string): void
 }
 
-export function WithView<T extends Constructor<AbstractFeature & Commands>>(base: T) :Constructor<WithView> &  T  {
+export function WithView<T extends Constructor<AbstractFeature & CommandManager>>(base: T) :Constructor<WithView> &  T  {
     @Component({ 
         selector: 'with-view',
         template: ""    

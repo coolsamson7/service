@@ -1,4 +1,4 @@
-import { Component, Injector, ViewEncapsulation } from "@angular/core";
+import { Component, Injector, ViewEncapsulation, forwardRef } from "@angular/core";
 import {
   AbstractFeature,
   Command,
@@ -34,7 +34,11 @@ type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
     styleUrls: ['./translation-editor.component.scss'],
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent]
+    imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent],
+    providers: [{ 
+      provide: AbstractFeature, 
+      useExisting: forwardRef(() => TranslationEditorComponent) 
+    }]
 })
 @Feature({
   id: "translations",

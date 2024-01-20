@@ -1,26 +1,15 @@
 import { CommandConfig } from "./command-config";
 import { CommandDescriptor } from "./command-descriptor";
 import { CommandInterceptor } from "./command-interceptor";
-import { ExecutionContext } from "./execution-context";
 
-// TODO stupid name
-// why are so many methods listed
-export interface Commands {
-    currentExecutionContext?: ExecutionContext;
-
+export interface CommandManager {
     findCommand(command: string) : CommandDescriptor | undefined
 
     callSuper<T=any>(...args: any[]) : T
 
     getCommand(command: string): CommandDescriptor
 
-    setCommandEnabled(command: string, value: boolean): Commands
-
-    pendingExecutions(): boolean 
-
-    pushExecutionContext(context: ExecutionContext): void 
-
-    popExecutionContext(context: ExecutionContext): void 
+    setCommandEnabled(command: string, value: boolean): CommandManager
 
     addCommandInterceptors(commandConfig: CommandConfig) : CommandInterceptor[]
 }

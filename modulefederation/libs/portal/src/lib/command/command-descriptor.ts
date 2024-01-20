@@ -2,8 +2,9 @@
 import { TraceLevel, Tracer } from "../tracer";
 import { CommandConfig } from "./command-config";
 import { CommandInterceptor } from "./command-interceptor";
-import { Commands } from "./commands";
+import { CommandManager } from "./commands";
 import { ExecutionContext } from "./execution-context";
+import { CommandAdministration } from "./with-commands.mixin";
 
 /**
  * a <code>CommandListener</code> can be used in order to be informed about success or failure of a command execution.
@@ -41,7 +42,7 @@ export class CommandDescriptor {
     enabled: boolean;
     i18n?: string;
 
-    commands: Commands; // the declaring container
+    commands: CommandAdministration; // the declaring container
 
     superCommand?: CommandDescriptor;
     interceptors: CommandInterceptor[] = [];
@@ -49,7 +50,7 @@ export class CommandDescriptor {
 
     // constructor
 
-    constructor(commands: Commands, config: CommandConfig) {
+    constructor(commands: CommandAdministration, config: CommandConfig) {
       this.commands = commands
       this.name = config.command!;
       this.group = config.group;

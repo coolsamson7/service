@@ -1,5 +1,5 @@
 import { CommandDescriptor } from "./command-descriptor";
-import { Commands } from "./commands";
+import { CommandAdministration } from "./with-commands.mixin";
 
 export class ExecutionContext {
     // instance data
@@ -11,6 +11,6 @@ export class ExecutionContext {
   
     // constructor
   
-    constructor(public command: CommandDescriptor, public commands: Commands, public args: any[]) {}
+    constructor(public command: CommandDescriptor, public commands: CommandAdministration, public args: any[]) {}
   }
   
