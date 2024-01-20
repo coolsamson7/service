@@ -1,7 +1,7 @@
 import { State } from "./state"
 
 export interface Stateful<S=any> {
-    state?: State
+    state?: State<S>
 
     storeState() : void
 
@@ -9,11 +9,11 @@ export interface Stateful<S=any> {
 
     writeState(state: S) : void
 
-    mergeState(newStateData: any, previousStateData: any): void
+    mergeState(newState: S, previousState: S): void
 
     stateID() : any
 
-    createState(previousStateData?: any): State
+    createState(previous?: S): State<S>
 
     loadState() : void
 

@@ -13,7 +13,7 @@ export function WithState<S>() {
     return registerMixins(class StateManager extends base implements Stateful<S> {
         // instance data
 
-        state?: State
+        state?: State<S>
 
         // constructor
       
@@ -69,14 +69,14 @@ export function WithState<S>() {
             }
           }
     
-        private addChildState(state: State): void {
+        private addChildState(state: State<any>): void {
             if (this.state?.children) 
                 this.state.children.push(state);
             else 
                 this.state!.children = [state];
         }
     
-        private findState4(manager: StateManager): State | undefined {
+        private findState4(manager: StateManager): State<S> | undefined {
             const id = manager.stateID();
 
             return (this.state?.children || []).find((state) => equals(state.owner, id));
@@ -93,19 +93,19 @@ export function WithState<S>() {
         }
 
         storeState() : void {
-            this.writeState(this.state?.data)
+            this.writeState(this.state!.data)
 
             this.rootStateManager().saveState()
         }
 
-        createState(previousStateData?: any): State {
+        createState(previousState?: S): State<S> {
             this.state = {
                 owner: this.stateID(),
-                data: previousStateData ? this.mergeState({}, previousStateData) : {},
+                data: previousState ? this.mergeState({} as S, previousState) : {} as S,
                 children: []
             };
 
-            return this.state
+            return this.state!
         }
 
         applyState(state: S) : void {
@@ -116,8 +116,8 @@ export function WithState<S>() {
             // noope
         }
 
-        mergeState(newStateData: any, previousStateData: any):any {
-            return newStateData;
+        mergeState(newState: S, previousState: S):S {
+            return newState;
         }
 
         stateID(): any {
