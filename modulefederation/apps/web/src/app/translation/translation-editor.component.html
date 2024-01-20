@@ -5,15 +5,15 @@
     <mat-toolbar-row>
       <!-- save -->
 
-      <button  [matTooltip]="getCommand('save').tooltip!" (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
+      <!--button  [matTooltip]="getCommand('save').tooltip!" (click)="save()" [disabled]="!hasChanges()" mat-icon-button>
         <mat-icon>save</mat-icon>
-      </button>
+      </button-->
+
+      <command-button [command]="getCommand('save')"></command-button>
 
       <!-- revert -->
 
-      <button  [matTooltip]="getCommand('revert').tooltip!" (click)="revert()" [disabled]="!hasChanges()" mat-icon-button>
-        <mat-icon>undo</mat-icon>
-      </button>
+      <command-button [command]="getCommand('revert')"></command-button>
 
       <!-- add -->
 

@@ -128,10 +128,9 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
            const unsubscribe = this.injector.get(ShortcutManager).register({
                 shortcut: command.shortcut!,
                 onShortcut: () => {
-                  return command.run();
+                  return command.runWithContext(command.createContext([], {fromShortcut: true}));
                 }
               })
-
         
             // delete on destroy
         

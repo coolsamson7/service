@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { OverlayComponent } from './overlay';
+import { OverlayComponent } from './overlay.component';
 import { CommonModule } from '@angular/common';
 
 

@@ -3,6 +3,8 @@ import { CommandDescriptor } from "./command-descriptor";
 import { CommandInterceptor } from "./command-interceptor";
 import { ExecutionContext } from "./execution-context";
 
+// TODO stupid name
+// why are so many methods listed
 export interface Commands {
     currentExecutionContext?: ExecutionContext;
 

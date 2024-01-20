@@ -23,17 +23,18 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { CommandButtonComponent } from "@modulefederation/portal"
 
 type MessagesByType = { [type : string] : Message[] } // label -> Messge
 type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
 
 @Component({
-  selector: 'translations',
-  templateUrl: './translation-editor.component.html',
-  styleUrls: ['./translation-editor.component.scss'],
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule]
+    selector: 'translations',
+    templateUrl: './translation-editor.component.html',
+    styleUrls: ['./translation-editor.component.scss'],
+    standalone: true,
+    encapsulation: ViewEncapsulation.None,
+    imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent]
 })
 @Feature({
   id: "translations",
@@ -66,6 +67,11 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
 
   constructor(injector: Injector, private snackBar : MatSnackBar, private messageAdministrationService : MessageAdministrationService) {
     super(injector)
+  }
+
+  updateCommands() {
+    this.setCommandEnabled("save", this.hasChanges())
+    this.setCommandEnabled("revert", this.hasChanges())
   }
 
   // callbacks
@@ -115,11 +121,14 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
       deletedMessages: []
     }
 
+    this.updateCommands()
+
     this.select(this.selectedNamespace!)
   }
 
   @Command({
     i18n: "portal.commands:save",
+    icon: "save"
   })
   save(selectNode? : NamespaceNode) {
     if (!this.hasChanges())
@@ -155,6 +164,8 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
         changedMessages: [],
         deletedMessages: []
       }
+
+      this.updateCommands()
 
       this.select(selectNode ? selectNode : this.selectedNamespace!)
     })
@@ -439,6 +450,8 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
       if (!this.namespaceChanges.newMessages.includes(message))
         this.namespaceChanges.newMessages.push(message)
     }
+
+    this.updateCommands()
   }
 
   // private
@@ -511,5 +524,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
     this.messageAdministrationService.readLocales().subscribe(locales => this.locales = locales)
 
     this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
+
+    this.updateCommands()
   }
 }
