@@ -1,0 +1,11 @@
+:host {
+    display: contents;
+  }
+  
+.button {
+    .mat-mdc-button > .mat-icon {
+    height: unset;
+    margin-right: unset;
+    font-size: 24px;
+  }
+}
