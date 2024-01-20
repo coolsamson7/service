@@ -12,6 +12,7 @@ import { TraceLevel, Tracer } from "./tracer";
 import { PathResolveService } from "./page-not-found/page-not-found-resolver";
 import { PageNotFoundComponent } from "./page-not-found/page-not-found-components";
 import { ReplaySubject } from "rxjs";
+import { LocaleManager } from "./locale";
 
 /**
  * the runtime data of feature
@@ -55,6 +56,7 @@ export class PortalManager {
         private featureRegistry : FeatureRegistry,
         private moduleRegistry : ModuleRegistry,
         private router : Router,
+        private localeManager: LocaleManager,
         private injector : Injector
     ) {
     }
@@ -341,6 +343,8 @@ export class PortalManager {
         // fill feature registry
 
         this.fillFeatureRegistry(deployment, this.deployment)
+
+        this.featureRegistry.onLocaleChange(this.localeManager.getLocale())
 
         // inform guys interested in me ( like registerLazyRoutes )
 

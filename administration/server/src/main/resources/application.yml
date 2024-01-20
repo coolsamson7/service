@@ -19,7 +19,7 @@ service:
   package: com.serious
 web:
   cors:
-    allowed-origins: "http://localhost:4200"
+    allowed-origins: "http://localhost:*"
     allowed-methods: GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD
     allowed-headers: "Requestor-Type"
     exposed-headers: "X-Get-Header"

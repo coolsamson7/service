@@ -48,10 +48,10 @@ class IndexController {
 
 @Configuration
 @EnableWebSecurity
-open class JWTSecurityConfig {
+class JWTSecurityConfig {
     @Bean
     @Throws(Exception::class)
-    open fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .csrf { csrf -> csrf.disable() }
             //.cors(Customizer.withDefaults())
@@ -78,13 +78,13 @@ open class JWTSecurityConfig {
 @EnableTransactionManagement
 @Import(ServiceConfiguration::class, PortalConfiguration::class)
 @EnableScheduling
-open class RootConfig
+class RootConfig
 
 @Configuration
 @EnableWebMvc
-open class WebConfig {
+class WebConfig {
     @Bean
-    open fun corsConfigurer(): WebMvcConfigurer {
+    fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
             override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
                 registry.addResourceHandler("/**")
@@ -103,7 +103,7 @@ open class WebConfig {
             }
 
             override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:4200", "http://localhost:4300")
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200", "http://localhost:4203",  "http://localhost:4300")
             }
         }
     }
@@ -118,7 +118,7 @@ open class WebConfig {
 @EnableAsync
 @Slf4j
 @Component
-open class AdministrationServerApplication {
+class AdministrationServerApplication {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
