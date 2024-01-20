@@ -28,7 +28,7 @@
   <div class="content">
     <!-- tree-->
 
-    <namespace-tree (onSelectionChange)="select($event)" [namespaces]="namespaces" class="tree"></namespace-tree>
+    <namespace-tree (onSelectionChange)="select($event).subscribe()" [namespaces]="namespaces" class="tree"></namespace-tree>
 
     <!--list -->
 

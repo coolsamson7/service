@@ -1,4 +1,5 @@
-import { Component, Injector, ViewEncapsulation, forwardRef } from "@angular/core";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Component, Injector, ViewChild, ViewEncapsulation, forwardRef } from "@angular/core";
 import {
   AbstractFeature,
   Command,
@@ -8,7 +9,8 @@ import {
   MessageAdministrationService,
   MessageChanges, StringBuilder,
   WithCommands,
-  WithDialogs
+  WithDialogs,
+  WithState
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
 import { CommonModule } from "@angular/common";
@@ -24,9 +26,23 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommandButtonComponent } from "@modulefederation/portal"
+import { Observable, of, tap } from "rxjs";
 
 type MessagesByType = { [type : string] : Message[] } // label -> Messge
 type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
+
+export function provideAsFeature(clazz: Function) {
+  return  { 
+    provide: AbstractFeature, 
+    useExisting: forwardRef(() => clazz) 
+  }
+}
+
+interface TranslationState {
+  treeExpansion: string[]
+  selectedNamespace?: string
+  selectedMessage?: string
+}
 
 @Component({
     selector: 'translations',
@@ -51,8 +67,10 @@ type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
   tags: ["navigation"],
   permissions: []
 })
-export class TranslationEditorComponent extends WithDialogs(WithCommands(AbstractFeature)) {
+export class TranslationEditorComponent extends WithState<TranslationState>()(WithDialogs(WithCommands(AbstractFeature))) {
   // instance data
+
+  @ViewChild(NamespaceTreeComponent) tree! : NamespaceTreeComponent
 
   types = ["label", "tooltip", "shortcut"] // dynamic?
   namespaces : NamespaceNode[] = []
@@ -117,6 +135,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
 
   @Command({
     i18n: "portal.commands:revert",
+    icon: "revert"
   })
   revert() {
     this.namespaceChanges = {
@@ -127,7 +146,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
 
     this.updateCommands()
 
-    this.select(this.selectedNamespace!)
+    this.select(this.selectedNamespace!).subscribe()
   }
 
   @Command({
@@ -171,7 +190,7 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
 
       this.updateCommands()
 
-      this.select(selectNode ? selectNode : this.selectedNamespace!)
+      this.select(selectNode ? selectNode : this.selectedNamespace!).subscribe()
     })
   }
 
@@ -346,19 +365,20 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
       })
   }
 
-  select(namespaceNode : NamespaceNode) {
+  select(namespaceNode : NamespaceNode) : Observable<any> {
     if (this.hasChanges()) {
       this.confirmationDialog()
         .okCancel()
         .title("Messages")
         .message("Save changes first")
-        .show().subscribe(result => {
+        .show()
+        .subscribe(result => {
         if (result) {
           this.save(namespaceNode);
         }
       })
 
-      return
+      return of()
     }
 
     // start from scratch
@@ -373,19 +393,28 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
 
     if (namespaceNode) {
       if (!namespaceNode.messages) {
-        this.messageAdministrationService.readAllMessages(namespaceNode.path).subscribe(
+        return this.messageAdministrationService.readAllMessages(namespaceNode.path)
+        .pipe(
+          tap( (messages: Message[] | undefined) => {
+            namespaceNode.messages = messages
+            this.messages = this.computeMessages(messages!)
+          })
+          )/*.subscribe(
           messages => {
             namespaceNode.messages = messages
             this.messages = this.computeMessages(messages)
           }
-        )
+        )*/
       }
       else {
         this.messages = this.computeMessages(namespaceNode.messages)
         if (this.selectedName)
           this.selectMessages(this.selectedName)
+
+          return of()
       }
     }
+    else return of()
   }
 
 
@@ -519,15 +548,59 @@ export class TranslationEditorComponent extends WithDialogs(WithCommands(Abstrac
     }
   }
 
-  // implement OnInit
+  // override Stateful
 
+  override applyState(state: TranslationState) : void {
+    //this.tree.applyState(state.treeExpansion)
+  }
+
+  override writeState(state: TranslationState) : void {
+    state.treeExpansion = this.tree.getState()
+    state.selectedNamespace = this.selectedNamespace?.path
+    state.selectedMessage = this.selectedName
+  }
+
+  // implement OnInit
 
   override ngOnInit() : void {
     super.ngOnInit()
 
+    const findNode = (path?: string) : NamespaceNode | undefined => {
+      if ( path == undefined)
+        return undefined
+
+      const legs = path.split(".")
+
+      const find = (nodes: NamespaceNode[], index: number) :  NamespaceNode | undefined => {
+        const leg = legs[index]
+
+        const node = nodes.find(n => n.name === leg)
+        if (node) {
+          if ( index < legs.length - 1)
+             return find(node.children, index + 1)
+          else
+            return node
+        }
+        else return undefined
+      }
+
+      return find(this.namespaces, 0)
+    }
+
     this.messageAdministrationService.readLocales().subscribe(locales => this.locales = locales)
 
-    this.messageAdministrationService.readNamespaces().subscribe(namespaces => this.setupNamespaces(namespaces))
+    this.messageAdministrationService.readNamespaces().subscribe(namespaces => {
+      this.setupNamespaces(namespaces)
+      if ( this.state?.data.treeExpansion)
+        setTimeout(() => this.tree.applyState(this.state?.data.treeExpansion), 0) // oh boy...
+
+        const node = findNode(this.state?.data.selectedNamespace)
+        if (node)
+          this.select(node!).subscribe(_ => {
+        if ( this.state?.data.selectedMessage)
+            this.selectMessages( this.state?.data.selectedMessage!)
+        }) // toDO
+    })
 
     this.updateCommands()
   }

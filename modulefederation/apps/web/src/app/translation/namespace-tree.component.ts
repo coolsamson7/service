@@ -22,6 +22,20 @@ export interface NamespaceNode {
   imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule],
 })
 export class NamespaceTreeComponent implements OnInit, OnChanges {
+
+  getState() : string[] {
+    return this.treeControl.expansionModel.selected.map(node => node.path)
+  }
+
+  applyState(selected: string[]) {
+    const nodes = this.dataSource.data //this.treeControl.dataNodes;
+        
+    selected.forEach((path: string) => {
+        const node = nodes.find(n => n.path === path);
+        if (node)
+            this.treeControl.expand(node);
+        })
+  }
     // input
 
     @Input('namespaces') namespaces : NamespaceNode[] = []
@@ -39,6 +53,10 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     constructor() {
     }
 
+    test() {
+
+    }
+
     // private
 
      refreshData() {
@@ -50,6 +68,9 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     // public
 
     select(node: NamespaceNode) {
+//
+console.log(this.treeControl.expansionModel.selected)
+        //
         this.selection = node
 
         this.onSelectionChange.emit(node)

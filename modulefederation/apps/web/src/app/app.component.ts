@@ -103,6 +103,12 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
 
     // private
 
+    override stateID(): any {
+      return {
+          component: "app"
+      };
+  }
+
    override loadState() {
       this.state = this.stateStorage.load("portal" /* TODO */, this.sessionManager.currentSession());
       if ( this.state) 
