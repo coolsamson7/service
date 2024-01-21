@@ -2,7 +2,7 @@ import { ViewChild, Component } from "@angular/core";
 import { AbstractFeature } from "../feature";
 import { registerMixins } from "../mixin/mixin";
 import { ViewComponent } from "./view.component";
-import { CommandConfig, CommandManager, ExecutionContext } from "../command";
+import { CommandConfig, CommandManager, ExecutionContext, LockCommandGroupInterceptor, LockCommandInterceptor } from "../command";
 import { CommandInterceptor } from "../command/command-interceptor";
 
 type Constructor<T = any> =  new (...args: any[]) => T;
@@ -100,9 +100,16 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
        
        override addCommandInterceptors(commandConfig: CommandConfig) : CommandInterceptor[] {
         switch ( commandConfig.lock) {
-            case "view":
-                return [new BusyCursorInterceptor(this), new LockViewInterceptor(this)]
-            default:
+          case "view":
+            return [new BusyCursorInterceptor(this), new LockViewInterceptor(this)]
+
+          case "command":
+              return [new BusyCursorInterceptor(this), new LockCommandInterceptor()]
+
+          case "group":
+              return [new BusyCursorInterceptor(this), new LockCommandGroupInterceptor()]
+              
+           default:
                  return [new BusyCursorInterceptor(this)]
         }
        }
@@ -129,71 +136,3 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
 
     return W
   }
-
-  /*export class LockCommandInterceptor extends AbstractCommandInterceptor {
-  // implement CommandInterceptor
-
-  onCall(context: ExecutionContext) {
-    context.command.enabled = false;
-  }
-
-  onError(context: ExecutionContext): void {
-    context.command.enabled = true;
-  }
-
-  onResult(context: ExecutionContext): void {
-    context.command.enabled = true;
-  }
-}
-
-/**
- * an interceptor that will disable a group of commands as long as one command of the group is executing.
- *
-export class LockGroupInterceptor extends AbstractCommandInterceptor {
-  // instance data
-
-  private commands: Command[];
-  private previousState: boolean[];
-
-  // constructor
-
-  constructor() {
-    super();
-  }
-
-  // private
-
-  disableCommands(context: ExecutionContext): void {
-    const group = context.command.group;
-    if (group) {
-      this.commands = context.controller.getCommands({ group: group, inherited: true });
-      this.previousState = this.commands.map((command) => {
-        const old = command.enabled;
-        command.enabled = false;
-
-        return old;
-      });
-    }
-  }
-
-  restoreCommands(): void {
-    let i = 0;
-    for (const command of this.commands || []) {
-      command.enabled = this.previousState[i++];
-    }
-  }
-
-  // implement CommandInterceptor
-
-  onCall(context: ExecutionContext) {
-    this.disableCommands(context);
-  }
-
-  onError(context: ExecutionContext): void {
-    this.restoreCommands();
-  }
-
-  onResult(context: ExecutionContext): void {
-    this.restoreCommands();
-  }
-}*/ 

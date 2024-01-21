@@ -5,7 +5,7 @@ import { ExecutionContext } from "./execution-context";
 /**
  * an interceptor that will disable a group of commands as long as one command of the group is executing.
  */
-export class LockGroupInterceptor implements CommandInterceptor {
+export class LockCommandGroupInterceptor implements CommandInterceptor {
   // instance data
 
   private commands: CommandDescriptor[] = []

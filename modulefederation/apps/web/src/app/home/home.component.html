@@ -1,8 +1,17 @@
 <view>
-  <button mat-button (click)="toggleBusy()">Toggle Busy</button>
-  <button mat-button (click)="longRunning()">Long Running</button>
-  <button mat-button (click)="lockView()">Lock</button>
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <command-button command="g11"></command-button>
+      <command-button command="g12"></command-button>
 
+      <mat-divider [vertical]="true"></mat-divider>
+
+      <command-button command="toggleBusy"></command-button>
+      <command-button command="longRunning"></command-button>
+      <command-button command="lockView"></command-button>
+
+    </mat-toolbar-row>
+  </mat-toolbar>
 
   <button mat-button (click)="throwString()">String error</button>
   <button mat-button (click)="throwError()">Error</button>
