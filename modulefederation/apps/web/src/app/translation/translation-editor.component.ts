@@ -133,6 +133,21 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
       })
   }
 
+  canDeactivate() : Observable<boolean> {
+    if (!this.hasChanges())
+      return of(true)
+
+    return this.confirmationDialog()
+      .title("Unsaved Changes")
+      .message("Still close?")
+      .ok()
+      .button({
+        label: "Cancel",
+        result: false
+       })
+      .show()
+  }
+
   @Command({
     i18n: "portal.commands:revert",
     icon: "undo"

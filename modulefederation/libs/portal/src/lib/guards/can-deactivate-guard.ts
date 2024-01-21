@@ -20,7 +20,7 @@ export class CanDeactivateGuard implements CanDeactivate<any> {
         let feature = currentRoute.data['feature']
 
         if (component && component['canDeactivate'])
-            return component.canDeactivate(component, currentRoute, currentState, nextState)
+            return component.canDeactivate()
         else
             return of(true)
     }
