@@ -45,14 +45,14 @@ export class BusyCursorInterceptor implements CommandInterceptor {
     // private
 
     private showOverlay(show : boolean = true) : void {
-        this.withView.view.showOverlay(show)
+        this.withView.showOverlay(show)
     }
   
     // implement CommandInterceptor
   
     onCall(context: ExecutionContext) {
       context.command.enabled = false;
-      this.withView.view.showMessage('Holla'); // reset previous message if any
+      this.withView.showMessage('Holla'); // reset previous message if any
   
       this.showOverlay(true);
     }
@@ -90,27 +90,51 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
 
         @ViewChild(ViewComponent, {static: false}) view! : ViewComponent
 
+        // instance data
+
+        private lockViewInterceptor?: LockViewInterceptor
+        private busyCursorInterceptor?: BusyCursorInterceptor
+
         // constructor
 
        //constructor(...args: any[]) {
        //  super(...args);
        //}
 
+       // private
+
+       private getLockViewInterceptor() {
+        if (!this.lockViewInterceptor)
+          this.lockViewInterceptor = new LockViewInterceptor(this)
+
+        return this.lockViewInterceptor
+       }
+
+       private getBusyCursorInterceptor() {
+        if (!this.busyCursorInterceptor)
+          this.busyCursorInterceptor = new BusyCursorInterceptor(this)
+
+        return this.busyCursorInterceptor
+       }
+
        // override 
        
-       override addCommandInterceptors(commandConfig: CommandConfig) : CommandInterceptor[] {
+       override addCommandInterceptors(commandConfig: CommandConfig, interceptors: CommandInterceptor[]) : void  {
         switch ( commandConfig.lock) {
           case "view":
-            return [new BusyCursorInterceptor(this), new LockViewInterceptor(this)]
+            interceptors.push(this.getBusyCursorInterceptor(), this.getLockViewInterceptor())
+            break;
 
           case "command":
-              return [new BusyCursorInterceptor(this), new LockCommandInterceptor()]
+            interceptors.push(this.getBusyCursorInterceptor(), LockCommandInterceptor.instance)
+            break;
 
           case "group":
-              return [new BusyCursorInterceptor(this), new LockCommandGroupInterceptor()]
-              
+            interceptors.push(this.getBusyCursorInterceptor(), new LockCommandGroupInterceptor())
+            break;
+
            default:
-                 return [new BusyCursorInterceptor(this)]
+            interceptors.push(this.getBusyCursorInterceptor())
         }
        }
 

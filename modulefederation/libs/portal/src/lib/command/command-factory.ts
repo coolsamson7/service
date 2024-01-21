@@ -151,7 +151,7 @@ export class CommandFactory {
 
     // add command interceptors from manager
 
-    command.interceptors.push(...commands.addCommandInterceptors(commandConfig));
+    commands.addCommandInterceptors(commandConfig, this.interceptors);
 
     // add method call
 

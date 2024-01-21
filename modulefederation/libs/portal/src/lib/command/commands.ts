@@ -11,5 +11,5 @@ export interface CommandManager {
 
     setCommandEnabled(command: string, value: boolean): CommandManager
 
-    addCommandInterceptors(commandConfig: CommandConfig) : CommandInterceptor[]
+    addCommandInterceptors(commandConfig: CommandConfig, interceptors:  CommandInterceptor[]) : void
 }
