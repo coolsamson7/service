@@ -7,13 +7,18 @@ import { hasMixin, registerMixins } from "../mixin/mixin";
 import { State } from "./state";
 import { Stateful } from "./stateful";
 
+export interface StateAdministration<S> extends  Stateful<S> {
+    foo() : void;
+}
 
 export function WithState<S>() {
     return function <T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Stateful> &  T  {
-    return registerMixins(class StateManager extends base implements Stateful<S> {
+    return registerMixins(class StateManager extends base implements StateAdministration<S> {
         // instance data
 
         state?: State<S>
+
+        foo() : void {}
 
         // constructor
       

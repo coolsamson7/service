@@ -1,11 +1,19 @@
-:host {
-    display: contents;
-  }
-  
-.button {
-    .mat-mdc-button > .mat-icon {
+
+
+  .mat-mdc-button > .mat-icon {
+    width: unset;
     height: unset;
     margin-right: unset;
-    font-size: 24px;
-  }
+    //font-size: 24px;
+}
+
+.button {
+    padding: 0;
+    display: grid !important;
+    align-items: center !important;
+
+    .mdc-button__label {
+        margin-top: 10px;
+    }
+
 }

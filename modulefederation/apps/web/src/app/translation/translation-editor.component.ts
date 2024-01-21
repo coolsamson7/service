@@ -135,7 +135,7 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @Command({
     i18n: "portal.commands:revert",
-    icon: "revert"
+    icon: "undo"
   })
   revert() {
     this.namespaceChanges = {

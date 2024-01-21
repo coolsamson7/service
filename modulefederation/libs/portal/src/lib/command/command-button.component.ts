@@ -23,7 +23,6 @@ export class CommandButtonComponent implements OnInit, CommandListener {
     
     @ViewChild("button") button!: MatIconButton;
 
-
     // input
 
     @Input() command!:  string
@@ -35,9 +34,6 @@ export class CommandButtonComponent implements OnInit, CommandListener {
 
     constructor(private feature: AbstractFeature) {
     }
-
-    // private
-
 
     // callbacks
 
@@ -67,7 +63,7 @@ export class CommandButtonComponent implements OnInit, CommandListener {
         if ( hasMixin(this, WithCommands))
             this.descriptor  = (<CommandManager><unknown>this.feature).getCommand(this.command)
         else 
-        throw new Error("WithCommands is missing")
+            throw new Error("WithCommands is missing")
 
 
         this.descriptor.addListener(this)

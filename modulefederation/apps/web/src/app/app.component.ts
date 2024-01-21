@@ -6,6 +6,7 @@ import {
   LocaleManager,
   SessionManager,
   ShortcutManager,
+  StateAdministration,
   StateStorage,
   WithState
 } from "@modulefederation/portal";
@@ -86,7 +87,7 @@ interface ApplicationState {
       useExisting: forwardRef(() => AppComponent) 
     }]
 })
-export class AppComponent extends WithState<ApplicationState>()(AbstractFeature) {
+export class AppComponent extends WithState<ApplicationState>()(AbstractFeature){
     // instance data
 
     locales: string[] = []

@@ -4,7 +4,6 @@ import { Injectable, InjectFlags, Injector } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
 import { CommandDescriptor } from './command-descriptor';
 import { CommandConfigToken } from './command.module';
-import { CommandManager } from './commands';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
 import { ExecutionContext } from './execution-context';
 import { Translator } from '../i18n';

@@ -25,7 +25,24 @@ export interface WithCommandsConfig {
     inheritCommands: boolean
 }
 
+/**
+ * a <code>CommandFilter</code> controls, what commands are returned by the method getCommands
+ */
+export interface CommandFilter {
+    /**
+     * if <code>true</code> inherited commands are returned as well
+     */
+    inherited?: boolean;
+    /**
+     * an optional group of commands
+     */
+    group?: string;
+  }
+  
+
 export interface CommandAdministration extends CommandManager {
+    getCommands(filter: CommandFilter): CommandDescriptor[]
+
     currentExecutionContext?: ExecutionContext;
 
     pendingExecutions(): boolean 
@@ -76,6 +93,41 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
             return undefined
         }
+
+        // implement CommandAdministration
+
+         /**
+         * return an array commands, given a filter object
+         * @param filter a <code>CommandFilter</code>
+         * @see CommandFilter
+         */
+
+        getCommands(filter: CommandFilter = {}): CommandDescriptor[] {
+            const commands: { [key: string]: CommandDescriptor } = {};
+
+            const collect = (controller: Manager) => {
+            // recursion
+
+            if (filter.inherited && controller.parentCommandManager())
+                 collect(controller.parentCommandManager()!);
+
+            // add commands
+
+            for (const commandName in controller.commands) {
+                const command = controller.commands[commandName];
+
+                if (command.group == filter.group) commands[commandName] = command; // will overwrite in cases of overridden commands
+            }
+        };
+
+    // collect everything
+
+    collect(this);
+
+    // done
+
+    return Object.values(commands);
+  }
 
         // implement Commands
 
