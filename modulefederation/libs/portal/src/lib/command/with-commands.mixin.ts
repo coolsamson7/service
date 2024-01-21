@@ -189,8 +189,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             return this as CommandManager;
         }
 
-        addCommandInterceptors(commandConfig: CommandConfig): CommandInterceptor[] {
-            return [];
+        addCommandInterceptors(commandConfig: CommandConfig, interceptors: CommandInterceptor[]) : void {
         }
 
         // private

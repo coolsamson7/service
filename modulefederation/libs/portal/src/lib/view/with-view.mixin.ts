@@ -41,12 +41,6 @@ export class BusyCursorInterceptor implements CommandInterceptor {
   
     constructor(private withView:  WithView) {
     }
-
-    // private
-
-    private showOverlay(show : boolean = true) : void {
-        this.withView.showOverlay(show)
-    }
   
     // implement CommandInterceptor
   
@@ -54,19 +48,19 @@ export class BusyCursorInterceptor implements CommandInterceptor {
       context.command.enabled = false;
       this.withView.showMessage('Holla'); // reset previous message if any
   
-      this.showOverlay(true);
+      this.withView.showOverlay(true);
     }
   
     onError(context: ExecutionContext): void {
       context.command.enabled = true;
   
-      this.showOverlay(false);
+      this.withView.showOverlay(false);
     }
   
     onResult(context: ExecutionContext): void {
       context.command.enabled = true;
   
-      this.showOverlay(false);
+      this.withView.showOverlay(false);
     }
   }
 
@@ -88,7 +82,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
     class W extends base implements WithView {
         // instance data
 
-        @ViewChild(ViewComponent, {static: false}) view! : ViewComponent
+        @ViewChild(ViewComponent) view! : ViewComponent
 
         // instance data
 
@@ -120,6 +114,8 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
        // override 
        
        override addCommandInterceptors(commandConfig: CommandConfig, interceptors: CommandInterceptor[]) : void  {
+        super.addCommandInterceptors(commandConfig, interceptors)
+        
         switch ( commandConfig.lock) {
           case "view":
             interceptors.push(this.getBusyCursorInterceptor(), this.getLockViewInterceptor())
