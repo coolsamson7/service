@@ -28,7 +28,12 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="content">
+        <!-- navigation loading indicator  -->
+
+        <mat-progress-bar *ngIf="loading" color="indigo" mode="indeterminate"></mat-progress-bar>
+        
         <!-- main body -->
+
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 </mat-sidenav-container>

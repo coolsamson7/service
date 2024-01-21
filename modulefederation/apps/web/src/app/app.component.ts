@@ -15,7 +15,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
-import { Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
@@ -90,6 +90,7 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
     // instance data
 
     locales: string[] = []
+    loading = false
 
     // constructor
 
@@ -99,6 +100,25 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
       this.locales = localeManager.supportedLocales
 
       this.onInit(() => this.loadState())
+
+      this.router.events.subscribe(event => {
+        switch (true) {
+          case event instanceof NavigationStart: {
+            this.loading = true;
+            break;
+          }
+  
+          case event instanceof NavigationEnd:
+          case event instanceof NavigationCancel:
+          case event instanceof NavigationError: {
+            this.loading = false;
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
     }
 
     // private

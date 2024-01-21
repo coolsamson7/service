@@ -48,6 +48,8 @@ import { authConfig } from './auth.config';
 import { TranslationModule } from "./translation/translation.module";
 import { GlobalErrorHandler } from './error/global-error-handler';
 import { UserComponent } from "./header/user/user.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -93,6 +95,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         PortalComponentModule,
         MaterialModule,
         ErrorModule,
+        MatProgressBarModule,
+        MatProgressSpinnerModule,
 
         TracerModule.forRoot({
             enabled: true,
