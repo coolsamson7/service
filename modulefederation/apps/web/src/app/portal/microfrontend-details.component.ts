@@ -74,7 +74,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     allVisibilities : string[] = ['public', 'private'];
 
     formGroup : FormGroup
-    labelKey = ""
     labelTranslation = ""
 
     dirty : any = {}
@@ -101,6 +100,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             }
         )
 
+        this.formGroup.get('labelKey')?.valueChanges.subscribe(val => this.changedLabelKey(val));
         this.formGroup.get('id')?.disable();
     }
 
@@ -109,7 +109,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.labelKeyIsFocused = focused
 
         if ( focused )
-            this.tree?.applyFilter(this.labelKey)
+            this.tree?.applyFilter(this.formGroup.get('labelKey')?.value)
     }
 
     focusLabelTranslation(focused: boolean) {
@@ -222,15 +222,15 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.selectedFeature = feature
-
-        this.labelKey =  feature.labelKey || ""
-        this.labelTranslation = ""
+        this.labelTranslation = ""// todo this.translator.tr
         this.labelKeyIsFocused = false
+
+        this.changedLabelKey(feature.labelKey || "")
 
         this.formGroup.setValue({
             id: feature.id,
             label: feature.label,
-            labelKey:  this.labelKey,
+            labelKey:  feature.labelKey || "",
             labelTranslation:  this.labelTranslation,
             description: feature.description,
             visibility: feature.visibility,
@@ -240,15 +240,16 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             //enabled: feature.enabled
         })
 
-        this.tree?.filterTree( this.labelKey)
+        this.tree?.filterTree( feature.labelKey || "")
     }
 
-    changedLabelKey() {
-        this.tree?.applyFilter(this.labelKey)
+    changedLabelKey(key: string) {
+        this.tree?.applyFilter(key)
 
-        if (this.labelKey.indexOf(":") > 0)
-            this.translator.translate$(this.labelKey).subscribe(translation => {
+        if (key.indexOf(":") > 0 && key.indexOf(":") < key.length - 1)
+            this.translator.translate$(key).subscribe(translation => {
                 this.labelTranslation = translation
+                this.formGroup.get("labelTranslation")?.setValue(translation)
             })
     }
 

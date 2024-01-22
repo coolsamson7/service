@@ -89,13 +89,13 @@
 
                                 <!--- the translation -->
 
-                                <input [ngStyle]="{'display':labelKeyIsFocused ? 'none' : 'block'}" matInput id="labelTranslation" name="labelTranslation" type="text" [ngModel]="labelTranslation" placeholder="Label"  
+                                <input [ngStyle]="{'display':labelKeyIsFocused ? 'none' : 'block'}" matInput id="labelTranslation" name="labelTranslation" type="text" placeholder="Label"  
                                     (focus)="focusLabelTranslation(true)"  formControlName="labelTranslation" 
                                 />
 
                                 <!-- the key -->
 
-                                <input #input [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" matInput id="labelKey" name="labelKey" type="text" [(ngModel)]="labelKey" (ngModelChange)="changedLabelKey()" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
+                                <input #input [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" matInput id="labelKey" name="labelKey" type="text" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
                                 formControlName="labelKey" 
                                 autofocus   
                                 autocomplete="off"
@@ -109,14 +109,6 @@
 
                                 <i18n-tree [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" [namespaces]="namespaces" class="tree" #tree>
                                 </i18n-tree>
-                            
-                                <!--ng-template
-                                    cdkConnectedOverlay
-                                    [cdkConnectedOverlayOrigin]="trigger"
-                                    [cdkConnectedOverlayOpen]="isFocused">
-                                    <i18n-tree [namespaces]="namespaces" class="tree" #tree>
-                                    </i18n-tree>
-                                </ng-template-->
                             </mat-form-field>
 
                             <!-- description -->
