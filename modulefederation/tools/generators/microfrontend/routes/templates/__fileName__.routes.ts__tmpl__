@@ -13,7 +13,10 @@ export const localRoutes: Routes = [
       redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].id %>',
       pathMatch: 'full'
     },
-     <% for (let feature of features ) { -%>
+     <% for (let feature of features ) if (feature.isPageNotFound !== true) { -%>
           <%- include(process.cwd() + '/tools/generators/microfrontend/routes/includes/route.tmpl', { feature: feature }) -%>
+     <% } %>
+     <% if (pageNotFoundFeature) { -%>
+     <%- include(process.cwd() + '/tools/generators/microfrontend/routes/includes/wildcardRoute.tmpl', { feature: pageNotFoundFeature }) -%>
      <% } %>
 ]

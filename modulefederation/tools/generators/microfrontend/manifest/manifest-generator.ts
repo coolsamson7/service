@@ -297,12 +297,16 @@ export class ManifestGenerator {
 
             // create feature
 
+            if ( decorator.isPageNotFound )
+            console.log("KHKJHKJHKHJKHJKHJ")
+
             feature = {
                 fqn: decorator.id, // new
                 id: decorator.id,
                 label: decorator.label || (decorator.labelKey ? "" : decorator.id),
                 labelKey: decorator.labelKey || "",
                 i18n: decorator.i18n || [],
+                isPageNotFound: decorator.isPageNotFound,
                 icon: decorator.icon || "",
                 folder: decorator.folder || "",
                 router: decorator.router || null,

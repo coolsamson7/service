@@ -60,6 +60,12 @@ export interface FeatureConfig {
      * if true, the "" redirect will point to this feature
      */
     isDefault? : boolean
+
+     /**
+     * if true, the "**" redirect will point to this feature
+     */
+     isPageNotFound? : boolean
+
     /**
      * optional label. if not set, populated with the id
      */

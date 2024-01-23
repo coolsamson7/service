@@ -1,7 +1,7 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "f44bad13355077f4d528bc6976b7f5a1db1c1c71",
+  "commitHash": "d2d04a68e0063170a1b167d76646859fdea5f184",
   "module": "AppModule",
   "features": [
     {
@@ -32,6 +32,13 @@
           "component": "MicrofrontendDetailsComponent"
         }
       ]
+    },
+    {
+      "id": "**",
+      "label": "Page not found",
+      "isPageNotFound": true,
+      "icon": "language",
+      "component": "PageNotFoundComponent"
     },
     {
       "id": "nodes",

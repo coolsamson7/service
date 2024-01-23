@@ -9,6 +9,8 @@ import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 import { MicrofrontendDetailsComponent } from './portal/microfrontend-details.component';
 
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+
 import { NodesComponent } from './nodes/nodes.component';
 
 import { NodeDetailsComponent } from './nodes/node-details.component';
@@ -26,7 +28,6 @@ import { ComponentsComponent } from './components/components.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
 
 import { ServiceInstanceComponent } from './components/service-instance.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 export const localRoutes: Routes = [
   {
@@ -99,6 +100,8 @@ export const localRoutes: Routes = [
     ],
   },
 
-  {path: '**', component: PageNotFoundComponent}
-
+  {
+    path: '**',
+    component: PageNotFoundComponent,
+  },
 ];

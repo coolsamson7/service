@@ -17,8 +17,11 @@ export const routes: Routes = [
       pathMatch: 'full'
     },
      <% } %>
-     <% for (let feature of features ) { -%>
+     <% for (let feature of features ) if (feature.pageNotFoundFeature !== true) { -%>
           <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: feature, isChild: isChild, rootModule: rootModule, execute: execute }) -%>
+     <% }, %>
+        <% if (pageNotFoundFeature) { -%>
+      <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/wildcardRoute.tmpl', { feature: pageNotFoundFeature }) -%>
      <% } %>
 ]
 

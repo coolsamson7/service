@@ -9,8 +9,6 @@ import { ModuleRegistry } from "./modules";
 import { FeatureConfig } from "./feature-config";
 import { DeploymentLoader, HTTPDeploymentLoader, LocalDeploymentLoader, ManifestDecorator } from "./deployment";
 import { TraceLevel, Tracer } from "./tracer";
-import { PathResolveService } from "./page-not-found/page-not-found-resolver";
-import { PageNotFoundComponent } from "./page-not-found/page-not-found-components";
 import { ReplaySubject } from "rxjs";
 import { LocaleManager } from "./locale";
 
@@ -228,16 +226,7 @@ export class PortalManager {
             this.linkRoutes(localRoutes, localFeatures)
         }
 
-        const pageNotFoundRoute : Route = {
-            path: '**',
-            pathMatch: 'full',
-            resolve: {
-                path: PathResolveService
-            },
-            component: PageNotFoundComponent
-        }
-
-        const routes = [...localRoutes, ...lazyRoutes/*,  pageNotFoundRoute*/]
+        const routes = [...localRoutes, ...lazyRoutes]
 
         // done
 

@@ -52,9 +52,16 @@ export class RouteModuleWriter {
             featureName =  features[0].fqn//TODO manifest.module.name + "." + features[0].id // TODO
 
         let requiresRedirect = rootModule
-        for (let feature of features)
+
+        let pageNotFoundFeature = undefined
+        for (let feature of features) {
+            if ( feature.isPageNotFound == true) {
+                pageNotFoundFeature = feature
+            }
+
             if (feature.id == "" || feature.router?.path == "")
-                requiresRedirect = false
+                requiresRedirect = false 
+        }
 
         let execute  = {
           moduleImportPath: (feature: any) => {
@@ -79,6 +86,7 @@ export class RouteModuleWriter {
             manifest,
             requiresRedirect,
             featureName,
+            pageNotFoundFeature,
             rootModule,
             isChild: false,
             moduleName: moduleNames.className,

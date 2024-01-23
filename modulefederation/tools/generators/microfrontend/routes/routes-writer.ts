@@ -15,14 +15,22 @@ export class RoutesWriter {
 
         // generate files
 
+        let pageNotFoundFeature = undefined
+
         let requiresRedirect = true
-        for (let feature of manifest.features)
+        for (let feature of manifest.features) {
+            if ( feature.isPageNotFound == true) {
+                pageNotFoundFeature = feature
+            }
+
             if (feature.id == "" || feature.router?.path == "")
                 requiresRedirect = false
+        }
 
         generateFiles(host, routesTemplatePath, fileName, {
             manifest,
             requiresRedirect,
+            pageNotFoundFeature,
             isChild: false,
             features: manifest.features,
             fileName: "local",
