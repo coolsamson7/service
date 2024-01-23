@@ -10,13 +10,17 @@ import { FeatureConfig } from "../../feature-config";
     styleUrls: ['./current-feature.component.scss']
 })
 export class CurrentFeatureComponent implements OnLocaleChange {
+    // static data
+
+    static noFeature : FeatureConfig = {
+            id: "",
+            label: "unknown feature",
+            icon: ""
+     }
+    
     // instance data
 
-    feature?: FeatureConfig = {
-        id: "",
-        label: "",
-        icon: ""
-    }
+    feature: FeatureConfig = CurrentFeatureComponent.noFeature
 
     // constructor
 
@@ -35,7 +39,7 @@ export class CurrentFeatureComponent implements OnLocaleChange {
                 switchMap(route => (route as any).data)
             )
             .subscribe((data : any) => {
-                this.feature = data['feature']
+                this.feature = data['feature'] ||  CurrentFeatureComponent.noFeature
                 //this.label = data['feature'].label
                 //this.icon = data['feature'].icon
             });

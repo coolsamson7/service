@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
 
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthStorage } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -73,6 +73,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             throw new Error("unknown domain " + domain)
     }
 }
+
+export function storageFactory() : OAuthStorage {
+    return localStorage
+  }
+
 
 @Shell({
     name: "shell"
@@ -160,6 +165,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         UserComponent
     ],
     providers: [
+        //{ provide: OAuthStorage, useFactory: storageFactory },
         /*{
           provide: ErrorHandler,
           useClass: GlobalErrorHandler

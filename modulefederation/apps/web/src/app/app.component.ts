@@ -120,6 +120,8 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
           }
         }
       });
+
+      this.sessionManager.start()
     }
 
     // private
@@ -147,8 +149,8 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
     // implement Stateful
 
     override applyState(state: ApplicationState) : void {
-      if (state.url)
-        this.router.navigate([state.url]);
+      //TODO if (state.url)
+      //  this.router.navigate([state.url]);
     }
 
     override writeState(state: ApplicationState) : void {

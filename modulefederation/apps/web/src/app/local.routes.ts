@@ -26,6 +26,7 @@ import { ComponentsComponent } from './components/components.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
 
 import { ServiceInstanceComponent } from './components/service-instance.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 export const localRoutes: Routes = [
   {
@@ -97,4 +98,7 @@ export const localRoutes: Routes = [
       },
     ],
   },
+
+  {path: '**', component: PageNotFoundComponent}
+
 ];

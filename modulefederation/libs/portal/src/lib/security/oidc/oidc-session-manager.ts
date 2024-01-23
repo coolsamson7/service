@@ -29,11 +29,13 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
 
             switch (e.type) {
                 case "discovery_document_loaded":
+                    console.log(oauthService)
                     if (!this.hasSession() && oauthService.hasValidAccessToken())
                         this.loadUser();
                     break;
 
                 case "token_received":
+                    this.checkRedirect()
                     this.onTokenReceived()
                     break;
 
@@ -46,6 +48,13 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
         });
     }
 
+    override start() {
+        this.oauthService.loadDiscoveryDocumentAndTryLogin().then(result => {
+            if (this.oauthService.hasValidAccessToken())
+                this.loadUser();
+        })
+    }
+
     private configure(authConfig : AuthConfig) {
         // adjust configuration TODO
 
@@ -56,28 +65,12 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
 
         this.oauthService.configure(authConfig);
         this.oauthService.tokenValidationHandler = new NullValidationHandler();
-        this.oauthService.loadDiscoveryDocumentAndTryLogin();
-        this.oauthService.setupAutomaticSilentRefresh();
-
-        // subscribe to events
-
-        this.oauthService.events.subscribe((e) => {
-            switch (e.type) {
-                case "token_received":
-                    this.checkRedirect();
-                    break;
-
-                default:
-                    ;
-            }
-        });
+        this.oauthService.setupAutomaticSilentRefresh()
     }
 
-    // implement OnInit
-
     private checkRedirect() {
-        if (this.oauthService.state!!.length > 0) {
-            let url = decodeURIComponent(this.oauthService.state!!);
+        if (this.oauthService.state!.length > 0) {
+            let url = decodeURIComponent(this.oauthService.state!);
 
             this.oauthService.state = ""
 
@@ -85,25 +78,14 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
         }
     }
 
-    // public
-
-    public override login() {
-        this.oauthService.initLoginFlow();
-    }
-
-    public override logout() {
-        this.oauthService.logOut();
-    }
-
-    // private
-
-    onTokenReceived() {
-        this.loadUser();
+    private onTokenReceived() {
+        this.loadUser()
+        this.checkRedirect()
 
         //const scopes = this.oauthService.getGrantedScopes(); // see config object
     }
 
-    onLogout() {
+    private onLogout() {
         this.closeSession()
     }
 
@@ -116,5 +98,15 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
                     refreshToken: this.oauthService.getRefreshToken()
                 }
             }))
+    }
+
+    // public
+
+    public override login() {
+        this.oauthService.initLoginFlow();
+    }
+
+    public override logout() {
+        this.oauthService.logOut();
     }
 }

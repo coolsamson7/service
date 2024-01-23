@@ -25,6 +25,8 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
 
     // public
 
+    start() {}
+
     login() {
     }
 
