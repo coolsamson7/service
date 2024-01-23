@@ -12,7 +12,7 @@
       "icon": "language",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],
-      "visibility": ["public", "private"]
+      "visibility": ["private"]
     },
     {
       "id": "microfrontends",

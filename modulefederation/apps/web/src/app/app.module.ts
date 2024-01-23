@@ -1,9 +1,15 @@
 import "reflect-metadata";
 
+import { environment } from "../environments/environment"
+
+import { Tracer } from "@modulefederation/portal";
+
+Tracer.ENABLED = environment.production !== true
+
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
 
-import { OAuthModule, OAuthStorage } from 'angular-oauth2-oidc';
+import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -12,9 +18,10 @@ import { MaterialModule } from './material/material.module';
 import { NodesModule } from './nodes/nodes.module';
 import { PortalComponentModule } from './portal/portal.module';
 import { SharedModule } from './auth/auth.guard';
-import { environment } from "../environments/environment"
+
 import {
   AbstractModule,
+  CanActivateGuard,
   CanDeactivateGuard,
   CommandModule,
   ConsoleTrace,
@@ -22,14 +29,14 @@ import {
   Environment,
   EnvironmentModule, ErrorModule,
   FeatureReuseStrategy,
-  HTTPErrorInterceptor, I18nModule, I18nResolver, Injected, LocaleModule,
+  HTTPErrorInterceptor, I18nModule, I18nResolver, LocaleModule,
   Manifest,
   OIDCAuthentication, OIDCModule,
   OIDCSessionManager,
   PortalComponentsModule,
   PortalModule,
   SecurityModule, ServerTranslationLoader,
-  SessionManager,
+  SessionGuard,
   Shell,
   StateModule,
   TraceLevel,
@@ -74,11 +81,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     }
 }
 
-export function storageFactory() : OAuthStorage {
-    return localStorage
-  }
-
-
 @Shell({
     name: "shell"
 })
@@ -87,6 +89,17 @@ export function storageFactory() : OAuthStorage {
         AppComponent
     ],
     imports: [
+        TracerModule.forRoot({
+            enabled: environment.production !== false,
+            trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
+            paths: {
+              "": TraceLevel.OFF,
+              "type": TraceLevel.OFF,
+              "portal": TraceLevel.OFF,
+              "session": TraceLevel.FULL,
+            }
+          }),
+
         MatSnackBarModule,
         BrowserModule,
         BrowserAnimationsModule,
@@ -102,15 +115,6 @@ export function storageFactory() : OAuthStorage {
         ErrorModule,
         MatProgressBarModule,
         MatProgressSpinnerModule,
-
-        TracerModule.forRoot({
-            enabled: environment.production !== false,
-            trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
-            paths: {
-              "portal": TraceLevel.FULL,
-              "controller": TraceLevel.FULL,
-            }
-          }),
 
         LocaleModule.forRoot({
             locale: 'en-US',
@@ -130,11 +134,11 @@ export function storageFactory() : OAuthStorage {
             localManifest: localManifest as Manifest,
             decorateRoutes: (route : Route) => {
                 route.resolve = {i18n: I18nResolver}
-                //route.canActivate = [CanActivateGuard, AuthGuard] // TODO??
+                route.canActivate = [CanActivateGuard, SessionGuard]
                 route.canDeactivate = [CanDeactivateGuard]
             }
         }),
-        
+
         CommandModule.forRoot(),
 
         OIDCModule.forRoot({
@@ -146,8 +150,7 @@ export function storageFactory() : OAuthStorage {
 
         SecurityModule.forRoot({
             sessionManager: OIDCSessionManager,
-            authentication: OIDCAuthentication,
-            //authorization: SampleAuthorization
+            authentication: OIDCAuthentication
         }),
 
         MonacoEditorModule.forRoot({
@@ -165,7 +168,6 @@ export function storageFactory() : OAuthStorage {
         UserComponent
     ],
     providers: [
-        //{ provide: OAuthStorage, useFactory: storageFactory },
         /*{
           provide: ErrorHandler,
           useClass: GlobalErrorHandler
@@ -195,7 +197,7 @@ export class AppModule extends AbstractModule() {
     }
 }
 
-// TEST
+/* TEST
 
 class Foo {
     // variables
@@ -215,3 +217,4 @@ class Foo {
 let d = PortalModule.New(Foo, {bar: SessionManager})("foo")
 
 console.log(d)
+*/

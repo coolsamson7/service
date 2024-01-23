@@ -1,9 +1,8 @@
 import { TraceLevel } from './trace-level.enum';
-import { TracerConfiguration, TracerConfigurationInjectionToken } from './tracer-configuration';
 import { Trace } from './trace';
 import { TraceEntry } from './trace-entry';
-import { ConsoleTrace } from "./traces/console-trace";
-import { Inject, Injectable, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { TracerModule } from './tracer.module';
 
 /**
  * A Tracer is used to emit trace messages for development purposes.
@@ -17,54 +16,48 @@ export class Tracer {
 
     public static ENABLED = true
 
-    private static This : Tracer
-    private traceLevels : { [path : string] : TraceLevel } = {}
-    private cachedTraceLevels : { [path : string] : TraceLevel } = {}
+    public static instance : Tracer
 
     // instance data
 
+    private traceLevels : { [path : string] : TraceLevel } = {}
+    private cachedTraceLevels : { [path : string] : TraceLevel } = {}
     private modifications = 0
     private sink : Trace | undefined
 
     // constructor
 
-    constructor(@Optional() @Inject(TracerConfigurationInjectionToken) tracerConfiguration : TracerConfiguration) {
-        if (tracerConfiguration) {
-            // enabled
+    constructor() {
+        const tracerConfiguration = TracerModule.tracerConfiguration
+      
+        // enabled
 
-            Tracer.ENABLED = tracerConfiguration.enabled
+        Tracer.ENABLED = tracerConfiguration.enabled
 
-            // some more
+        // some more
 
-            this.sink = tracerConfiguration.trace
+        this.sink = tracerConfiguration.trace
 
-            // set paths
+        // set paths
 
-            for (const path of Object.keys(tracerConfiguration.paths!!)) {
-                this.setTraceLevel(path, tracerConfiguration.paths!![path])
-            }
-        }
+        if (tracerConfiguration.paths)
+            for (const path of Object.keys(tracerConfiguration.paths)) 
+                this.setTraceLevel(path, tracerConfiguration.paths[path])
 
-        Tracer.This = this
+        Tracer.instance = this
     }
 
-    static getSingleton() {
-        if (!Tracer.This)
-            new Tracer({
-                enabled: true,
-                trace: new ConsoleTrace("%d [%p]: %m\n"),
-                paths: {
-                    "": TraceLevel.FULL,
-                },
-            })
+    static getInstance() {
+        if (!Tracer.instance)
+            new Tracer()
 
-        return Tracer.This
+        return Tracer.instance
     }
 
     // public
 
     public static Trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
-        Tracer.getSingleton().trace(path, level, message, ...args)
+        Tracer.getInstance().trace(path, level, message, ...args)
     }
 
     // public

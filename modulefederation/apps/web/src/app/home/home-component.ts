@@ -41,7 +41,6 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
 
   override applyState(state: any) : void {
     const foo = state.foo
-    console.log(foo)
   }
 
   override writeState(state: any) : void {

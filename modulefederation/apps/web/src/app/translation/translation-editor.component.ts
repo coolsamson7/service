@@ -62,7 +62,7 @@ interface TranslationState {
   labelKey: "translations:title.label",
   i18n: ["translations", "portal.commands"],
   icon: "language",
-  visibility: ["public", "private"],
+  visibility: ["private"],
   categories: [],
   tags: ["navigation"],
   permissions: []

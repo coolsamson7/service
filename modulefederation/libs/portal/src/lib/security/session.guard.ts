@@ -4,7 +4,7 @@ import { FeatureData } from "../portal-manager";
 import { Observable, filter, map, tap } from "rxjs";
 import { SessionManager } from "./session-manager";
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class SessionGuard implements CanActivate {
   // constructor
 
