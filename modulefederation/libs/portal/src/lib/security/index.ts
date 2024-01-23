@@ -4,6 +4,7 @@ export * from './authorization';
 export * from './authentication-request.interface';
 
 export * from './session.interface';
+export * from './session.guard';
 export * from './ticket.interface';
 
 export * from './security.error';

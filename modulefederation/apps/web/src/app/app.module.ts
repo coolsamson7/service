@@ -104,7 +104,7 @@ export function storageFactory() : OAuthStorage {
         MatProgressSpinnerModule,
 
         TracerModule.forRoot({
-            enabled: true,
+            enabled: environment.production !== false,
             trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
             paths: {
               "portal": TraceLevel.FULL,

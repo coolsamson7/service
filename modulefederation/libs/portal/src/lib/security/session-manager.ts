@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Authentication } from './authentication';
-import { SessionListener } from "./session-listener";
 import { Session } from "./session.interface";
 import { Ticket } from "./ticket.interface";
 import { AuthenticationRequest } from "./authentication-request.interface";
+import { Tracer, TraceLevel } from '../tracer';
 
+export interface SessionEvent<U=any,T extends Ticket = Ticket> {
+    type: "opening" | "opened" | "closing" | "closed"
+    session: Session<U,T> 
+}
 
 /**
  * The session manager is the central service that keeps information on the current session.
@@ -15,8 +19,12 @@ import { AuthenticationRequest } from "./authentication-request.interface";
 export class SessionManager<U = any, T extends Ticket = Ticket> {
     // instance data
 
+    public ready$ = new ReplaySubject<boolean>();
+    public authenticated$ = new BehaviorSubject<boolean>(false);
+    public session$ = new BehaviorSubject<Session<any,Ticket> | undefined>(undefined);
+    public events$ = new Subject<SessionEvent<any,Ticket>>();
+
     private session? : Session<U, T>;
-    private listeners : SessionListener<Session<U, T>>[] = [];
 
     // constructor
 
@@ -25,12 +33,19 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
 
     // public
 
-    start() {}
+    start() {
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session", TraceLevel.HIGH, "start")
+
+        this.ready$.next(true)
+    }
 
     login() {
+        // noop
     }
 
     logout() {
+        // noop
     }
 
     /**
@@ -48,27 +63,6 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      */
     set<TYPE>(key : string, value : TYPE) : void {
         this.session!![key] = value;
-    }
-
-    /**
-     * add a {@link SessionListener}
-     * @param listener the listener
-     * @return the unsubscribe function
-     */
-    addListener(listener : SessionListener<Session<U, T>>) : () => void {
-        this.listeners.push(listener);
-
-        return () => {
-            this.removeListener(listener);
-        };
-    }
-
-    /**
-     * remove a {@link SessionListener}
-     * @param listener the listener
-     */
-    removeListener(listener : SessionListener<Session<U, T>>) {
-        this.listeners.splice(this.listeners.indexOf(listener), 1);
     }
 
     /**
@@ -97,6 +91,9 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * @param request the request
      */
     openSession(request : AuthenticationRequest) : Observable<Session<U, T>> {
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session", TraceLevel.HIGH, "open session")
+
         return this.authentication.authenticate(request)
             .pipe(
                 tap((session) => this.setSession(session))
@@ -108,33 +105,51 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * @param session
      */
     setSession(session : Session<U, T>) {
-        // listener
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session", TraceLevel.HIGH, "set session")
 
-        for (const listener of this.listeners)
-            listener.opening(session);
-
-        this.session = session;
+        this.authenticated$.next(true)
 
         // listener
 
-        for (const listener of this.listeners)
-            listener.opened(this.session);
+        this.events$.next({
+            type: "opening",
+            session: session
+        })
+
+        this.session$.next(this.session = session)
+
+        // listener
+
+        this.events$.next({
+            type: "opened",
+            session: session
+        })
     }
 
     /**
      * close the active session
      */
     closeSession() : Observable<boolean> {
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session", TraceLevel.HIGH, "close session")
+
         if (this.session) {
             const session = this.session;
 
-            for (const listener of this.listeners)
-                listener.closing(session);
+            this.events$.next({
+                type: "closing",
+                session: session
+            })
 
-            this.session = undefined;
+            this.session$.next(this.session = undefined)
 
-            for (const listener of this.listeners)
-                listener.closed(session);
+            this.authenticated$.next(false)
+
+            this.events$.next({
+                type: "closed",
+                session: session
+            })
         }
 
         return of(true);

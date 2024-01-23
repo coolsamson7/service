@@ -8,11 +8,11 @@ import { SessionManager, StandardSessionManager } from "./session-manager";
  * the configuration object for the security module
  */
 interface SecurityModuleConfig {
-    sessionManager? : Type<SessionManager<any, Ticket>>;
+    sessionManager? : Type<SessionManager>
 
-    authentication? : Type<Authentication<any, Ticket>>;
+    authentication? : Type<Authentication>
 
-    authorization? : Type<Authorization>;
+    authorization? : Type<Authorization>
 }
 
 @NgModule({

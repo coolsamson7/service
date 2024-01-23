@@ -7,6 +7,7 @@ import { Ticket } from "../ticket.interface";
 import { OIDCModuleConfig, OIDCModuleConfigToken } from "./oidc-module";
 import { Router } from "@angular/router";
 import { Environment } from "../../common/util/environment.service";
+import { Tracer, TraceLevel } from "../../tracer";
 
 export interface OIDCTicket extends Ticket {
     token : string
@@ -25,11 +26,13 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
         // subscribe to events
 
         oauthService.events.subscribe((e) => {
-            console.debug('oauth/oidc event', e);
+            if ( Tracer.ENABLED)
+                Tracer.Trace("session.oidc", TraceLevel.FULL, "handle event {0}", e.type)
 
             switch (e.type) {
                 case "discovery_document_loaded":
-                    console.log(oauthService)
+                    this.ready$.next(true)
+                    
                     if (!this.hasSession() && oauthService.hasValidAccessToken())
                         this.loadUser();
                     break;
@@ -49,6 +52,9 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     }
 
     override start() {
+        if ( Tracer.ENABLED)
+            Tracer.Trace("session.oidc", TraceLevel.FULL, "startup oidc session manager")
+
         this.oauthService.loadDiscoveryDocumentAndTryLogin().then(result => {
             if (this.oauthService.hasValidAccessToken())
                 this.loadUser();
@@ -72,6 +78,9 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
         if (this.oauthService.state!.length > 0) {
             let url = decodeURIComponent(this.oauthService.state!);
 
+            if ( Tracer.ENABLED)
+                Tracer.Trace("session.oidc", TraceLevel.HIGH, "redirect to {0}", url)
+
             this.oauthService.state = ""
 
             this.router.navigateByUrl(url);
@@ -81,8 +90,6 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     private onTokenReceived() {
         this.loadUser()
         this.checkRedirect()
-
-        //const scopes = this.oauthService.getGrantedScopes(); // see config object
     }
 
     private onLogout() {
@@ -90,6 +97,9 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     }
 
     private loadUser() {
+        if ( Tracer.ENABLED)
+            Tracer.Trace("session.oidc", TraceLevel.FULL, "load user profile")
+
         this.oauthService.loadUserProfile().then((user : any) =>
             this.setSession({
                 user: user['info'],
@@ -103,10 +113,16 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     // public
 
     public override login() {
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session.oidc", TraceLevel.HIGH, "login")
+
         this.oauthService.initLoginFlow();
     }
 
     public override logout() {
+        if ( Tracer.ENABLED)
+           Tracer.Trace("session.oidc", TraceLevel.HIGH, "logout")
+
         this.oauthService.logOut();
     }
 }

@@ -7,6 +7,7 @@ import { UserProfileAdministrationService } from "../../user/user-profile-admini
 import { MatDividerModule } from "@angular/material/divider";
 import { PreferencesDialog } from "../../home/preferences-dialog";
 import { UserProfile } from "../../user/user-profile.interface";
+import { filter } from "rxjs";
 
 
 @Component({
@@ -24,30 +25,21 @@ export class UserComponent {
 
     // constructor
     constructor(private dialogs : DialogService, private localeManager: LocaleManager, public sessionManager : SessionManager, private userProfileAdministrationService : UserProfileAdministrationService) {
-       const outerThis = this
-    sessionManager.addListener({
-        closed(session : Session<any, Ticket>) : void {
-        },
-
-        closing(session : Session<any, Ticket>) : void {
-        },
-
-        opened(session : Session<any, Ticket>) : void {
-          const user = session.user.preferred_username
+       sessionManager.events$
+       .pipe(filter(event => event.type == "opened"))
+       .subscribe(event => {
+          const user = event.session.user.preferred_username
 
           userProfileAdministrationService.readProfile(user).subscribe(userProfile => {
-            outerThis.userProfile = userProfile
-            session.locale = userProfile.locale
+            this.userProfile = userProfile
+            event.session.locale = userProfile.locale
 
             localeManager.setLocale(userProfile.locale)
-          })
-        },
-        opening(session : Session<any, Ticket>) : void {
-        }
-      })
+          })})
 
-      this.locales = localeManager.supportedLocales
-    }
+
+        this.locales = localeManager.supportedLocales
+      }
 
     // public
 

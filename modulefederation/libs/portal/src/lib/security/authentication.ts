@@ -8,7 +8,7 @@ import { AuthenticationRequest } from "./authentication-request.interface";
 /**
  * this interface covers the main authentication method.
  */
-export class Authentication<U = any, T = Ticket> {
+export class Authentication<U = any, T extends Ticket = Ticket> {
     /**
      * return a combination of a user and ticket related to the specified authentication request.
      * @param request the authentication request

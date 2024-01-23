@@ -17,8 +17,8 @@ export class CanActivateGuard implements CanActivate {
      * @inheritdoc
      */
     canActivate(route : ActivatedRouteSnapshot, state : RouterStateSnapshot) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        let feature : FeatureData = route.data['feature']
+        const feature : FeatureData = route.data['feature']
 
-        return feature.enabled == true
+        return feature == undefined || feature.enabled == true
     }
 }
