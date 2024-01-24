@@ -8,6 +8,6 @@ export const authConfig : AuthConfig = {
     responseType: 'code',
     // at_hash is not present in JWT token
     disableAtHashCheck: true,
-    showDebugInformation: true,
+    //showDebugInformation: true,
     oidc: true
 }

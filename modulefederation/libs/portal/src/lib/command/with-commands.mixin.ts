@@ -62,7 +62,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             useExisting: forwardRef(() => CommandManager) 
         }]
     })*/
-    class Manager extends base implements CommandAdministration {
+    class WithCommandsClass extends base implements CommandAdministration {
         // instance data
 
         private commands: { [key: string]: CommandDescriptor } = {};
@@ -82,11 +82,11 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
         // private
 
-        private parentCommandManager() : Manager | undefined {
+        private parentCommandManager() : WithCommandsClass | undefined {
             let parent = this.parent
             while ( parent ) {
-               if ( parent instanceof Manager)
-                  return parent as Manager
+               if ( parent instanceof WithCommandsClass)
+                  return parent as WithCommandsClass
 
                   parent = parent.parent
             }
@@ -105,7 +105,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         getCommands(filter: CommandFilter = {}): CommandDescriptor[] {
             const commands: { [key: string]: CommandDescriptor } = {};
 
-            const collect = (controller: Manager) => {
+            const collect = (controller: WithCommandsClass) => {
             // recursion
 
             if (filter.inherited && controller.parentCommandManager())
@@ -190,6 +190,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         }
 
         addCommandInterceptors(commandConfig: CommandConfig, interceptors: CommandInterceptor[]) : void {
+            // noop
         }
 
         // private
@@ -292,5 +293,5 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
           }
     }//, WithCommands)
 
-    return registerMixins(Manager, WithCommands)
+    return registerMixins(WithCommandsClass, WithCommands)
   }

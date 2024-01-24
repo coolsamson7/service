@@ -13,7 +13,7 @@ export interface StateAdministration<S> extends  Stateful<S> {
 
 export function WithState<S>() {
     return function <T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Stateful> &  T  {
-    return registerMixins(class StateManager extends base implements StateAdministration<S> {
+    return registerMixins(class WithStateClass extends base implements StateAdministration<S> {
         // instance data
 
         state?: State<S>
@@ -34,16 +34,16 @@ export function WithState<S>() {
 
         // private
 
-        private rootStateManager() : StateManager {
-            let manager = this as StateManager
+        private rootStateManager() : WithStateClass {
+            let manager = this as WithStateClass
             while (manager.parentStateManager())
                 manager = manager.parentStateManager()!
 
             return manager
         }
 
-        private parentStateManager() : StateManager | undefined {
-            return this.parent as StateManager
+        private parentStateManager() : WithStateClass | undefined {
+            return this.parent as WithStateClass
         }
 
         protected setupState() {
@@ -81,7 +81,7 @@ export function WithState<S>() {
                 this.state!.children = [state];
         }
     
-        private findState4(manager: StateManager): State<S> | undefined {
+        private findState4(manager: WithStateClass): State<S> | undefined {
             const id = manager.stateID();
 
             return (this.state?.children || []).find((state) => equals(state.owner, id));

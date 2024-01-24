@@ -90,7 +90,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     ],
     imports: [
         TracerModule.forRoot({
-            enabled: environment.production !== false,
+            enabled: environment.production !== true,
             trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
             paths: {
               "": TraceLevel.OFF,

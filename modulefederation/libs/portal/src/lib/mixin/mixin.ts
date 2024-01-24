@@ -1,12 +1,12 @@
 export function registerMixins(clazz: any, mixin: Function) : any {
     const prototype = Object.getPrototypeOf(clazz)
 
-    if ( prototype.constructor.name !== "Object") {
+    if ( prototype.name !== "Object") {
       const mixins =  [... prototype.constructor["$mixins"] || []]
       if ( !mixins.includes(mixin))
         mixins.push(mixin)
-      else
-        console.log(clazz.name + " super class " + prototype.constructor.name + " already declares mixin " + mixin.name)
+      //else
+      //WTF  console.log(clazz.name + " super class " + prototype.name + " already declares mixin " + mixin.name)
 
       clazz.constructor["$mixins"] = mixins
     }

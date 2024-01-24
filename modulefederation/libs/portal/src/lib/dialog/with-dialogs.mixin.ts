@@ -10,7 +10,7 @@ import { GConstructor } from "../common/lang/constructor.type";
 
 
 export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Dialogs> &  T  {
-    return registerMixins(class extends base implements Dialogs {
+    return registerMixins(class WithDialogsClass extends base implements Dialogs {
         // instance data
 
         private dialogs : DialogService
