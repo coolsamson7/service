@@ -2,12 +2,11 @@
   "name": "@modulefederation/portal",
   "version": "0.0.1",
   "peerDependencies": {
+    "source-map-js": "^1.0.2",
     "@angular/common": "^15.2.0",
     "@angular/core": "^15.2.0"
   },
   "dependencies": {
-    "source-map-js": "^1.0.2",
-    "sourcemapped-stacktrace": "^1.1.11",
     "tslib": "^2.3.0"
   },
   "sideEffects": false
