@@ -1,19 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, HostListener, Injectable, Injector, forwardRef } from '@angular/core';
 import {
-  AboutDialogService, AbstractFeature, ErrorContext,
-  ErrorHandler, Feature, FeatureData, FeatureRegistry, HandleError,
+  AboutDialogService, AbstractFeature, DialogService, ErrorContext,
+  ErrorHandler, FeatureData, FeatureRegistry, HandleError,
   LocaleManager,
   SessionManager,
   ShortcutManager,
-  Stacktrace,
-  StateAdministration,
   StateStorage,
   WithState
 } from "@modulefederation/portal";
 import { MessageBus } from "./message-bus/message-bus";
-import { filter, map, switchMap, tap } from "rxjs/operators";
-import { MatDialog } from "@angular/material/dialog";
+import { filter, map, switchMap } from "rxjs/operators";
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
@@ -24,7 +21,7 @@ import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, Navig
 export class Handler {
   // constructor
 
-  constructor(private errorStorage: ErrorStorage, private dialog: MatDialog, private messageBus: MessageBus, private shortcutManager: ShortcutManager) {
+  constructor(private errorStorage: ErrorStorage, private dialog: DialogService, private messageBus: MessageBus, private shortcutManager: ShortcutManager) {
   }
 
   // private
@@ -32,19 +29,15 @@ export class Handler {
   private openDialog(error: ErrorEntry) {
     this.errorStorage.add(error)
 
-    this.shortcutManager.pushLevel()
-
-    let configuration = {
+    const configuration = {
       title: "Error",
       message: "Caught fatal error",
       error: error
     }
 
-    const dialogRef = this.dialog.open(ErrorDialog, {
+    return this.dialog.openDialog(ErrorDialog, {
       data: configuration
-    });
-
-    return dialogRef.afterClosed().pipe(tap(() => this.shortcutManager.popLevel()))
+    })
   }
 
   // handler

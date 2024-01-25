@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
 import { AboutDialog } from "./about.dialog";
+import { DialogService } from "../dialog";
+import { Observable } from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class AboutDialogService {
@@ -8,16 +9,14 @@ export class AboutDialogService {
 
     // constructor
 
-    constructor(private dialog : MatDialog) {
+    constructor(private dialogs: DialogService) {
     }
 
     // public
-    show() {
-        const dialogRef = this.dialog.open(AboutDialog, {
+    show(): Observable<any> {
+        return this.dialogs.openDialog(AboutDialog, {
             data: {}
         });
-
-        return dialogRef.afterClosed()
     }
 }
 
