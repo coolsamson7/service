@@ -297,18 +297,22 @@ export class Stacktrace {
                 }),
 
                 switchMap(script => {
-                    //console.log("parse source  " + uri)
+                    console.log("parse source  " + uri, script)
 
                     const match = RegExp(/\/\/# sourceMappingURL=(.*)/).exec(script)
                     let mapUri = match !== null ? match[1] : "";
                     mapUri = new URL(mapUri, uri).href + uriQuery;
 
-                    //console.log("load source map " + mapUri)
+                    console.log("load source map " + mapUri)
 
                     return  fromFetch(mapUri)
                 }),
 
-                switchMap(sourceMap => sourceMap.json()),
+                switchMap(sourceMap => {
+                  console.log("parse source map  ", sourceMap)
+                  
+                  return sourceMap.json()
+                }),
 
                 shareReplay()
             );
