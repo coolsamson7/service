@@ -12,7 +12,7 @@
   </mat-toolbar>
 
   <as-split class="content" direction="horizontal" unit="percent">
-    <as-split-area size="10">
+    <as-split-area [size]="10">
       <mat-nav-list class="list" dense>
         <ng-container *ngFor="let error of storage.errors; let index = index">
           <a (click)="selectError(error)" [ngClass]="{selected: selectedError === error}" class="error" mat-list-item
@@ -25,7 +25,7 @@
       </mat-nav-list>
     </as-split-area>
 
-    <as-split-area size="90">
+    <as-split-area [size]="90">
       <div class="details" *ngIf="selectedError">
         <!-- date -->
 

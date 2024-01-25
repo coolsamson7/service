@@ -192,7 +192,7 @@
                             <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/../web/dist/component-browser/</directory>
+                                    <directory>${project.parent.basedir}/../modulefederation/dist/apps/web/</directory>
                                 </resource>
                             </resources>
                         </configuration>
