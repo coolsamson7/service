@@ -1,4 +1,5 @@
 import { StringBuilder } from "../common";
+import { StackFrame } from "../util";
 import { TraceEntry } from "./trace-entry";
 import { TraceLevel } from "./trace-level.enum";
 
@@ -12,6 +13,7 @@ interface TraceModel {
     d : string;
     l : string;
     m : string;
+    f: StackFrame;
 }
 
 interface Callbacks {
@@ -20,6 +22,7 @@ interface Callbacks {
     l : () => void;
     p : () => void;
     m : () => void;
+    f: () => void;
 }
 
 /**
@@ -44,6 +47,7 @@ export class TraceFormatter {
             d: entry.timestamp.toDateString(),
             l: this.level(entry.level),
             m: entry.message,
+            f: entry.stackFrame
         });
     }
 
@@ -124,6 +128,12 @@ export class TraceFormatter {
                 // message
                 result.push((builder : StringBuilder, model : TraceModel) =>
                     builder.append(model.m)
+                );
+            },
+            f: () => {
+                // message
+                result.push((builder : StringBuilder, model : TraceModel) =>
+                    builder.append((model.f.file || "<unknown>") + ":" + model.f.lineNumber + ":" + model.f.column)
                 );
             },
         });

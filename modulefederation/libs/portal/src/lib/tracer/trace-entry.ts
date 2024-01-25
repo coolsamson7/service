@@ -1,3 +1,5 @@
+
+import { StackFrame } from '../util';
 import { TraceLevel } from './trace-level.enum';
 
 /**
@@ -21,12 +23,15 @@ export class TraceEntry {
      */
     timestamp : Date = new Date();
 
+    stackFrame : StackFrame
+
     // constructor
 
-    constructor(path : string, level : TraceLevel, message : string, timestamp : Date) {
+    constructor(path : string, level : TraceLevel, message : string, timestamp : Date, stackFrame : StackFrame) {
         this.path = path;
         this.level = level;
         this.message = message;
         this.timestamp = timestamp;
+        this.stackFrame = stackFrame
     }
 }

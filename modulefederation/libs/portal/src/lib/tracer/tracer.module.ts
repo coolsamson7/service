@@ -33,16 +33,12 @@ export class TracerModule {
     public static forRoot(tracerConfiguration : TracerConfiguration) : ModuleWithProviders<TracerModule> {
         TracerModule.tracerConfiguration = tracerConfiguration
 
-        // force a new instance!
-
-        new Tracer()
-
         return {
             ngModule: TracerModule,
             providers: [
                 {
-                    provide: TracerConfigurationInjectionToken,
-                    useValue: tracerConfiguration
+                    provide: Tracer,
+                    useValue:  new Tracer()
                 }
             ]
         };

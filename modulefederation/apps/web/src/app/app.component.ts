@@ -2,7 +2,7 @@
 import { Component, HostListener, Injectable, Injector, forwardRef } from '@angular/core';
 import {
   AboutDialogService, AbstractFeature, ErrorContext,
-  ErrorHandler, Feature, HandleError,
+  ErrorHandler, Feature, FeatureData, FeatureRegistry, HandleError,
   LocaleManager,
   SessionManager,
   ShortcutManager,
@@ -11,12 +11,12 @@ import {
   WithState
 } from "@modulefederation/portal";
 import { MessageBus } from "./message-bus/message-bus";
-import { tap } from "rxjs/operators";
+import { filter, map, switchMap, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
@@ -76,6 +76,7 @@ export class Handler {
 
 interface ApplicationState {
    url?: string
+   feature?: string
 }
 
 @Component({
@@ -92,15 +93,29 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
 
     locales: string[] = []
     loading = false
+    currentFeature? : FeatureData
 
     // constructor
 
-    constructor(private router: Router, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
+    constructor(private activatedRoute: ActivatedRoute, private featureRegistry: FeatureRegistry, private router: Router, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
       super(injector)
 
       this.locales = localeManager.supportedLocales
 
       this.onInit(() => this.loadState())
+
+      this.router.events
+      .pipe(
+          filter(event => event instanceof NavigationEnd),
+          map(() => this.activatedRoute),
+          map(route => route.firstChild),
+          switchMap(route => (route as any).data)
+      )
+      .subscribe((data : any) => {
+          this.currentFeature = data['feature']
+          //this.label = data['feature'].label
+          //this.icon = data['feature'].icon
+      });
 
       this.router.events.subscribe(event => {
         switch (true) {
@@ -110,6 +125,10 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
           }
   
           case event instanceof NavigationEnd:
+            //this.currentFeature = this.activatedRoute.firstChild?.data.feature
+            this.loading = false;
+            break;
+
           case event instanceof NavigationCancel:
           case event instanceof NavigationError: {
             this.loading = false;
@@ -135,7 +154,7 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
    override loadState() {
       this.state = this.stateStorage.load("portal" /* TODO */, this.sessionManager.currentSession());
       if ( this.state) 
-         this.applyState(this.state.data)
+         console.log("hh");///this.applyState(this.state.data)
       else
          this.state = this.createState()
    }
@@ -149,12 +168,18 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
     // implement Stateful
 
     override applyState(state: ApplicationState) : void {
-      //TODO if (state.url)
-      //  this.router.navigate([state.url]);
+       //if (state.url)
+       // this.router.navigate([state.url]);
+
+      //if ( this.featureRegistry.findFeature(state.feature || ""))
+      //this.router.navigate(["/" + state.feature?.replace(".", "/")]);
+      console.log("redirect to " + state.url + " feature " + state.feature)
     }
 
     override writeState(state: ApplicationState) : void {
+      console.log("### " + this.currentFeature?.path)
       state.url = this.router?.url;
+      state.feature = this.currentFeature?.path
     }
 
     // host listeners

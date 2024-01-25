@@ -3,6 +3,8 @@ import { Trace } from './trace';
 import { TraceEntry } from './trace-entry';
 import { Injectable } from "@angular/core";
 import { TracerModule } from './tracer.module';
+import { StackFrame, Stacktrace } from '../util';
+
 
 /**
  * A Tracer is used to emit trace messages for development purposes.
@@ -57,7 +59,13 @@ export class Tracer {
     // public
 
     public static Trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
-        Tracer.getInstance().trace(path, level, message, ...args)
+        const stack = new Error().stack!
+
+        const frames = Stacktrace.createFrames(stack)
+
+        const lastFrame =  frames[1]
+
+        Tracer.getInstance().trace(path, level, message, lastFrame, ...args)
     }
 
     // public
@@ -66,8 +74,12 @@ export class Tracer {
         return Tracer.ENABLED && this.getTraceLevel(path) >= level
     }
 
-    public trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
+    public async trace(path : string, level : TraceLevel, message : string, frame: StackFrame,  ...args : any[]) {
         if (this.isTraced(path, level)) {
+            // new
+
+            await Stacktrace.mapFrames(frame)
+
             // format
 
             const formattedMessage = message.replace(/{(\d+)}/g, function(match, number) {
@@ -81,7 +93,7 @@ export class Tracer {
 
             // and write
 
-            this.sink?.trace(new TraceEntry(path, level, formattedMessage, new Date()))
+            this.sink?.trace(new TraceEntry(path, level, formattedMessage, new Date(), frame))
         }
     }
 

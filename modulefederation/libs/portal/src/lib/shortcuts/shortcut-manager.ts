@@ -77,7 +77,7 @@ export class ShortcutManager {
      * @see unregister
      */
     public register(shortcut : Shortcut) : (() => void) | undefined {
-        if (Tracer.ENABLED) this.tracer.trace('portal', TraceLevel.HIGH, 'register shortcut {0}', shortcut.shortcut);
+        if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.HIGH, 'register shortcut {0}', shortcut.shortcut);
 
         shortcut.keys = this.toKey(shortcut.shortcut);
 
@@ -108,7 +108,7 @@ export class ShortcutManager {
      * push another layer of shortcuts
      */
     public pushLevel() : void {
-        if (Tracer.ENABLED) this.tracer.trace('portal', TraceLevel.HIGH, 'push shortcut level');
+        if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.HIGH, 'push shortcut level');
 
         this.shortcuts.push((this.currentShortcuts = []));
     }
@@ -117,7 +117,7 @@ export class ShortcutManager {
      * pop the current shortcut layer
      */
     public popLevel() : void {
-        if (Tracer.ENABLED) this.tracer.trace('portal', TraceLevel.HIGH, 'pop shortcut level');
+        if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.HIGH, 'pop shortcut level');
 
         this.shortcuts.splice(this.shortcuts.length - 1, 1);
         this.currentShortcuts = this.shortcuts.length > 0 ? this.shortcuts[this.shortcuts.length - 1] : undefined;
@@ -171,14 +171,14 @@ export class ShortcutManager {
 
         const key = toKey(event);
 
-        if (Tracer.ENABLED) this.tracer.trace('portal', TraceLevel.HIGH, 'check for shortcut {0}', toString(key));
+        if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.HIGH, 'check for shortcut {0}', toString(key));
 
         const shortCuts = this.currentShortcuts!!.filter((shortcut) => match(key, shortcut.keys!!));
 
         for (const shortCut of shortCuts) {
             if (!shortCut.handles || shortCut.handles(event)) {
                 if (Tracer.ENABLED)
-                    this.tracer.trace('views', TraceLevel.HIGH, 'execute shortcut {0}', toString(shortCut.keys!!));
+                    Tracer.Trace('views', TraceLevel.HIGH, 'execute shortcut {0}', toString(shortCut.keys!!));
 
                 event.preventDefault();
 

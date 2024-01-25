@@ -9,7 +9,7 @@ const noop = () => {
 };
 
 @Directive({
-  selector: "input[type=text][ngModel][suggestionProvider]",
+  selector: "input[type=text][suggestionProvider]",
   standalone: true,
   // By overriding the NG_VALUE_ACCESSOR dependency-injection token at this level of
   // the component tree / hierarchical injectors, we are effectively replacing the

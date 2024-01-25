@@ -1,5 +1,5 @@
 import { Component, Injector, forwardRef } from "@angular/core";
-import { AbstractFeature, Feature, WithCommands, Command, WithState, WithView, ViewComponent, LockType, CommandButtonComponent } from "@modulefederation/portal";
+import { AbstractFeature, Feature, WithCommands, Command, WithState, WithView, ViewComponent, LockType, CommandButtonComponent, Stacktrace } from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -92,7 +92,24 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
     lock: "view",
     icon: "undo"
   })
-  lockView() : Promise<any> {
+  async lockView() : Promise<any> {
+    const stack = new Error().stack!
+
+    const frames = Stacktrace.createFrames(stack)
+
+    console.log("### created frames ", frames);
+
+    try {
+      await Stacktrace.mapFrames(...frames)
+
+      console.log("### mapped ", frames)
+    }
+    catch(e) {
+      console.error(e)
+    }
+
+   
+
     return new Promise((resolve) => setTimeout(() => resolve('done'), 5000));
   }
 

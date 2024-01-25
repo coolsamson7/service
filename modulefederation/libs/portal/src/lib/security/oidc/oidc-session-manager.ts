@@ -56,8 +56,8 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
             Tracer.Trace("session.oidc", TraceLevel.FULL, "startup oidc session manager")
 
         this.oauthService.loadDiscoveryDocumentAndTryLogin().then(result => {
-            if (this.oauthService.hasValidAccessToken())
-                this.loadUser();
+            //if (this.oauthService.hasValidAccessToken())
+                //this.loadUser();
         })
     }
 
