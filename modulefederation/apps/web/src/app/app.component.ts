@@ -6,6 +6,7 @@ import {
   LocaleManager,
   SessionManager,
   ShortcutManager,
+  Stacktrace,
   StateAdministration,
   StateStorage,
   WithState
@@ -30,6 +31,7 @@ export class Handler {
 
   private openDialog(error: ErrorEntry) {
     this.errorStorage.add(error)
+
     this.shortcutManager.pushLevel()
 
     let configuration = {
@@ -113,8 +115,6 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
       )
       .subscribe((data : any) => {
           this.currentFeature = data['feature']
-          //this.label = data['feature'].label
-          //this.icon = data['feature'].icon
       });
 
       this.router.events.subscribe(event => {
@@ -153,9 +153,7 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
 
    override loadState() {
       this.state = this.stateStorage.load("portal" /* TODO */, this.sessionManager.currentSession());
-      if ( this.state) 
-         console.log("hh");///this.applyState(this.state.data)
-      else
+      if ( !this.state) 
          this.state = this.createState()
    }
 
@@ -173,11 +171,10 @@ export class AppComponent extends WithState<ApplicationState>()(AbstractFeature)
 
       //if ( this.featureRegistry.findFeature(state.feature || ""))
       //this.router.navigate(["/" + state.feature?.replace(".", "/")]);
-      console.log("redirect to " + state.url + " feature " + state.feature)
+      console.log("### would redirect to " + state.url + " feature " + state.feature)
     }
 
     override writeState(state: ApplicationState) : void {
-      console.log("### " + this.currentFeature?.path)
       state.url = this.router?.url;
       state.feature = this.currentFeature?.path
     }

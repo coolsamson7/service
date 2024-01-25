@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { Feature } from "@modulefederation/portal";
+import { Feature, StackFrame, Stacktrace } from "@modulefederation/portal";
 import { ErrorStorage } from "./error-storage";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -32,6 +32,7 @@ export class ErrorComponent implements OnInit {
   // instance data
 
   selectedError?: ErrorEntry
+  stack? : string
 
   // constructor
 
@@ -40,12 +41,24 @@ export class ErrorComponent implements OnInit {
 
   // public
 
-  selectError(error: ErrorEntry) {
+  async selectError(error: ErrorEntry) {
     this.selectedError = error
+
+    if ( error.error instanceof Error) {
+      const frames = Stacktrace.createFrames(error.error.stack || "")
+
+      await Stacktrace.mapFrames(...frames)
+
+      this.stack = ""
+
+      for ( const frame of frames )
+         this.stack += "\n" + frame.file + ":" + frame.lineNumber + ":" + frame.column + " " + frame.methodName 
+    }
+    else this.stack = undefined
   }
 
   clear() {
-
+    // TODO
   }
 
   errorClass(selectedError : ErrorEntry) {

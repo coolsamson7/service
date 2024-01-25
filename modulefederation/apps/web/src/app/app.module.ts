@@ -7,7 +7,7 @@ import { Tracer } from "@modulefederation/portal";
 Tracer.ENABLED = environment.production !== true
 
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
+import { ErrorHandler, Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
@@ -75,7 +75,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
     getEndpoint(domain : string) : string {
         if (domain.startsWith("admin"))
-            return this.environment.get<string>("administration.server")!!
+            return this.environment.get<string>("administration.server")!
         else
             throw new Error("unknown domain " + domain)
     }
@@ -91,10 +91,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     imports: [
         TracerModule.forRoot({
             enabled: environment.production !== true,
-            trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message)
+            trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
             paths: {
               "": TraceLevel.OFF,
-              "sourcemaps": TraceLevel.FULL,
               "type": TraceLevel.OFF,
               "portal": TraceLevel.HIGH,
               "session": TraceLevel.FULL,
@@ -169,10 +168,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         UserComponent
     ],
     providers: [
-        /*{
+        {
           provide: ErrorHandler,
           useClass: GlobalErrorHandler
-        },*/
+        },
         {
            provide: RouteReuseStrategy,
            useClass: FeatureReuseStrategy

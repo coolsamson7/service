@@ -5,7 +5,7 @@
     <mat-toolbar-row>
       <!-- save -->
 
-      <button matTooltip="save changes" (click)="clear()" [disabled]="storage.errors.length == 0" mat-icon-button>
+      <button matTooltip="save changes" (click)="clear()" [disabled]="storage.errors.length === 0" mat-icon-button>
         <mat-icon>clear</mat-icon>
       </button>
     </mat-toolbar-row>
@@ -50,7 +50,7 @@
         <!-- stack -->
 
         <div class="label">Stack</div>
-        <textarea *ngIf="errorStack(selectedError)">{{errorStack(selectedError)}}</textarea>
+        <textarea *ngIf="stack">{{stack}}</textarea>
       </div>
     </as-split-area>
   </as-split>
