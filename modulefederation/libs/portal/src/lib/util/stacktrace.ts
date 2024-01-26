@@ -252,41 +252,28 @@ export class Stacktrace {
 
         //console.log("find source map for " + uri)
 
-        if (loading) {
-            //console.log("replay " + uri)
+        if (loading) 
             return loading;
-        }
 
         else {
-            //console.log("request source map for " + uri)
-
             const request = fromFetch(uri).pipe(
                 catchError((e) => {
                     console.error(e);
                     return of();
                 }),
 
-                switchMap(response => {
-                    return response.text()
-                }),
+                switchMap(response => response.text()),
 
                 switchMap(script => {
-                    //console.log("parse source  " + uri, script)
-
                     const match = RegExp(/\/\/# sourceMappingURL=(.*)/).exec(script)
+
                     let mapUri = match !== null ? match[1] : "";
                     mapUri = new URL(mapUri, uri).href + uriQuery;
 
-                    //console.log("load source map " + mapUri)
-
-                    return  fromFetch(mapUri)
+                    return fromFetch(mapUri)
                 }),
 
-                switchMap(sourceMap => {
-                  //console.log("parse source map  ", sourceMap)
-
-                  return sourceMap.json()
-                }),
+                switchMap(sourceMap => sourceMap.json()),
 
                 map(sourceMap => new SourceMapConsumer(sourceMap)),
 

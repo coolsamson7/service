@@ -28,7 +28,7 @@ export function WithState<S>() {
             if (this.parent && !hasMixin(this.parent, WithState))
                throw new Error("parent must include WithState")
 
-            this.afterContentInit(() => this.setupState())
+            this.afterViewInit(() => this.setupState()) // afterContentInit
             this.onDestroy(() => this.storeState())
         }
 

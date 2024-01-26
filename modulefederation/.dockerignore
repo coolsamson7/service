@@ -1,0 +1,8 @@
+.git
+node_modules
+target
+tmp
+dist
+.angular
+.vscode
+.nx
