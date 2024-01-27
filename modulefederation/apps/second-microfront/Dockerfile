@@ -1,15 +1,16 @@
-FROM node:latest as node
-WORKDIR /app
+### STAGE 1: Build ###
+
+FROM node:latest AS build
+#RUN apk add --no-cache python3 py3-pip make g++
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+RUN npm i
 COPY . .
+RUN npx nx run second-microfront:build --configuration=production
 
+### STAGE 2: Run ###
 
-RUN npm install -g @nrwl/cli
-RUN npm install --force
-RUN npx nx build second-microfront 
-#--configuration=production
-#RUN pwd && ls
-
-#stage 2
-FROM nginx:alpine
-COPY ./apps/second-microfront/nginx.conf /etc/nginx/nginx.conf
-COPY --from=node app/dist/apps/second-microfront /usr/share/nginx/html
+FROM nginx:1.17.1-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/apps/second-microfront /usr/share/nginx/html
+EXPOSE 80
