@@ -1,0 +1,59 @@
+version: "3.8"
+services:
+  #----------------------------------------------------------------
+  modulefederation-web:
+    build:
+      context: ../
+      dockerfile: apps/web/Dockerfile
+    container_name: modulefederation-web
+    restart: on-failure
+    expose:
+      - '4200'
+    ports:
+      - "4200:80"
+    networks:
+      - modulefederation-network
+
+  #----------------------------------------------------------------
+  modulefederation-shell:
+    build:
+      context: ../
+      dockerfile: apps/shell/Dockerfile
+    container_name: modulefederation-shell
+    restart: on-failure
+    expose:
+      - '4203'
+    ports:
+      - "4203:80"
+    networks:
+      - modulefederation-network
+
+  #----------------------------------------------------------------
+  modulefederation-first-microfrontend:
+    build:
+      context: ../
+      dockerfile: apps/first-microfront/Dockerfile
+    container_name: modulefederation-first-microfrontend
+    restart: on-failure
+    expose:
+      - '4201'
+    ports:
+      - "4201:80"
+    networks:
+      - modulefederation-network
+  #----------------------------------------------------------------
+  modulefederation-second-microfrontend:
+    build:
+      context: ../
+      dockerfile: apps/second-microfront/Dockerfile
+    container_name: modulefederation-second-microfrontend
+    restart: on-failure
+    expose:
+      - '4202'
+    ports:
+      - "4202:80"
+    networks:
+      - modulefederation-network
+#----------------------------------------------------------------
+networks:
+  modulefederation-network:
