@@ -17,8 +17,15 @@ web:
     allowed-headers: "Requestor-Type"
     exposed-headers: "X-Get-Header"
 spring:
+  sql:
+    init:
+      mode: always
+  jpa:
+    defer-datasource-initialization: true
   application:
     name: demo
   autoconfigure:
     exclude[0]: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     exclude[1]: org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+
+

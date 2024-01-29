@@ -6,6 +6,9 @@ keycloak:
   use-resource-role-mappings: true
   bearer-only: true
 spring:
+  sql:
+    init:
+      mode: never
   security:
     oauth2:
       resourceserver:
