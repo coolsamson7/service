@@ -1,4 +1,17 @@
+keycloak:
+  realm: service
+  auth-server-url: = http://127.0.0.1:8080/auth
+  ssl-required: external
+  resource: service-browser
+  use-resource-role-mappings: true
+  bearer-only: true
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/service
+          jwk-set-uri: http://localhost:8080/realms/service/protocol/openid-connect/certs
   jpa:
     show-sql: true
     generate-ddl: true

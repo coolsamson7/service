@@ -1,7 +1,7 @@
 [![Java CI with Maven](https://github.com/coolsamson7/service/actions/workflows/maven.yml/badge.svg)](https://github.com/coolsamson7/service/actions/workflows/maven.yml)
 # Service
 
-This library is based upon spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
+This library is based on spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
 
 ## Motivation and goals
 
@@ -42,17 +42,17 @@ What's wrong?
 
 This is _clumsy_ and against some major architectural principles like separation of concern, etc.
 
-Talking about modularization: Spring assumes that the basis for clustering services is an application which is wrong in my mind. Teams split up work
+Talking about modularization: Spring assumes that the basis for clustering services is an application which is _wrong_ in my mind. Teams split up work
 by working on different modules. It should be a deployment aspect at the very end how modules are mapped to processes. So we bascially need a smaller building block! 
 
 The following design ideas or principles where the basis of the implemented architecture: 
 
 - we want to program against simple interfaces and are not interested in protocol level details
-- we don't want to care where the implementation is. It could be remote, it could be local as well.
+- we don't want to care where the implementation is. It could be remote, but it could be local as well.
 - depending on a specific deployment scenarios - e.g class path - different remoting situations should be possible.
 - remote service calls are transparently routed based on a central registry that keeps track of running services
 - services allow different protocols for remoting, which they expose as meta-data
-- typical health checks are executed in order to valdidate the health of individual services
+- typical health checks are executed in order to validate the health of individual services
 - changes in the topology - due to died or newly started services - should be handled transparently
 - every component is able to compute and return the full meta-data concerning its hosted services ( service-signatures, model-information, etc. )
 
@@ -175,7 +175,7 @@ A channel implements the technical remoting protocol whenever remote services ar
 Resolving a proper channel is done lazily based on the available information from the component registry
 which return a list of service instances and supported channels.
 
-It is up to a concrete channel if ( client side ) loadbalancing is supported or not.
+It is up to a concrete channel if ( client side ) load-balancing is supported or not.
 
 Channels will automatically adjust to changes in the topology which is detected by failing heartbeats.
 
