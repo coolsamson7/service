@@ -1,0 +1,26 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console.enabled: false
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h3.Driver
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        health-check-path: ${server.servlet.context-path:}/actuator/health
+        health-check-interval: 15s
+        health-check-timeout: 90s
+        health-check-critical-timeout: 3m
+        instanceId: ${spring.application.name}-${server.port}-${spring.cloud.client.ip-address}

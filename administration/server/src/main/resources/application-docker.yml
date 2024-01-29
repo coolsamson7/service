@@ -1,0 +1,26 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+    ddl-auto: update
+    defer-datasource-initialization: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    platform: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driverClassName: org.postgresql.Driver
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        health-check-path: ${server.servlet.context-path:}/actuator/health
+        health-check-interval: 15s
+        health-check-timeout: 90s
+        health-check-critical-timeout: 3m
+        instanceId: ${spring.application.name}-${server.port}-${spring.cloud.client.ip-address}

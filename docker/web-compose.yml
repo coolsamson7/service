@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  #----------------------------------------------------------------
+  consul:
+    image: consul:1.15
+    command: consul agent -dev -client 0.0.0.0
+    ports:
+      - "8500:8500"
+    networks:
+      - modulefederation-network
+  #----------------------------------------------------------------
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    expose:
+      - '5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - modulefederation-network
+  #----------------------------------------------------------------
+  administration-server:
+    build:
+      context: ../
+      dockerfile: ./administration/server/Dockerfile
+    container_name: administration-server
+    restart: on-failure
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=docker
+    expose:
+      - '8083'
+    ports:
+      - "8083:8083"
+    links:
+      - consul
+      - db
+    networks:
+      - modulefederation-network
+networks:
+  modulefederation-network:
+volumes:
+  postgres:

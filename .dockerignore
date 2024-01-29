@@ -1,0 +1,10 @@
+**/.git
+**/.github
+**/tmp/
+**/target/
+**/node_modules/
+**/dist/
+**/.angular
+**/.idea/
+**/.vscode/
+**/.nx/

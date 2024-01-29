@@ -208,5 +208,6 @@
         <module>administration</module>
         <module>demo</module>
         <module>test</module>
+        <!--module>docker</module-->
     </modules>
 </project>
