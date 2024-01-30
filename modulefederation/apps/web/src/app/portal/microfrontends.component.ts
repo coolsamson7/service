@@ -6,6 +6,8 @@ import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DialogService, Feature, Manifest } from "@modulefederation/portal";
+import { fromFetch } from "rxjs/fetch";
+import { catchError, lastValueFrom, of, switchMap } from "rxjs";
 
 @Component({
     selector: 'microfrontends',
@@ -52,13 +54,14 @@ export class MirofrontendsComponent extends NavigationComponent {
         })
     }
 
-    addManifest() {
+    async addManifest() {
         this.dialogs.inputDialog()
           .title("Add Microfrontend")
           .placeholder("manifest url")
           .inputType("text")
           .okCancel()
-          .show().subscribe(remote => {
+          .show()
+          .subscribe(remote => {
           if (remote == "" || remote == undefined)
             return
 
@@ -66,14 +69,62 @@ export class MirofrontendsComponent extends NavigationComponent {
 
           try {
             url = new URL(remote)
-          } catch(error) {
+          } 
+          catch(error) {
             this.dialogs.confirmationDialog()
               .title("Add Microfrontend")
               .message("malformed url")
               .ok()
               .show()
+              remote == ""
             return
           }
+
+           // new
+
+           fromFetch(remote + "/assets/manifest.json").pipe(
+            switchMap(response => response.json()),
+
+            catchError(err => {
+                console.error(err);
+                    return of({ error: true, message: err });
+              }),
+            )
+            .subscribe(m => {
+                var manifest = m as Manifest
+
+                manifest.enabled = true
+                manifest.remoteEntry = remote
+                manifest.health = "alive"
+
+                this.portalAdministrationService.registerManifest(manifest).subscribe(result => {
+                    if (result.manifest)
+                    this.manifests.push(ManifestDecorator.decorate(result.manifest))
+        
+                    else {
+                        let builder = this.dialogs.confirmationDialog() .title("Add Microfrontend")
+        
+                        switch (result.error) {
+                            case "duplicate":
+                                builder.message("already registered")
+                                break;
+                            case "malformed_url":
+                                builder.message("malformed url")
+                                break;
+                            case "unreachable":
+                                builder.message("could not fetch manifest metadata")
+                                break;
+                        } // switch
+        
+                        builder.ok().show()
+                    } // else
+                })
+                })
+            })
+
+         
+
+          /* New
 
           let address : Address = {
             protocol: url.protocol,
@@ -85,32 +136,24 @@ export class MirofrontendsComponent extends NavigationComponent {
               this.manifests.push(ManifestDecorator.decorate(result.manifest))
 
             else {
-              switch (result.error) {
-                case "duplicate":
-                  this.dialogs.confirmationDialog()
-                    .title("Add Microfrontend")
-                    .message("already registered")
-                    .ok()
-                    .show()
-                  break;
-                case "malformed_url":
-                  this.dialogs.confirmationDialog()
-                    .title("Add Microfrontend")
-                    .message("malformed url")
-                    .ok()
-                    .show()
-                  break;
-                case "unreachable":
-                  this.dialogs.confirmationDialog()
-                    .title("Add Microfrontend")
-                    .message("could not fetch manifest metadata")
-                    .ok()
-                    .show()
-                  break;
-              }
+                let builder = this.dialogs.confirmationDialog() .title("Add Microfrontend")
+
+                switch (result.error) {
+                    case "duplicate":
+                        builder.message("already registered")
+                        break;
+                    case "malformed_url":
+                        builder.message("malformed url")
+                        break;
+                    case "unreachable":
+                        builder.message("could not fetch manifest metadata")
+                        break;
+                } // switch
+
+                builder.ok().show()
             }
           })
-        })
+        })*/
     }
 
     loadManifestFrom(url : string) {

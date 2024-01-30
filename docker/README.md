@@ -8,7 +8,8 @@ will start
 - consul
 - keycloak
 - administration server ( including the ui )
-- 
+- two microservices including the generic shell
+
 # Administration Server
 
 Navigate to
@@ -17,7 +18,7 @@ http://localhost:8083/home
 
 # Consul
 
-Navigate to
+**Navigate to
 
 http://localhost:8500/ui/dc1/services
 
@@ -25,4 +26,18 @@ http://localhost:8500/ui/dc1/services
 
 Navigate to
 
-http://localhost:8080/admin/master/console/
+http://localhost:8080/admin/master/console/**
+
+
+
+
+# Microservices
+
+**Navigate to
+
+http://localhost:4203/
+
+the shell, which hosts two other microfrontends
+
+* http://localhost:4201/
+* http://localhost:4202/

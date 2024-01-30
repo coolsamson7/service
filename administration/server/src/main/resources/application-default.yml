@@ -25,7 +25,7 @@ spring:
     url: jdbc:h2:mem:mydb
     username: sa
     password: password
-    driverClassName: org.h3.Driver
+    driverClassName: org.h2.Driver
   cloud:
     consul:
       host: localhost

@@ -86,7 +86,7 @@ class ManifestManager {
         this.entityManager.saveManifest(manifest)
     }
 
-    @Scheduled(fixedRate = 1000 * 10)
+    //TODO @Scheduled(fixedRate = 1000 * 10)
     fun checkHealth() {
         for (manifest in manifests) {
             try {

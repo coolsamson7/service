@@ -8,7 +8,7 @@ RUN mvn clean install -pl com.serious:service-administration-server -am -DskipTe
 ### STAGE 2: run ###
 
 FROM openjdk:17-jdk-slim AS run
-ENV JAVA_OPTS=" -Dfile.encoding=UTF8 -Dserver.tomcat.uri-encoding=UTF8 --add-opens java.base/java.lang=ALL-UNNAMED "
+ENV JAVA_OPTS=" -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF8 -Dserver.tomcat.uri-encoding=UTF8 --add-opens java.base/java.lang=ALL-UNNAMED "
 ENV SPRING_PROFILE=default
 EXPOSE 8083
 WORKDIR /usr/src/app

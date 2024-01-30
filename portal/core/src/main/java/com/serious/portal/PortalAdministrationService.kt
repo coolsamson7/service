@@ -20,6 +20,11 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun registerMicrofrontend(@RequestBody url : Address) : RegistryResult
 
+    @PostMapping("register-manifest")
+    @ResponseBody
+    fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult
+
+
     @PostMapping("remove-microfrontend")
     fun removeMicrofrontend(@RequestBody url : Address)
 

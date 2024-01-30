@@ -27,8 +27,25 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var manifestLoader: ManifestLoader
 
     // implement PortalAdministrationService
+
+    override fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult {
+        var url = manifest.remoteEntry
+
+        // check for duplicates
+
+        val result: Manifest? = manifestManager.manifests.find { manifest -> manifest.remoteEntry == url }
+
+        if (result != null)
+            return RegistryResult(RegistryError.duplicate, null, "microfrontend already registered")
+        else {
+            manifestManager.register(manifest)
+
+            return RegistryResult(null, manifest, "registered")
+        }
+    }
+
     override fun registerMicrofrontend(address: Address): RegistryResult {
-        var url : URL? = null;
+        var url : URL? = null
 
         try {
             url = URL(address.protocol + "//" + address.host + ":" + address.port)
