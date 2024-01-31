@@ -18,6 +18,7 @@ data class Manifest(
     var version: String,
     var commitHash: String,
     var remoteEntry: String?,
+    var healthCheck: String?,
 
     // actually
 

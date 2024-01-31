@@ -75,6 +75,8 @@ services:
       dockerfile: apps/shell/Dockerfile
     container_name: modulefederation-shell
     restart: on-failure
+    environment:
+      - REMOTE=http://localhost:4203
     expose:
       - '4203'
     ports:
@@ -89,6 +91,8 @@ services:
       dockerfile: apps/first-microfront/Dockerfile
     container_name: modulefederation-first-microfrontend
     restart: on-failure
+    environment:
+      - REMOTE=http://localhost:4201
     expose:
       - '4201'
     ports:
@@ -102,6 +106,8 @@ services:
       dockerfile: apps/second-microfront/Dockerfile
     container_name: modulefederation-second-microfrontend
     restart: on-failure
+    environment:
+      - REMOTE=http://localhost:4202
     expose:
       - '4202'
     ports:

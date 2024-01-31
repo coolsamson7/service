@@ -61,7 +61,7 @@ export class MirofrontendsComponent extends NavigationComponent {
           .inputType("text")
           .okCancel()
           .show()
-          .subscribe(remote => {
+          .subscribe(async remote => {
           if (remote == "" || remote == undefined)
             return
 
@@ -80,7 +80,30 @@ export class MirofrontendsComponent extends NavigationComponent {
             return
           }
 
-           // new
+        // read manifest locally
+
+        let manifest: Manifest | undefined = undefined
+
+        try {
+            let response = (await fetch(remote + "/assets/manifest.json"))
+            manifest = await response.json()
+        } 
+        catch (error) {
+          // ouch  
+        } 
+
+        // in case of a docker container, we can read the container ip
+
+        let ip: string | undefined = undefined
+        try {
+            let response = (await fetch(remote + "/assets/ip"))
+            ip = await response.text()
+        } 
+        catch (error) {
+          // ouch  
+        } 
+  
+      
 
            fromFetch(remote + "/assets/manifest.json").pipe(
             switchMap(response => response.json()),
@@ -91,13 +114,16 @@ export class MirofrontendsComponent extends NavigationComponent {
               }),
             )
             .subscribe(m => {
-                var manifest = m as Manifest
+                manifest!.enabled = true
+                manifest!.remoteEntry = remote
+                manifest!.health = "alive"
 
-                manifest.enabled = true
-                manifest.remoteEntry = remote
-                manifest.health = "alive"
+                if ( ip )
+                   manifest!.healthCheck = url?.protocol + "//" +  ip.trim() + ":" + url?.port
+                else
+                   manifest!.healthCheck = remote
 
-                this.portalAdministrationService.registerManifest(manifest).subscribe(result => {
+                this.portalAdministrationService.registerManifest(manifest!).subscribe(result => {
                     if (result.manifest)
                     this.manifests.push(ManifestDecorator.decorate(result.manifest))
         

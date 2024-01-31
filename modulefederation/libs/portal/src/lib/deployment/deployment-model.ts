@@ -9,6 +9,7 @@ export interface Manifest extends ModuleMetadata {
     health? : string,
     commitHash : string,
     remoteEntry? : string,
+    healthCheck?: string,
     module : string,
     features : FeatureConfig[],
     folders : FolderData[],

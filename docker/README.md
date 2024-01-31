@@ -41,3 +41,5 @@ the shell, which hosts two other microfrontends
 
 * http://localhost:4201/
 * http://localhost:4202/
+
+The microfrontends can be opened individually of course, but they lack any kind of navigation possibilities.

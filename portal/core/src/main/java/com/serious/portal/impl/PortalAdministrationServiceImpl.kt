@@ -31,6 +31,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     override fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult {
         var url = manifest.remoteEntry
 
+        if ( manifest.healthCheck == null)
+            manifest.healthCheck = manifest.remoteEntry
+
         // check for duplicates
 
         val result: Manifest? = manifestManager.manifests.find { manifest -> manifest.remoteEntry == url }

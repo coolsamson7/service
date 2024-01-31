@@ -13,4 +13,5 @@ RUN npx nx run shell:build --configuration=production
 FROM nginx:1.17.1-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/dist/apps/shell /usr/share/nginx/html
+CMD ["sh", "-c", "hostname -i > /usr/share/nginx/html/assets/ip & nginx -g 'daemon off;'"]
 EXPOSE 80

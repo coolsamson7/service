@@ -10,12 +10,12 @@ import com.serious.portal.ManifestEntity
 import com.serious.portal.model.Manifest
 import org.springframework.transaction.annotation.Transactional
 
-import jakarta.persistence.*;
+import jakarta.persistence.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class ManifestEntityManager() {
+class ManifestEntityManager {
     // instance data
 
     @PersistenceContext
@@ -36,7 +36,7 @@ class ManifestEntityManager() {
         )
     }
 
-    private fun toManifest(entity: ManifestEntity) : Manifest {
+    fun toManifest(entity: ManifestEntity) : Manifest {
         val manifest = objectMapper.readValue(entity.json, Manifest::class.java)
 
         manifest.enabled = entity.enabled
@@ -68,7 +68,7 @@ class ManifestEntityManager() {
         this.entityManager.createQuery("update ManifestEntity m set m.enabled = :enabled where m.uri=:id")
             .setParameter("enabled", enabled)
             .setParameter("id", uri)
-            .executeUpdate();
+            .executeUpdate()
     }
 
     @Transactional
@@ -76,7 +76,7 @@ class ManifestEntityManager() {
         this.entityManager.createQuery("update ManifestEntity m set m.health = :health where m.uri=:id")
             .setParameter("health", health)
             .setParameter("id", uri)
-            .executeUpdate();
+            .executeUpdate()
     }
 
     @Transactional
