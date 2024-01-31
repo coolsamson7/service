@@ -29,6 +29,7 @@ class ManifestManager {
     @PostConstruct
     fun loadDatabase() {
         for ( manifest in entityManager.readAll()) {
+            println("loaded " + manifest.remoteEntry + ", healthCheck: " + manifest.healthCheck)
             // add to list anyway
 
             this.manifests.add(manifest)
@@ -41,6 +42,7 @@ class ManifestManager {
                 this.entityManager.updateHealth(manifest.remoteEntry!!, "alive")
             }
             catch(exception : Throwable) {
+                println("och...dead")
                 manifest.health  = "dead"
 
                 this.entityManager.updateHealth(manifest.remoteEntry!!, "dead")
@@ -91,8 +93,11 @@ class ManifestManager {
     }
     @Scheduled(fixedRate = 1000 * 10)
     fun checkHealth() {
+        println("check health")
         for (manifest in manifests) {
             try {
+                println("try load " + manifest.healthCheck)
+
                 loader.load(URL(manifest.healthCheck))
 
                 if ( manifest.health != "alive") {
@@ -103,6 +108,9 @@ class ManifestManager {
                 }
             }
             catch(exception: Throwable) {
+                println("caught " + exception.message)
+                exception.printStackTrace()
+
                 if ( manifest.health == "alive") {
                     println(manifest.name + "-> dead ")
                     manifest.health = "dead"

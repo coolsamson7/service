@@ -8,6 +8,8 @@ RUN mvn clean install -pl com.serious:service-administration-server -am -DskipTe
 ### STAGE 2: run ###
 
 FROM openjdk:17-jdk-slim AS run
+#apt-get update && apt-get install -y curl
+#apt-get install -y iputils-ping
 ENV JAVA_OPTS=" -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF8 -Dserver.tomcat.uri-encoding=UTF8 --add-opens java.base/java.lang=ALL-UNNAMED "
 ENV SPRING_PROFILE=default
 EXPOSE 8083

@@ -28,7 +28,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // implement PortalAdministrationService
 
-    override fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult {
+    override fun registerManifest(manifest: Manifest) : RegistryResult {
         var url = manifest.remoteEntry
 
         if ( manifest.healthCheck == null)

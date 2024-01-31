@@ -15,6 +15,8 @@ port="$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[
 # extract the path (if any)
 path="$(echo $url | grep / | cut -d/ -f2-)"
 
+port=80
+
 # remove possibly old entries and first line
 
 sed -i '/"remoteEntry"/d' $2

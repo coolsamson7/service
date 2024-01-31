@@ -69,7 +69,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
           try {
             url = new URL(remote)
-          } 
+          }
           catch(error) {
             this.dialogs.confirmationDialog()
               .title("Add Microfrontend")
@@ -80,30 +80,6 @@ export class MirofrontendsComponent extends NavigationComponent {
             return
           }
 
-        // read manifest locally
-
-        let manifest: Manifest | undefined = undefined
-
-        try {
-            let response = (await fetch(remote + "/assets/manifest.json"))
-            manifest = await response.json()
-        } 
-        catch (error) {
-          // ouch  
-        } 
-
-        // in case of a docker container, we can read the container ip
-
-        let ip: string | undefined = undefined
-        try {
-            let response = (await fetch(remote + "/assets/ip"))
-            ip = await response.text()
-        } 
-        catch (error) {
-          // ouch  
-        } 
-  
-      
 
            fromFetch(remote + "/assets/manifest.json").pipe(
             switchMap(response => response.json()),
@@ -113,23 +89,19 @@ export class MirofrontendsComponent extends NavigationComponent {
                     return of({ error: true, message: err });
               }),
             )
-            .subscribe(m => {
-                manifest!.enabled = true
-                manifest!.remoteEntry = remote
-                manifest!.health = "alive"
-
-                if ( ip )
-                   manifest!.healthCheck = url?.protocol + "//" +  ip.trim() + ":" + url?.port
-                else
-                   manifest!.healthCheck = remote
+            .subscribe(manifest => {
+                manifest.enabled = true
+                if ( ! manifest.remoteEntry)
+                    manifest.remoteEntry = remote
+                manifest.health = "alive"
 
                 this.portalAdministrationService.registerManifest(manifest!).subscribe(result => {
                     if (result.manifest)
                     this.manifests.push(ManifestDecorator.decorate(result.manifest))
-        
+
                     else {
                         let builder = this.dialogs.confirmationDialog() .title("Add Microfrontend")
-        
+
                         switch (result.error) {
                             case "duplicate":
                                 builder.message("already registered")
@@ -141,14 +113,14 @@ export class MirofrontendsComponent extends NavigationComponent {
                                 builder.message("could not fetch manifest metadata")
                                 break;
                         } // switch
-        
+
                         builder.ok().show()
                     } // else
                 })
                 })
             })
 
-         
+
 
           /* New
 

@@ -24,6 +24,9 @@ sed -i '1d' $2
 ip="$(hostname -i)"
 
 # add beginning
+# we need to talk to the internal port, not mapped...
+
+port=80
 
 echo "{" > result
 echo "  \"remoteEntry\": \"${REMOTE}\"," > result

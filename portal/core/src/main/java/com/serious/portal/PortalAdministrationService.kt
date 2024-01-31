@@ -24,7 +24,6 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult
 
-
     @PostMapping("remove-microfrontend")
     fun removeMicrofrontend(@RequestBody url : Address)
 
