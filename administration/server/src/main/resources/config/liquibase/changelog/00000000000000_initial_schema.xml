@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="andreasernst (generated)" id="1706792913947-1">
+        <createTable tableName="message">
+            <column autoIncrement="true" name="id" startWith="205" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="message_pkey"/>
+            </column>
+            <column name="locale" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="namespace" type="VARCHAR(255)"/>
+            <column name="translation" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="andreasernst (generated)" id="1706792913947-2">
+        <createIndex indexName="idxjaanst835oe6vhkh8u5k9t6dv" tableName="message">
+            <column name="namespace"/>
+            <column name="name"/>
+            <column name="locale"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="andreasernst (generated)" id="1706792913947-3">
+        <createTable tableName="language">
+            <column name="locale" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="language_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="andreasernst (generated)" id="1706792913947-4">
+        <createTable tableName="MANIFEST">
+            <column name="uri" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="manifest_pkey"/>
+            </column>
+            <column name="enabled" type="BOOLEAN"/>
+            <column name="health" type="VARCHAR(255)"/>
+            <column name="json" type="VARCHAR(5000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="andreasernst (generated)" id="1706792913947-5">
+        <createTable tableName="user_profile">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_profile_pkey"/>
+            </column>
+            <column name="locale" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

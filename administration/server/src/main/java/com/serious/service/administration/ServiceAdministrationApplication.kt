@@ -1,4 +1,4 @@
-package com.serious.demo
+package com.serious.service.administration
 /*
 * @COPYRIGHT (C) 2023 Andreas Ernst
 *
@@ -59,7 +59,7 @@ class JWTSecurityConfig {
             .authorizeHttpRequests { authz ->
                 authz
                     .requestMatchers("/**").permitAll()
-                    .requestMatchers("/administration/**").hasAnyRole("service-admin-role")
+                    //TODO WTF.requestMatchers("/administration/**").hasAnyRole("service-admin-role")
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest()
                     .authenticated()
@@ -118,11 +118,11 @@ class WebConfig {
 @EnableAsync
 @Slf4j
 @Component
-class AdministrationServerApplication {
+class ServiceAdministrationApplication {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplication.run(AdministrationServerApplication::class.java, *args)
+            SpringApplication.run(ServiceAdministrationApplication::class.java, *args)
         }
     }
 }

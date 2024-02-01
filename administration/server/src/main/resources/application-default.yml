@@ -6,6 +6,9 @@ keycloak:
   use-resource-role-mappings: true
   bearer-only: true
 spring:
+  liquibase:
+    change-log: classpath:config/liquibase/master.xml
+    enabled: true
   security:
     oauth2:
       resourceserver:
@@ -14,10 +17,10 @@ spring:
           jwk-set-uri: http://localhost:8080/realms/service/protocol/openid-connect/certs
   jpa:
     show-sql: true
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true
+      ddl-auto: none
+    defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console.enabled: false

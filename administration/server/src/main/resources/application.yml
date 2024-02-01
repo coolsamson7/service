@@ -19,9 +19,7 @@ web:
 spring:
   sql:
     init:
-      mode: always
-  jpa:
-    defer-datasource-initialization: true
+      mode: never
   application:
     name: demo
   autoconfigure:

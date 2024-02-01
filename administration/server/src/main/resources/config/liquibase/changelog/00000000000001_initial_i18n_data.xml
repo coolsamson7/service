@@ -1,0 +1,166 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="andreasernst (generated)" id="1706792913947-1">
+        <!-- languages -->
+
+        <insert tableName="LANGUAGE">
+            <column name="LOCALE" value="en-US" />
+        </insert>
+
+        <insert tableName="LANGUAGE">
+            <column name="LOCALE" value="de-DE" />
+        </insert>
+
+        <!-- user profile -->
+
+        <insert tableName="USER_PROFILE">
+            <column name="USER_ID" value="coolsamson" />
+            <column name="LOCALE" value="en-US" />
+        </insert>
+
+        <!-- some messages -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal" />
+            <column name="NAME" value="name.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Portal" />
+        </insert>
+
+        <!-- ok -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="ok.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Ok" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="ok.label" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Ok" />
+        </insert>
+
+        <!-- cancel -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="cancel.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Abbrechen" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="cancel.label" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Cancel" />
+        </insert>
+
+        <!-- save -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.label" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Save" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.shortcut" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="ctrl+s" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.tooltip" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Save pending changes" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Sichern" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.shortcut" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="ctrl+s" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.tooltip" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Änderungen speichern" />
+        </insert>
+
+        <!-- revert -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.label" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Revert" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.shortcut" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="ctrl+z" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.tooltip" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="Revert changes" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Rückgängig" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.shortcut" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="ctrl+z" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.tooltip" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Änderungen rückgängig machen" />
+        </insert>
+
+        <!-- translations -->
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="translations" />
+            <column name="NAME" value="title.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Translations" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="translations" />
+            <column name="NAME" value="title.label" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="Übersetzungen" />
+        </insert>
+    </changeSet>
+</databaseChangeLog>
