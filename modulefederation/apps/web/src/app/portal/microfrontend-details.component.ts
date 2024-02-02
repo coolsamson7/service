@@ -1,14 +1,134 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, Injectable, Injector, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, map, of, switchMap } from 'rxjs';
 import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
-import { FormBuilder, FormGroup, NgForm } from "@angular/forms";
+import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, NgControl, NgForm, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
+import { MatFormField } from "@angular/material/form-field";
+
+@Component({
+    selector: '[errorMessages]',
+    template: '{{ error }}'
+})
+export class MatErrorMessagesComponent implements AfterViewInit {
+    // instance data
+
+    public error = ''
+    private control: NgControl | AbstractControlDirective | null = null
+
+    // constructor
+
+    constructor(private formField: MatFormField) {
+    }
+
+    /// implement AfterViewInit
+
+    public ngAfterViewInit(): void {
+        this.control = this.formField._control.ngControl;
+
+        // sub to the control's status stream
+
+        this.control?.statusChanges!.subscribe(this.updateErrors);
+    }
+
+    // private
+
+    private updateErrors = (state: 'VALID' | 'INVALID'): void => {
+        if (state === 'INVALID') {
+            // active errors on the FormControl
+
+            const controlErrors = this.control!.errors!
+
+            // just grab one error
+
+            const firstError = Object.keys(controlErrors)[0]
+
+            if (firstError === 'required')
+                this.error = 'This field is required.'
+
+            if (firstError === 'i18n-key')
+                switch (controlErrors[firstError].error) {
+                    case "missing-namespace":
+                        this.error = "namespace missing`"
+                        break;
+
+                    case "missing-path":
+                        this.error = "path missing"
+                        break;
+
+                    case "no-translations":
+                        this.error = "no translations"
+                        break;
+
+                default:
+                    this.error = "i18n fuck"
+             }
+        }
+    };
+}
+
+export class I18NValidator {
+  static createValidator(translator: Translator): AsyncValidatorFn {
+
+  let extractNamespace = (key : string) :  { namespace : string | undefined; path : string } => {
+      let namespace : string;
+      let path : string;
+      const colon = key.indexOf(':');
+
+      if (colon > 0)
+        return {
+          namespace: key.substring(0, colon),
+          path: key.substring(colon + 1)
+        }
+
+      else return {
+          namespace: undefined,
+          path: key
+      }
+  }
+
+  let check = (value: string)  : boolean => {
+    const {namespace, path} = extractNamespace(value);
+
+    if ( namespace == undefined)
+        return false
+
+    if ( path.length == 0)
+        return false
+
+
+    return true
+   }
+
+    return (control: AbstractControl): Observable<ValidationErrors|null> => {
+        if ( control.value == "")
+            return of(null)
+
+        const {namespace, path} = extractNamespace(control.value);
+
+        if ( namespace == undefined)
+            return of({
+                'i18n-key': {error: "missing-namespace"}
+            })
+
+        if ( path.length == 0)
+            return of({
+                'i18n-key': {error: "missing-path"}
+            })
+
+        return translator.hasTranslationsFor$(control.value).pipe(
+            switchMap(ok => ok ? of(null) : of({
+                'i18n-key': {error: "no-translations"}
+            })
+            ))
+        };
+  }
+}
 
 @Component({
     selector: 'microfrontend-details',
@@ -19,6 +139,7 @@ import { I18NTreeComponent } from "./widgets/i18n-tree";
 @Feature({
     id: "microfrontend",
     parent: "microfrontends",
+    i18n: ["portal.commands"],
     router: {
         path: ":microfrontend"
     },
@@ -90,7 +211,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.formGroup = this.formBuilder.group({
                 id: [''],
                 label: [''],
-                labelKey: [''],
+                labelKey: ['', null, [I18NValidator.createValidator(translator)]],
                 labelTranslation: [''],
                 description: [''],
                 visibility: [[]],
@@ -103,7 +224,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.formGroup.get('labelKey')?.valueChanges.subscribe(val => this.changedLabelKey(val));
         this.formGroup.get('id')?.disable();
     }
-
 
     focusLabelKey(focused: boolean) {
         this.labelKeyIsFocused = focused
@@ -119,6 +239,15 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     }
 
     save() {
+        if (!this.formGroup.valid) {
+            this.dialogs.confirmationDialog()
+                .title("Invalid Data")
+                .message("Correct input first")
+                .ok()
+                .show()
+            return
+        }
+
         // copy values from
 
         const index = this.manifest.features.indexOf(this.selectedFeature!)
@@ -126,7 +255,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.selectedFeature!.enabled = this.enabled[index]
 
         for (const propertyName in this.dirty)
-         if (propertyName !== "labelTranslation") {
+          if (propertyName !== "labelTranslation") {
             (<any>this.selectedFeature)[propertyName] = this.dirty[propertyName] || false
         }
 
@@ -203,6 +332,18 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     }
 
     selectFeature(feature : any) {
+
+        if (feature !== this.selectedFeature && !this.formGroup.valid) {
+            this.dialogs.confirmationDialog()
+                .title("Invalid Data")
+                .message("Correct input first")
+                .ok()
+                .show()
+
+            return
+        }
+
+
         if (feature !== this.selectedFeature && this.isDirty) {
             this.dialogs
                 .confirmationDialog()
@@ -220,6 +361,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             })
             return
         }
+
+       if (!feature.labelKey)
+          feature.labelKey = ""
 
         this.selectedFeature = feature
         this.labelTranslation = ""// todo this.translator.tr
@@ -246,11 +390,17 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     changedLabelKey(key: string) {
         this.tree?.applyFilter(key)
 
-        if (key.indexOf(":") > 0 && key.indexOf(":") < key.length - 1)
+        if (this.formGroup.get('labelKey')?.valid && key != "")
             this.translator.translate$(key).subscribe(translation => {
                 this.labelTranslation = translation
                 this.formGroup.get("labelTranslation")?.setValue(translation)
             })
+        else {
+            let translation = ""
+
+            this.labelTranslation = translation
+            this.formGroup.get("labelTranslation")?.setValue(translation)
+        }
     }
 
     toggleEnabled(index : number) {
@@ -282,6 +432,8 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         for (const propertyName in value) {
             if (propertyName !== "labelTranslation" && !equals((<any>this.selectedFeature)[propertyName], value[propertyName])) {
                 dirty[propertyName] = value[propertyName]
+
+                console.log(propertyName + " is dirty, was  " + (<any>this.selectedFeature)[propertyName] + ", now " + value[propertyName])
                 this.isDirty = true
             }
         }
@@ -293,7 +445,6 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
             this.isDirty = true
             dirty["enabled"] = this.enabled[index]
         }
-
 
         this.dirty = dirty
     }
@@ -322,3 +473,4 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.subscription.unsubscribe();
     }
 }
+

@@ -7,7 +7,7 @@ import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DialogService, Feature, Manifest } from "@modulefederation/portal";
 import { fromFetch } from "rxjs/fetch";
-import { catchError, lastValueFrom, of, switchMap } from "rxjs";
+import { catchError, of, switchMap } from "rxjs";
 
 @Component({
     selector: 'microfrontends',
@@ -18,6 +18,7 @@ import { catchError, lastValueFrom, of, switchMap } from "rxjs";
     id: "microfrontends",
     label: "Microfrontends",
     icon: "folder",
+    i18n: ["portal.commands"],
     visibility: ["public", "private"],
     categories: [],
     tags: ["navigation"],

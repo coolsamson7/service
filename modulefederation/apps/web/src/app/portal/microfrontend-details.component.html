@@ -66,8 +66,7 @@
 
                         <!-- details -->
 
-                        <form #form *ngIf="selectedFeature !== undefined" [formGroup]="formGroup" class="feature-details"
-                              novalidate>
+                        <form #form *ngIf="selectedFeature !== undefined" [formGroup]="formGroup" class="feature-details" novalidate>
                             <!-- id -->
 
                             <mat-form-field>
@@ -87,21 +86,25 @@
                             <mat-form-field>
                                 <mat-label>Label Translation</mat-label>
 
+                                   <!-- the key -->
+
+                                   <input #input [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" matInput id="labelKey" name="labelKey" type="text" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
+                                   formControlName="labelKey"
+                                   autofocus
+                                   autocomplete="off"
+                                       (focus)="focusLabelKey(true)"
+                                       (focusout)="focusLabelKey(false)"
+
+                                   />
+                                   <mat-error errorMessages></mat-error>
+
+
                                 <!--- the translation -->
 
-                                <input [ngStyle]="{'display':labelKeyIsFocused ? 'none' : 'block'}" matInput id="labelTranslation" name="labelTranslation" type="text" placeholder="Label"  
-                                    (focus)="focusLabelTranslation(true)"  formControlName="labelTranslation" 
+                                <input [ngStyle]="{'display':labelKeyIsFocused ? 'none' : 'block'}" matInput id="labelTranslation" name="labelTranslation" type="text" placeholder="Label"
+                                    (focus)="focusLabelTranslation(true)"  formControlName="labelTranslation"
                                 />
 
-                                <!-- the key -->
-
-                                <input #input [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" matInput id="labelKey" name="labelKey" type="text" [suggestionProvider]="tree.suggestionProvider" placeholder="Label"
-                                formControlName="labelKey" 
-                                autofocus   
-                                autocomplete="off"
-                                    (focus)="focusLabelKey(true)"
-                                    (focusout)="focusLabelKey(false)"
-                                />
 
                                 <button *ngIf="!labelKeyIsFocused" mat-icon-button matSuffix>
                                     <mat-icon>{{true ? 'language' : 'language'}}</mat-icon>
@@ -109,14 +112,16 @@
 
                                 <i18n-tree [ngStyle]="{'display':labelKeyIsFocused ? 'block' : 'none'}" [namespaces]="namespaces" class="tree" #tree>
                                 </i18n-tree>
+
+
                             </mat-form-field>
 
                             <!-- description -->
 
                             <mat-form-field>
                                 <mat-label>Description</mat-label>
-                                <input formControlName="description" id="description" matInput name="description"
-                                       type="text">
+                                <input formControlName="description" id="description" matInput name="description" type="text">
+                                       <!--mat-error errorMessages>ouch</mat-error-->
                             </mat-form-field>
 
                             <!-- visibility -->
