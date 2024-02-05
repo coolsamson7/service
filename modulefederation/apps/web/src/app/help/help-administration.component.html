@@ -1,0 +1,28 @@
+<view>
+  <!-- toolbar -->
+
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <!-- save -->
+
+      <command-button command="save"></command-button>
+
+      <!-- revert -->
+
+      <command-button command="revert"></command-button>
+
+      <!-- add -->
+
+      <command-button command="add"></command-button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content">
+    <quill-editor (onEditorCreated)="editorCreated($event)" format="json"
+                  placeholder="Enter Text"
+                  [modules]="quillConfig"
+                  (onContentChanged)="onContentChanged($event)"></quill-editor>
+
+  </div>
+ </view>
+

@@ -1,10 +1,6 @@
 <view>
-
-
-  {{htmlText}}
-  <quill-editor [(ngModel)]="htmlText"  (onEditorCreated)="editorCreated($event)" format="json"
-                placeholder="Enter Text"
-                [modules]="quillConfig"
-                (onContentChanged)="onContentChanged($event)"></quill-editor>
-</view>
+  <div class="content">
+    <quill-editor (onEditorCreated)="editorCreated($event)" format="json" [readOnly]="true" [modules]="modules" [ngStyle]="{'display': 'unset'}"></quill-editor>
+  </div>
+ </view>
 
