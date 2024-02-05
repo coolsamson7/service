@@ -57,6 +57,7 @@ import { GlobalErrorHandler } from './error/global-error-handler';
 import { UserComponent } from "./header/user/user.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { QuillModule } from "ngx-quill";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -139,6 +140,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             }
         }),
 
+        QuillModule.forRoot({
+            //theme: "bubble"
+        }),
+
         CommandModule.forRoot(),
 
         OIDCModule.forRoot({
@@ -168,10 +173,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         UserComponent
     ],
     providers: [
-        {
+        /*{
           provide: ErrorHandler,
           useClass: GlobalErrorHandler
-        },
+        },*/
         {
            provide: RouteReuseStrategy,
            useClass: FeatureReuseStrategy
