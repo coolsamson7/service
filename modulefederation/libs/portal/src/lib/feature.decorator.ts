@@ -4,18 +4,19 @@ const identity = (...args: any[]) => args[0]
 
 import { FeatureConfig } from "./feature-config";
 import { AbstractFeature } from './feature/abstract-feature';
+import { isSubclassOf } from './common';
 
 export function Feature(config : FeatureConfig) {
-    return (clazz: Type<any>) => { // TODO
+    return (clazz: Type<any>) => {
         (<any>clazz)['$$config'] = config;
         clazz.prototype.$$config = config;
-    
+
         const componentDef = (clazz as any)[ɵNG_COMP_DEF];
-    
+
         // remember
-    
+
         config.componentDefinition = componentDef;
-    
+
         // If no providers specified, i.e. no providersFeature is present,
         // apply one manually.
         // More on feature:
@@ -23,24 +24,27 @@ export function Feature(config : FeatureConfig) {
         if (!componentDef.providersResolver) {
           providersFeature([])(componentDef);
         }
-    
-        if ( clazz instanceof AbstractFeature) {
+
+        if ( !isSubclassOf(clazz, AbstractFeature))
+           console.log("######## " + clazz.name + " must extend AbstractFeature")
+
+        if ( true /* clazz instanceof AbstractFeature*/) {
             // Take the original providers resolver
-        
+
             const originalProvidersResolver = componentDef.providersResolver;
-        
+
             componentDef.providersResolver = (def: ɵDirectiveDef<any>, processProvidersFn?: (providers: Provider[]) => Provider[]) => {
             originalProvidersResolver(def, (providers: Provider[]) => {
                 const processedProviders = (processProvidersFn || identity)(providers);
-                
+
                 return [
                 ...processedProviders,
-        
+
                 // Add one more provider to the list
-        
-                { 
-                    provide: AbstractFeature, 
-                    useExisting: forwardRef(() => clazz) 
+
+                {
+                    provide: AbstractFeature,
+                    useExisting: forwardRef(() => clazz)
                 }
                 ];
             });
