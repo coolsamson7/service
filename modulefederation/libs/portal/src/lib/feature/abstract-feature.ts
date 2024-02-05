@@ -7,6 +7,7 @@ import {
   OnInit
 } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
+import { FeatureManager } from './feature-manager';
 
 /**
  * a <code>LifecycleAware</code> can include functions that will be executed in the different phases of a component.
@@ -37,7 +38,7 @@ export interface LifecycleAware {
  * covers the possible phases
  * @see LifecycleAware
  */
-declare type LifecylePhase = 'onInit' | 'onDestroy' | 'afterContentInit' | 'afterViewInit';
+declare type LifecyclePhase = 'onInit' | 'onDestroy' | 'afterContentInit' | 'afterViewInit';
 
 @Component({
   selector: 'abstract-feature',
@@ -47,10 +48,7 @@ declare type LifecylePhase = 'onInit' | 'onDestroy' | 'afterContentInit' | 'afte
 export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
   // instance data
 
-  injector: Injector
-
   private lifecycleAware: LifecycleAware[] = [];
-
   parent?: AbstractFeature;
   children: AbstractFeature[] = [];
 
@@ -60,13 +58,18 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
    * create a new AbstractFeature.
    * @param injector the appropriate injector that will be used internally to inject objects
    */
-  constructor(injector: Injector) {
-    this.injector = injector
-
+  constructor(protected injector: Injector) {
     const parent = injector.get(AbstractFeature, undefined, {skipSelf: true, optional: true})
     if ( parent ) {
       this.linkParent(this.parent = parent)
-      this.onDestroy(() => this.unlinkParent())
+
+      injector.get(FeatureManager).onCreate(this)
+
+      this.onDestroy(() => {
+        this.unlinkParent()
+
+        injector.get(FeatureManager).onDestroy(this)
+      })
     }
   }
 
@@ -152,7 +155,7 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
    * @param phase one of 'onDestroy', 'onInit'
    * @protected
    */
-  protected executeLifecycle(phase: LifecylePhase) {
+  protected executeLifecycle(phase: LifecyclePhase) {
     // execute in reverse so that the splice doesn't break us
 
     for (let i = this.lifecycleAware.length - 1; i >= 0; i--) {
