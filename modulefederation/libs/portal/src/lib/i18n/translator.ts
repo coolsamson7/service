@@ -30,11 +30,13 @@ export abstract class Translator {
      * return an observable containing all values for the specific namespace
      * @param namespace
      */
-    abstract findTranslationFor$(namespace : string) : Observable<Translations>;
+    abstract findTranslationsFor$(namespace : string) : Observable<Translations>;
 
     /**
      * return all values for the specific namespace, assuming that they have been already loaded
      * @param namespace
      */
-    abstract findTranslationFor(namespace : string) : Translations;
+    abstract findTranslationsFor(namespace : string) : Translations;
+
+    abstract hasTranslationsFor$(key : string) : Observable<boolean>
 }

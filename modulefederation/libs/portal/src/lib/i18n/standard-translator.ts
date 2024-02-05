@@ -7,6 +7,7 @@ import { Translations, Translator } from './translator';
 import { I18nLoader } from './i18n-loader';
 import { Interpolator } from "./interpolator";
 import { MissingTranslationHandler } from "./missing-translation-handler";
+import { transition } from '@angular/animations';
 
 /**
  * The default implementation of a {@link MissingTranslationHandler} that simply wraps the key with '##' around it.
@@ -37,7 +38,7 @@ export abstract class AbstractCachingTranslator extends Translator {
   /**
    * @inheritdoc
    */
-  findTranslationFor(namespace : string) : Translations {
+  findTranslationsFor(namespace : string) : Translations {
     return this.cachedNamespaces[namespace];
   }
 
@@ -130,7 +131,7 @@ export class StandardTranslator extends AbstractCachingTranslator implements OnL
             .loadNamespace(this.locale, namespace)
             .pipe(
               catchError((err) => {
-                // make sure that we don't end up in an endlsess loop
+                // make sure that we don't end up in an endless loop
                 this.cachedNamespaces[namespace] = {}
                 throw err
               }),
@@ -153,11 +154,20 @@ export class StandardTranslator extends AbstractCachingTranslator implements OnL
             );
     }
 
-    findTranslationFor$(namespace : string) : Observable<Translations> {
+    findTranslationsFor$(namespace : string) : Observable<Translations> {
         const translations = this.cachedNamespaces[namespace];
         if (translations) return of(translations);
         else return this.loadNamespace(namespace);
     }
+
+   hasTranslationsFor$(key : string) : Observable<boolean> {
+    const {namespace, path} = this.extractNamespace(key);
+
+    return this.findTranslationsFor$(namespace)
+      .pipe(
+        map(translations => this.get(translations, path) !== undefined)
+      )
+  }
 
     // implement OnLocaleChange
 

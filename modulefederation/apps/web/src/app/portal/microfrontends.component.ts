@@ -1,18 +1,22 @@
-import { Component } from "@angular/core";
+import { Component, Injector, forwardRef } from "@angular/core";
 import { PortalAdministrationService, PortalIntrospectionService } from "./service";
 import { Address } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { DialogService, Feature, Manifest } from "@modulefederation/portal";
+import { AbstractFeature, Feature, Manifest, WithDialogs } from "@modulefederation/portal";
 import { fromFetch } from "rxjs/fetch";
 import { catchError, of, switchMap } from "rxjs";
 
 @Component({
     selector: 'microfrontends',
     templateUrl: './microfrontends.component.html',
-    styleUrls: ['./microfrontends.component.scss']
+    styleUrls: ['./microfrontends.component.scss'],
+   // providers: [{ 
+   //     provide: AbstractFeature, 
+   //     useExisting: forwardRef(() => MirofrontendsComponent) 
+   //   }]
 })
 @Feature({
     id: "microfrontends",
@@ -23,9 +27,9 @@ import { catchError, of, switchMap } from "rxjs";
     categories: [],
     tags: ["navigation"],
     permissions: [],
-    folder: "microfrontends" // TODO NEW
+    folder: "microfrontends", // TODO NEW
 })
-export class MirofrontendsComponent extends NavigationComponent {
+export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
     // instance data
 
     manifests : Manifest[] = []
@@ -33,8 +37,8 @@ export class MirofrontendsComponent extends NavigationComponent {
 
     // constructor
 
-    constructor(private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService, private dialogs : DialogService) {
-        super()
+    constructor(injector: Injector, private snackBar : MatSnackBar, private introspectionService : PortalIntrospectionService, private portalAdministrationService : PortalAdministrationService) {
+        super(injector)
     }
 
     // public
@@ -56,7 +60,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     }
 
     async addManifest() {
-        this.dialogs.inputDialog()
+        this.inputDialog()
           .title("Add Microfrontend")
           .placeholder("manifest url")
           .inputType("text")
@@ -72,7 +76,7 @@ export class MirofrontendsComponent extends NavigationComponent {
             url = new URL(remote)
           }
           catch(error) {
-            this.dialogs.confirmationDialog()
+            this.confirmationDialog()
               .title("Add Microfrontend")
               .message("malformed url")
               .ok()
@@ -101,7 +105,7 @@ export class MirofrontendsComponent extends NavigationComponent {
                     this.manifests.push(ManifestDecorator.decorate(result.manifest))
 
                     else {
-                        let builder = this.dialogs.confirmationDialog() .title("Add Microfrontend")
+                        let builder = this.confirmationDialog() .title("Add Microfrontend")
 
                         switch (result.error) {
                             case "duplicate":
@@ -167,7 +171,7 @@ export class MirofrontendsComponent extends NavigationComponent {
 
                     for (let manifest of this.manifests)
                         if (manifest.remoteEntry == url) {
-                            this.dialogs.confirmationDialog()
+                            this.confirmationDialog()
                                 .title("Add Remote")
                                 .message("Already registered")
                                 .ok()
@@ -181,15 +185,16 @@ export class MirofrontendsComponent extends NavigationComponent {
                     this.manifests.push(manifest)
                 }
                 else {
-                    this.dialogs.confirmationDialog()
+                    this.confirmationDialog()
                         .title("Add Remote")
                         .message("Error fetching manifest")
                         .ok()
                         .show()
                 }
             })
-        } catch(e) {
-            this.dialogs.confirmationDialog()
+        } 
+        catch(e) {
+            this.confirmationDialog()
                 .title("Add Remote")
                 .message("Invalid URL")
                 .ok()
@@ -199,7 +204,7 @@ export class MirofrontendsComponent extends NavigationComponent {
     }
 
     removeManifest(manifest : Manifest) {
-        this.dialogs.confirmationDialog()
+        this.confirmationDialog()
             .title("Remove Manifest")
             .message("Are you sure?")
             .okCancel()

@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Injector, OnInit } from "@angular/core";
+import { AbstractFeature } from "@modulefederation/portal";
 
 export interface RouteElement {
     label : String
@@ -10,14 +11,15 @@ export interface RouteElement {
     template: '<div></div>',
     // styleUrls: ['./navigation-breadcrumb.component.scss'],
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent extends AbstractFeature {
     // instance data
 
     public routes : RouteElement[] = []
 
     // constructor
 
-    constructor() {
+    constructor(injector: Injector) {
+        super(injector)
     }
 
     // public
@@ -32,10 +34,5 @@ export class NavigationComponent implements OnInit {
 
     popRouteElement(route : RouteElement) {
         this.routes.splice(this.routes.indexOf(route, 0), 1);
-    }
-
-    // implement OnInit
-
-    ngOnInit() : void {
     }
 }

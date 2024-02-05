@@ -1,6 +1,6 @@
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { Channel, ComponentService } from "../service/component-service.service";
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Injector, ViewChild } from '@angular/core';
 
 import * as dagre from 'dagre';
 import * as graphlib from 'graphlib';
@@ -59,8 +59,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
     // constructor
 
-    constructor(private componentService : ComponentService) {
-        super()
+    constructor(injector: Injector, private componentService : ComponentService) {
+        super(injector)
 
         this.pushRouteElement({
             label: "Nodes",
@@ -204,13 +204,17 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     // implement OnInit
 
     override ngOnInit() {
+        super.ngOnInit()
+
         this.namespace = joint.shapes;
         this.graph = new joint.dia.Graph({}, {cellNamespace: this.namespace});
     }
 
     // implement AfterViewInit
 
-    ngAfterViewInit() {
+    override ngAfterViewInit() {
+        super.ngAfterViewInit()
+
         // create paper
 
         this.paper = new joint.dia.Paper({

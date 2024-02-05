@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { Feature } from "@modulefederation/portal";
 
@@ -20,8 +20,8 @@ import { Feature } from "@modulefederation/portal";
 export class ComponentsComponent extends NavigationComponent {
     // constructor
 
-    constructor() {
-        super()
+    constructor(injector: Injector) {
+        super(injector)
 
         this.pushRouteElement({
             label: "Components",

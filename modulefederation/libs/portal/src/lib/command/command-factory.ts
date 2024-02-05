@@ -112,7 +112,7 @@ export class CommandFactory {
       const namespace = commandConfig.i18n.substring(0, colon)
       const prefix = commandConfig.i18n.substring(colon + 1)
 
-      let translations = this.translator.findTranslationFor(namespace)
+      let translations = this.translator.findTranslationsFor(namespace)
 
       if ( translations ) {
         if ( prefix.indexOf(".") > 0)

@@ -7,7 +7,7 @@ import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
 import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, NgControl, NgForm, ValidationErrors, ValidatorFn } from "@angular/forms";
-import { DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator } from "@modulefederation/portal";
+import { AbstractFeature, Command, DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
 import { MatFormField } from "@angular/material/form-field";
 
@@ -134,7 +134,7 @@ export class I18NValidator {
     selector: 'microfrontend-details',
     templateUrl: './microfrontend-details.component.html',
     styleUrls: ['./microfrontend-details.component.scss'],
-    providers: []
+    //providers: []
 })
 @Feature({
     id: "microfrontend",
@@ -148,7 +148,7 @@ export class I18NValidator {
     tags: [],
     permissions: []
 })
-export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
+export class MicrofrontendDetailsComponent extends WithCommands(WithDialogs(AbstractFeature)) {
     // instance data
 
     @ViewChild(I18NTreeComponent) tree! : I18NTreeComponent
@@ -205,7 +205,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private translator: Translator, private messageAdministrationService : MessageAdministrationService, private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent, private dialogs : DialogService) {
+    constructor(injector: Injector, private translator: Translator, private messageAdministrationService : MessageAdministrationService, private formBuilder : FormBuilder, private activatedRoute : ActivatedRoute, private microfrontendsComponent : MirofrontendsComponent) {
+        super(injector)
+
         microfrontendsComponent.pushRouteElement(this.element)
 
         this.formGroup = this.formBuilder.group({
@@ -225,6 +227,25 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
         this.formGroup.get('id')?.disable();
     }
 
+    @Command({
+        shortcut: "ctrl+t"
+    })
+    test() {
+            console.log("test")
+
+
+            let element = window.document.activeElement
+            while ( element ) {
+                console.log(element.localName)
+
+                if ((<any>element).__ngContext__)
+                   console.log("ANGULAR")
+
+
+                element = element.parentElement
+            }
+    }
+
     focusLabelKey(focused: boolean) {
         this.labelKeyIsFocused = focused
 
@@ -240,7 +261,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     save() {
         if (!this.formGroup.valid) {
-            this.dialogs.confirmationDialog()
+            this.confirmationDialog()
                 .title("Invalid Data")
                 .message("Correct input first")
                 .ok()
@@ -334,7 +355,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
     selectFeature(feature : any) {
 
         if (feature !== this.selectedFeature && !this.formGroup.valid) {
-            this.dialogs.confirmationDialog()
+            this.confirmationDialog()
                 .title("Invalid Data")
                 .message("Correct input first")
                 .ok()
@@ -345,7 +366,7 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
 
         if (feature !== this.selectedFeature && this.isDirty) {
-            this.dialogs
+            this
                 .confirmationDialog()
                 .type("info")
                 .title("Switch feature")
@@ -451,7 +472,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // implement OnInit
 
-    ngOnInit() {
+    override ngOnInit() {
+        super.ngOnInit()
+
         this.subscription = this.activatedRoute.params.subscribe(params => {
             this.setManifest(params["microfrontend"])
         })
@@ -466,7 +489,9 @@ export class MicrofrontendDetailsComponent implements OnInit, OnDestroy {
 
     // implement OnDestroy
 
-    ngOnDestroy() {
+    override ngOnDestroy() {
+        super.ngOnDestroy()
+
         if (this.element)
             this.microfrontendsComponent.popRouteElement(this.element);
 

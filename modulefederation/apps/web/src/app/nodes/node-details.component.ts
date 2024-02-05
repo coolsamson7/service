@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { NavigationComponent, RouteElement } from "../widgets/navigation-component.component";
 import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -30,8 +30,8 @@ export class NodeDetailsComponent extends NavigationComponent {
 
     // constructor
 
-    constructor(private activatedRoute : ActivatedRoute) {
-        super()
+    constructor(injector: Injector, private activatedRoute : ActivatedRoute) {
+        super(injector)
 
         this.pushRouteElement(this.routeElement = {
             label: "",

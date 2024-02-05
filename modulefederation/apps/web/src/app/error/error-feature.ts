@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { Feature, StackFrame, Stacktrace } from "@modulefederation/portal";
+import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
+import { AbstractFeature, Feature, StackFrame, Stacktrace } from "@modulefederation/portal";
 import { ErrorStorage } from "./error-storage";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -28,7 +28,7 @@ import { AngularSplitModule } from "angular-split";
   tags: ["error", "navigation"],
   permissions: []
 })
-export class ErrorComponent implements OnInit {
+export class ErrorComponent extends AbstractFeature {
   // instance data
 
   selectedError?: ErrorEntry
@@ -36,7 +36,8 @@ export class ErrorComponent implements OnInit {
 
   // constructor
 
-  constructor(public storage: ErrorStorage) {
+  constructor(injector: Injector, public storage: ErrorStorage) {
+    super(injector)
   }
 
   // public
@@ -79,10 +80,5 @@ export class ErrorComponent implements OnInit {
       return selectedError.error.stack
     else
       return undefined
-  }
-
-  // implement OnInit
-
-  ngOnInit() : void {
   }
 }
