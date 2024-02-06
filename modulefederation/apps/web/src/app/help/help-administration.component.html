@@ -18,7 +18,7 @@
   </mat-toolbar>
 
   <div class="content">
-    <help-tree  (onSelectionChange)="select($event)"></help-tree>
+    <help-tree  (onSelectionChange)="select($event)" (onDelete)="deleteNode($event)"></help-tree>
     <quill-editor (onEditorCreated)="editorCreated($event)" format="json"
                   placeholder="Enter Text"
                   [modules]="quillConfig"

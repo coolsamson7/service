@@ -27,7 +27,11 @@ export class HelpAdministrationService extends AbstractHTTPService {
 		return this.post<string>(`save-help/${feature}`, help)
 	}
 
+	public deleteHelp(feature : string) : Observable<any> {
+		return this.get<string>(`delete-help/${feature}`)
+	}
+
 	public readHelp(feature : string) : Observable<string> {
   		return this.get<string>(`read-help/${feature}`)
-  }
+  	}
 }

@@ -1,11 +1,16 @@
 keycloak:
   realm: service
   auth-server-url: = http://keycloak:8080/auth
-  ssl-required: external
+  proxyUrl: http://localhost:8060/auth
+  proxy-url: http://localhost:8060/auth
+  ssl-required: none
   resource: service-browser
   use-resource-role-mappings: true
   bearer-only: true
 spring:
+  liquibase:
+    change-log: classpath:config/liquibase/master.xml
+    enabled: true
   sql:
     init:
       mode: never
@@ -17,12 +22,12 @@ spring:
           jwk-set-uri: http://keycloak:8080/realms/service/protocol/openid-connect/certs
   jpa:
     show-sql: true
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
-    ddl-auto: update
-    defer-datasource-initialization: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: none
+      defer-datasource-initialization: false
+      database: postgresql
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     platform: postgres
     url: ${SPRING_DATASOURCE_URL}

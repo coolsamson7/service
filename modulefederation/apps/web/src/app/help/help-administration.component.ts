@@ -77,9 +77,52 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
 
   // callbacks
 
+  deleteNode(node : HelpNode) {
+    if (node.leaf) {
+      this.helpAdministrationService.deleteHelp(node.path).subscribe()
+    }
+
+    let parent = this.helpTree.findParent(node)
+    if ( parent ) {
+      // inner node
+
+      if (node.children.length > 0) {
+        if (node.leaf) {
+          node.leaf = false
+        }
+      }
+      else {
+        // we can delete totally
+
+        if (node.leaf) {
+          parent.children.splice( parent.children.indexOf(node), 1)
+        }
+      }
+    }
+    else {
+      // root node
+
+      if (node.children.length > 0) {
+        if (node.leaf) {
+          node.leaf = false
+        }
+      }
+      else {
+        // we can delete totally
+
+        if (node.leaf) {
+          node.leaf = false
+        }
+
+        this.helpTree.root.splice(this.helpTree.root.indexOf(node), 1)
+      }
+    }
+
+    this.helpTree.refresh()
+  }
+
   select(node : HelpNode) {
     if ( this.dirty) {
-
       this.confirmationDialog()
         .title("Change selection")
         .message("save first")
@@ -167,8 +210,7 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
     let prefix = this.selection ? (this.selection?.path + ".") : ""
     this.helpTree.buildTree(folder, prefix, [help], true)
 
-    this.helpTree.dataSource.data = []
-    this.helpTree.dataSource.data = this.helpTree.root = [...this.helpTree.root]
+    this.helpTree.refresh()
   }
 
   private updateCommandState() {

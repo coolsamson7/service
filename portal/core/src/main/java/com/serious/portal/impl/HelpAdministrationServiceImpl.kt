@@ -47,6 +47,11 @@ class HelpAdministrationServiceImpl : HelpAdministrationService {
     }
 
     @Transactional
+    override fun deleteHelp(@PathVariable feature : String) {
+        helpRepository.deleteById(feature)
+    }
+
+    @Transactional
     override fun readHelp(feature: String): String {
         return helpRepository.findById(feature).get().help
     }

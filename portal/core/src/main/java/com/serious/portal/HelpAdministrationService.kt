@@ -19,6 +19,9 @@ interface HelpAdministrationService : Service {
     @GetMapping("read-help/{feature}")
     fun readHelp(@PathVariable feature : String) : String
 
+    @GetMapping("delete-help/{feature}")
+    fun deleteHelp(@PathVariable feature : String)
+
     @GetMapping("read-entries/")
     fun readEntries() : List<String>
 }
