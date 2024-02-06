@@ -16,6 +16,8 @@
     <!-- login or logout -->
 
     <user></user>
+
+    <button mat-button (click)="help.toggle()"><mat-icon>help</mat-icon></button>
 </portal-header>
 
 <mat-sidenav-container autosize class="example-container">
@@ -27,11 +29,15 @@
         <feature-navigation #navigation></feature-navigation>
     </mat-sidenav>
 
+    <mat-sidenav #help class="sidenav2" position="end" mode="side">
+		  <help></help>
+	</mat-sidenav>
+
     <mat-sidenav-content class="content">
         <!-- navigation loading indicator  -->
 
-        <mat-progress-bar *ngIf="loading" color="indigo" mode="indeterminate"></mat-progress-bar>
-        
+        <mat-progress-bar *ngIf="navigationIsLoading" color="indigo" mode="indeterminate"></mat-progress-bar>
+
         <!-- main body -->
 
         <router-outlet></router-outlet>

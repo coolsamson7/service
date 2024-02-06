@@ -5,6 +5,7 @@ const identity = (...args: any[]) => args[0]
 import { FeatureConfig } from "./feature-config";
 import { AbstractFeature } from './feature/abstract-feature';
 import { isSubclassOf } from './common';
+import { FeatureData } from './portal-manager';
 
 export function Feature(config : FeatureConfig) {
     return (clazz: Type<any>) => {
@@ -15,7 +16,7 @@ export function Feature(config : FeatureConfig) {
 
         // remember
 
-        config.componentDefinition = componentDef;
+        (config as FeatureData).componentDefinition = componentDef;
 
         // If no providers specified, i.e. no providersFeature is present,
         // apply one manually.
@@ -25,10 +26,7 @@ export function Feature(config : FeatureConfig) {
           providersFeature([])(componentDef);
         }
 
-        if ( !isSubclassOf(clazz, AbstractFeature))
-           console.log("######## " + clazz.name + " must extend AbstractFeature")
-
-        if ( true /* clazz instanceof AbstractFeature*/) {
+        if ( isSubclassOf(clazz, AbstractFeature)) {
             // Take the original providers resolver
 
             const originalProvidersResolver = componentDef.providersResolver;
@@ -48,7 +46,8 @@ export function Feature(config : FeatureConfig) {
                 }
                 ];
             });
+          }
         }
-        };
+        else console.log("######## " + clazz.name + " must extend AbstractFeature")
       };
     }

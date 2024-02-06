@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector } from "@angular/core";
+import { Inject, Injectable, Injector, ɵDirectiveDef } from "@angular/core";
 
 import { LoadChildrenCallback, Route, Router, Routes } from "@angular/router";
 import { loadRemoteModule, setRemoteDefinitions } from "@nrwl/angular/mf";
@@ -22,6 +22,8 @@ export interface FeatureData extends FeatureConfig {
     $parent? : FeatureConfig
 
     // computed
+
+    componentDefinition?: ɵDirectiveDef<any>;
 
     enabled? : boolean
     module? : any

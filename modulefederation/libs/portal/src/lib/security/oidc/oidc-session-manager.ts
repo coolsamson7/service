@@ -32,7 +32,7 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
             switch (e.type) {
                 case "discovery_document_loaded":
                     this.ready$.next(true)
-                    
+
                     if (!this.hasSession() && oauthService.hasValidAccessToken())
                         this.loadUser();
                     break;
@@ -64,7 +64,7 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     private configure(authConfig : AuthConfig) {
         // adjust configuration TODO
 
-        authConfig.issuer = this.environment.get<string>("oauth.server") + '/realms/' + this.environment.get<string>("oauth.client"),
+        authConfig.issuer = this.environment.get<string>("oauth.server") + "/realms/" + this.environment.get<string>("oauth.client"),
             authConfig.scope += " " + this.environment.get<string>("oauth.scopes", "")
 
         // tell oauth

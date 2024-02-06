@@ -28,6 +28,7 @@ import { ComponentsComponent } from './components/components.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
 
 import { ServiceInstanceComponent } from './components/service-instance.component';
+import { HelpAdministrationComponent, HelpComponent } from './help';
 
 export const localRoutes: Routes = [
   {
@@ -40,6 +41,11 @@ export const localRoutes: Routes = [
     component: TranslationEditorComponent,
     children: [],
   },
+   {
+      path: 'help-administration',
+      component: HelpAdministrationComponent,
+      children: [],
+    },
   {
     path: 'microfrontends',
     component: MirofrontendsComponent,

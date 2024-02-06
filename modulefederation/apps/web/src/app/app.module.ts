@@ -58,6 +58,7 @@ import { UserComponent } from "./header/user/user.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuillModule } from "ngx-quill";
+import { HelpComponent } from "./help/help.component";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -89,18 +90,41 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     declarations: [
         AppComponent
     ],
+    providers: [
+        /*{
+          provide: ErrorHandler,
+          useClass: GlobalErrorHandler
+        },*/
+        {
+            provide: RouteReuseStrategy,
+            useClass: FeatureReuseStrategy
+        },
+        {
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+            useValue: { duration: 2500 }
+        },
+        {
+            provide: EndpointLocator,
+            useValue: new ApplicationEndpointLocator(environment)
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HTTPErrorInterceptor,
+            multi: true
+        }
+    ],
+    bootstrap: [AppComponent],
     imports: [
         TracerModule.forRoot({
             enabled: environment.production !== true,
             trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
             paths: {
-              "": TraceLevel.OFF,
-              "type": TraceLevel.OFF,
-              "portal": TraceLevel.HIGH,
-              "session": TraceLevel.FULL,
+                "": TraceLevel.OFF,
+                "type": TraceLevel.OFF,
+                "portal": TraceLevel.HIGH,
+                "session": TraceLevel.FULL,
             }
-          }),
-
+        }),
         MatSnackBarModule,
         BrowserModule,
         BrowserAnimationsModule,
@@ -116,16 +140,13 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         ErrorModule,
         MatProgressBarModule,
         MatProgressSpinnerModule,
-
         LocaleModule.forRoot({
             locale: 'en-US',
             supportedLocales: ['en-US', 'de-DE']
         }),
-
         I18nModule.forRoot({
-            loader: {type: ServerTranslationLoader}
+            loader: { type: ServerTranslationLoader }
         }),
-
         PortalModule.forRoot({
             loader: {
                 //server: true,
@@ -133,35 +154,27 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             },
             localRoutes: localRoutes,
             localManifest: localManifest as Manifest,
-            decorateRoutes: (route : Route) => {
-                route.resolve = {i18n: I18nResolver}
-                route.canActivate = [CanActivateGuard, SessionGuard]
-                route.canDeactivate = [CanDeactivateGuard]
+            decorateRoutes: (route: Route) => {
+                route.resolve = { i18n: I18nResolver };
+                route.canActivate = [CanActivateGuard, SessionGuard];
+                route.canDeactivate = [CanDeactivateGuard];
             }
         }),
-
         QuillModule.forRoot({
-            //theme: "bubble"
+        //theme: "bubble"
         }),
-
         CommandModule.forRoot(),
-
         OIDCModule.forRoot({
             authConfig: authConfig
         }),
-
-        StateModule.forRoot({
-        }),
-
+        StateModule.forRoot({}),
         SecurityModule.forRoot({
             sessionManager: OIDCSessionManager,
             authentication: OIDCAuthentication
         }),
-
         MonacoEditorModule.forRoot({
-            defaultOptions: {theme: 'vs-dark', language: 'json'}
+            defaultOptions: { theme: 'vs-dark', language: 'json' }
         }),
-
         EnvironmentModule.forRoot(environment),
         SharedModule.forRoot(),
         OAuthModule.forRoot({
@@ -170,31 +183,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 sendAccessToken: true
             }
         }),
-        UserComponent
-    ],
-    providers: [
-        /*{
-          provide: ErrorHandler,
-          useClass: GlobalErrorHandler
-        },*/
-        {
-           provide: RouteReuseStrategy,
-           useClass: FeatureReuseStrategy
-        },
-        {
-            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
-            useValue: {duration: 2500}
-        },
-        {
-            provide: EndpointLocator,
-            useValue: new ApplicationEndpointLocator(environment)
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HTTPErrorInterceptor,
-            multi: true
-        }],
-    bootstrap: [AppComponent]
+        UserComponent,
+        HelpComponent
+    ]
 })
 export class AppModule extends AbstractModule() {
     constructor(injector: Injector) {

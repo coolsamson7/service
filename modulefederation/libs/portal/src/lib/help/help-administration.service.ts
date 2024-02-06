@@ -19,11 +19,15 @@ export class HelpAdministrationService extends AbstractHTTPService {
 
 	// public methods
 
+	public readEntries() : Observable<string[]> {
+		return this.get<string[]>(`read-entries/`)
+	}
+
 	public saveHelp(feature : string, help : string) : Observable<any> {
 		return this.post<string>(`save-help/${feature}`, help)
 	}
 
 	public readHelp(feature : string) : Observable<string> {
-  		return this.get<string>(`get-help/${feature}`)
+  		return this.get<string>(`read-help/${feature}`)
   }
 }

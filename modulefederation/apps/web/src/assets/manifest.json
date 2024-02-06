@@ -5,6 +5,22 @@
   "module": "AppModule",
   "features": [
     {
+      "id": "help",
+      "label": "Help",
+      "i18n": ["portal.commands"],
+      "icon": "help",
+      "component": "HelpComponent",
+      "visibility": ["private", "public"]
+    },
+    {
+      "id": "help-administration",
+      "label": "Help",
+      "icon": "help",
+      "component": "HelpAdministrationComponent",
+      "tags": ["navigation"],
+      "visibility": ["private", "public"]
+    },
+    {
       "id": "translations",
       "label": "Translations",
       "labelKey": "translations:title.label",
