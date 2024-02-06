@@ -1,4 +1,4 @@
-<view>
+<div class="help">
   <!-- toolbar -->
 
   <mat-toolbar class="toolbar">
@@ -18,11 +18,12 @@
   </mat-toolbar>
 
   <div class="content">
+    <help-tree  (onSelectionChange)="select($event)"></help-tree>
     <quill-editor (onEditorCreated)="editorCreated($event)" format="json"
                   placeholder="Enter Text"
                   [modules]="quillConfig"
                   (onContentChanged)="onContentChanged($event)"></quill-editor>
 
   </div>
- </view>
+</div>
 

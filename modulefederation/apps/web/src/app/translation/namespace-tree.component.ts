@@ -28,7 +28,7 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
   }
 
   applyState(selected: string[]) {
-    const nodes = this.dataSource.data //this.treeControl.dataNodes;
+    const nodes = this.dataSource.data 
         
     selected.forEach((path: string) => {
         const node = nodes.find(n => n.path === path);
@@ -51,10 +51,6 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     // constructor
 
     constructor() {
-    }
-
-    test() {
-
     }
 
     // private

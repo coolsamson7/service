@@ -1,32 +1,36 @@
 import { CommonModule } from "@angular/common"
-import { Component, Injector } from "@angular/core"
+import { Component, Injector, ViewChild } from "@angular/core"
 import { FormsModule } from "@angular/forms"
 import { MatDividerModule } from "@angular/material/divider"
 import { MatToolbarModule } from "@angular/material/toolbar"
 import { AbstractFeature, Command, CommandButtonComponent, Feature, HelpAdministrationService, ViewComponent, WithCommands, WithDialogs, WithState, WithView } from "@modulefederation/portal"
-import { QuillEditorComponent } from "ngx-quill"
+import { ContentChange, QuillEditorComponent } from "ngx-quill"
 import { DeltaStatic, Quill } from "quill"
+import { HelpNode, HelpTreeComponent } from "./help-tree.component"
 
 @Component({
     selector: 'help-administration',
     templateUrl: './help-administration.component.html',
     styleUrls: ['./help-administration.component.scss'],
     standalone: true,
-    imports: [CommonModule, ViewComponent, MatToolbarModule, MatDividerModule, CommandButtonComponent, QuillEditorComponent, FormsModule]
+    imports: [CommonModule, ViewComponent, MatToolbarModule, MatDividerModule, CommandButtonComponent, QuillEditorComponent, FormsModule, HelpTreeComponent]
 })
 @Feature({
     id: "help-administration",
+    i18n: ["portal.commands"],
     label: "Help", icon: "home",
     visibility: ["public", "private"],
     categories: [],
     tags: ["navigation"],
     permissions: []
 })
-export class HelpAdministrationComponent extends WithDialogs(WithView(WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false})))) {
+export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(WithCommands(AbstractFeature, {inheritCommands: false}))) {
   // instance data
 
+  @ViewChild(HelpTreeComponent) helpTree!: HelpTreeComponent
+
   editor!: Quill
-  feature: string = ""
+  selection?: HelpNode
   dirty = false
   delta?: DeltaStatic
 
@@ -71,28 +75,67 @@ export class HelpAdministrationComponent extends WithDialogs(WithView(WithState<
     })
   }
 
+  // callbacks
+
+  select(node : HelpNode) {
+    if ( this.dirty) {
+
+      this.confirmationDialog()
+        .title("Change selection")
+        .message("save first")
+        .ok()
+        .show().subscribe()
+      return 
+    }
+
+    this.helpTree.select( this.selection = node)
+
+    if ( node.leaf) {
+      this.helpAdministrationService.readHelp(node.path).subscribe(help => {
+        this.delta = help  as any as DeltaStatic
+        this.editor.setContents(this.delta)
+      })
+  }
+  else {
+    this.selection = node
+    this.delta = {ops: []} as any as DeltaStatic
+    this.editor.setContents(this.delta)
+  }
+  }
+
   // commands
 
   @Command({
     i18n: "portal.commands:revert",
-    icon: "undo"
+    icon: "undo",
   })
   revert() {
-    this.helpAdministrationService.readHelp(this.feature).subscribe(help => {
-      this.editor.setContents(this.delta as any as DeltaStatic)
+    if ( this.selection!.leaf)
+      this.helpAdministrationService.readHelp(this.selection!.path).subscribe(help => {
+        this.editor.setContents(this.delta as any as DeltaStatic)
 
-      this.dirty = false
-  
-      this.updateCommandState()
-    })
+        this.dirty = false
+    
+        this.updateCommandState()
+      })
+      else {
+        this.editor.setContents(this.delta = {ops: []} as any as DeltaStatic)
+
+        this.dirty = false
+    
+        this.updateCommandState()
+      }
   }
 
   @Command({
     i18n: "portal.commands:save",
-    icon: "save"
+    icon: "save",
+    shortcut: "ctrl+s"
   })
   save() {
-    this.helpAdministrationService.saveHelp(this.feature, JSON.stringify(this.delta = this.editor.getContents())).subscribe(result => console.log(result))
+    this.helpAdministrationService.saveHelp(this.selection!.path, JSON.stringify(this.delta = this.editor.getContents())).subscribe(result =>
+       this.selection!.leaf = true
+       )
 
     this.dirty = false
     this.updateCommandState()
@@ -100,7 +143,7 @@ export class HelpAdministrationComponent extends WithDialogs(WithView(WithState<
 
   @Command({
     label: "Add",
-    icon: "plus"
+    icon: "add",
   })
   add() {
     if ( !this.dirty)
@@ -119,18 +162,13 @@ export class HelpAdministrationComponent extends WithDialogs(WithView(WithState<
 
   // private
 
-  private addHelp(feature: string) {
-    if ( this.entries.includes(feature)) {
-      this.feature = feature
-      this.helpAdministrationService.readHelp(feature).subscribe(help => {
-        this.delta = help  as any as DeltaStatic
-        this.editor.setContents(this.delta)
-      })
-    }
-    else {
-      this.feature = feature
-      this.delta = {ops: []} as any as DeltaStatic
-    }
+  private addHelp(help: string) {
+    let folder = this.selection ? this.selection?.children : this.helpTree.root
+    let prefix = this.selection ? (this.selection?.path + ".") : ""
+    this.helpTree.buildTree(folder, prefix, [help], true)
+
+    this.helpTree.dataSource.data = []
+    this.helpTree.dataSource.data = this.helpTree.root = [...this.helpTree.root]
   }
 
   private updateCommandState() {
@@ -141,10 +179,12 @@ export class HelpAdministrationComponent extends WithDialogs(WithView(WithState<
 
   // public
 
-  onContentChanged = (event: any) => {
+  onContentChanged = (change: ContentChange) => {
+    if (change.source == "user") {
       this.dirty = true
       
       this.updateCommandState()
+    }
   }
 
   editorCreated(editor: Quill): void {

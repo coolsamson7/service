@@ -3,17 +3,18 @@ import { Component, Injector } from "@angular/core"
 import { FormsModule } from "@angular/forms"
 import { MatDividerModule } from "@angular/material/divider"
 import { MatToolbarModule } from "@angular/material/toolbar"
-import { AbstractFeature, Command, CommandButtonComponent, Feature, HelpAdministrationService, ViewComponent, WithCommands, WithDialogs, WithState, WithView } from "@modulefederation/portal"
+import { AbstractFeature, CommandButtonComponent, Feature, HelpAdministrationService, ViewComponent, WithCommands, WithDialogs, WithState, WithView } from "@modulefederation/portal"
 import { QuillEditorComponent } from "ngx-quill"
 import { DeltaStatic, Quill } from "quill"
 import { MessageBus } from "../message-bus/message-bus"
+import { HelpTreeComponent } from "./help-tree.component"
 
 @Component({
     selector: 'help',
     templateUrl: './help.component.html',
     styleUrls: ['./help.component.scss'],
     standalone: true,
-    imports: [CommonModule, ViewComponent, MatToolbarModule, MatDividerModule, CommandButtonComponent, QuillEditorComponent, FormsModule]
+    imports: [CommonModule, ViewComponent, MatToolbarModule, MatDividerModule, CommandButtonComponent, QuillEditorComponent, FormsModule, HelpTreeComponent]
 })
 @Feature({
     id: "help",

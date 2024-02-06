@@ -153,7 +153,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
     }
 
     @Command({
-      shortcut: "ctrl+h"
+      shortcut: "f1"
     })
     help() {
       for (let i = this.featureStack.length - 1; i >= 0; i--) {
