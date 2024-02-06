@@ -1,0 +1,68 @@
+.namespace-tree-invisible {
+  display: none;
+}
+
+.mat-tree-node {
+  height: 48px;
+}
+
+.mat-tree-node:hover {
+  font-weight: bold;
+}
+
+.namespace-tree ul,
+.namespace-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+/*
+ * This padding sets alignment of the nested nodes.
+ */
+.namespace-tree .mat-nested-tree-node div[role=group] {
+  padding-left: 40px;
+}
+
+/*
+ * Padding for leaf nodes.
+ * Leaf nodes need to have padding so as to align with other non-leaf nodes
+ * under the same parent.
+ */
+.namespace-tree div[role=group] > .mat-tree-node {
+  padding-left: 0px;
+}
+
+
+.node {
+  cursor: pointer;
+  padding-right: 10px;
+
+  .invisible {
+    visibility: hidden
+  }
+
+  .delete {
+    visibility: hidden;
+    float: right;
+
+    padding: unset;
+
+    .mat-icon {
+      height: 20px;
+      width: 20px;
+      font-size: 20px;
+
+    }
+  }
+}
+
+.node:hover {
+    .delete {
+      visibility: visible;
+    }
+}
+
+.background-highlight {
+  background-color: lightgray;
+}
