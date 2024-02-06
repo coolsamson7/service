@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ComponentDTO } from '../model/component.interface';
 import { ComponentsComponent } from './components.component';
@@ -6,7 +6,7 @@ import { RouteElement } from '../widgets/navigation-component.component';
 import { Update, UpdateService } from '../service/update-service.service';
 import { ComponentStore } from './component-store';
 import { Subscription } from 'rxjs';
-import { Feature } from "@modulefederation/portal";
+import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 
 @Component({
@@ -26,7 +26,7 @@ import { Feature } from "@modulefederation/portal";
     tags: [],
     permissions: []
 })
-export class ComponentDetailsComponent implements OnInit, OnDestroy {
+export class ComponentDetailsComponent extends AbstractFeature {
     // instance data
 
     component : ComponentDTO = {
@@ -52,7 +52,9 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent, updateService : UpdateService) {
+    constructor(injector: Injector, private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent, updateService : UpdateService) {
+        super(injector)
+
         componentsComponent.pushRouteElement(this.element)
 
         this.updateSubscription = updateService.getUpdates().subscribe({
@@ -70,7 +72,9 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
     // private
 
-    ngOnInit() {
+    override ngOnInit() {
+        super.ngOnInit()
+
         this.subscription = this.activatedRoute.params.subscribe(params => {
             this.setComponent(params["component"])
         })
@@ -78,7 +82,9 @@ export class ComponentDetailsComponent implements OnInit, OnDestroy {
 
     // network
 
-    ngOnDestroy() {
+    override ngOnDestroy() {
+        super.ngOnDestroy()
+        
         if (this.element)
             this.componentsComponent.popRouteElement(this.element);
 

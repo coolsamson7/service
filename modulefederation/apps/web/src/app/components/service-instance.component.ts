@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ServiceInstanceDTO } from '../model/service-instance.interface';
 import { ComponentsComponent } from './components.component';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { ComponentStore } from './component-store';
-import { Feature } from "@modulefederation/portal";
+import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 
 interface Channel {
@@ -29,7 +29,7 @@ interface Channel {
     tags: [],
     permissions: []
 })
-export class ServiceInstanceComponent implements OnInit, OnDestroy {
+export class ServiceInstanceComponent extends AbstractFeature {
     // instance data
 
     subscription : Subscription
@@ -56,7 +56,9 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
 
     // constructor
 
-    constructor(private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent) {
+    constructor(injector: Injector, private activatedRoute : ActivatedRoute, private componentStore : ComponentStore, private componentsComponent : ComponentsComponent) {
+        super(injector)
+
         this.element.route = componentsComponent.topRouteElement().route + "/"
 
         this.componentsComponent.pushRouteElement(this.element)
@@ -98,12 +100,11 @@ export class ServiceInstanceComponent implements OnInit, OnDestroy {
         })
     }
 
-    ngOnInit() {
-    }
-
     // implement OnInit
 
-    ngOnDestroy() {
+    override ngOnDestroy() {
+        super.ngOnDestroy()
+        
         if (this.element)
             this.componentsComponent.popRouteElement(this.element);
 

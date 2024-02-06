@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, Injector, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 
 import { MatIconModule } from "@angular/material/icon";
@@ -9,6 +9,7 @@ import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import {
+  AbstractFeature,
   Feature,
   FeatureData,
   FeatureRegistry,
@@ -19,10 +20,12 @@ import { MatListModule } from "@angular/material/list";
 import { Observable, of } from "rxjs";
 
 
-export abstract class PreferencesFeature {
+export abstract class PreferencesFeature extends AbstractFeature {
   // constructor
 
-  constructor(private dialog : PreferencesDialog, protected feature : FeatureData) {
+  constructor(injector: Injector, dialog : PreferencesDialog, protected feature : FeatureData) {
+    super(injector)
+
     dialog.selectedComponent = this
   }
 
@@ -130,7 +133,7 @@ export class PreferencesDialog implements OnInit {
   imports: [CommonModule, MatCommonModule, MatInputModule, MatIconModule, MatDialogModule, MatButtonModule, FormsModule, MatFormFieldModule, MatListModule]
 })
 export class OtherPreferences extends PreferencesFeature {
-  constructor(dialog : PreferencesDialog) {
-    super(dialog, Reflect.get(OtherPreferences, '$$feature') as FeatureData)
+  constructor(injector: Injector, dialog : PreferencesDialog) {
+    super(injector, dialog, Reflect.get(OtherPreferences, '$$feature') as FeatureData)
   }
 }

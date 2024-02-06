@@ -1,5 +1,5 @@
 import { DialogService, Feature, FeatureData, LocaleManager, SessionManager } from "@modulefederation/portal";
-import { Component, ViewChild } from "@angular/core";
+import { Component, Injector, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatCommonModule } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
@@ -38,8 +38,8 @@ export class LocalePreferences extends PreferencesFeature {
 
   // constructor
 
-  constructor(dialog : PreferencesDialog, private localeManager: LocaleManager, private dialogs: DialogService, private userProfileAdministrationService: UserProfileAdministrationService, private sessionManager: SessionManager) {
-    super(dialog, Reflect.get(LocalePreferences, '$$feature') as FeatureData)
+  constructor(injector: Injector, dialog : PreferencesDialog, private localeManager: LocaleManager, private dialogs: DialogService, private userProfileAdministrationService: UserProfileAdministrationService, private sessionManager: SessionManager) {
+    super(injector, dialog, Reflect.get(LocalePreferences, '$$feature') as FeatureData)
 
     this.locales = localeManager.supportedLocales
 

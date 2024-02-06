@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Feature } from '@modulefederation/portal';
+import { Component, Injector, OnInit } from '@angular/core';
+import { AbstractFeature, Feature } from '@modulefederation/portal';
 
 @Component({
   selector: 'page-not-found',
@@ -12,14 +12,10 @@ import { Feature } from '@modulefederation/portal';
   icon: "language",
   isPageNotFound: true
 })
-export class PageNotFoundComponent implements OnInit {
+export class PageNotFoundComponent extends AbstractFeature {
   // constructor
 
-  constructor() {
-  }
-
-  // implement OnInit
-
-  ngOnInit() {
+  constructor(injector: Injector) {
+    super(injector)
   }
 }
