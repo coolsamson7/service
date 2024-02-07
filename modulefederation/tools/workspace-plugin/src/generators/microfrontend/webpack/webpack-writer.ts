@@ -7,7 +7,7 @@ export class WebpackWriter {
     // write router module
 
     const webpackTemplatePath =
-      'tools/generators/microfrontend/webpack/templates';
+      'tools/workspace-plugin/src/generators/microfrontend/webpack/templates';
 
     let moduleName = manifest.module.component;
     let fileName = manifest.module.file;

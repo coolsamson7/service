@@ -8,7 +8,7 @@
           component: <%= feature.component %>,
           children: [
             <% for (let child of (feature.children || [])) { %>
-              <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
+              <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
             <% } %>
           ]
  <% } %>
@@ -17,7 +17,7 @@
           component: <%= feature.component %>,
           children: [
             <% for (let child of (feature.children || [])) { %>
-              <%- include(process.cwd() + '/tools/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
+              <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/microfrontend/router-module/includes/route.tmpl', { feature: child, isChild: true, execute: execute }) -%>
             <% } %>
           ]
  <% } %>

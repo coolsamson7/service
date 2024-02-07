@@ -40,7 +40,7 @@ export class RouteModuleWriter {
     // write router module
 
     const routesTemplatePath =
-      'tools/generators/microfrontend/router-module/templates';
+      'tools/workspace-plugin/src/generators/microfrontend/router-module/templates';
 
     let moduleName = forModule;
     if (moduleName.endsWith('Module'))

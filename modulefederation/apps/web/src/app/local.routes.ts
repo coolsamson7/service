@@ -21,6 +21,10 @@ import { LocalePreferences } from './home/locale-preferences';
 
 import { HomeComponent } from './home/home-component';
 
+import { HelpComponent } from './help/help.component';
+
+import { HelpAdministrationComponent } from './help/help-administration.component';
+
 import { ErrorComponent } from './error/error-feature';
 
 import { ComponentsComponent } from './components/components.component';
@@ -28,7 +32,6 @@ import { ComponentsComponent } from './components/components.component';
 import { ComponentDetailsComponent } from './components/component-details.component';
 
 import { ServiceInstanceComponent } from './components/service-instance.component';
-import { HelpAdministrationComponent, HelpComponent } from './help';
 
 export const localRoutes: Routes = [
   {
@@ -41,11 +44,6 @@ export const localRoutes: Routes = [
     component: TranslationEditorComponent,
     children: [],
   },
-   {
-      path: 'help-administration',
-      component: HelpAdministrationComponent,
-      children: [],
-    },
   {
     path: 'microfrontends',
     component: MirofrontendsComponent,
@@ -81,6 +79,16 @@ export const localRoutes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    children: [],
+  },
+  {
+    path: 'help',
+    component: HelpComponent,
+    children: [],
+  },
+  {
+    path: 'help-administration',
+    component: HelpAdministrationComponent,
     children: [],
   },
   {

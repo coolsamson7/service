@@ -1,7 +1,7 @@
 {
   "name": "shell",
   "version": "0.1",
-  "commitHash": "b64270a9a15caca856f785bbd043efcd18a9cc40",
+  "commitHash": "9245c93062916e4f821f6de79dcd903c878aa4c7",
   "module": "ShellModule",
   "features": [
     {

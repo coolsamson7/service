@@ -1,26 +1,9 @@
 {
   "name": "modulefederation",
   "version": "0.0.0",
-  "commitHash": "d2d04a68e0063170a1b167d76646859fdea5f184",
+  "commitHash": "9245c93062916e4f821f6de79dcd903c878aa4c7",
   "module": "AppModule",
   "features": [
-    {
-      "id": "help",
-      "label": "Help",
-      "i18n": ["portal.commands"],
-      "icon": "help",
-      "component": "HelpComponent",
-      "visibility": ["private", "public"]
-    },
-    {
-      "id": "help-administration",
-      "label": "Help",
-      "i18n": ["portal.commands"],
-      "icon": "help",
-      "component": "HelpAdministrationComponent",
-      "tags": ["navigation"],
-      "visibility": ["private", "public"]
-    },
     {
       "id": "translations",
       "label": "Translations",
@@ -34,6 +17,7 @@
     {
       "id": "microfrontends",
       "label": "Microfrontends",
+      "i18n": ["portal.commands"],
       "icon": "folder",
       "folder": "microfrontends",
       "component": "MirofrontendsComponent",
@@ -43,6 +27,7 @@
         {
           "id": "microfrontend",
           "label": "microfrontend",
+          "i18n": ["portal.commands"],
           "router": {
             "path": ":microfrontend"
           },
@@ -92,6 +77,22 @@
       "label": "Home",
       "icon": "home",
       "component": "HomeComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "help",
+      "label": "Help",
+      "icon": "home",
+      "component": "HelpComponent",
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "help-administration",
+      "label": "Help",
+      "i18n": ["portal.commands"],
+      "icon": "home",
+      "component": "HelpAdministrationComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"]
     },
