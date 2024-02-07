@@ -6,8 +6,6 @@ import { CommandDescriptor } from './command-descriptor';
 import { CommandConfigToken } from './command.module';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
 import { ExecutionContext } from './execution-context';
-import { Translator } from '../i18n';
-import { get } from '../common';
 import { CommandAdministration } from './with-commands.mixin';
 
 /**
@@ -82,7 +80,6 @@ export class CommandFactory {
   // instance data
 
   private interceptors: CommandInterceptor[]
-  private translator: Translator
 
   // constructor
 
@@ -91,7 +88,6 @@ export class CommandFactory {
         new CommandContextInterceptor(),
         ...injector.get(CommandConfigToken, {  interceptors: [] }, InjectFlags.Optional) .interceptors.map(type => this.injector.get(type))
     ]
-    this.translator = injector.get(Translator)
   }
 
   // public
@@ -104,38 +100,6 @@ export class CommandFactory {
   public createCommand(commandConfig: CommandConfig, commands: CommandAdministration): CommandDescriptor {
     if (Tracer.ENABLED)
       Tracer.Trace('commands', TraceLevel.HIGH, 'create command {0}', commandConfig.command);
-
-    // i18n
-
-    if (commandConfig.i18n) {
-      const colon = commandConfig.i18n.indexOf(":")
-      const namespace = commandConfig.i18n.substring(0, colon)
-      const prefix = commandConfig.i18n.substring(colon + 1)
-
-      let translations = this.translator.findTranslationsFor(namespace)
-
-      if ( translations ) {
-        if ( prefix.indexOf(".") > 0)
-          commandConfig.label = get(translations, prefix)
-        else {
-          translations = translations[prefix]
-          if ( translations )
-          Object.getOwnPropertyNames(translations)
-          .forEach(name => {
-            switch (name) {
-              case "label":
-              case "tooltip":
-              case "shortcut":
-                (<any>commandConfig)[name] = translations[name]
-                break;
-      
-                default:
-                    ;
-            }
-          })
-        }
-      }
-    }
 
     // create command
 

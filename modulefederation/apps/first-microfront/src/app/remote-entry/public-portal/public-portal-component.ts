@@ -24,7 +24,7 @@ import { Router } from "@angular/router";
     templateUrl: './public-portal-component.html',
     styleUrls: ["./public-portal-component.scss"]
 })
-export class PublicPortalComponent extends AbstractFeature implements OnInit {
+export class PublicPortalComponent extends AbstractFeature {
     // instance data
 
     features : FeatureData[] = []

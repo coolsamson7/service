@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Feature } from "@modulefederation/portal";
+import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 @Feature({
     id: '',
@@ -11,5 +11,5 @@ import { Feature } from "@modulefederation/portal";
     selector: 'first-microfrontend',
     template: `<div>First Microfrontend</div>`,
 })
-export class RemoteEntryComponent {
+export class RemoteEntryComponent extends AbstractFeature {
 }

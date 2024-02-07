@@ -13,6 +13,10 @@ import { CommandManager } from "./commands";
 import { ExecutionContext } from "./execution-context";
 import { CommandError } from "./command-error";
 import { ShortcutManager } from "../shortcuts";
+import { LocaleManager, OnLocaleChange } from "../locale";
+import { Observable, of } from "rxjs";
+import { get } from '../common';
+import { Translator } from "../i18n";
 
 
 type Constructor<T = any> =  new (...args: any[]) => T;
@@ -53,21 +57,12 @@ export interface CommandAdministration extends CommandManager {
 }
  
 export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager> &  T  {
-   /*@Component({
-        selector: "command-manager",
-        template: '',
-        providers: [  
-            { 
-            provide: AbstractFeature, 
-            useExisting: forwardRef(() => CommandManager) 
-        }]
-    })*/
-    class WithCommandsClass extends base implements CommandAdministration {
+    class WithCommandsClass extends base implements CommandAdministration, OnLocaleChange {
         // instance data
 
         private commands: { [key: string]: CommandDescriptor } = {};
-        private commandFactory: CommandFactory;
         private pending: ExecutionContext[] = [];
+        private translator: Translator
         currentExecutionContext?: ExecutionContext;
 
         // constructor
@@ -75,9 +70,28 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         constructor(...args: any[]) {
             super(...args);
 
-            this.commandFactory = inject(CommandFactory)
+            this.onDestroy(inject(LocaleManager).subscribe(this))
 
-            this.collectCommands()
+            this.translator = inject(Translator)
+
+            this.collectCommands(inject(CommandFactory))
+        }
+
+        // implement OnLocaleChange
+
+        onLocaleChange(locale: Intl.Locale): Observable<any> {
+            for ( let commandName in this.commands) {
+               let command = this.commands[commandName]
+
+               if ( command.i18n) {
+
+                // TODO shortcut!
+
+                this.addI18N(command)
+               }
+            }
+
+            return of()
         }
 
         // private
@@ -106,28 +120,28 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             const commands: { [key: string]: CommandDescriptor } = {};
 
             const collect = (controller: WithCommandsClass) => {
-            // recursion
+                // recursion
 
-            if (filter.inherited && controller.parentCommandManager())
-                 collect(controller.parentCommandManager()!);
+                if (filter.inherited && controller.parentCommandManager())
+                    collect(controller.parentCommandManager()!);
 
-            // add commands
+                // add commands
 
-            for (const commandName in controller.commands) {
-                const command = controller.commands[commandName];
+                for (const commandName in controller.commands) {
+                    const command = controller.commands[commandName];
 
-                if (command.group == filter.group) commands[commandName] = command; // will overwrite in cases of overridden commands
-            }
-        };
+                    if (command.group == filter.group) commands[commandName] = command; // will overwrite in cases of overridden commands
+                }
+            };
 
-    // collect everything
+            // collect everything
 
-    collect(this);
+            collect(this);
 
-    // done
+            // done
 
-    return Object.values(commands);
-  }
+            return Object.values(commands);
+        }
 
         // implement Commands
 
@@ -150,7 +164,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 if (currentCommand.superCommand)
                     return currentCommand.superCommand.run(args) as T;
                 else 
-                    throw new CommandError("no super command " + currentCommand.name);
+                    throw new CommandError(`no super command ${currentCommand.name}`);
             }
             else throw new CommandError("no current command execution");
         }
@@ -179,7 +193,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 if (config.inheritCommands && parent)
                     return parent.getCommand(commandName)
                 else 
-                    throw new CommandError("no command " + commandName)
+                    throw new CommandError(`no command ${commandName}`)
             }
         }
 
@@ -206,15 +220,49 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             // delete on destroy
         
             this.onDestroy(unsubscribe!);
-
         }
 
-        private addCommand(commandConfig: CommandConfig) {
+        private addI18N(commandConfig: CommandConfig) {
+            const colon = commandConfig.i18n!.indexOf(":")
+            const namespace = commandConfig.i18n!.substring(0, colon)
+            const prefix = commandConfig.i18n!.substring(colon + 1)
+    
+            let translations = this.translator.findTranslationsFor(namespace)
+    
+            if ( translations ) {
+                if ( prefix.indexOf(".") > 0)
+                    commandConfig.label = get(translations, prefix)
+                else {
+                    translations = translations[prefix]
+                    
+                    if ( translations )
+                        Object.getOwnPropertyNames(translations).forEach(name => {
+                            switch (name) {
+                                case "label":
+                                case "tooltip":
+                                case "shortcut":
+                                (<any>commandConfig)[name] = translations[name]
+                                break;
+                        
+                                default:
+                                    ;
+                            } // switch
+                    })
+                } // else
+            }
+        }
+
+        private addCommand(commandFactory: CommandFactory, commandConfig: CommandConfig) {
+            if ( commandConfig.i18n)
+               this.addI18N(commandConfig)
+
+            // go
+
             const inheritedCommand = this.findCommand(commandConfig.command!);
 
             // create by factory
 
-            const command = this.commandFactory.createCommand(commandConfig, this as CommandAdministration);
+            const command = commandFactory.createCommand(commandConfig, this as CommandAdministration);
 
             if (inheritedCommand) command.superCommand = inheritedCommand;
 
@@ -231,7 +279,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             return command;
         }
   
-        private collectCommands(): void {
+        private collectCommands(commandFactory: CommandFactory): void {
             const type = TypeDescriptor.forType(this.constructor as Type<any>)
 
             const configs: { [type: string]: CommandData } = {};
@@ -284,7 +332,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
               if (Tracer.ENABLED)
                 Tracer.Trace('command', TraceLevel.HIGH, 'add command {0}', config.command);
         
-              const commandInstance = this.addCommand(config); 
+              const commandInstance = this.addCommand(commandFactory, config); 
         
               // replace the function :-)
         

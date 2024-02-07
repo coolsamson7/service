@@ -160,6 +160,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
         let feature = this.featureStack[i]
 
          if (this.helpEntries.includes(feature.path!)) {
+          this.sidenav.open()
           this.messageBus.broadcast({topic: "help", message: "show", payload: {feature: feature.path}})
           return
          }

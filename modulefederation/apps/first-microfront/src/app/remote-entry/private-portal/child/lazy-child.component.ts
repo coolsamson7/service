@@ -1,4 +1,4 @@
-import { Feature } from "@modulefederation/portal";
+import { AbstractFeature, Feature } from "@modulefederation/portal";
 import { Component } from "@angular/core";
 
 @Feature({
@@ -13,4 +13,5 @@ import { Component } from "@angular/core";
   selector: 'lazy-child',
   template: '<div>Lazy...</div>',
 })
-export class  LazyComponent {}
+export class  LazyComponent extends AbstractFeature {
+}

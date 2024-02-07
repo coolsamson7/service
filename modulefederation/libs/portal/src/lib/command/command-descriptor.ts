@@ -65,26 +65,34 @@ export class CommandDescriptor {
     // public
 
     addListener(listener: CommandListener) {
-      if (!this.listeners) this.listeners = [listener];
-      else this.listeners.push(listener);
+      if (!this.listeners) 
+         this.listeners = [listener];
+      else 
+         this.listeners.push(listener);
     }
 
     onCall(context: ExecutionContext) {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on call {0}', context.command.name);
 
-      if (this.listeners) for (const listener of this.listeners) listener.onCall(context);
+      if (this.listeners)
+        for (const listener of this.listeners) 
+          listener.onCall(context);
     }
 
     onResult(context: ExecutionContext): void {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on result {0}', context.result);
 
-      if (this.listeners) for (const listener of this.listeners) listener.onResult(context);
+      if (this.listeners) 
+        for (const listener of this.listeners) 
+          listener.onResult(context);
     }
 
     onError(context: ExecutionContext): void {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on error {0}', context.error);
 
-      if (this.listeners) for (const listener of this.listeners) listener.onError(context);
+      if (this.listeners)
+        for (const listener of this.listeners) 
+          listener.onError(context);
     }
 
     createContext(args: any[], data?: any) :ExecutionContext{

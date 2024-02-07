@@ -15,6 +15,7 @@
     {
       "id": "help-administration",
       "label": "Help",
+      "i18n": ["portal.commands"],
       "icon": "help",
       "component": "HelpAdministrationComponent",
       "tags": ["navigation"],
