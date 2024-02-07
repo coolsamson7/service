@@ -15,7 +15,7 @@ export class Class {
   // public
 
   public clean(object: any) {
-    for (let property in this.properties) this.properties[property](object);
+    for (const property in this.properties) this.properties[property](object);
   }
 
   // fluent
@@ -109,13 +109,13 @@ export class ManifestWriter {
 
     // features
 
-    let cleanFeature = (feature) => {
+    const cleanFeature = (feature) => {
       ManifestWriter.FeatureClass.clean(feature);
 
       if (feature.children)
-        for (let child of feature.children) cleanFeature(child);
+        for (const child of feature.children) cleanFeature(child);
     };
 
-    for (let feature of manifest.features) cleanFeature(feature);
+    for (const feature of manifest.features) cleanFeature(feature);
   }
 }

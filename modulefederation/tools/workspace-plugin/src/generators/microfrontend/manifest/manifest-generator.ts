@@ -73,7 +73,7 @@ export class ManifestGenerator {
   protected relativeImport(
     current: string,
     target: string,
-    separator: string = '/'
+    separator = '/'
   ): string {
     if (current == target) return './';
 
@@ -135,7 +135,7 @@ export class ManifestGenerator {
   }
 
   private file(fileName: string) {
-    let index = fileName.lastIndexOf('/');
+    const index = fileName.lastIndexOf('/');
 
     return {
       file: fileName.substring(index + 1),
@@ -175,7 +175,7 @@ export class ManifestGenerator {
     };
   }
 
-  private path(file: string, separator: string = '/'): string {
+  private path(file: string, separator = '/'): string {
     return file.substring(0, file.lastIndexOf(separator));
   }
 
@@ -191,33 +191,33 @@ export class ManifestGenerator {
       new DecoratorReader(file, decorator, true).read((data: DecoratorData) => {
         if (!decorators[data.data.name]) decorators[data.data.name] = data;
         else {
-          let file1 =
+          const file1 =
             decorators[data.data.name].file +
             ', line ' +
             decorators[data.data.name].lineNumber;
-          let file2 = data.file + ', line ' + data.lineNumber;
+          const file2 = data.file + ', line ' + data.lineNumber;
           throw new Error(
             "folder '" + data.data.name + "' found twice " + file1 + ' ' + file2
           );
         }
       });
 
-    let decorator4 = (name: string) => {
-      let decorator = decorators[name];
+    const decorator4 = (name: string) => {
+      const decorator = decorators[name];
       if (decorator) return decorator;
       else throw new Error("unknown folder '" + name + "'");
     };
 
     // name, label, icon?, parent?
 
-    let resultMap: { [name: string]: any } = {};
-    let result: any[] = [];
+    const resultMap: { [name: string]: any } = {};
+    const result: any[] = [];
 
-    let createFolder = (name: string): any => {
-      let decorator: DecoratorData = decorator4(name);
+    const createFolder = (name: string): any => {
+      const decorator: DecoratorData = decorator4(name);
 
-      let folderDecorator = decorator.data;
-      let folder = {
+      const folderDecorator = decorator.data;
+      const folder = {
         name: folderDecorator.name,
         label: folderDecorator.label,
         icon: folderDecorator.icon,
@@ -228,7 +228,7 @@ export class ManifestGenerator {
       // parent?
 
       if (folderDecorator.parent) {
-        let parent = findFolder(folderDecorator.parent);
+        const parent = findFolder(folderDecorator.parent);
 
         if (!parent.children) parent.children = [folder];
         else parent.children.push(folder);
@@ -237,7 +237,7 @@ export class ManifestGenerator {
       return folder;
     };
 
-    let findFolder = (name: string): any => {
+    const findFolder = (name: string): any => {
       let folder = resultMap[name];
       if (!folder) folder = createFolder(name);
 
@@ -246,7 +246,7 @@ export class ManifestGenerator {
 
     // create folder hierarchy
 
-    for (let decorator in decorators) {
+    for (const decorator in decorators) {
       try {
         findFolder(decorator);
       } catch (error) {
@@ -280,11 +280,11 @@ export class ManifestGenerator {
 
         if (!featureMap[data.data.id]) featureMap[data.data.id] = data;
         else {
-          let file1 =
+          const file1 =
             featureMap[data.data.id].file +
             ', line ' +
             featureMap[data.data.id].lineNumber;
-          let file2 = data.file + ', line ' + data.lineNumber;
+          const file2 = data.file + ', line ' + data.lineNumber;
 
           throw new Error(
             "feature '" + data.data.id + "' found twice " + file1 + ' ' + file2
@@ -314,7 +314,7 @@ export class ManifestGenerator {
 
       // create
 
-      let decorator = data.data;
+      const decorator = data.data;
 
       // create feature
 
@@ -344,9 +344,9 @@ export class ManifestGenerator {
       // check for lazy modules
 
       if (decorator.router?.lazyModule) {
-        let lazyModuleFile = this.findFile4Module(decorator.router?.lazyModule);
+        const lazyModuleFile = this.findFile4Module(decorator.router?.lazyModule);
 
-        let file = this.file(lazyModuleFile);
+        const file = this.file(lazyModuleFile);
 
         feature.module = {
           name: decorator.router?.lazyModule,
@@ -403,9 +403,9 @@ export class ManifestGenerator {
       .map((data) => result[data.data.id]);
     // make sure the "" feature comes first since it will get a special handling
 
-    let index = features.find((feature) => feature.id == '');
+    const index = features.find((feature) => feature.id == '');
     if (index > 0) {
-      let tmp = features[0];
+      const tmp = features[0];
       features[0] = features[index];
       features[index] = tmp;
     }

@@ -8,7 +8,7 @@ export class RouteModuleWriter {
   private relativeImport(
     current: string,
     target: string,
-    separator: string = '/'
+    separator = '/'
   ): string {
     if (current == target) return './';
 
@@ -50,7 +50,7 @@ export class RouteModuleWriter {
 
     // generate files
 
-    let moduleNames = names(moduleName);
+    const moduleNames = names(moduleName);
 
     let fileName = moduleNames.fileName;
     if (fileName.endsWith('-module'))
@@ -62,7 +62,7 @@ export class RouteModuleWriter {
     let requiresRedirect = rootModule;
 
     let pageNotFoundFeature = undefined;
-    for (let feature of features) {
+    for (const feature of features) {
       if (feature.isPageNotFound == true) {
         pageNotFoundFeature = feature;
       }
@@ -71,7 +71,7 @@ export class RouteModuleWriter {
         requiresRedirect = false;
     }
 
-    let execute = {
+    const execute = {
       moduleImportPath: (feature: any) => {
         let path = this.relativeImport(inFolder, feature.module.file.path);
 

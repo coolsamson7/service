@@ -9,8 +9,8 @@ export class WebpackWriter {
     const webpackTemplatePath =
       'tools/workspace-plugin/src/generators/microfrontend/webpack/templates';
 
-    let moduleName = manifest.module.component;
-    let fileName = manifest.module.file;
+    const moduleName = manifest.module.component;
+    const fileName = manifest.module.file;
     //fileName = fileName.substring(0, fileName.lastIndexOf("/") + 1)
 
     // generate files

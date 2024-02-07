@@ -18,7 +18,7 @@ export class RoutesWriter {
     let pageNotFoundFeature = undefined;
 
     let requiresRedirect = true;
-    for (let feature of manifest.features) {
+    for (const feature of manifest.features) {
       if (feature.isPageNotFound == true) {
         pageNotFoundFeature = feature;
       }
@@ -39,9 +39,9 @@ export class RoutesWriter {
 
     // check lazy components
 
-    let routeModuleWriter = new RouteModuleWriter();
+    const routeModuleWriter = new RouteModuleWriter();
 
-    for (let feature of manifest.features)
+    for (const feature of manifest.features)
       if (feature.module)
         routeModuleWriter.write(
           host,

@@ -26,13 +26,13 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
   // write router module or routes
 
-  let path = (fileName: string): string => {
+  const path = (fileName: string): string => {
     return fileName.substring(0, fileName.lastIndexOf('/'));
   };
 
   if (schema.type == 'shell') await new RoutesWriter().write(host, manifest);
   else {
-    let writer = new RouteModuleWriter();
+    const writer = new RouteModuleWriter();
 
     await writer.write(
       host,
@@ -43,7 +43,7 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
       true /* root module */
     );
 
-    let queue = manifest.features
+    const queue = manifest.features
       .filter((feature) => feature.module)
       .map((feature) => {
         return {
@@ -53,7 +53,7 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
       });
 
     while (queue.length > 0) {
-      let { name, feature } = queue[0];
+      const { name, feature } = queue[0];
 
       feature.fqn = name;
 
@@ -75,7 +75,7 @@ export default async function (host: Tree, schema: MicrofrontendSchema) {
 
       // push children
 
-      for (let child of feature.children || [])
+      for (const child of feature.children || [])
         queue.push({ name: name + '.' + child.id, feature: child });
     } // while
   }

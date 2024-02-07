@@ -1,0 +1,1 @@
+nx g microfrontend

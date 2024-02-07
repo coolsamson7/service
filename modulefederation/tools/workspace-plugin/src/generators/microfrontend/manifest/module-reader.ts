@@ -9,9 +9,9 @@ export class ModuleReader {
   // private
 
   async readModules(folder: string): Promise<Modules> {
-    let result = {};
+    const result = {};
 
-    for (let file of await this.findDecorators('NgModule', folder))
+    for (const file of await this.findDecorators('NgModule', folder))
       this.parseFile(file, result);
 
     return result;
@@ -21,7 +21,7 @@ export class ModuleReader {
     text: string,
     folder: string
   ): Promise<string[]> {
-    let matches = await find(text, folder, '.ts$');
+    const matches = await find(text, folder, '.ts$');
     //.filter((file) => !file.includes(".test"))
 
     return Object.keys(matches);

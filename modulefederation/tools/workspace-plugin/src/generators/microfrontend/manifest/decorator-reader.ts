@@ -18,7 +18,7 @@ export class DecoratorReader {
   constructor(
     private file: string,
     private decoratorName: string,
-    private multiple: boolean = false
+    private multiple = false
   ) {}
 
   // public
