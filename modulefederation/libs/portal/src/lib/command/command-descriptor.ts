@@ -41,6 +41,7 @@ export class CommandDescriptor {
     icon?: string;
     enabled: boolean;
     i18n?: string;
+    shortcutSubscription? : () => void
 
     commands: CommandAdministration; // the declaring container
 

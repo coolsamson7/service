@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "microfrontend": {
+      "implementation": "./src/generators/microfrontend",
+      "schema": "./src/generators/microfrontend/schema.json",
+      "description": "Generator microfrontend"
+    }
+  }
+}

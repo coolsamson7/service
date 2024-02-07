@@ -84,10 +84,19 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                let command = this.commands[commandName]
 
                if ( command.i18n) {
+                // possibly unsubscribe shortcut
 
-                // TODO shortcut!
+                if ( command.shortcutSubscription ) {
+                    command.shortcutSubscription()
+                    command.shortcutSubscription = undefined
+                }
 
                 this.addI18N(command)
+
+                // check shortcut again
+
+                if (command.shortcut)
+                    this.registerShortcut(command)
                }
             }
 
@@ -130,7 +139,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 for (const commandName in controller.commands) {
                     const command = controller.commands[commandName];
 
-                    if (command.group == filter.group) commands[commandName] = command; // will overwrite in cases of overridden commands
+                    if (command.group == filter.group) 
+                        commands[commandName] = command; // will overwrite in cases of overridden commands
                 }
             };
 
@@ -164,7 +174,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 if (currentCommand.superCommand)
                     return currentCommand.superCommand.run(args) as T;
                 else 
-                    throw new CommandError(`no super command ${currentCommand.name}`);
+                    throw new CommandError(`no super command '${currentCommand.name}'`);
             }
             else throw new CommandError("no current command execution");
         }
@@ -193,7 +203,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 if (config.inheritCommands && parent)
                     return parent.getCommand(commandName)
                 else 
-                    throw new CommandError(`no command ${commandName}`)
+                    throw new CommandError(`no command '${commandName}'`)
             }
         }
 
@@ -210,7 +220,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         // private
 
         private registerShortcut(command: CommandDescriptor) {
-           const unsubscribe = this.injector.get(ShortcutManager).register({
+            command.shortcutSubscription = this.injector.get(ShortcutManager).register({
                 shortcut: command.shortcut!,
                 onShortcut: () => {
                   return command.runWithContext(command.createContext([], {fromShortcut: true}));
@@ -219,7 +229,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         
             // delete on destroy
         
-            this.onDestroy(unsubscribe!);
+            this.onDestroy(() => command.shortcutSubscription!());
         }
 
         private addI18N(commandConfig: CommandConfig) {
@@ -264,7 +274,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
             const command = commandFactory.createCommand(commandConfig, this as CommandAdministration);
 
-            if (inheritedCommand) command.superCommand = inheritedCommand;
+            if (inheritedCommand) 
+                command.superCommand = inheritedCommand;
 
             // and register
 
@@ -272,7 +283,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
             // shortcut needed?
 
-            if (command.shortcut) this.registerShortcut(command);
+            if (command.shortcut) 
+                this.registerShortcut(command);
 
             // done
 
@@ -297,12 +309,11 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 // check overridden methods
         
                 for (const config of Object.values(configs)) {
-                  const name = config.command!;
+                    const name = config.command!;
         
-                  const method = clazz.getMethod(name, false);
-                  if (method) {
-                    config.action = method.method as (args: any) => Promise<any> | any; // replace function with inherited
-                  }
+                    const method = clazz.getMethod(name, false);
+                    if (method) 
+                        config.action = method.method as (args: any) => Promise<any> | any; // replace function with inherited
                 }
         
                 // check decorators bottom up
