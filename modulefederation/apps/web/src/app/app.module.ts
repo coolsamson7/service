@@ -59,6 +59,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuillModule } from "ngx-quill";
 import { HelpComponent } from "./help/help.component";
+import { ResizableModule } from "angular-resizable-element";
 
 export class ApplicationEndpointLocator extends EndpointLocator {
     // instance data
@@ -125,6 +126,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 "session": TraceLevel.FULL,
             }
         }),
+
+        ResizableModule,
+        
         MatSnackBarModule,
         BrowserModule,
         BrowserAnimationsModule,

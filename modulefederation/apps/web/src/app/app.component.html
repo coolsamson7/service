@@ -21,6 +21,8 @@
 </portal-header>
 
 <mat-sidenav-container autosize class="example-container">
+    <!--  navigation -->
+
     <mat-sidenav [fixedBottomGap]="0" [fixedInViewport]="true" [fixedTopGap]="64"
                  [opened]="true"
                  class="example-sidenav"
@@ -29,8 +31,17 @@
         <feature-navigation #navigation></feature-navigation>
     </mat-sidenav>
 
-    <mat-sidenav #help class="sidenav2" position="end" mode="side">
-		  <help></help>
+    <!--  help   [resizeEdges]="{right: true}" -->
+
+    <mat-sidenav #help class="sidenav2" position="end" mode="side" 
+    mwlResizable
+    [enableGhostResize]="true"
+    [ngStyle]="resizeStyle"
+    [validateResize]="resizeValidate"
+    (resizeEnd)="onResizeEnd($event)"
+    >
+        <div  mwlResizeHandle class="resize-handle-left" [resizeEdges]="{ left: true }"></div>
+		<help></help>
 	</mat-sidenav>
 
     <mat-sidenav-content class="content">

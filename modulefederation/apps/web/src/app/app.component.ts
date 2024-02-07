@@ -18,6 +18,7 @@ import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
+import { ResizeEvent } from 'angular-resizable-element';
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
@@ -87,6 +88,37 @@ interface ApplicationState {
     }]
 })
 export class AppComponent extends WithRouting(WithCommands(WithState<ApplicationState>()(AbstractFeature))) {
+  //
+  resizeStyle : any  = {
+    "max-width": `30%`,
+  };
+
+  resizeValidate(event: ResizeEvent): boolean {
+    const MIN_DIMENSIONS_PX = 50;
+    
+    if ( event.rectangle.width &&  event.rectangle.height &&
+      (event.rectangle.width < MIN_DIMENSIONS_PX || event.rectangle.height < MIN_DIMENSIONS_PX)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+ 
+              
+  onResizeEnd(event: ResizeEvent): void {
+    this.resizeStyle = {
+                     // enable/disable these per your needs
+      //position: 'fixed',
+      //left: `${event.rectangle.left}px`,
+      //top: `${event.rectangle.top}px`,
+      //height: `${event.rectangle.height}px`,
+      width: `${event.rectangle.width}px`,
+    };
+  }
+
+
+  //
   @ViewChild('help') sidenav!: MatSidenav
   
     // instance data
@@ -102,13 +134,13 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
       helpAdministrationService.readEntries().subscribe(entries => this.helpEntries = entries)
 
 
-      let printHierarchy = () => {
-        let builder = new StringBuilder()
+      const printHierarchy = () => {
+        const builder = new StringBuilder()
 
-        let print = (feature: AbstractFeature, level: number) => {
-          let ctr = <any>feature.constructor
-          let config = ctr.$$config
-          let selector = config?.componentDefinition.selectors[0][0]
+        const print = (feature: AbstractFeature, level: number) => {
+          const ctr = <any>feature.constructor
+          const config = ctr.$$config
+          const selector = config?.componentDefinition.selectors[0][0]
 
           builder
             .append(" ".repeat(level))
@@ -119,7 +151,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
             builder.append("\n")
 
-          for ( let child of feature.children)
+          for ( const child of feature.children)
              print(child, level + 1)
         }
 
@@ -157,7 +189,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
     })
     help() {
       for (let i = this.featureStack.length - 1; i >= 0; i--) {
-        let feature = this.featureStack[i]
+        const feature = this.featureStack[i]
 
          if (this.helpEntries.includes(feature.path!)) {
           this.sidenav.open()

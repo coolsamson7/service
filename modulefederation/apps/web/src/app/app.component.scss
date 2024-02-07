@@ -11,3 +11,19 @@
   cursor: pointer;
   margin-right: 10px;
 }
+
+mwlResizable {
+  box-sizing: border-box; // required for the enableGhostResize option to work
+}
+
+.resize-handle-left,
+      .resize-handle-right {
+        position: absolute;
+        height: 100%;
+        cursor: col-resize;
+        width: 5px;
+      }
+
+      .resize-handle-left {
+        left: 0;
+      }
