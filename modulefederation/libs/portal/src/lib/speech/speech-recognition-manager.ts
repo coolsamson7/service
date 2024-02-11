@@ -10,7 +10,7 @@ export class SpeechRecognitionManager {
 
     events$ : Subject<SpeechEvent> = new Subject<SpeechEvent>();
     result$ : Subject<SpeechEvent> = new Subject<SpeechEvent>();
-    
+
     private engine! : SpeechEngine
 
     // constructor
@@ -26,7 +26,7 @@ export class SpeechRecognitionManager {
     // public
 
     isRunning() {
-        return this.engine.isRunning()
+        return this.engine ? this.engine.isRunning() : false
     }
 
     start() {

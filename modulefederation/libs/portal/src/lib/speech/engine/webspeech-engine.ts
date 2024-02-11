@@ -127,6 +127,7 @@ export class WebkitSpeechEngine extends SpeechEngine {
         engine.lang = configuration.lang
         engine.interimResults = configuration.interimResults
         engine.continuous = configuration.continuous
+        engine.maxAlternatives = 0
 
         // add listeners
 
@@ -138,7 +139,7 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
         for (const eventName of ["end"])
             engine.addEventListener(eventName, event => this.zone.run(() => {
-                this.running = false; 
+                this.running = false;
                 events$.next({type: eventName, event: event})
             }))
 
@@ -149,11 +150,15 @@ export class WebkitSpeechEngine extends SpeechEngine {
             engine.addEventListener(eventName, event =>  this.zone.run(() => events$.next({type: eventName, event: event})))
 
         for (const eventName of ["result"])
-            engine.addEventListener(eventName, event =>  this.zone.run(() => result$.next({
-                type: eventName, 
-                event: event, 
-                result:  (<SpeechRecognitionEvent>event).results[0][0].transcript
-            })))
+            engine.onresult = event =>  {
+                const transcript = event.results[event.resultIndex][0].transcript
+
+                this.zone.run(() => {
+                    result$.next({
+                        type: eventName,
+                        event: event,
+                        result: transcript
+                    })})}
 
         // done
 
