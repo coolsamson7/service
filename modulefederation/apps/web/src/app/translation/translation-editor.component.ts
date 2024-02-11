@@ -33,9 +33,9 @@ type MessagesByType = { [type : string] : Message[] } // label -> Messge
 type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
 
 export function provideAsFeature(clazz: Function) {
-  return  { 
-    provide: AbstractFeature, 
-    useExisting: forwardRef(() => clazz) 
+  return  {
+    provide: AbstractFeature,
+    useExisting: forwardRef(() => clazz)
   }
 }
 
@@ -52,9 +52,9 @@ interface TranslationState {
     standalone: true,
     encapsulation: ViewEncapsulation.None,
     imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent],
-    providers: [{ 
-      provide: AbstractFeature, 
-      useExisting: forwardRef(() => TranslationEditorComponent) 
+    providers: [{
+      provide: AbstractFeature,
+      useExisting: forwardRef(() => TranslationEditorComponent)
     }]
 })
 @Feature({
@@ -73,7 +73,7 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @ViewChild(NamespaceTreeComponent) tree! : NamespaceTreeComponent
 
-  types = ["label", "tooltip", "shortcut"] // dynamic?
+  types = ["label", "tooltip", "shortcut", "speech"] // dynamic?
   namespaces : NamespaceNode[] = []
   selectedNamespace? : NamespaceNode
   messages : MessageMap = {} // ok -> {label: [], ...}
