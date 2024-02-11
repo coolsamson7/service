@@ -10,6 +10,7 @@ import {
   MessageChanges, StringBuilder,
   WithCommands,
   WithDialogs,
+  WithSpeechCommands,
   WithState
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
@@ -67,7 +68,7 @@ interface TranslationState {
   tags: ["navigation"],
   permissions: []
 })
-export class TranslationEditorComponent extends WithState<TranslationState>()(WithDialogs(WithCommands(AbstractFeature))) {
+export class TranslationEditorComponent extends WithState<TranslationState>()(WithDialogs(WithSpeechCommands(WithCommands(AbstractFeature)))) {
   // instance data
 
   @ViewChild(NamespaceTreeComponent) tree! : NamespaceTreeComponent
@@ -150,7 +151,8 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @Command({
     i18n: "portal.commands:revert",
-    icon: "undo"
+    icon: "undo",
+    speech: "revert" // TODO
   })
   revert() {
     this.namespaceChanges = {
@@ -166,7 +168,8 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @Command({
     i18n: "portal.commands:save",
-    icon: "save"
+    icon: "save",
+    speech: "save" // TODO
   })
   save(selectNode? : NamespaceNode) {
     if (!this.hasChanges())

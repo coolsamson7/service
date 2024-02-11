@@ -43,4 +43,10 @@ export interface CommandConfig {
     lock?: LockType;
 
     action?: (args: any) => Promise<any> | any;
+
+    speech?: string;
+
+    // additional args
+
+    [prop : string] : any;
 }

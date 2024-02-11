@@ -80,8 +80,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         // implement OnLocaleChange
 
         onLocaleChange(locale: Intl.Locale): Observable<any> {
-            for ( let commandName in this.commands) {
-               let command = this.commands[commandName]
+            for ( const commandName in this.commands) {
+               const command = this.commands[commandName]
 
                if ( command.i18n) {
                 // possibly unsubscribe shortcut
@@ -217,6 +217,10 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             // noop
         }
 
+        createdCommand(command: CommandDescriptor) : void {
+            // noop
+        }
+
         // private
 
         private registerShortcut(command: CommandDescriptor) {
@@ -251,11 +255,13 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                                 case "label":
                                 case "tooltip":
                                 case "shortcut":
-                                (<any>commandConfig)[name] = translations[name]
+                                case "speech":
+                                    if (!(<any>commandConfig)[name])
+                                        (<any>commandConfig)[name] = translations[name]
                                 break;
                         
                                 default:
-                                    ;
+                                    
                             } // switch
                     })
                 } // else
@@ -280,6 +286,10 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             // and register
 
             this.commands[commandConfig.command!] = command;
+
+            // callback
+
+            this.createdCommand(command)
 
             // shortcut needed?
 

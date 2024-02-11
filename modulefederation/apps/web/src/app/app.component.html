@@ -17,6 +17,8 @@
 
     <user></user>
 
+    <button mat-button (click)="toggleSpeech()"><mat-icon>{{isRecording() ? 'mic': 'mic_none'}}</mat-icon></button>
+
     <button mat-button (click)="help.toggle()"><mat-icon>help</mat-icon></button>
 </portal-header>
 

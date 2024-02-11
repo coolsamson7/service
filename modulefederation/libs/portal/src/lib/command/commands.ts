@@ -7,6 +7,8 @@ export interface CommandManager {
 
     callSuper<T=any>(...args: any[]) : T
 
+    createdCommand(command: CommandDescriptor) : void
+
     getCommand(command: string): CommandDescriptor
 
     setCommandEnabled(command: string, value: boolean): CommandManager

@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import { environment } from "../environments/environment"
 
-import { Tracer } from "@modulefederation/portal";
+import { SpeechRecognitionModule, Tracer } from "@modulefederation/portal";
 
 Tracer.ENABLED = environment.production !== true
 
@@ -144,6 +144,13 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         ErrorModule,
         MatProgressBarModule,
         MatProgressSpinnerModule,
+
+        SpeechRecognitionModule.forRoot({
+            lang: 'en-US', 
+            continuous: true, 
+            interimResults: false
+        }),
+
         LocaleModule.forRoot({
             locale: 'en-US',
             supportedLocales: ['en-US', 'de-DE']

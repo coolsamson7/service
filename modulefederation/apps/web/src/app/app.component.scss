@@ -22,8 +22,13 @@ mwlResizable {
         height: 100%;
         cursor: col-resize;
         width: 5px;
+        background-color: white;
       }
 
       .resize-handle-left {
         left: 0;
+      }
+
+      .resize-handle-left:hover {
+        background-color: lightgrey;
       }

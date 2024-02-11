@@ -7,6 +7,7 @@ import {
   LocaleManager,
   SessionManager,
   ShortcutManager,
+  SpeechRecognitionManager,
   StateStorage,
   StringBuilder,
   WithCommands,
@@ -128,7 +129,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
     // constructor
 
-    constructor(private messageBus: MessageBus, private helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
+    constructor(private speechRecognitionManager : SpeechRecognitionManager, private messageBus: MessageBus, private helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
       super(injector)
 
       helpAdministrationService.readEntries().subscribe(entries => this.helpEntries = entries)
@@ -224,6 +225,18 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
         element = element.parentElement
       } // while
       */
+    }
+
+    isRecording() : boolean {
+      return this.speechRecognitionManager.isRunning()
+    }
+
+  
+    toggleSpeech() {
+        if ( this.isRecording() ) 
+          this.speechRecognitionManager.stop()
+        else 
+          this.speechRecognitionManager.start() 
     }
 
     // private

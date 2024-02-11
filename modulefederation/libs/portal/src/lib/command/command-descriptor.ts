@@ -41,6 +41,7 @@ export class CommandDescriptor {
     icon?: string;
     enabled: boolean;
     i18n?: string;
+    speech?: string;
     shortcutSubscription? : () => void
 
     commands: CommandAdministration; // the declaring container
@@ -61,6 +62,7 @@ export class CommandDescriptor {
       this.shortcut = config.shortcut;
       this.enabled = config.enabled ? config.enabled : true;
       this.i18n = config.i18n;
+      this.speech = config.speech;
     }
 
     // public

@@ -20,16 +20,16 @@ export class LocalDeploymentLoader extends DeploymentLoader {
             return fetch(url + "/assets/manifest.json")
         })
 
-        let deployment : Deployment = {
+        const deployment : Deployment = {
             modules: {}
         }
 
-        let responses = await Promise.allSettled<Response>(promises)
+        const responses = await Promise.allSettled<Response>(promises)
 
         let index = 0
-        for (let response of responses) {
+        for (const response of responses) {
             if (response.status == "fulfilled") {
-                let manifest = await response.value.json()
+                const manifest = await response.value.json()
 
                 ManifestDecorator.decorate(manifest)
 
