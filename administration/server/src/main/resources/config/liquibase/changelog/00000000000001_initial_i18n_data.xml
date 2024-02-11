@@ -77,6 +77,13 @@
 
         <insert tableName="MESSAGE">
             <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.speech" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="save" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="save.tooltip" />
             <column name="LOCALE" value="en-US" />
             <column name="TRANSLATION" value="Save pending changes" />
@@ -94,6 +101,13 @@
             <column name="NAME" value="save.shortcut" />
             <column name="LOCALE" value="de-DE" />
             <column name="TRANSLATION" value="ctrl+s" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="save.speech" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="sichern" />
         </insert>
 
         <insert tableName="MESSAGE">
@@ -121,6 +135,13 @@
 
         <insert tableName="MESSAGE">
             <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.speech" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="revert" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="revert.tooltip" />
             <column name="LOCALE" value="en-US" />
             <column name="TRANSLATION" value="Revert changes" />
@@ -138,6 +159,13 @@
             <column name="NAME" value="revert.shortcut" />
             <column name="LOCALE" value="de-DE" />
             <column name="TRANSLATION" value="ctrl+z" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="revert.speech" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="rückgängig" />
         </insert>
 
         <insert tableName="MESSAGE">
