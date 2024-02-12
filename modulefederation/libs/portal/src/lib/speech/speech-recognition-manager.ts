@@ -1,11 +1,12 @@
 /* eslint-disable no-var */
 import { Injectable, Injector, inject } from "@angular/core";
-import { Subject } from "rxjs";
+import { Observable, Subject, of } from "rxjs";
 import { SpeechEngine, SpeechEvent } from "./speech-engine";
+import { LocaleManager, OnLocaleChange } from "../locale";
 
 
 @Injectable({providedIn: 'root'})
-export class SpeechRecognitionManager {
+export class SpeechRecognitionManager implements OnLocaleChange {
     // instance data
 
     events$ : Subject<SpeechEvent> = new Subject<SpeechEvent>();
@@ -17,6 +18,8 @@ export class SpeechRecognitionManager {
 
     constructor(injector: Injector) {
         setTimeout(() => injector.get(SpeechEngine).start(), 0)
+
+        injector.get(LocaleManager).subscribe(this)
     }
 
     setEngine(engine : SpeechEngine) {
@@ -39,5 +42,13 @@ export class SpeechRecognitionManager {
         if ( this.isRunning()) {
             this.engine.stop()
         }
+    }
+
+     // implement OnLocaleChange
+    
+     onLocaleChange(locale: Intl.Locale): Observable<any> {
+        this.engine.setLocale(locale.baseName)
+
+        return of()
     }
 }

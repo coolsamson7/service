@@ -4,6 +4,7 @@ import { Inject, Injectable, NgZone } from "@angular/core";
 import { SpeechEngine } from "../speech-engine";
 import { SpeechRecognitionManager } from "../speech-recognition-manager";
 import { SpeechRecognitionConfig, SpeechRecognitionConfigInjectionToken } from "../speech-recognition.module";
+import { TraceLevel, Tracer } from "../../tracer";
 
 
 //import "@types/webspeechapi"
@@ -149,16 +150,18 @@ export class WebkitSpeechEngine extends SpeechEngine {
         for (const eventName of ["error"])
             engine.addEventListener(eventName, event =>  this.zone.run(() => events$.next({type: eventName, event: event})))
 
-        for (const eventName of ["result"])
-            engine.onresult = event =>  {
-                const transcript = event.results[event.resultIndex][0].transcript
+        engine.onresult = event =>  {
+            const transcript = event.results[event.resultIndex][0].transcript
 
-                this.zone.run(() => {
-                    result$.next({
-                        type: eventName,
-                        event: event,
-                        result: transcript
-                    })})}
+            this.zone.run(() => {
+                if ( Tracer.ENABLED)
+                    Tracer.Trace("speech", TraceLevel.MEDIUM, "process speech result '{0}'", transcript)
+
+                result$.next({
+                    type: "result",
+                    event: event,
+                    result: transcript
+                })})}
 
         // done
 
@@ -177,5 +180,9 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
     override isRunning(): boolean {
         return this.running
+    }
+
+    override setLocale(locale: string) {
+        this.speechRecognition.lang = locale
     }
 }

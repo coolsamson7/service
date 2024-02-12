@@ -2,6 +2,7 @@
 import { Injectable } from "@angular/core";
 import { SpeechRecognitionManager } from "./speech-recognition-manager";
 import { SpeechEvent } from "./speech-engine";
+import { TraceLevel, Tracer } from "../tracer";
 
 
 interface CommandEntry {
@@ -29,6 +30,9 @@ export class SpeechCommandManager {
     // public
 
     addCommand(command: string, callback:  (...args: any[]) => void) : () => void {
+        if ( Tracer.ENABLED)
+            Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "add speech command {0}", command)
+
         const entry = {
             command: command,
             re: new RegExp(command, "i"),
@@ -37,14 +41,20 @@ export class SpeechCommandManager {
 
         this.commands.push(entry)
 
-        return () =>  this.commands.splice(this.commands.indexOf(entry), 1)
+        return () =>  {
+            if ( Tracer.ENABLED)
+                Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "remove speech command {0}", command)
+
+            this.commands.splice(this.commands.indexOf(entry), 1)
+        }
     }
 
     // private
 
     private dispatchEvent(event: SpeechEvent) {
-        console.log(event)
-        
+         if ( Tracer.ENABLED)
+            Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "dispatch speech command '{0}'",  event.result)
+
         for ( const command of this.commands)
            if ( command.command == event.result || command.re.test(event.result!)) {
 

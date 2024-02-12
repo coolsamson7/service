@@ -38,9 +38,23 @@
 
         <insert tableName="MESSAGE">
             <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="ok.speech" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="ok" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="ok.label" />
             <column name="LOCALE" value="en-US" />
             <column name="TRANSLATION" value="Ok" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="ok.speech" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="ok" />
         </insert>
 
         <!-- cancel -->
@@ -54,9 +68,23 @@
 
         <insert tableName="MESSAGE">
             <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="cancel.speech" />
+            <column name="LOCALE" value="de-DE" />
+            <column name="TRANSLATION" value="abbrechen" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="cancel.label" />
             <column name="LOCALE" value="en-US" />
             <column name="TRANSLATION" value="Cancel" />
+        </insert>
+
+        <insert tableName="MESSAGE">
+            <column name="NAMESPACE" value="portal.commands" />
+            <column name="NAME" value="cancel.speech" />
+            <column name="LOCALE" value="en-US" />
+            <column name="TRANSLATION" value="cancel" />
         </insert>
 
         <!-- save -->

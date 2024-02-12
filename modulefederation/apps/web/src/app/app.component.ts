@@ -20,6 +20,7 @@ import { ErrorEntry } from "./error/global-error-handler";
 import { ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
 import { ResizeEvent } from 'angular-resizable-element';
+import { MatIconButton } from '@angular/material/button';
 
 @Injectable({ providedIn: 'root' })
 @ErrorHandler()
@@ -121,6 +122,8 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
   //
   @ViewChild('help') sidenav!: MatSidenav
+  @ViewChild('mic') mic!: MatIconButton
+
   
     // instance data
 
@@ -129,11 +132,12 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
     // constructor
 
-    constructor(private speechRecognitionManager : SpeechRecognitionManager, private messageBus: MessageBus, private helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
+    constructor(private speechRecognitionManager : SpeechRecognitionManager, private messageBus: MessageBus, helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
       super(injector)
 
       helpAdministrationService.readEntries().subscribe(entries => this.helpEntries = entries)
 
+      speechRecognitionManager.result$.subscribe(result =>  this.mic.ripple.launch({centered: true}))
 
       const printHierarchy = () => {
         const builder = new StringBuilder()

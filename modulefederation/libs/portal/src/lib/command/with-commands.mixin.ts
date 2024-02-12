@@ -56,7 +56,7 @@ export interface CommandAdministration extends CommandManager {
     popExecutionContext(context: ExecutionContext): void
 }
  
-export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager> &  T  {
+export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager> &  T & OnLocaleChange  {
     class WithCommandsClass extends base implements CommandAdministration, OnLocaleChange {
         // instance data
 
@@ -139,7 +139,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 for (const commandName in controller.commands) {
                     const command = controller.commands[commandName];
 
-                    if (command.group == filter.group) 
+                    if (filter.group && command.group == filter.group) 
                         commands[commandName] = command; // will overwrite in cases of overridden commands
                 }
             };
@@ -232,8 +232,9 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
               })
         
             // delete on destroy
-        
-            this.onDestroy(() => command.shortcutSubscription!());
+
+            if (!command.shortcutSubscription)
+                this.onDestroy(() => command.shortcutSubscription!());
         }
 
         private addI18N(commandConfig: CommandConfig) {

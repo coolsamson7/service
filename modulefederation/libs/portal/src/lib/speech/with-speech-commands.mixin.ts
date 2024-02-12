@@ -4,42 +4,70 @@ import { inject } from "@angular/core";
 import { GConstructor } from "../common";
 import { registerMixins } from "../mixin/mixin";
 import { SpeechCommandManager } from "./speech-command-manager";
-import { CommandDescriptor, CommandManager } from "../command";
+import { CommandAdministration, CommandDescriptor, CommandManager } from "../command";
 import { AbstractFeature } from "../feature";
+import { Observable, of } from "rxjs";
 
 export interface WithSpeechCommands {
 }
 
 export function WithSpeechCommands<T extends GConstructor<CommandManager & AbstractFeature>>(base: T) :GConstructor<WithSpeechCommands> &  T  {
     return registerMixins(class WithSpeechCommandsClass extends base implements WithSpeechCommands {
-      // instance data
+        // instance data
 
-     speechCommandManager = inject(SpeechCommandManager)
+        speechCommandManager = inject(SpeechCommandManager)
 
-      // constructor
+        // constructor
 
-      constructor(...args: any[]) {
-        super(...args);
-      }
+        constructor(...args: any[]) {
+            super(...args);
+        }
 
-      // private
+        // private
 
-      getSpeechCommandManager() {
-        if ( !this.speechCommandManager)
-            this.speechCommandManager = this.injector.get(SpeechCommandManager);
+        getSpeechCommandManager() {
+            if ( !this.speechCommandManager)
+                this.speechCommandManager = this.injector.get(SpeechCommandManager);
 
-        return this.speechCommandManager
-      }
+            return this.speechCommandManager
+        }
 
-      // override CommandManager
+        // override CommandManager
 
-      override createdCommand(command: CommandDescriptor) : void {
-         if ( command.speech )
-            this.onDestroy(this.getSpeechCommandManager().addCommand(command.speech!, (args) => {
-                if ( command.enabled )
-                    command.runWithContext(command.createContext([args], {fromSpeech: true}))
-            }))
-      }
+        override createdCommand(command: CommandDescriptor) : void {
+            if ( command.speech ) {
+                const remove = this.getSpeechCommandManager().addCommand(command.speech!, (args) => {
+                    if ( command.enabled )
+                        command.runWithContext(command.createContext([args], {fromShortcut: true})) // we simply use the same marker to trigger the ripple effect
+                })
+
+                command.speechSubscription = remove
+                this.onDestroy(() => command.speechSubscription!())
+            }
+        }
+
+        // override OnLocaleChange
+
+        override onLocaleChange(locale: Intl.Locale): Observable<any> {
+            super.onLocaleChange(locale) // will set the new localized 
+
+            for ( const command of (<CommandAdministration><any>this).getCommands({})) {
+                // possibly unsubscribe shortcut
+
+                if ( command.speechSubscription ) {
+                    command.speechSubscription()
+                    command.speechSubscription = undefined
+                }
+
+                if ( command.speech )
+                    command.speechSubscription = this.getSpeechCommandManager().addCommand(command.speech!, (args) => {
+                        if ( command.enabled )
+                            command.runWithContext(command.createContext([args], {fromShortcut: true})) // we simply use the same marker to trigger the ripple effect
+                    })
+            }
+                
+            return of()
+        }
 
       // implement WithSpeechCommands
 

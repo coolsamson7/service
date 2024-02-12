@@ -42,7 +42,7 @@ export class ConfirmationDialog implements OnInit {
     // implement OnInit
     
     ngOnInit() : void {
-        let button = this.data.buttons.find(button => button.primary)
+        const button = this.data.buttons.find(button => button.primary)
 
         if (button)
             this.dialogRef.keydownEvents().subscribe(event => {
@@ -53,7 +53,7 @@ export class ConfirmationDialog implements OnInit {
                 if (event.key === "Enter" && !event.shiftKey) {
                     event.preventDefault();
 
-                    this.dialogRef.close(button!!.result);
+                    this.dialogRef.close(button.result);
                 }
             });
     }

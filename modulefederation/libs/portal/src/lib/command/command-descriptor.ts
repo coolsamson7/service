@@ -42,7 +42,9 @@ export class CommandDescriptor {
     enabled: boolean;
     i18n?: string;
     speech?: string;
+    // i don't like this coupling...isn't there a better idea?
     shortcutSubscription? : () => void
+    speechSubscription? : () => void
 
     commands: CommandAdministration; // the declaring container
 

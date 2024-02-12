@@ -32,20 +32,20 @@ export class DialogService implements Dialogs {
 
     // public
 
-  openDialog<T>(component: ComponentType<T>, configuration: any) : Observable<any> {
-    this.shortcutManager.pushLevel()
+    openDialog<T>(component: ComponentType<T>, configuration: any) : Observable<any> {
+      this.shortcutManager.pushLevel()
 
-    return  this.dialog.open(component, configuration).afterClosed()
-      .pipe(
-        tap(() => this.shortcutManager.popLevel())
-      )
-  }
+      return  this.dialog.open(component, configuration).afterClosed()
+        .pipe(
+          tap(() => this.shortcutManager.popLevel())
+        )
+    }
 
     confirmationDialog() : ConfirmationDialogBuilder {
-        return new ConfirmationDialogBuilder(this, this.translator)
+      return new ConfirmationDialogBuilder(this, this.translator)
     }
 
     inputDialog() : InputDialogBuilder {
-        return new InputDialogBuilder(this, this.translator)
+      return new InputDialogBuilder(this, this.translator)
     }
 }
