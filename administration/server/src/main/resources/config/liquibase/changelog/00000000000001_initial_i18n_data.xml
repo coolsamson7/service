@@ -36,7 +36,7 @@
             <column name="TRANSLATION" value="Ok" />
         </insert>
 
-        <insert tableName="MESSAGE">
+        <insert tableName="MESSAGE" schemaName="">
             <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="ok.speech" />
             <column name="LOCALE" value="de-DE" />

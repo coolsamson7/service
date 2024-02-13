@@ -1,8 +1,6 @@
 import { Observable } from "rxjs";
 import { InputDialog } from "./input-dialog";
 import { ButtonConfiguration, DialogService } from "./dialogs";
-import { Translator } from "../i18n";
-import { DialogBuilder } from "./dialog-builder";
 
 export interface InputDialogConfig {
     title: string,
@@ -13,7 +11,7 @@ export interface InputDialogConfig {
     defaultValue: any,
     buttons: ButtonConfiguration[]
 }
-export class InputDialogBuilder extends DialogBuilder {
+export class InputDialogBuilder {
     // instance data
 
     configuration : InputDialogConfig = {
@@ -28,8 +26,7 @@ export class InputDialogBuilder extends DialogBuilder {
 
     // constructor
 
-    constructor(private dialog : DialogService, translator: Translator) {
-        super(translator)
+    constructor(private dialog : DialogService) {
     }
 
     // fluent
@@ -69,7 +66,7 @@ export class InputDialogBuilder extends DialogBuilder {
      * @param button the {@link ButtonConfiguration}
      */
     button(button : ButtonConfiguration) : InputDialogBuilder {
-        this.configuration.buttons.push(this.decorate(button));
+        this.configuration.buttons.push(button);
 
         return this;
     }

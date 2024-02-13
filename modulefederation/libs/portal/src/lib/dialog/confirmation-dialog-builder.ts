@@ -1,9 +1,6 @@
 import { Observable } from "rxjs";
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { ButtonConfiguration, DialogService } from "./dialogs";
-import { Translator } from "../i18n";
-import { get } from "../common";
-import { DialogBuilder } from "./dialog-builder";
 
 export interface ConfirmationDialogConfig {
     title : string;
@@ -12,7 +9,7 @@ export interface ConfirmationDialogConfig {
     buttons : ButtonConfiguration[]
 }
 
-export class ConfirmationDialogBuilder extends DialogBuilder {
+export class ConfirmationDialogBuilder {
     // instance data
 
     configuration : ConfirmationDialogConfig = {
@@ -24,8 +21,7 @@ export class ConfirmationDialogBuilder extends DialogBuilder {
 
     // constructor
 
-    constructor(private dialog : DialogService, translator: Translator) {
-        super(translator)
+    constructor(private dialog : DialogService) {
     }
 
     // fluent
@@ -65,7 +61,7 @@ export class ConfirmationDialogBuilder extends DialogBuilder {
      * @param button the {@link ButtonConfiguration}
      */
     button(button : ButtonConfiguration) : ConfirmationDialogBuilder {
-        this.configuration.buttons.push(this.decorate(button));
+        this.configuration.buttons.push(button);
 
         return this;
     }

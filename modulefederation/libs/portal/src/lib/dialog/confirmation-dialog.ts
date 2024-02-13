@@ -5,6 +5,7 @@ import { ButtonConfiguration } from "./dialogs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
+import { CommonDialog } from "./dialog-builder";
 
 @Component({
     selector: 'confirmation-dialog',
@@ -13,10 +14,11 @@ import { CommonModule } from "@angular/common";
     standalone: true,
     imports: [CommonModule, MatIconModule, MatDialogModule, MatButtonModule]
 })
-export class ConfirmationDialog implements OnInit {
+export class ConfirmationDialog extends CommonDialog implements OnInit {
     // constructor
     
-    constructor(public dialogRef : MatDialogRef<ConfirmationDialog>, @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig) {
+    constructor(dialogRef : MatDialogRef<ConfirmationDialog>, @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig) {
+        super(dialogRef)
     }
 
     // callbacks
@@ -34,13 +36,15 @@ export class ConfirmationDialog implements OnInit {
         return ""
     }
 
-    click(button : ButtonConfiguration) : void {
+    override click(button : ButtonConfiguration) : void {
         this.dialogRef.close(button.result);
     }
 
     // implement OnInit
     
-    ngOnInit() : void {
+ ngOnInit() : void {
+        this.data.buttons.forEach(button => this.decorate(button))
+
         const button = this.data.buttons.find(button => button.primary)
 
         if (button)

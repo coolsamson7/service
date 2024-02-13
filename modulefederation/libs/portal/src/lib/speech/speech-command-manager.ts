@@ -3,9 +3,8 @@ import { Injectable } from "@angular/core";
 import { SpeechRecognitionManager } from "./speech-recognition-manager";
 import { SpeechEvent } from "./speech-engine";
 import { TraceLevel, Tracer } from "../tracer";
-import { ButtonConfiguration, DialogService } from "../dialog";
-import { DialogBuilder } from "../dialog/dialog-builder";
-
+import { ButtonConfiguration, ButtonData, DialogService } from "../dialog";
+import { CommonDialog } from "../dialog/dialog-builder";
 
 interface CommandEntry {
     command: string
@@ -27,11 +26,18 @@ export class SpeechCommandManager {
     // constructor
 
     constructor(speechRecognition : SpeechRecognitionManager,  dialogs : DialogService) {
-        DialogBuilder.addDecorator({
-            decorate(button: ButtonConfiguration) : void {
-                if ( button.speech) {
-                    console.log(button)
-                }
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const This = this
+        
+        CommonDialog.addDecorator({
+            decorate(button: ButtonConfiguration, dialog: CommonDialog) : void {
+                if ( button.speech ) {
+                    This.addCommand(
+                        button.speech,  
+                        (...args: any[]) => (<ButtonData>button).run(), 
+                        () => true
+                        )
+                    }
             },
         })
 

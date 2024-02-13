@@ -1,11 +1,13 @@
-import { MatDialog } from "@angular/material/dialog";
-import { Injectable } from "@angular/core";
+/* eslint-disable @angular-eslint/no-empty-lifecycle-method */
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { Component, Injectable, OnInit, inject } from "@angular/core";
 import { InputDialogBuilder } from "./input-dialog-builder";
 import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { tap } from "rxjs/operators";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Observable } from "rxjs";
 import { Translator } from "../i18n";
+import { get } from "../common";
 
 export interface ButtonConfiguration {
     label?: string
@@ -16,6 +18,10 @@ export interface ButtonConfiguration {
 
     result : any
     primary? : boolean
+}
+
+export interface ButtonData extends ButtonConfiguration {
+  run: () => any
 }
 
 export interface Dialogs {
@@ -31,7 +37,6 @@ export interface DialogListener {
   closedDialog() : void
 }
 
-
 @Injectable({providedIn: 'root'})
 export class DialogService implements Dialogs {
     // instance data
@@ -40,7 +45,7 @@ export class DialogService implements Dialogs {
 
     // constructor
 
-    constructor(private dialog : MatDialog, private translator: Translator) {
+    constructor(private dialog : MatDialog) {
     }
 
     // public
@@ -63,10 +68,10 @@ export class DialogService implements Dialogs {
     }
 
     confirmationDialog() : ConfirmationDialogBuilder {
-      return new ConfirmationDialogBuilder(this, this.translator)
+      return new ConfirmationDialogBuilder(this)
     }
 
     inputDialog() : InputDialogBuilder {
-      return new InputDialogBuilder(this, this.translator)
+      return new InputDialogBuilder(this)
     }
 }
