@@ -107,7 +107,7 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
     // constructor
 
-    constructor(@Inject(SpeechRecognitionConfigInjectionToken) configuration : SpeechRecognitionConfig, speechRecognitionManager: SpeechRecognitionManager, private zone: NgZone) {
+    constructor(@Inject(SpeechRecognitionConfigInjectionToken) configuration : SpeechRecognitionConfig, private speechRecognitionManager: SpeechRecognitionManager, private zone: NgZone) {
         super();
 
         this.speechRecognition = this.setup(configuration, speechRecognitionManager)
@@ -121,7 +121,6 @@ export class WebkitSpeechEngine extends SpeechEngine {
         const engine : SpeechRecognition = new (<any>window).webkitSpeechRecognition()
 
         const events$ = speechRecognitionManager.events$
-        const result$ = speechRecognitionManager.result$
 
         // configure
 
@@ -151,17 +150,20 @@ export class WebkitSpeechEngine extends SpeechEngine {
             engine.addEventListener(eventName, event =>  this.zone.run(() => events$.next({type: eventName, event: event})))
 
         engine.onresult = event =>  {
-            const transcript = event.results[event.resultIndex][0].transcript
+            if ( event.results[event.resultIndex][0].confidence > 0) {
+                const transcript = event.results[event.resultIndex][0].transcript
 
-            this.zone.run(() => {
-                if ( Tracer.ENABLED)
-                    Tracer.Trace("speech", TraceLevel.MEDIUM, "process speech result '{0}'", transcript)
+                this.zone.run(() => {
+                    if ( Tracer.ENABLED)
+                        Tracer.Trace("speech", TraceLevel.MEDIUM, "process speech result '{0}'", transcript)
 
-                result$.next({
-                    type: "result",
-                    event: event,
-                    result: transcript
-                })})}
+                    this.speechRecognitionManager.callListener({
+                        type: "result",
+                        event: event,
+                        result: transcript
+                    })})
+            } // if
+        }
 
         // done
 

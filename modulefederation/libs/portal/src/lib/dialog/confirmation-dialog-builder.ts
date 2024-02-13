@@ -2,6 +2,8 @@ import { Observable } from "rxjs";
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { ButtonConfiguration, DialogService } from "./dialogs";
 import { Translator } from "../i18n";
+import { get } from "../common";
+import { DialogBuilder } from "./dialog-builder";
 
 export interface ConfirmationDialogConfig {
     title : string;
@@ -10,7 +12,7 @@ export interface ConfirmationDialogConfig {
     buttons : ButtonConfiguration[]
 }
 
-export class ConfirmationDialogBuilder {
+export class ConfirmationDialogBuilder extends DialogBuilder {
     // instance data
 
     configuration : ConfirmationDialogConfig = {
@@ -22,7 +24,8 @@ export class ConfirmationDialogBuilder {
 
     // constructor
 
-    constructor(private dialog : DialogService, private translator: Translator) {
+    constructor(private dialog : DialogService, translator: Translator) {
+        super(translator)
     }
 
     // fluent
@@ -62,8 +65,7 @@ export class ConfirmationDialogBuilder {
      * @param button the {@link ButtonConfiguration}
      */
     button(button : ButtonConfiguration) : ConfirmationDialogBuilder {
-        // @ts-ignore
-        this.configuration.buttons.push(button);
+        this.configuration.buttons.push(this.decorate(button));
 
         return this;
     }
@@ -76,7 +78,7 @@ export class ConfirmationDialogBuilder {
     public ok() : ConfirmationDialogBuilder {
         return this
             .button({
-                label: this.translator.translate("portal.commands:ok.label"),
+                i18n: "portal.commands:ok",
                 primary: true,
                 result: true
             })
@@ -86,24 +88,16 @@ export class ConfirmationDialogBuilder {
      * add "ok" and "cancel" buttons
      */
     public okCancel() : ConfirmationDialogBuilder {
-      const buttons : ButtonConfiguration[] = [
-        {
-          label: "portal.commands:ok.label",
-          primary: true,
-          result: true
-        },
-        {
-          label: "portal.commands:cancel.label",
-          result: undefined
-        }
-      ]
-
-      for ( const button of buttons)
-        this.translator.translate$(button.label).subscribe((label) => button.label = label)
-
-      buttons.map(config => this.button(config))
-
-      return this
+        return this
+            .button({
+                i18n: "portal.commands:ok",
+                primary: true,
+                result: true
+            })
+            .button({
+                i18n: "portal.commands:cancel",
+                result: undefined
+            })
     }
 
     // show

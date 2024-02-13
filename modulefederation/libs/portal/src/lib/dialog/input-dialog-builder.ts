@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import { InputDialog } from "./input-dialog";
 import { ButtonConfiguration, DialogService } from "./dialogs";
 import { Translator } from "../i18n";
+import { DialogBuilder } from "./dialog-builder";
 
 export interface InputDialogConfig {
     title: string,
@@ -12,7 +13,7 @@ export interface InputDialogConfig {
     defaultValue: any,
     buttons: ButtonConfiguration[]
 }
-export class InputDialogBuilder {
+export class InputDialogBuilder extends DialogBuilder {
     // instance data
 
     configuration : InputDialogConfig = {
@@ -27,7 +28,8 @@ export class InputDialogBuilder {
 
     // constructor
 
-    constructor(private dialog : DialogService, private translator: Translator) {
+    constructor(private dialog : DialogService, translator: Translator) {
+        super(translator)
     }
 
     // fluent
@@ -67,8 +69,7 @@ export class InputDialogBuilder {
      * @param button the {@link ButtonConfiguration}
      */
     button(button : ButtonConfiguration) : InputDialogBuilder {
-        // @ts-ignore
-        this.configuration.buttons.push(button);
+        this.configuration.buttons.push(this.decorate(button));
 
         return this;
     }
@@ -93,7 +94,7 @@ export class InputDialogBuilder {
     public ok() : InputDialogBuilder {
         return this
             .button({
-                label: this.translator.translate("portal.commands:ok.label"),
+                i18n: "portal.commands:ok",
                 primary: true,
                 result: true
             })
@@ -105,12 +106,12 @@ export class InputDialogBuilder {
     public okCancel() : InputDialogBuilder {
         return this
             .button({
-                label: this.translator.translate("portal.commands:ok.label"),
+                i18n: "portal.commands:ok",
                 primary: true,
                 result: true
             })
             .button({
-                label: this.translator.translate("portal.commands:cancel.label"),
+                i18n: "portal.commands:cancel",
                 result: undefined
             });
     }

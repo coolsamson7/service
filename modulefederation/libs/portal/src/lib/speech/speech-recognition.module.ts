@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { InjectionToken, Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { AbstractModule } from "../injection";
 import { SpeechEngine } from './speech-engine';
@@ -18,7 +20,7 @@ export interface SpeechRecognitionConfig {
     //maxAlternatives: number;
 
     engine?: Type<SpeechEngine>
-   
+
     /**
      * any additional properties
      */

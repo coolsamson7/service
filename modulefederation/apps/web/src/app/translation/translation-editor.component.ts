@@ -7,7 +7,7 @@ import {
   I18nModule,
   Message,
   MessageAdministrationService,
-  MessageChanges, StringBuilder,
+  MessageChanges, VoiceInputDirective, StringBuilder,
   WithCommands,
   WithDialogs,
   WithSpeechCommands,
@@ -28,6 +28,7 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommandButtonComponent } from "@modulefederation/portal"
 import { Observable, of, tap } from "rxjs";
+import { MicrofoneComponent } from "libs/portal/src/lib/speech/ui/microfone.component";
 
 type MessagesByType = { [type : string] : Message[] } // label -> Messge
 type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
@@ -51,7 +52,7 @@ interface TranslationState {
     styleUrls: ['./translation-editor.component.scss'],
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent],
+    imports: [CommandButtonComponent, NamespaceTreeComponent, CommonModule, I18nModule, MatMenuModule, MatListModule, MatIconModule, MatSlideToggleModule, MatButtonModule, MatToolbarModule, MatTooltipModule, FormsModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, I18nModule, CommandButtonComponent, VoiceInputDirective, MicrofoneComponent],
     providers: [{
       provide: AbstractFeature,
       useExisting: forwardRef(() => TranslationEditorComponent)
@@ -151,8 +152,7 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @Command({
     i18n: "portal.commands:revert",
-    icon: "undo",
-    speech: "revert" // TODO
+    icon: "undo"
   })
   revert() {
     this.namespaceChanges = {
@@ -168,8 +168,7 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   @Command({
     i18n: "portal.commands:save",
-    icon: "save",
-    speech: "save" // TODO
+    icon: "save"
   })
   save(selectNode? : NamespaceNode) {
     if (!this.hasChanges())

@@ -1,0 +1,19 @@
+:host { display: contents; }
+
+.mic {
+    animation-name: color;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate-reverse;
+    animation-timing-function: ease;
+}
+
+
+@keyframes color {
+from {
+  color: green;
+  }
+to {
+  color: blue;
+  }
+}

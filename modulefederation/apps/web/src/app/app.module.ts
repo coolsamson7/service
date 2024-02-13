@@ -122,6 +122,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             paths: {
                 "": TraceLevel.OFF,
                 "type": TraceLevel.OFF,
+                "speech": TraceLevel.MEDIUM,
                 "portal": TraceLevel.HIGH,
                 "session": TraceLevel.FULL,
             }

@@ -9,6 +9,7 @@ import { AbstractFeature } from "../feature";
 import { Observable, of } from "rxjs";
 
 export interface WithSpeechCommands {
+    // hmm...nothing so far
 }
 
 export function WithSpeechCommands<T extends GConstructor<CommandManager & AbstractFeature>>(base: T) :GConstructor<WithSpeechCommands> &  T  {
@@ -42,7 +43,7 @@ export function WithSpeechCommands<T extends GConstructor<CommandManager & Abstr
                 })
 
                 command.speechSubscription = remove
-                this.onDestroy(() => command.speechSubscription!())
+                this.onDestroy(() => {if (command.speechSubscription) command.speechSubscription!()})
             }
         }
 

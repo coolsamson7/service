@@ -81,9 +81,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
 
         onLocaleChange(locale: Intl.Locale): Observable<any> {
             for ( const commandName in this.commands) {
-               const command = this.commands[commandName]
+                const command = this.commands[commandName]
 
-               if ( command.i18n) {
                 // possibly unsubscribe shortcut
 
                 if ( command.shortcutSubscription ) {
@@ -91,13 +90,14 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                     command.shortcutSubscription = undefined
                 }
 
-                this.addI18N(command)
+                if ( command.i18n) {
+                    this.addI18N(command)
 
-                // check shortcut again
+                    // check shortcut again
 
-                if (command.shortcut)
-                    this.registerShortcut(command)
-               }
+                    if (command.shortcut)
+                        this.registerShortcut(command)
+               } // if
             }
 
             return of()
@@ -234,7 +234,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             // delete on destroy
 
             if (!command.shortcutSubscription)
-                this.onDestroy(() => command.shortcutSubscription!());
+                this.onDestroy(() => {if (command.shortcutSubscription)  command.shortcutSubscription!()});
         }
 
         private addI18N(commandConfig: CommandConfig) {
@@ -250,7 +250,14 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 else {
                     translations = translations[prefix]
                     
-                    if ( translations )
+                    if ( translations ) {
+                        // clear old values that only make sense in the context of i18n
+                        // TODO: these are??
+
+                        ["speeech"].forEach(name => (<any>commandConfig)[name] = undefined)
+
+                        // set new values
+
                         Object.getOwnPropertyNames(translations).forEach(name => {
                             switch (name) {
                                 case "label":
@@ -265,6 +272,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                                     
                             } // switch
                     })
+                    }
                 } // else
             }
         }

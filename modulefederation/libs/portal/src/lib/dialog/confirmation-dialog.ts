@@ -14,10 +14,9 @@ import { CommonModule } from "@angular/common";
     imports: [CommonModule, MatIconModule, MatDialogModule, MatButtonModule]
 })
 export class ConfirmationDialog implements OnInit {
-    constructor(
-        public dialogRef : MatDialogRef<ConfirmationDialog>,
-        @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig,
-    ) {
+    // constructor
+    
+    constructor(public dialogRef : MatDialogRef<ConfirmationDialog>, @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig) {
     }
 
     // callbacks

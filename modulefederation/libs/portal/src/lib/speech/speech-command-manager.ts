@@ -3,6 +3,8 @@ import { Injectable } from "@angular/core";
 import { SpeechRecognitionManager } from "./speech-recognition-manager";
 import { SpeechEvent } from "./speech-engine";
 import { TraceLevel, Tracer } from "../tracer";
+import { ButtonConfiguration, DialogService } from "../dialog";
+import { ButtonDecorator, DialogBuilder } from "../dialog/dialog-builder";
 
 
 interface CommandEntry {
@@ -11,20 +13,66 @@ interface CommandEntry {
     callback: (...args: any[]) => void
 }
 
+declare type CommandEntryArray = CommandEntry[];
+
+
 @Injectable({providedIn: 'root'})
 export class SpeechCommandManager {
     // instance data
 
-    commands : CommandEntry[] = []
+    commandStack : CommandEntryArray[] = []
+    commands! : CommandEntry[]
 
     // constructor
 
-    constructor(speechRecognition : SpeechRecognitionManager) {
-        speechRecognition.result$.subscribe(event => this.dispatchEvent(event))
+    constructor(speechRecognition : SpeechRecognitionManager,  dialogs : DialogService) {
+        DialogBuilder.addDecorator({
+            decorate(button: ButtonConfiguration) : void {
+                if ( button.speech) {
+                    console.log(button)
+                }
+            },
+        })
+
+        speechRecognition.addListener(event => this.dispatchEvent(event), 0)
+
+        dialogs.addListener({
+            openDialog: () => {this.pushLevel()},
+            closedDialog: () => {this.popLevel()}
+        })
+
+        this.pushLevel()
 
         // TODO
 
         speechRecognition.events$.subscribe(event => console.log(event))
+    }
+
+    // private
+
+    pushLevel() {
+        this.commandStack.push(this.commands = [])
+    }
+
+    popLevel() {
+        this.commandStack.splice(this.commandStack.length - 1, 1);
+        this.commands = this.commandStack[this.commandStack.length - 1];
+    }
+
+    // private
+
+    private makeRE(command: string) {
+        const optionalParam = /\((.*?)\)/g;
+        const namedParam    = /:(\w+)/g
+        const restParam    = /\*(\w+)/g;
+    
+        command = command
+            .replace(optionalParam, '($1)?')
+            .replace(namedParam, '(?<$1>\\w+)')
+            .replace(restParam, '(?<$1>.*)')
+
+  
+        return new RegExp('^' + command + '$', 'i');
     }
 
     // public
@@ -35,7 +83,7 @@ export class SpeechCommandManager {
 
         const entry = {
             command: command,
-            re: new RegExp(command, "i"),
+            re: this.makeRE(command),
             callback: callback
         }
 
@@ -51,7 +99,7 @@ export class SpeechCommandManager {
 
     // private
 
-    private dispatchEvent(event: SpeechEvent) {
+    private dispatchEvent(event: SpeechEvent) :boolean {
          if ( Tracer.ENABLED)
             Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "dispatch speech command '{0}'",  event.result)
 
@@ -65,8 +113,10 @@ export class SpeechCommandManager {
                 else
                     command.callback()
 
-                return
+                return true
            } // if
-        }
+        } // if
+
+        return false
     }
 }

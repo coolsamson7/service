@@ -51,8 +51,8 @@ export class LocaleManager {
 
         this.locale$
             .pipe(
-                mergeMap((locale) => from(this.getListeners())),
-                concatMap((l) => l.onLocaleChange.onLocaleChange(this.locale$.value))
+                mergeMap(locale => from(this.getListeners())),
+                concatMap(listener => listener.onLocaleChange.onLocaleChange(this.locale$.value))
             )
             .subscribe();
 
@@ -72,9 +72,7 @@ export class LocaleManager {
         this.listeners.push(listener);
         this.dirty = true;
 
-        return () => {
-          this.listeners.splice(this.listeners.indexOf(listener, 1))
-        }
+        return () => this.listeners.splice(this.listeners.indexOf(listener), 1)
     }
 
     // public
