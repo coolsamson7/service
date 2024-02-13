@@ -4,12 +4,13 @@ import { SpeechRecognitionManager } from "./speech-recognition-manager";
 import { SpeechEvent } from "./speech-engine";
 import { TraceLevel, Tracer } from "../tracer";
 import { ButtonConfiguration, DialogService } from "../dialog";
-import { ButtonDecorator, DialogBuilder } from "../dialog/dialog-builder";
+import { DialogBuilder } from "../dialog/dialog-builder";
 
 
 interface CommandEntry {
     command: string
     re: RegExp
+    enabled:  () => boolean
     callback: (...args: any[]) => void
 }
 
@@ -77,13 +78,14 @@ export class SpeechCommandManager {
 
     // public
 
-    addCommand(command: string, callback:  (...args: any[]) => void) : () => void {
+    addCommand(command: string, callback: (...args: any[]) => void, enabled: () => boolean) : () => void {
         if ( Tracer.ENABLED)
             Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "add speech command {0}", command)
 
         const entry = {
             command: command,
             re: this.makeRE(command),
+            enabled: enabled,
             callback: callback
         }
 
@@ -104,7 +106,7 @@ export class SpeechCommandManager {
             Tracer.Trace("speech.commands", TraceLevel.MEDIUM, "dispatch speech command '{0}'",  event.result)
 
         for ( const command of this.commands)
-           if ( command.command == event.result || command.re.test(event.result!)) {
+           if ( command.re.test(event.result!) && command.enabled()) {
 
             let result: RegExpMatchArray | null
             if ((result = command.re.exec(event.result!))) {

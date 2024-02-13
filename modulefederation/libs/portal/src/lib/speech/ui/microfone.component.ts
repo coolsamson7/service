@@ -25,7 +25,9 @@ export class MicrofoneComponent implements OnInit {
         this.on = on
    }
 
-   ngOnInit() {
+   // implement OnInit
+
+   ngOnInit() { /*
         const nativeElement: HTMLElement = this.el.nativeElement
         const parentElement = nativeElement.parentElement!
 
@@ -36,6 +38,6 @@ export class MicrofoneComponent implements OnInit {
         
         // remove the empty element(the host)
 
-        parentElement.removeChild(nativeElement)
+        parentElement.removeChild(nativeElement)*/
     }
 }

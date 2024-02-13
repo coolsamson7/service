@@ -27,8 +27,8 @@ export class VoiceInputDirective implements OnInit, OnDestroy {
     constructor(private speechRecognitionManager: SpeechRecognitionManager, private elementRef : ElementRef<HTMLInputElement>) {
         this.input =  this.elementRef.nativeElement
 
-      this.input.addEventListener('focus', (_: Event) => this.focus(true))
-      this.input.addEventListener('blur', (_: Event) => this.focus(false))
+        this.input.addEventListener('focus', (_: Event) => this.focus(true))
+        this.input.addEventListener('blur', (_: Event) => this.focus(false))
     }
 
     // private

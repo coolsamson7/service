@@ -102,6 +102,9 @@ declare var webkitSpeechGrammarList: SpeechGrammarListStatic;
 export class WebkitSpeechEngine extends SpeechEngine {
     // instance data
 
+    autoRestart = true
+    lastStartedAt = 0;
+    autoRestartCount = 0;
     running = false
     speechRecognition: SpeechRecognition
 
@@ -141,17 +144,42 @@ export class WebkitSpeechEngine extends SpeechEngine {
             engine.addEventListener(eventName, event => this.zone.run(() => {
                 this.running = false;
                 events$.next({type: eventName, event: event})
+
+                const timeSinceLastStart = new Date().getTime() - this.lastStartedAt;
+                this.autoRestartCount += 1;
+
+                if (this.autoRestartCount % 10 === 0) {
+                    // give up
+                  return
+                }
+                else if (timeSinceLastStart < 1000) 
+                  setTimeout(() => this.start(), 1000 - timeSinceLastStart)
+                
+                else this.start()
             }))
 
         for (const eventName of ["nomatch"])
             engine.addEventListener(eventName, event =>  this.zone.run(() => events$.next({type: eventName, event: event})))
 
         for (const eventName of ["error"])
-            engine.addEventListener(eventName, event =>  this.zone.run(() => events$.next({type: eventName, event: event})))
+            engine.addEventListener(eventName, event => this.zone.run(() => {
+                switch((<SpeechRecognitionError>event).error) {
+                    case 'not-allowed':
+                    case 'service-not-allowed':
+                      // if permission to use the mic is denied, turn off auto-restart
+                      this.autoRestart = false
+                      break
+
+                    default:
+                      // noop
+                }
+
+                events$.next({type: eventName, event: event})
+         }))
 
         engine.onresult = event =>  {
-            if ( event.results[event.resultIndex][0].confidence > 0) {
-                const transcript = event.results[event.resultIndex][0].transcript
+            if ( event.results[event.resultIndex][0].confidence > 0.7) {
+                const transcript = event.results[event.resultIndex][0].transcript.trim() // why trim, no idea....i see leading blanks
 
                 this.zone.run(() => {
                     if ( Tracer.ENABLED)
@@ -173,10 +201,14 @@ export class WebkitSpeechEngine extends SpeechEngine {
     // implement SpeechEngine
 
     override start(): void {
+       this.autoRestart = true
+       this.lastStartedAt = new Date().getTime();
        this.speechRecognition.start()
     }
 
     override stop(): void {
+        this.autoRestart = false
+        this.autoRestartCount = 0
         this.speechRecognition.stop()
     }
 

@@ -37,10 +37,11 @@ export function WithSpeechCommands<T extends GConstructor<CommandManager & Abstr
 
         override createdCommand(command: CommandDescriptor) : void {
             if ( command.speech ) {
-                const remove = this.getSpeechCommandManager().addCommand(command.speech!, (args) => {
-                    if ( command.enabled )
-                        command.runWithContext(command.createContext([args], {fromShortcut: true})) // we simply use the same marker to trigger the ripple effect
-                })
+                const remove = this.getSpeechCommandManager().addCommand(
+                    command.speech!, 
+                    (args) => command.runWithContext(command.createContext([args], {fromShortcut: true})), // we simply use the same marker to trigger the ripple effect
+                    () => command.enabled
+                )
 
                 command.speechSubscription = remove
                 this.onDestroy(() => {if (command.speechSubscription) command.speechSubscription!()})
@@ -61,10 +62,10 @@ export function WithSpeechCommands<T extends GConstructor<CommandManager & Abstr
                 }
 
                 if ( command.speech )
-                    command.speechSubscription = this.getSpeechCommandManager().addCommand(command.speech!, (args) => {
-                        if ( command.enabled )
-                            command.runWithContext(command.createContext([args], {fromShortcut: true})) // we simply use the same marker to trigger the ripple effect
-                    })
+                    command.speechSubscription = this.getSpeechCommandManager().addCommand(
+                        command.speech!, 
+                        (args) => command.runWithContext(command.createContext([args], {fromShortcut: true})), // we simply use the same marker to trigger the ripple effect
+                        () => command.enabled)
             }
                 
             return of()

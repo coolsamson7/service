@@ -11,7 +11,8 @@ import {
   WithCommands,
   WithDialogs,
   WithSpeechCommands,
-  WithState
+  WithState,
+  MicrofoneComponent
 } from "@modulefederation/portal";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
 import { CommonModule } from "@angular/common";
@@ -28,7 +29,6 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CommandButtonComponent } from "@modulefederation/portal"
 import { Observable, of, tap } from "rxjs";
-import { MicrofoneComponent } from "libs/portal/src/lib/speech/ui/microfone.component";
 
 type MessagesByType = { [type : string] : Message[] } // label -> Messge
 type MessageMap = { [prefix : string] : MessagesByType } // ok -> {label: [...]}
@@ -163,7 +163,10 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
     this.updateCommands()
 
-    this.select(this.selectedNamespace!).subscribe()
+    this.select(this.selectedNamespace!).subscribe(_ => {
+      if ( this.selectedName )
+        this.selectMessages(this.selectedName)
+      })
   }
 
   @Command({
@@ -409,27 +412,13 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
     this.selectedNamespace = namespaceNode
 
     if (namespaceNode) {
-      if (!namespaceNode.messages) {
-        return this.messageAdministrationService.readAllMessages(namespaceNode.path)
-        .pipe(
-          tap( (messages: Message[] | undefined) => {
-            namespaceNode.messages = messages
-            this.messages = this.computeMessages(messages!)
-          })
-          )/*.subscribe(
-          messages => {
-            namespaceNode.messages = messages
-            this.messages = this.computeMessages(messages)
-          }
-        )*/
-      }
-      else {
-        this.messages = this.computeMessages(namespaceNode.messages)
-        if (this.selectedName)
-          this.selectMessages(this.selectedName)
-
-          return of()
-      }
+      return this.messageAdministrationService.readAllMessages(namespaceNode.path)
+      .pipe(
+        tap( (messages: Message[] | undefined) => {
+          namespaceNode.messages = messages
+          this.messages = this.computeMessages(messages!)
+        })
+        )
     }
     else return of()
   }
