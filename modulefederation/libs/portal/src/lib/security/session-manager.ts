@@ -83,7 +83,7 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * return the current user.
      */
     getUser() : U {
-        return this.session?.user!;
+        return this.session!.user!;
     }
 
     /**

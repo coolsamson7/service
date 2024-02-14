@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { DialogService, Feature, FeatureData, LocaleManager, SessionManager } from "@modulefederation/portal";
 import { Component, Injector, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";

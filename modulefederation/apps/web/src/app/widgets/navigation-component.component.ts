@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { AbstractFeature } from "@modulefederation/portal";
 
 export interface RouteElement {

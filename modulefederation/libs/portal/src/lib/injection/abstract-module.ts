@@ -13,6 +13,7 @@ abstract class _AbstractModule {
     public static injectorSubject: ReplaySubject<Injector>;
 
     static New<T extends Ctr<any>>(Base: T, injectIntoProp?: { [prop: string]: Type<any> }): Result<T> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const module = this
         const clazz = class extends Base {
             constructor(...args : any[]) {

@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
 import { filter, fromEvent, Subscription, take } from "rxjs";
 import { EditorModel } from "./monaco-editor";

@@ -7,7 +7,7 @@ import { Translations, Translator } from './translator';
 import { I18nLoader } from './i18n-loader';
 import { Interpolator } from "./interpolator";
 import { MissingTranslationHandler } from "./missing-translation-handler";
-import { transition } from '@angular/animations';
+
 
 /**
  * The default implementation of a {@link MissingTranslationHandler} that simply wraps the key with '##' around it.

@@ -108,8 +108,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
                 return "date"
 
             default:
-                const model = this.model.models.find(model => model.name == type.name)
-                if (model?.kind.includes("enum"))
+                if ( this.model.models.find(m => m.name == type.name)?.kind.includes("enum"))
                     return "enum"
                 else
                     return "json"

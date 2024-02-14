@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AfterViewInit, Component, ElementRef, Injectable, Injector, OnDestroy, OnInit, ViewChild } from "@angular/core";
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from "@angular/core";
 import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
-import { Observable, Subscription, map, of, switchMap } from 'rxjs';
+import { Observable, Subscription, of, switchMap } from 'rxjs';
 import { MirofrontendsComponent } from "./microfrontends.component";
 import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
 import { v4 as uuidv4 } from 'uuid'
-import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, NgControl, NgForm, ValidationErrors, ValidatorFn } from "@angular/forms";
-import { AbstractFeature, Command, DialogService, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";
+import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, NgControl, NgForm, ValidationErrors } from "@angular/forms";
+import { AbstractFeature, Command, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
 import { MatFormField } from "@angular/material/form-field";
 

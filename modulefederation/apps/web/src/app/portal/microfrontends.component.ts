@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+
 import { Component, Injector } from "@angular/core";
 import { PortalAdministrationService, PortalIntrospectionService } from "./service";
 import { Address } from "./model";
@@ -96,7 +98,7 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
                     manifest.remoteEntry = remote
                 manifest.health = "alive"
 
-                this.portalAdministrationService.registerManifest(manifest!).subscribe(result => {
+                this.portalAdministrationService.registerManifest(manifest).subscribe(result => {
                     if (result.manifest)
                     this.manifests.push(ManifestDecorator.decorate(result.manifest))
 

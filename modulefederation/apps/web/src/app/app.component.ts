@@ -170,7 +170,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
         return
       }
 
-      if ( false )
+      /*
         injector.get(FeatureManager).addListener({
           created: function (feature: AbstractFeature): void {
             console.log("created feature" + (<any>feature.constructor)["$$feature"]?.id)
@@ -182,7 +182,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
             printHierarchy()
           }
-        })
+        })*/
 
       this.locales = localeManager.supportedLocales
 

@@ -140,7 +140,7 @@ export class FeatureRegistry implements OnLocaleChange {
 
         if (feature.children)
             for (const child of feature.children)
-                this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!)
+                this.mergeFeature(child, newFeature.children!.find(f => f.id == child.id)!)
     }
 
     private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {

@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { AbstractFeature, Feature } from "@modulefederation/portal";
 import { Component } from "@angular/core";
 

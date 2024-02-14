@@ -175,13 +175,15 @@ export class JSONSchemaBuilder {
                 type.format = "uri"
                 break;
 
-            default:
+            default: {
                 const model = this.types[typeName]
                 if (model && model.kind.includes("enum")) {
                     type.enum = model.properties.map(property => property.name)
                 }
                 else
                     console.log("strange type " + typeName) // TODO
+                break;
+            }
         }
 
 

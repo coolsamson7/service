@@ -52,7 +52,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
     getEndpoint(domain : string) : string {
         if (domain == "admin")
-            return this.environment.get<string>("administration.server")!!
+            return this.environment.get<string>("administration.server")
         else
             throw new Error("unknown domain " + domain)
     }

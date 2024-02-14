@@ -1,3 +1,7 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
+/* eslint-disable @angular-eslint/component-selector */
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+/* eslint-disable @angular-eslint/no-output-on-prefix */
 import {
     Component,
     EventEmitter,
@@ -77,16 +81,11 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
     }
 
-    onChange = (_ : any) => {
-    };
+    onChange = (_ : any) => { /** noop */}
 
-    onTouched = () => {
-    };
+    onTouched = () => { /** noop */}
 
-    // constructor
-
-    onErrorStatusChange : () => void = () => {
-    };
+    onErrorStatusChange : () => void = () => { /** noop */ }
 
     // implement AfterViewInit
 
@@ -155,7 +154,6 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     // override
 
     validate(control : AbstractControl<any, any>) : ValidationErrors | null {
-        const value = control.value
 
         if (this.editor) {
             // @ts-ignore

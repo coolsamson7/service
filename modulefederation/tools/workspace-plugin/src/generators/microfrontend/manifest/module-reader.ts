@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { createSourceFile, isDecorator, Node, ScriptTarget } from 'typescript';
 
-const { find } = require('find-in-files');
+import { find } from 'find-in-files'
 
 export type Modules = { [module: string]: string };
 

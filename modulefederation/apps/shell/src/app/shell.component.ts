@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component } from '@angular/core';
 import { FeatureData, FeatureRegistry, SessionManager, Ticket } from "@modulefederation/portal";
 

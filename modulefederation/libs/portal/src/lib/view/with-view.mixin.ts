@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
+
 import { ViewChild, Component } from "@angular/core";
 import { AbstractFeature } from "../feature";
 import { registerMixins } from "../mixin/mixin";

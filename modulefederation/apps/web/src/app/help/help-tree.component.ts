@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/no-output-on-prefix */
+
 import { HelpAdministrationService } from "@modulefederation/portal";
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { NestedTreeControl } from "@angular/cdk/tree";

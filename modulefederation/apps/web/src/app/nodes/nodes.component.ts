@@ -1,3 +1,6 @@
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+/* eslint-disable no-prototype-builtins */
+
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { Channel, ComponentService } from "../service/component-service.service";
 import { AfterViewInit, Component, ElementRef, HostListener, Injector, ViewChild } from '@angular/core';

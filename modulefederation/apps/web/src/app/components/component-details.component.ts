@@ -1,4 +1,9 @@
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+/* eslint-disable @angular-eslint/component-selector */
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+
+
+
+import { Component, Injector } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ComponentDTO } from '../model/component.interface';
 import { ComponentsComponent } from './components.component';
@@ -133,6 +138,6 @@ export class ComponentDetailsComponent extends AbstractFeature {
                     this.dead = true
                 }
             }
-        });
+        })
     }
 }

@@ -37,7 +37,7 @@ const constraintHandlers : ConstraintHandler[] = [
                     return constraint == "integer" || constraint == "number"
             }
 
-            return typeof value !== undefined && value !== null
+            return typeof value !== "undefined" && value !== null
         }
     },
 

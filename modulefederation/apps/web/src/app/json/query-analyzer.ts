@@ -88,7 +88,7 @@ export class QueryAnalyzer {
             case "java.util.Date":
                 return "" // TODO date
 
-            default:
+            default: {
                 const model = this.model.models.find(model => model.name == type.name)
                 if (model?.kind.includes("enum"))
                     return model.properties[0].name
@@ -96,6 +96,7 @@ export class QueryAnalyzer {
                     console.log("strange type " + type.name)
 
                 return ""
+            }
         }
     }
 

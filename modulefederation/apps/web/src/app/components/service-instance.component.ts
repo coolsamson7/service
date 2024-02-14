@@ -1,4 +1,6 @@
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+
+import { Component, Injector } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ServiceInstanceDTO } from '../model/service-instance.interface';

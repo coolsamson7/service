@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
+
 import { Component, Injector } from "@angular/core";
 import { NavigationComponent, RouteElement } from "../widgets/navigation-component.component";
 import { ActivatedRoute } from "@angular/router";

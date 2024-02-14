@@ -2,8 +2,8 @@ import { DecoratorReader } from './decorator-reader';
 import { execSync } from 'child_process';
 import { ModuleReader, Modules } from './module-reader';
 
-const { find } = require('find-in-files');
-const { findNearestPackageJsonSync } = require('find-nearest-package-json');
+import { find } from 'find-in-files';
+import { findNearestPackageJsonSync } from 'find-nearest-package-json'
 
 // local interfaces
 

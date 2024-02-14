@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @angular-eslint/use-lifecycle-interface */
 import { Component, Injector, ViewChild, ViewEncapsulation, forwardRef } from "@angular/core";
 import {
   AbstractFeature,
@@ -610,8 +612,8 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
         if (node)
           this.select(node!).subscribe(_ => {
         if ( this.state?.data.selectedMessage)
-            this.selectMessages( this.state?.data.selectedMessage!)
-        }) // toDO
+            this.selectMessages( this.state!.data.selectedMessage!)
+        }) // TODO
     })
 
     this.updateCommands()

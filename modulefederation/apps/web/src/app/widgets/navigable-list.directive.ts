@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/no-output-rename */
 import {
     AfterContentInit,
     ContentChildren,
@@ -82,13 +83,13 @@ export class NavigableListItemDirective implements FocusableOption {
 @Directive({
     selector: '[navigableList]',
 })
-export class NavigableListComponent implements AfterContentInit {
+export class NavigableListDirective implements AfterContentInit {
     // instance data
 
     keyManager! : FocusKeyManager<NavigableListItemDirective>;
 
     @ContentChildren(NavigableListItemDirective, {descendants: true})
-    listItems! : QueryList<NavigableListItemDirective>;
+    listItems! : QueryList<NavigableListItemDirective>
 
     // listener
 

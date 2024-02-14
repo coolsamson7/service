@@ -10,7 +10,7 @@ import { ComponentDetailsComponent } from "./component-details.component";
 import { MatListModule } from "@angular/material/list";
 import { RouterModule } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
-import { NavigableListComponent, NavigableListItemDirective } from "../widgets/navigable-list.directive";
+import { NavigableListDirective, NavigableListItemDirective } from "../widgets/navigable-list.directive";
 import { ServiceInstanceComponent } from "./service-instance.component";
 import { ServiceInstanceListComponent } from "./service-instance-list.component";
 import { ServiceComponent } from "./service.component";
@@ -37,7 +37,7 @@ import { DescriptionComponent } from "./service/description.component";
         NavigableListItemDirective,
         ServiceInstanceListComponent,
         ServiceInstanceComponent,
-        NavigableListComponent,
+        NavigableListDirective,
         ServiceComponent,
         ServiceLiteralComponent,
         ServiceAnnotationComponent,
