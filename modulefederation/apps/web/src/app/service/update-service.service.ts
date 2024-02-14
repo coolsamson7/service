@@ -36,13 +36,13 @@ export class UpdateService {
     setup() {
         // local function
 
-        let connect = () => {
+        const connect = () => {
             console.log("connect ")
 
             // create source
 
-            let url = this.environment.get<string>("administration.server") + "/administration/listen/" + this.subscriberId
-            let source = new EventSource(url);
+            const url = this.environment.get<string>("administration.server") + "/administration/listen/" + this.subscriberId
+            const source = new EventSource(url);
 
             // attach callbacks
 

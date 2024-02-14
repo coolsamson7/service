@@ -10,7 +10,7 @@ interface ConstraintHandler {
     check : ConstraintCheck
 }
 
-let constraintHandlers : ConstraintHandler[] = [
+const constraintHandlers : ConstraintHandler[] = [
     // required
 
     {
@@ -27,7 +27,7 @@ let constraintHandlers : ConstraintHandler[] = [
         type: ["integer", "number", "string"],
         constraint: "type",
         check: (constraint, value) => {
-            let type = typeof value
+            const type = typeof value
 
             switch (type) {
                 case "string":
@@ -90,9 +90,9 @@ class ConstraintValidator {
     // constructor
 
     constructor(constraints : any) {
-        let type = constraints.type
+        const type = constraints.type
 
-        let keys = Object.keys(constraints)
+        const keys = Object.keys(constraints)
 
         let index = keys.indexOf("type")
         keys.splice(index, 1)
@@ -107,8 +107,8 @@ class ConstraintValidator {
 
         // sort, so that type and required come first
 
-        let findHandler = (type : string, constraint : string) => {
-            for (let handler of constraintHandlers)
+        const findHandler = (type : string, constraint : string) => {
+            for (const handler of constraintHandlers)
                 if (handler.constraint == constraint && handler.type.includes(type))
                     return handler
 
@@ -116,10 +116,10 @@ class ConstraintValidator {
         }
 
 
-        for (let constraintName of keys) {
-            let constraint = constraints[constraintName]
+        for (const constraintName of keys) {
+            const constraint = constraints[constraintName]
 
-            let handler = findHandler(type, constraintName)
+            const handler = findHandler(type, constraintName)
             if (handler) {
                 // @ts-ignore
                 this.handlers.push({constraint: constraint, handler: handler})
@@ -130,10 +130,10 @@ class ConstraintValidator {
     // public
 
     validate(value : any) {
-        for (let handler of this.handlers) {
+        for (const handler of this.handlers) {
             // @ts-ignore
             if (!handler.handler.check(handler.constraint, value)) {
-                let error = {}
+                const error = {}
 
                 // @ts-ignore
                 error[handler.handler.constraint] = handler.constraint

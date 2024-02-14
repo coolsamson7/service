@@ -122,14 +122,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             paths: {
                 "": TraceLevel.OFF,
                 "type": TraceLevel.OFF,
-                "speech": TraceLevel.MEDIUM,
+                "speech": TraceLevel.HIGH,
                 "portal": TraceLevel.HIGH,
                 "session": TraceLevel.FULL,
             }
         }),
 
         ResizableModule,
-        
+
         MatSnackBarModule,
         BrowserModule,
         BrowserAnimationsModule,
@@ -147,8 +147,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         MatProgressSpinnerModule,
 
         SpeechRecognitionModule.forRoot({
-            lang: 'en-US', 
-            continuous: true, 
+            lang: 'de-DE',
+            continuous: true,
             interimResults: false
         }),
 

@@ -9,8 +9,8 @@ import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 
 interface Channel {
-    name : String,
-    uri : String
+    name : string,
+    uri : string
 }
 
 @Component({
@@ -46,7 +46,7 @@ export class ServiceInstanceComponent extends AbstractFeature {
         scheme: "",
         metadata: {}
     }
-    health : string = "unknown"
+    health  = "unknown"
     element : RouteElement = {
         label: "",
         route: ""
@@ -75,7 +75,7 @@ export class ServiceInstanceComponent extends AbstractFeature {
     setInstance(id : string) {
         this.instanceSubscription = this.componentStore.getInstances().subscribe({
             next: (instances : ServiceInstanceDTO[]) => {
-                let instance = instances.find((instance) => instance.instanceId == id)
+                const instance = instances.find((instance) => instance.instanceId == id)
 
                 if (instance) {
                     this.instance = instance
@@ -119,16 +119,16 @@ export class ServiceInstanceComponent extends AbstractFeature {
 
     // implement OnDestroy
 
-    private parseChannnels = (addresses : String) : Channel[] => {
-        let result = []
+    private parseChannnels = (addresses : string) : Channel[] => {
+        const result = []
 
         if (addresses)
-            for (let address of addresses.split(",")) {
-                let lparen = address.indexOf("(")
-                let rparen = address.indexOf(")")
+            for (const address of addresses.split(",")) {
+                const lparen = address.indexOf("(")
+                const rparen = address.indexOf(")")
 
-                let channel = address.substring(0, lparen)
-                let url = address.substring(lparen + 1, rparen)
+                const channel = address.substring(0, lparen)
+                const url = address.substring(lparen + 1, rparen)
 
                 result.push({name: channel, uri: url})
             }

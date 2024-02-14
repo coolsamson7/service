@@ -32,7 +32,7 @@ export interface Query {
 export class QueryAnalyzer {
     // instance data
 
-    urlPrefix : string = ""
+    urlPrefix  = ""
     schmaBuilder : JSONSchemaBuilder
 
     // constructor
@@ -89,7 +89,7 @@ export class QueryAnalyzer {
                 return "" // TODO date
 
             default:
-                let model = this.model.models.find(model => model.name == type.name)
+                const model = this.model.models.find(model => model.name == type.name)
                 if (model?.kind.includes("enum"))
                     return model.properties[0].name
                 else
@@ -102,17 +102,17 @@ export class QueryAnalyzer {
     analyzeParameters(method : MethodDescriptor, query : Query) {
         // local functions
 
-        let findAnnotation = (parameter : ParameterDescriptor, name : string) => {
+        const findAnnotation = (parameter : ParameterDescriptor, name : string) => {
             return parameter.annotations.find(annotation => annotation.name.endsWith(name))
         }
 
-        let findParameter = (annotation : AnnotationDescriptor, name : string) => {
+        const findParameter = (annotation : AnnotationDescriptor, name : string) => {
             return annotation.parameters.find(param => param.name == name)
         }
 
         // let's go
 
-        for (let parameter of method.parameters) {
+        for (const parameter of method.parameters) {
             let annotation;
 
             // path variable
@@ -166,9 +166,9 @@ export class QueryAnalyzer {
                     name = value.value
                 }
 
-                let descriptor = this.model.models.find(model => model.name == parameter.type.name)
-                let schema = this.schmaBuilder.createSchema(descriptor!!)
-                let defaultValue = this.createDefaultJSON(schema)
+                const descriptor = this.model.models.find(model => model.name == parameter.type.name)
+                const schema = this.schmaBuilder.createSchema(descriptor!)
+                const defaultValue = this.createDefaultJSON(schema)
 
                 query.params.push({
                     name: name,
@@ -185,9 +185,9 @@ export class QueryAnalyzer {
     analyzeGetMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
         // @ts-ignore
         // @ts-ignore
-        let query : Query = {
+        const query : Query = {
             method: "get",
-            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
+            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!.value[0],
             params: []
         }
 
@@ -198,9 +198,9 @@ export class QueryAnalyzer {
 
     analyzePostMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
         // @ts-ignore
-        let query : Query = {
+        const query : Query = {
             method: "post",
-            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
+            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!.value[0],
             params: []
         }
 
@@ -211,9 +211,9 @@ export class QueryAnalyzer {
 
     analyzePutMapping(method : MethodDescriptor, mapping : AnnotationDescriptor) : Query {
         // @ts-ignore
-        let query : Query = {
+        const query : Query = {
             method: "put",
-            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!!.value[0],
+            url: this.urlPrefix + mapping.parameters.find(param => param.name == "value")!.value[0],
             params: []
         }
 
@@ -223,9 +223,9 @@ export class QueryAnalyzer {
     }
 
     private createDefaultJSON(schema : any) : string {
-        let json = {}
+        const json = {}
 
-        for (let property in schema.properties) {
+        for (const property in schema.properties) {
             let value
             switch (schema.properties[property].type) {
                 case "string":

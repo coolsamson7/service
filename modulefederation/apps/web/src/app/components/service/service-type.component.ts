@@ -10,7 +10,7 @@ import { TypeDescriptor } from "../../model/service.interface"
 export class ServiceTypeComponent {
     // input
 
-    @Input('type') type! : TypeDescriptor
+    @Input() type! : TypeDescriptor
 
     // public
 

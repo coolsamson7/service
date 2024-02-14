@@ -24,7 +24,7 @@ import { Feature } from "@modulefederation/portal";
 export class NodeDetailsComponent extends NavigationComponent {
     // instance data
 
-    node : string = ""
+    node  = ""
     subscription? : Subscription
     routeElement : RouteElement
 

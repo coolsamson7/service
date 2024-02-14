@@ -24,7 +24,7 @@ import { AbstractMonacoEditor } from "./abstract-monaco-editor.component";
 import { EditorModel, MONACO_EDITOR_CONFIG, MonacoEditorConfig } from "./monaco-editor";
 import { MonacoEditorLoader } from "./monaco-editor-loader";
 
-declare var monaco : any;
+declare let monaco : any;
 
 @Component({
     selector: 'monaco-editor',
@@ -72,7 +72,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         return this.editorOptions;
     }
 
-    @Input('options')
+    @Input()
     set options(options : any) {
         this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
     }
@@ -112,7 +112,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     // protected
 
     override createEditor() {
-        let editor = super.createEditor()
+        const editor = super.createEditor()
 
         // add listeners
 
@@ -159,7 +159,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
         if (this.editor) {
             // @ts-ignore
-            let errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
+            const errors = this.getModelMarkers().map(({message}) => message);//this.getErrorMessages()
 
             if (errors.length > 0) {
                 return {

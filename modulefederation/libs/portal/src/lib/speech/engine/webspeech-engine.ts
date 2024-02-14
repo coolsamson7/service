@@ -136,26 +136,34 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
         for (const eventName of ["start"])
             engine.addEventListener(eventName, event =>  this.zone.run(() => {
+                if ( Tracer.ENABLED)
+                    Tracer.Trace("speech", TraceLevel.MEDIUM, "process start event")
+
                 this.running = true;
                 events$.next({type: eventName, event: event})
             }))
 
         for (const eventName of ["end"])
             engine.addEventListener(eventName, event => this.zone.run(() => {
+                if ( Tracer.ENABLED)
+                    Tracer.Trace("speech", TraceLevel.MEDIUM, "process end event")
+
                 this.running = false;
                 events$.next({type: eventName, event: event})
 
-                const timeSinceLastStart = new Date().getTime() - this.lastStartedAt;
-                this.autoRestartCount += 1;
+                if (this.autoRestart) {
+                    const timeSinceLastStart = new Date().getTime() - this.lastStartedAt;
+                    this.autoRestartCount += 1;
 
-                if (this.autoRestartCount % 10 === 0) {
-                    // give up
-                  return
+                    if (this.autoRestartCount % 10 === 0) {
+                        // give up
+                        return
+                    }
+                    else if (timeSinceLastStart < 1000) 
+                        setTimeout(() => this.start(), 1000 - timeSinceLastStart)
+                    else
+                        this.start()
                 }
-                else if (timeSinceLastStart < 1000) 
-                  setTimeout(() => this.start(), 1000 - timeSinceLastStart)
-                
-                else this.start()
             }))
 
         for (const eventName of ["nomatch"])
@@ -163,6 +171,9 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
         for (const eventName of ["error"])
             engine.addEventListener(eventName, event => this.zone.run(() => {
+                if ( Tracer.ENABLED)
+                    Tracer.Trace("speech", TraceLevel.MEDIUM, "error event '{0}'", (<SpeechRecognitionError>event).error)
+
                 switch((<SpeechRecognitionError>event).error) {
                     case 'not-allowed':
                     case 'service-not-allowed':
@@ -179,7 +190,7 @@ export class WebkitSpeechEngine extends SpeechEngine {
 
         engine.onresult = event =>  {
             if ( event.results[event.resultIndex][0].confidence > 0.7) {
-                const transcript = event.results[event.resultIndex][0].transcript.trim() // why trim, no idea....i see leading blanks
+                const transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase() // why trim, no idea....i see leading blanks
 
                 this.zone.run(() => {
                     if ( Tracer.ENABLED)

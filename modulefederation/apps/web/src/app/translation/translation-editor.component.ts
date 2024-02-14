@@ -108,12 +108,15 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
     return prefix
   }
 
-  addNamespace() {
+  @Command({
+    speech: "neuer namensraum :namespace"
+  })
+  addNamespace(parameter : any = {}) {
     this.inputDialog()
       .title("Add Namespace")
       .message("Input namespace name")
       .placeholder("namespace")
-      .defaultValue("")
+      .defaultValue(parameter.namespace || "")
       .okCancel()
       .show()
       .subscribe(name => {
@@ -122,11 +125,14 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
       })
   }
 
-  addMessage() {
+  @Command({
+    speech: "neue übersetzung :message"
+  })
+  addMessage(parameter : any = {}) {
     this.inputDialog()
       .title("Add Message")
       .message("Input message name")
-      .defaultValue("")
+      .defaultValue(parameter.message || "")
       .placeholder("message")
       .okCancel()
       .show()

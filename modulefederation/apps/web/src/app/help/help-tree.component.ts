@@ -47,7 +47,7 @@ export class HelpTreeComponent implements OnInit {
         this.dataSource.data = this.root = [...this.root]
     }
 
-    buildTree(folder: HelpNode[], folderPrefix: string, entries: string[], add: boolean = false) {
+    buildTree(folder: HelpNode[], folderPrefix: string, entries: string[], add = false) {
         const findOrCreateFolder = (entry: string, name : string, folders : HelpNode[], prefix : string) => {
             let folder = folders.find(folder => folder.name == name)
       
@@ -98,19 +98,19 @@ export class HelpTreeComponent implements OnInit {
     // public
 
     findParent(node: HelpNode) :HelpNode | undefined {
-        let notFound: HelpNode = {
+        const notFound: HelpNode = {
             children : [],
             leaf: false,
             name : "",
             path : ""
         }
 
-        let find = (parent: HelpNode, node: HelpNode, target: HelpNode ) : HelpNode | undefined=> {
+        const find = (parent: HelpNode, node: HelpNode, target: HelpNode ) : HelpNode | undefined=> {
             if ( node === target )
                return parent
             else {
-                for ( let child of node.children) {
-                    let result = find(node, child, target)
+                for ( const child of node.children) {
+                    const result = find(node, child, target)
                     if ( result )
                        return result
                 }
@@ -119,8 +119,8 @@ export class HelpTreeComponent implements OnInit {
             }
         }
 
-       for ( let root of this.root ) {
-        let result = find(notFound, root, node)
+       for ( const root of this.root ) {
+        const result = find(notFound, root, node)
         if ( result )
            return result === notFound ? undefined : result
        }

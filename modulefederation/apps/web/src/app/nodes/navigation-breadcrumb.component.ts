@@ -10,10 +10,5 @@ import { RouteElement } from "../widgets/navigation-component.component";
 export class NavigationBreadcrumbComponent {
     // input
 
-    @Input('routes') routes! : RouteElement[]
-
-    // constructor
-    constructor() {
-
-    }
+    @Input() routes! : RouteElement[]
 }

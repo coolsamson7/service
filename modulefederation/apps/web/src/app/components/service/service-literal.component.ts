@@ -8,8 +8,8 @@ import { Component, Input, OnInit } from "@angular/core"
 export class ServiceLiteralComponent implements OnInit {
     // input
 
-    @Input('value') value! : any
-    type : string = ""
+    @Input() value! : any
+    type  = ""
 
     // implement OnInit
 

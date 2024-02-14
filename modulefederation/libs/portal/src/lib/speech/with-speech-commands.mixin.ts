@@ -63,7 +63,7 @@ export function WithSpeechCommands<T extends GConstructor<CommandManager & Abstr
 
                 if ( command.speech )
                     command.speechSubscription = this.getSpeechCommandManager().addCommand(
-                        command.speech!, 
+                        command.speech, 
                         (args) => command.runWithContext(command.createContext([args], {fromShortcut: true})), // we simply use the same marker to trigger the ripple effect
                         () => command.enabled)
             }

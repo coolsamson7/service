@@ -82,7 +82,7 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
       this.helpAdministrationService.deleteHelp(node.path).subscribe()
     }
 
-    let parent = this.helpTree.findParent(node)
+    const parent = this.helpTree.findParent(node)
     if ( parent ) {
       // inner node
 
@@ -206,8 +206,8 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
   // private
 
   private addHelp(help: string) {
-    let folder = this.selection ? this.selection?.children : this.helpTree.root
-    let prefix = this.selection ? (this.selection?.path + ".") : ""
+    const folder = this.selection ? this.selection?.children : this.helpTree.root
+    const prefix = this.selection ? (this.selection?.path + ".") : ""
     this.helpTree.buildTree(folder, prefix, [help], true)
 
     this.helpTree.refresh()

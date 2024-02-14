@@ -76,10 +76,10 @@ export interface WithView {
 
 export function WithView<T extends Constructor<AbstractFeature & CommandManager>>(base: T) :Constructor<WithView> &  T  {
     @Component({ 
-        selector: 'with-view',
+        selector: 'with-view-component',
         template: ""    
     })
-    class W extends base implements WithView {
+    class WithViewClass extends base implements WithView {
         // instance data
 
         @ViewChild(ViewComponent) view! : ViewComponent
@@ -88,12 +88,6 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
 
         private lockViewInterceptor?: LockViewInterceptor
         private busyCursorInterceptor?: BusyCursorInterceptor
-
-        // constructor
-
-       //constructor(...args: any[]) {
-       //  super(...args);
-       //}
 
        // private
 
@@ -147,12 +141,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
        showMessage(message: string) : void {
         this.view.showMessage(message)
        }
+    }//, WithView)
 
-      
-    };//, WithView)
-
-    registerMixins(W, WithView)
-
-
-    return W
+    return registerMixins(WithViewClass, WithView)
   }

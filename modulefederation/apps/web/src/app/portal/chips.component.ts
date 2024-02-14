@@ -34,10 +34,10 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     @ViewChild('autocomplete') autocomplete! : MatAutocomplete;
     //stateChanges: Observable<void>;
     @HostBinding()
-    id : string = `chips-${ChipsComponent.nextId++}`
+    id  = `chips-${ChipsComponent.nextId++}`
     //ngControl: NgControl | AbstractControlDirective;
-    focused : boolean = false;
-    errorState : boolean = false
+    focused  = false;
+    errorState  = false
     controlType = "chips";
     autofilled? : boolean;
     userAriaDescribedBy? : string;
@@ -56,7 +56,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
             map((value : string | null) => value ? this.filterValues(value) : this.allValues.slice()));
     }
 
-    private _placeholder : string = "";
+    private _placeholder  = "";
 
     // constructor
 
@@ -95,7 +95,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     }
 
     set value(value : string[] | null) {
-        this.values = value!!
+        this.values = value!
 
         this.stateChanges.next();
     }
@@ -188,7 +188,7 @@ export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl
     selected(event : MatAutocompleteSelectedEvent) : void {
         this.markAsTouched()
 
-        let add = event.option.viewValue
+        const add = event.option.viewValue
 
         if (!this.values.includes(add)) {
             this.onChange(this.values = [...this.values, add])

@@ -23,8 +23,8 @@ export class ComponentStore {
     instances : ServiceInstanceDTO[] = []
     healths : Healths = {}
 
-    componentName : string = ""
-    componentSubject = new BehaviorSubject<ComponentDTO>(this.component)
+    componentName  = ""
+    componentSubject = new BehaviorSubject<ComponentDTO | null>(this.component)
     instancesSubject = new BehaviorSubject<ServiceInstanceDTO[]>(this.instances)
     healthSubject = new BehaviorSubject<Healths>(this.healths) // mapping service id -> health
     dead = false
@@ -54,7 +54,6 @@ export class ComponentStore {
         console.log(update)
 
         if (update.deletedServices.includes(this.componentName)) {
-            // @ts-ignore
             this.componentSubject.next(null)
             this.instancesSubject.next(this.instances = [])
             this.healthSubject.next(this.healths = {})
@@ -69,10 +68,10 @@ export class ComponentStore {
         }
 
         else if (update.addedInstances[this.componentName] || update.deletedInstances[this.componentName]) {
-            let deleted = update.deletedInstances[this.componentName] || []
-            let added = update.addedInstances[this.componentName] || []
+            const deleted = update.deletedInstances[this.componentName] || []
+            const added = update.addedInstances[this.componentName] || []
 
-            let newInstances = [...this.instances.filter(instance => !deleted.includes(instance.instanceId)), ...added]
+            const newInstances = [...this.instances.filter(instance => !deleted.includes(instance.instanceId)), ...added]
 
             this.instancesSubject.next(this.instances = newInstances)
         }
@@ -106,7 +105,7 @@ export class ComponentStore {
         return this.instancesSubject
     }
 
-    getComponent() : Observable<ComponentDTO> {
+    getComponent() : Observable<ComponentDTO | null> {
         return this.componentSubject
     }
 

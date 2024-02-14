@@ -23,9 +23,9 @@ export interface ServiceRequest {
 export class ServiceComponent implements OnInit {
     // input
 
-    @Input('model') model! : ComponentModel
-    @Input('service') service! : InterfaceDescriptor
-    @Input('open') open = false
+    @Input() model! : ComponentModel
+    @Input() service! : InterfaceDescriptor
+    @Input() open = false
     icon = "expand_more"
 
     description! : AnnotationDescriptor
@@ -44,12 +44,12 @@ export class ServiceComponent implements OnInit {
         }
     }
 
-    superClass() : Boolean {
-        return this.service!!.inherits != null && this.service!!.inherits != ""
+    superClass() : boolean {
+        return this.service!.inherits != null && this.service!.inherits != ""
     }
 
-    inherits() : Boolean {
-        return this.superClass() || this.service!!.implements.length > 0
+    inherits() : boolean {
+        return this.superClass() || this.service!.implements.length > 0
     }
 
     format(o : any) {
@@ -63,7 +63,7 @@ export class ServiceComponent implements OnInit {
         return type.name.substring(type.name.lastIndexOf('.') + 1)
     }
 
-    formatClass(type : String) {
+    formatClass(type : string) {
         return type.substring(type.lastIndexOf('.') + 1)
     }
 
@@ -75,8 +75,8 @@ export class ServiceComponent implements OnInit {
 
         // @ts-ignore
         this.description = this.service.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")
-        this.annotations = this.service!!.annotations
+        this.annotations = this.service!.annotations
         if (this.description)
-            this.annotations = this.service!!.annotations.filter(annotation => annotation !== this.description)
+            this.annotations = this.service!.annotations.filter(annotation => annotation !== this.description)
     }
 }

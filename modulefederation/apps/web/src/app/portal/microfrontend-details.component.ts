@@ -75,7 +75,7 @@ export class MatErrorMessagesComponent implements AfterViewInit {
 export class I18NValidator {
   static createValidator(translator: Translator): AsyncValidatorFn {
 
-  let extractNamespace = (key : string) :  { namespace : string | undefined; path : string } => {
+  const extractNamespace = (key : string) :  { namespace : string | undefined; path : string } => {
       let namespace : string;
       let path : string;
       const colon = key.indexOf(':');
@@ -92,7 +92,7 @@ export class I18NValidator {
       }
   }
 
-  let check = (value: string)  : boolean => {
+  const check = (value: string)  : boolean => {
     const {namespace, path} = extractNamespace(value);
 
     if ( namespace == undefined)
@@ -417,7 +417,7 @@ export class MicrofrontendDetailsComponent extends WithCommands(WithDialogs(Abst
                 this.formGroup.get("labelTranslation")?.setValue(translation)
             })
         else {
-            let translation = ""
+            const translation = ""
 
             this.labelTranslation = translation
             this.formGroup.get("labelTranslation")?.setValue(translation)

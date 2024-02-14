@@ -10,9 +10,9 @@ import { AnnotationDescriptor, InterfaceDescriptor, MethodDescriptor } from "../
 export class ServiceMethodComponent implements OnInit {
     // input
 
-    @Input('model') model! : ComponentModel
-    @Input('service') service! : InterfaceDescriptor
-    @Input('method') method! : MethodDescriptor
+    @Input() model! : ComponentModel
+    @Input() service! : InterfaceDescriptor
+    @Input() method! : MethodDescriptor
 
     run = false
     description! : AnnotationDescriptor
@@ -28,7 +28,7 @@ export class ServiceMethodComponent implements OnInit {
     // implement OnInit
 
     ngOnInit() : void {
-        this.description = this.method.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")!!
+        this.description = this.method.annotations.find(annotation => annotation.name == "com.serious.annotations.Description")!
         this.annotations = this.method.annotations
         if (this.description)
             this.annotations = this.method.annotations.filter(annotation => annotation !== this.description)

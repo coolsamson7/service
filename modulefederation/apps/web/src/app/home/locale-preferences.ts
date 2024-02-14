@@ -57,8 +57,8 @@ export class LocalePreferences extends PreferencesFeature {
   // override PreferencesFeature
 
   override save() {
-    this.localeManager.setLocale(this.userProfile!!.locale)
-    this.userProfileAdministrationService.updateProfile(this.userProfile!!).subscribe()
+    this.localeManager.setLocale(this.userProfile!.locale)
+    this.userProfileAdministrationService.updateProfile(this.userProfile!).subscribe()
   }
 
   override isDirty() : boolean {

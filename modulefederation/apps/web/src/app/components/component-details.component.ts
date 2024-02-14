@@ -117,7 +117,7 @@ export class ComponentDetailsComponent extends AbstractFeature {
         // this is a stream also called after upates!
 
         this.componentStore.getComponent().subscribe({
-            next: (value : ComponentDTO) => {
+            next: (value : ComponentDTO | null) => {
                 if (value != null) {
                     this.component = value
                     this.dead = false

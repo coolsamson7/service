@@ -24,8 +24,8 @@ export class MonacoEditorLoader {
         const baseUrl = this.config.baseUrl || "./assets";
 
         const onGotAmdLoader : any = (require? : any) => {
-            let usedRequire = require || (<any>window).require;
-            let requireConfig = {paths: {vs: `${baseUrl}/monaco/min/vs`}};
+            const usedRequire = require || (<any>window).require;
+            const requireConfig = {paths: {vs: `${baseUrl}/monaco/min/vs`}};
             Object.assign(requireConfig, this.config.requireConfig || {});
 
             // Load monaco
@@ -58,12 +58,12 @@ export class MonacoEditorLoader {
             // Load AMD loader without over-riding node's require
         }
         else if (!(<any>window).require.config) {
-            var src = `${baseUrl}/monaco/min/vs/loader.js`;
+            const src = `${baseUrl}/monaco/min/vs/loader.js`;
 
-            var loaderRequest = new XMLHttpRequest();
+            const loaderRequest = new XMLHttpRequest();
 
             loaderRequest.addEventListener("load", () => {
-                let scriptElem = document.createElement('script');
+                const scriptElem = document.createElement('script');
                 scriptElem.type = 'text/javascript';
                 scriptElem.text = [
                     // Monaco uses a custom amd loader that over-rides node's require.

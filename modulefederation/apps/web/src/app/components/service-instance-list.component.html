@@ -5,8 +5,8 @@
             {{instance.instanceId}}
             <mat-icon>language</mat-icon>
             {{instance.host}}:{{instance.port}}
-            <mat-icon *ngIf="health[instance.instanceId] == 'PASSING'" class="ok">check_circle</mat-icon>
-            <mat-icon *ngIf="health[instance.instanceId] != 'PASSING'" class="nok">bug_report</mat-icon>
+            <mat-icon *ngIf="health[instance.instanceId] === 'PASSING'" class="ok">check_circle</mat-icon>
+            <mat-icon *ngIf="health[instance.instanceId] !== 'PASSING'" class="nok">bug_report</mat-icon>
             {{health[instance.instanceId]}}
         </div>
     </a>

@@ -71,7 +71,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     // private
 
     fetchData() : Observable<Result> {
-        let result : Result = {
+        const result : Result = {
             instances: {},
             services: [],
             servers: [],
@@ -82,36 +82,36 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
         }
 
 
-        let parse = (addresses : string) => {
-            for (let address of addresses.split(",")) {
-                let lparen = address.indexOf("(")
-                let rparen = address.indexOf(")")
+        const parse = (addresses : string) => {
+            for (const address of addresses.split(",")) {
+                const lparen = address.indexOf("(")
+                const rparen = address.indexOf(")")
 
-                let channel = address.substring(0, lparen)
-                let url = address.substring(lparen + 1, rparen)
+                const channel = address.substring(0, lparen)
+                const url = address.substring(lparen + 1, rparen)
             }
         }
 
-        let computeLinks = (result : Result) => {
-            for (let server in result.channels) { // { [server: string] :  { [component: string] : string[]} }
-                let channels = result.channels[server]
+        const computeLinks = (result : Result) => {
+            for (const server in result.channels) { // { [server: string] :  { [component: string] : string[]} }
+                const channels = result.channels[server]
 
                 if (Object.getOwnPropertyNames(channels).length > 0)
                     result.links[server] = []
 
-                for (let component in channels) {
-                    let name = channels[component].name
-                    let uris = channels[component].uri
+                for (const component in channels) {
+                    const name = channels[component].name
+                    const uris = channels[component].uri
 
-                    for (let uri of uris) {
-                        let address = name + "(" + uri + ")"
+                    for (const uri of uris) {
+                        const address = name + "(" + uri + ")"
 
-                        let instances = result.address2instance[address]
+                        const instances = result.address2instance[address]
 
-                        for (let instance of instances) {
-                            let addr = instance.host + ":" + instance.port
+                        for (const instance of instances) {
+                            const addr = instance.host + ":" + instance.port
 
-                            let link = result.links[server].find(link => link.server == addr)
+                            const link = result.links[server].find(link => link.server == addr)
 
                             if (!link)
                                 result.links[server].push({
@@ -128,12 +128,12 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
             }
         }
 
-        let sortResults = (instancesArray : ServiceInstanceDTO[][], result : Result) => {
-            let servers : { [name : string] : boolean } = {}
+        const sortResults = (instancesArray : ServiceInstanceDTO[][], result : Result) => {
+            const servers : { [name : string] : boolean } = {}
 
-            for (let instances of instancesArray)
-                for (let instance of instances) {
-                    let server = serverName(instance)
+            for (const instances of instancesArray)
+                for (const instance of instances) {
+                    const server = serverName(instance)
 
                     if (!servers[server]) {
                         result.servers.push(server)
@@ -143,7 +143,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
                     result.instances[server].push(instance)
 
-                    for (let address of instance.metadata['channels'].split(",")) {
+                    for (const address of instance.metadata['channels'].split(",")) {
                         if (!result.address2instance[address])
                             result.address2instance[address] = []
 
@@ -152,7 +152,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
                 }
         }
 
-        let serverName = (serviceInstance : ServiceInstanceDTO) => {
+        const serverName = (serviceInstance : ServiceInstanceDTO) => {
             return serviceInstance.instanceId.substring(0, serviceInstance.instanceId.lastIndexOf(":"))
         }
 
@@ -168,9 +168,9 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
                 sortResults(instancesArray, result)
 
                 return combineLatest(result.servers.map(server => {
-                    let i = server.lastIndexOf(':')
-                    let host = server.substring(0, i)
-                    let port = server.substring(i + 1)
+                    const i = server.lastIndexOf(':')
+                    const host = server.substring(0, i)
+                    const port = server.substring(i + 1)
 
                     return this.componentService.getOpenChannels({host: host, port: +port})
                 }))
@@ -249,7 +249,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
     private buildGraph(graph : any, result : Result) {
         // new
 
-        let merge = (obj1 : any, obj2 : any) => {
+        const merge = (obj1 : any, obj2 : any) => {
             if (obj1 == undefined) {
                 return obj2
             }
@@ -261,7 +261,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
             const merged = {...obj1};
 
-            for (let key in obj2) {
+            for (const key in obj2) {
                 if (obj2.hasOwnProperty(key)) {
                     if (typeof obj2[key] === 'object' && obj2[key] !== null && !Array.isArray(obj2[key]))
                         merged[key] = merge(merged[key], obj2[key]);
@@ -277,13 +277,13 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // local functions
 
-        let connect = (a : any, b : any, labels : string[], attributes? : any) => {
-            var link = new joint.shapes.standard.Link();
+        const connect = (a : any, b : any, labels : string[], attributes? : any) => {
+            const link = new joint.shapes.standard.Link();
             if (attributes)
                 link.attr(attributes)
 
             let i = 0
-            let labelParam = labels.map(label => {
+            const labelParam = labels.map(label => {
                 return {
                     position: {
                         offset: {
@@ -309,8 +309,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
             return link
         }
 
-        let makeNode = (name : string, attributes? : any) => {
-            let node = new joint.shapes.basic.Rect(merge({
+        const makeNode = (name : string, attributes? : any) => {
+            const node = new joint.shapes.basic.Rect(merge({
                 size: {
                     width: 300,
                     height: 35
@@ -327,8 +327,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
             return node
         }
 
-        let makeText = (name : string, attributes? : any) => {
-            let node = new joint.shapes.basic.Rect(merge({
+        const makeText = (name : string, attributes? : any) => {
+            const node = new joint.shapes.basic.Rect(merge({
                 size: {
                     width: 300,
                     height: 25
@@ -350,8 +350,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
             return node
         }
 
-        let makeRegion = (name : string, attributes? : any) => {
-            let node = new joint.shapes.standard.HeaderedRectangle(merge({
+        const makeRegion = (name : string, attributes? : any) => {
+            const node = new joint.shapes.standard.HeaderedRectangle(merge({
                 size: {
                     width: 300
                 },
@@ -389,9 +389,9 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // collect servers & components
 
-        let servers : { [name : string] : any } = {}
+        const servers : { [name : string] : any } = {}
 
-        for (let server of result.servers) {
+        for (const server of result.servers) {
             servers[server] = {
                 server: makeRegion(server, {
                     attrs: {
@@ -413,13 +413,13 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
         // create a hioerarchical structure that references a cell hierarchy
         // we will use this structure to restore parent-child relationships afterwards
 
-        let fetchStructure = (component : joint.dia.Cell) : Node => {
-            let result = {
+        const fetchStructure = (component : joint.dia.Cell) : Node => {
+            const result = {
                 cell: component,
                 children: []
             }
 
-            for (let child of component.getEmbeddedCells()) { // @ts-ignore
+            for (const child of component.getEmbeddedCells()) { // @ts-ignore
                 result.children.push(fetchStructure(child))
             }
 
@@ -428,8 +428,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // restore the saved embedding information
 
-        let embed = (node : Node, parent : joint.dia.Cell) => {
-            for (let child of node.children) {
+        const embed = (node : Node, parent : joint.dia.Cell) => {
+            for (const child of node.children) {
 
                 // recursion
 
@@ -441,12 +441,12 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // collect all cells of a hierarchical struture
 
-        let collectCells = (node : Node, result : joint.dia.Cell[]) => {
+        const collectCells = (node : Node, result : joint.dia.Cell[]) => {
             // local function
 
-            let collect = (node : Node) => {
+            const collect = (node : Node) => {
                 result.push(node.cell)
-                for (let child of node.children)
+                for (const child of node.children)
                     collect(child)
             }
 
@@ -455,27 +455,27 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // assign components
 
-        let afterLastDot = (str : string) : string => {
-            let i = str.lastIndexOf('.')
+        const afterLastDot = (str : string) : string => {
+            const i = str.lastIndexOf('.')
             if (i >= 0)
                 return str.substring(i + 1)
             else
                 return str
         }
 
-        let addComponents = () => {
-            for (let serverName of result.servers) {
-                let server = servers[serverName]
-                let serverRegion = server.server
+        const addComponents = () => {
+            for (const serverName of result.servers) {
+                const server = servers[serverName]
+                const serverRegion = server.server
 
-                let parent = serverRegion
+                const parent = serverRegion
 
 
-                for (let serviceInstance of result.instances[serverName]) {
+                for (const serviceInstance of result.instances[serverName]) {
                     // create component
 
                     if (!server.components[serviceInstance.serviceId]) {
-                        let component = makeRegion(afterLastDot(serviceInstance.serviceId), {
+                        const component = makeRegion(afterLastDot(serviceInstance.serviceId), {
                             attrs: {
                                 header: {
                                     fill: '#3f51b5'
@@ -495,7 +495,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
                         // services
 
-                        for (let service of result.componentServices[serviceInstance.serviceId]) {
+                        for (const service of result.componentServices[serviceInstance.serviceId]) {
                             component.embed(makeText(afterLastDot(service.name)))
                         }
                     } // if
@@ -509,8 +509,8 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         this.layout(true)
 
-        for (let server in servers) {
-            let serverRegion = servers[server].server
+        for (const server in servers) {
+            const serverRegion = servers[server].server
 
             serverRegion.fitToChildren({deep: true, padding: {top: 10, left: 10, right: 10, bottom: 10}})
         }
@@ -518,26 +518,26 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
         // we need to delet and save all embedded elements since the layout algorithm would break otherwise
         // oh boy!
 
-        let save : { [name : string] : Node[] } = {}
+        const save : { [name : string] : Node[] } = {}
 
-        for (let server in servers) {
-            let serverRegion = servers[server].server
+        for (const server in servers) {
+            const serverRegion = servers[server].server
 
-            let children = fetchStructure(serverRegion).children
+            const children = fetchStructure(serverRegion).children
 
             save[server] = children
 
             // and delete from graph
 
-            for (let child of children)
+            for (const child of children)
                 child.cell.remove()
         }
 
         // add links
 
-        for (let server in result.links) {
-            for (let link of result.links[server]) {
-                let target = link.server // link.components
+        for (const server in result.links) {
+            for (const link of result.links[server]) {
+                const target = link.server // link.components
 
                 if (server != target)
                     connect(servers[server].server, servers[target].server, link.components, {
@@ -555,24 +555,24 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
         // and restore saved elements
 
-        for (let server in servers) {
-            let serverRegion = servers[server].server
+        for (const server in servers) {
+            const serverRegion = servers[server].server
 
-            let children = save[server]
+            const children = save[server]
 
             // extract cells
 
-            let cells : joint.dia.Cell[] = []
-            for (let c of children)
+            const cells : joint.dia.Cell[] = []
+            for (const c of children)
                 collectCells(c, cells)
 
             if (cells.length > 0) {
-                var dx = serverRegion.getBBox().x - cells[0].getBBox().x;
-                var dy = serverRegion.getBBox().y - cells[0].getBBox().y;
+                const dx = serverRegion.getBBox().x - cells[0].getBBox().x;
+                const dy = serverRegion.getBBox().y - cells[0].getBBox().y;
 
                 // add to graph & translate
 
-                for (let cell of cells) {
+                for (const cell of cells) {
                     cell.addTo(this.graph)
                     // @ts-ignore TODO??
                     cell.translate(dx + 20, dy + 10) // the padding
@@ -580,7 +580,7 @@ export class NodesComponent extends NavigationComponent implements AfterViewInit
 
                 // embed
 
-                for (let child of children)
+                for (const child of children)
                     embed(child, serverRegion)
             }
         }

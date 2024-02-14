@@ -97,8 +97,8 @@ export class JSONSchemaBuilder {
     // constructor
 
     constructor(model : ComponentModel) {
-        for (let descriptor of model.models) {
-            let kind = descriptor.kind.split(" ")
+        for (const descriptor of model.models) {
+            const kind = descriptor.kind.split(" ")
             if (kind.find((kind) => kind == "class") /*&& !kind.find((kind) => kind == "enum")*/)
                 this.types[descriptor.name] = descriptor
         }
@@ -109,7 +109,7 @@ export class JSONSchemaBuilder {
 
     createPropertySchema(type : TypeDescriptor, property : PropertyDescriptor) : any {
 
-        let schema = {
+        const schema = {
             required: !type.optional
         }
 
@@ -176,7 +176,7 @@ export class JSONSchemaBuilder {
                 break;
 
             default:
-                let model = this.types[typeName]
+                const model = this.types[typeName]
                 if (model && model.kind.includes("enum")) {
                     type.enum = model.properties.map(property => property.name)
                 }
@@ -187,8 +187,8 @@ export class JSONSchemaBuilder {
 
         // todo: just a hack here
 
-        let findAndApplyHandler = (annotation : AnnotationDescriptor, type : string, schema : any) => {
-            for (let handler of this.constraintHandlers) {
+        const findAndApplyHandler = (annotation : AnnotationDescriptor, type : string, schema : any) => {
+            for (const handler of this.constraintHandlers) {
                 if (handler.type.includes(type) && handler.name === annotation.name) {
                     handler.apply(annotation, schema)
                     return
@@ -197,7 +197,7 @@ export class JSONSchemaBuilder {
         }
 
 
-        for (let annotation of property.annotations) {
+        for (const annotation of property.annotations) {
             findAndApplyHandler(annotation, type.type, type)
         }
     }
@@ -223,13 +223,13 @@ export class JSONSchemaBuilder {
     }
 
     private isObject(type : string) : boolean {
-        let model = this.types[type]
+        const model = this.types[type]
 
         return (model != undefined && !model.kind.includes("enum"))
     }
 
     private isEnum(type : string) : boolean {
-        let model = this.types[type]
+        const model = this.types[type]
 
         return (model != undefined && !model.kind.includes("enum"))
     }
@@ -254,8 +254,8 @@ export class JSONSchemaBuilder {
     }*/
 
     private referenceType(property : PropertyDescriptor) {
-        let propertyName = property.name
-        let type = this.type(propertyName)
+        const propertyName = property.name
+        const type = this.type(propertyName)
         if (!type) {
             this.addType(propertyName, {})
             this.addType(propertyName, this.createType(property))
@@ -267,9 +267,9 @@ export class JSONSchemaBuilder {
     }
 
     private createType(property : PropertyDescriptor) {
-        let typeName = property.type?.name
+        const typeName = property.type?.name
 
-        let result : any = {}
+        const result : any = {}
 
         // object
 
@@ -284,7 +284,7 @@ export class JSONSchemaBuilder {
         if (this.isArray(typeName)) {
             result.type = "array"
 
-            let itemTypeName = property.type.parameter[0].name
+            const itemTypeName = property.type.parameter[0].name
 
             if (this.isObject(itemTypeName)) { // @ts-ignore
                 result.items = this.referenceType({name: itemTypeName, type: this.types[itemTypeName], annotations: []})
@@ -317,9 +317,9 @@ export class JSONSchemaBuilder {
     }
 
     private createProperties(descriptor : InterfaceDescriptor) {
-        let properties : { [name : string] : PropertyDescriptor } = {}
+        const properties : { [name : string] : PropertyDescriptor } = {}
 
-        for (let property of descriptor.properties)
+        for (const property of descriptor.properties)
             properties[property.name] = this.createType(property)
 
         return properties

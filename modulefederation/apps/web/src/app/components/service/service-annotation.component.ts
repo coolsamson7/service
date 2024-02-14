@@ -9,14 +9,14 @@ import { AnnotationDescriptor } from "../../model/service.interface"
 export class ServiceAnnotationComponent {
     // input
 
-    @Input('annotation') annotation! : AnnotationDescriptor
+    @Input() annotation! : AnnotationDescriptor
 
     isArray(value : any) {
         return Array.isArray(value)
     }
 
     isAnnotation(value : any) {
-        let type = typeof value
+        const type = typeof value
 
         if (type == "object") {
             return !Array.isArray(value)

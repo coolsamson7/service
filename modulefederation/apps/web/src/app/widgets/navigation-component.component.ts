@@ -2,7 +2,7 @@ import { Component, Injector, OnInit } from "@angular/core";
 import { AbstractFeature } from "@modulefederation/portal";
 
 export interface RouteElement {
-    label : String
+    label : string
     route : string
 }
 

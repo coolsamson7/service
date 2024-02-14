@@ -5,6 +5,7 @@ import { SpeechEvent } from "./speech-engine";
 import { TraceLevel, Tracer } from "../tracer";
 import { ButtonConfiguration, ButtonData, DialogService } from "../dialog";
 import { CommonDialog } from "../dialog/dialog-builder";
+import { StringBuilder } from "../common";
 
 interface CommandEntry {
     command: string
@@ -28,9 +29,11 @@ export class SpeechCommandManager {
     constructor(speechRecognition : SpeechRecognitionManager,  dialogs : DialogService) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const This = this
+
+        ;(window as any)["commands"] = () => this.report()
         
         CommonDialog.addDecorator({
-            decorate(button: ButtonConfiguration, dialog: CommonDialog) : void {
+            decorate(button: ButtonConfiguration, _dialog: CommonDialog) : void {
                 if ( button.speech ) {
                     This.addCommand(
                         button.speech,  
@@ -49,13 +52,20 @@ export class SpeechCommandManager {
         })
 
         this.pushLevel()
-
-        // TODO
-
-        speechRecognition.events$.subscribe(event => console.log(event))
     }
 
     // private
+
+    report() {
+        const builder = new StringBuilder()
+        for ( const command of this.commands)
+            builder
+                .append("command ").append(command.command)
+                .append(command.enabled() ? " enabled" : "")
+                .append("\n")
+
+        console.log(builder.toString())
+    }
 
     pushLevel() {
         this.commandStack.push(this.commands = [])
@@ -73,13 +83,15 @@ export class SpeechCommandManager {
         const namedParam    = /:(\w+)/g
         const restParam    = /\*(\w+)/g;
     
-        command = command
+        const compiledCommand = command
             .replace(optionalParam, '($1)?')
             .replace(namedParam, '(?<$1>\\w+)')
             .replace(restParam, '(?<$1>.*)')
 
+        if ( Tracer.ENABLED)
+            Tracer.Trace("speech.commands", TraceLevel.HIGH, "compiled speech command {0} to {1}", command,  '^' + compiledCommand + '$')
   
-        return new RegExp('^' + command + '$', 'i');
+        return new RegExp('^' + compiledCommand + '$', 'i');
     }
 
     // public

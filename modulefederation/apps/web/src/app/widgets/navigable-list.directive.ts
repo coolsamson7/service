@@ -21,7 +21,7 @@ export class NavigableListItemDirective implements FocusableOption {
     // The label which allows the user to jump to the list item by typing
     @Input('navigableListItem')
     label? : string;
-    disabled : boolean = false;
+    disabled  = false;
     // Emits when an item is selected with mouse or keyboard
     @Output('navSelection')
     selectedChange = new EventEmitter<void>()
@@ -57,14 +57,14 @@ export class NavigableListItemDirective implements FocusableOption {
     // liustener
 
     @HostListener('focus', ['$event'])
-    focusEvent(event : FocusEvent) {
+    focusEvent(_event : FocusEvent) {
         this.focused.emit();
     }
 
     @HostListener('keydown.enter', ['$event'])
     @HostListener('keydown.space', ['$event'])
     @HostListener('click', ['$event'])
-    manage(event : KeyboardEvent) {
+    manage(_event : KeyboardEvent) {
         this.selectedChange.emit();
         this.selected = true;
     }
@@ -90,11 +90,6 @@ export class NavigableListComponent implements AfterContentInit {
     @ContentChildren(NavigableListItemDirective, {descendants: true})
     listItems! : QueryList<NavigableListItemDirective>;
 
-    // constructor
-
-    constructor() {
-    }
-
     // listener
 
     @HostListener('keydown', ['$event'])
@@ -118,7 +113,7 @@ export class NavigableListComponent implements AfterContentInit {
         this.listItems.forEach((item, index) => {
             // TODO: unsub
 
-            item.selectedChange.subscribe(it => {
+            item.selectedChange.subscribe(_it => {
                 this.keyManager.setActiveItem(index);
                 this.listItems.forEach((otherItem, otherIndex) => {
                     if (otherIndex != index) {

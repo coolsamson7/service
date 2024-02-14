@@ -35,13 +35,13 @@ export class DescriptionComponent implements OnInit {
     // implement OnInit
 
     private extractDescription(annotation : AnnotationDescriptor) {
-        this.description.description = " * " + annotation.parameters.find(parameter => parameter.name == "value")!!.value.replace("\n", "<br> * ")
+        this.description.description = " * " + annotation.parameters.find(parameter => parameter.name == "value")!.value.replace("\n", "<br> * ")
 
-        let parameters = annotation.parameters.find(parameter => parameter.name == "parameters")
+        const parameters = annotation.parameters.find(parameter => parameter.name == "parameters")
         if (parameters)
-            for (let param of parameters.value) {
-                let name = param.parameters.find((p : any) => p.name == "name").value
-                let value = param.parameters.find((p : any) => p.name == "description").value.replace("\n", "<br>")
+            for (const param of parameters.value) {
+                const name = param.parameters.find((p : any) => p.name == "name").value
+                const value = param.parameters.find((p : any) => p.name == "description").value.replace("\n", "<br>")
 
                 this.description.parameter.push({
                     name: name,

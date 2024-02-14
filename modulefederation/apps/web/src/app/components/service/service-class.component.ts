@@ -8,11 +8,11 @@ import { Component, Input } from "@angular/core"
 export class ServiceClassComponent {
     // input
 
-    @Input('class') clazz! : String
+    @Input('class') clazz! : string
 
     // public
 
-    format(clazz : String) {
+    format(clazz : string) {
         return clazz.substring(clazz.lastIndexOf('.') + 1) // for now
     }
 }

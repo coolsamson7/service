@@ -1,7 +1,7 @@
 <div class="container">
     <!-- breadcrumb -->
 
-    <div *ngIf="outlet.isActivated == true" class="breadcrumb">
+    <div *ngIf="outlet.isActivated === true" class="breadcrumb">
         <ng-container *ngFor="let route of routes; let i = index; let first = first ;let last = last;">
             <ng-container *ngIf="i > 0 && i < routes.length">
                 /
@@ -13,7 +13,7 @@
 
     <!-- toolbar -->
 
-    <mat-toolbar *ngIf="outlet.isActivated == false" class="left">
+    <mat-toolbar *ngIf="outlet.isActivated === false" class="left">
         <mat-toolbar-row>
             <button (click)="addManifest()" mat-icon-button>
                 <mat-icon>add_circle_outline</mat-icon>
@@ -28,7 +28,7 @@
 
     <!-- manifest list -->
 
-    <div *ngIf="outlet.isActivated == false" class="left">
+    <div *ngIf="outlet.isActivated === false" class="left">
         <mat-nav-list>
             <ng-container *ngFor="let manifest of manifests">
                 <mat-list-item class="manifest">
@@ -51,7 +51,7 @@
                   Health
             </span>
                         <mat-icon
-                                [ngStyle]="{'color':manifest.health == 'alive' ? 'green' : 'red' }">{{manifest.health == "alive" ? "wifi" : "sentiment_very_dissatisfied"}}</mat-icon>
+                                [ngStyle]="{'color':manifest.health === 'alive' ? 'green' : 'red' }">{{manifest.health === "alive" ? "wifi" : "sentiment_very_dissatisfied"}}</mat-icon>
                     </a>
 
                     <!--mat-icon class="icon" (click)="addManifest()">add_circle</mat-icon-->

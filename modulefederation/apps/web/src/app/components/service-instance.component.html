@@ -20,8 +20,8 @@
     <mat-label>Health</mat-label>
 
     <div>
-        <mat-icon *ngIf="health == 'PASSING'" class="ok">check_circle</mat-icon>
-        <mat-icon *ngIf="health != 'PASSING'" class="nok">bug_report</mat-icon>
+        <mat-icon *ngIf="health === 'PASSING'" class="ok">check_circle</mat-icon>
+        <mat-icon *ngIf="health !== 'PASSING'" class="nok">bug_report</mat-icon>
 
         <div>{{health}}</div>
     </div>

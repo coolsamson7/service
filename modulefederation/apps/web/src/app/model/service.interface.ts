@@ -3,7 +3,7 @@ export interface NamedDescriptor {
 }
 
 export interface TypeDescriptor extends NamedDescriptor {
-    optional : Boolean,
+    optional : boolean,
     parameter : TypeDescriptor[]
 }
 

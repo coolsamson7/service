@@ -3,7 +3,7 @@ import { filter, fromEvent, Subscription, take } from "rxjs";
 import { EditorModel } from "./monaco-editor";
 import { MonacoEditorLoader } from "./monaco-editor-loader";
 
-declare var monaco : any;
+declare let monaco : any;
 
 @Component({template: ''})
 export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {

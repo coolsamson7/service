@@ -13,13 +13,13 @@ import { QueryParameter } from "../../json/query-analyzer";
 export class QueryParamComponent implements OnInit {
     // input
 
-    @Input('parameter') parameter! : QueryParameter
-    @Input('model') model! : ComponentModel
+    @Input() parameter! : QueryParameter
+    @Input() model! : ComponentModel
     @Input() form : any
 
     @Output() changed = new EventEmitter<any>();
 
-    type : string = ""
+    type  = ""
 
     // callbacks
 

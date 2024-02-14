@@ -1,5 +1,5 @@
 <div>
-    <div *ngIf="outlet.isActivated == false" class="left">
+    <div *ngIf="outlet.isActivated === false" class="left">
 
         <h1>{{manifest.name}}</h1>
         <hr/>
@@ -48,12 +48,12 @@
                             <mat-nav-list dense>
                                 <ng-container *ngFor="let feature of manifest.features; let index = index">
                                     <a (click)="selectFeature(feature)"
-                                       [ngClass]="{selected: selectedFeature == feature}" class="item"
+                                       [ngClass]="{selected: selectedFeature === feature}" class="item"
                                        mat-list-item
                                        role="listitem">
-                                        <mat-icon matListItemIcon>{{feature.id == "" ? "apps" : "stop"}}</mat-icon>
+                                        <mat-icon matListItemIcon>{{feature.id === "" ? "apps" : "stop"}}</mat-icon>
                                         <span
-                                                [ngClass]="[feature.id == '' ? 'root' : 'view']">{{feature.id == "" ? "Root" : feature.id}}</span>
+                                                [ngClass]="[feature.id === '' ? 'root' : 'view']">{{feature.id === "" ? "Root" : feature.id}}</span>
                                         <mat-slide-toggle (toggleChange)="toggleEnabled(index)"
                                                           [disabled]="selectedFeature !== feature"
                                                           [ngModel]="enabled[index]"

@@ -10,5 +10,5 @@ import { PropertyDescriptor } from "../../model/service.interface";
 export class ServicePropertyComponent {
     // input
 
-    @Input('property') property! : PropertyDescriptor
+    @Input() property! : PropertyDescriptor
 }

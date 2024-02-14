@@ -34,27 +34,27 @@ export class ComponentService extends AbstractHTTPService {
      * @param component
      * @returns
      */
-    public getDetails(component : String) : Observable<ComponentDTO> {
+    public getDetails(component : string) : Observable<ComponentDTO> {
         return this.get<ComponentDTO>(`/component/${component}`);
     }
 
-    public getServices(component : String) : Observable<InterfaceDescriptor[]> {
+    public getServices(component : string) : Observable<InterfaceDescriptor[]> {
         return this.get<InterfaceDescriptor[]>(`/component-services/${component}`);
     }
 
-    public executeMethod(component : String, request : string) : Observable<string> {
+    public executeMethod(component : string, request : string) : Observable<string> {
         return this.post<string>(`/execute-method/${component}`, request);
     }
 
-    public getServiceHealth(serviceName : String, serviceId : String) : Observable<string> {
+    public getServiceHealth(serviceName : string, serviceId : string) : Observable<string> {
         return this.get<string>(`/health/${serviceName}/${serviceId}`);
     }
 
-    public getServiceHealths(serviceName : String) : Observable<Healths> {
+    public getServiceHealths(serviceName : string) : Observable<Healths> {
         return this.get<Healths>(`/health/${serviceName}`)
     }
 
-    public getServiceInstances(serviceName : String) : Observable<ServiceInstanceDTO[]> {
+    public getServiceInstances(serviceName : string) : Observable<ServiceInstanceDTO[]> {
         return this.get<ServiceInstanceDTO[]>(`/service-instances/${serviceName}`)
     }
 

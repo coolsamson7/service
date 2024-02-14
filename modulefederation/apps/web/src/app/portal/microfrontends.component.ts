@@ -1,11 +1,11 @@
-import { Component, Injector, forwardRef } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { PortalAdministrationService, PortalIntrospectionService } from "./service";
 import { Address } from "./model";
 import { NavigationComponent } from "../widgets/navigation-component.component";
 import { ReplaySubject } from "rxjs/internal/ReplaySubject";
 import { ManifestDecorator } from "./util/manifest-decorator";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { AbstractFeature, Feature, Manifest, WithDialogs } from "@modulefederation/portal";
+import { Feature, Manifest, WithDialogs } from "@modulefederation/portal";
 import { fromFetch } from "rxjs/fetch";
 import { catchError, of, switchMap } from "rxjs";
 
@@ -13,10 +13,6 @@ import { catchError, of, switchMap } from "rxjs";
     selector: 'microfrontends',
     templateUrl: './microfrontends.component.html',
     styleUrls: ['./microfrontends.component.scss'],
-   // providers: [{ 
-   //     provide: AbstractFeature, 
-   //     useExisting: forwardRef(() => MirofrontendsComponent) 
-   //   }]
 })
 @Feature({
     id: "microfrontends",
@@ -105,7 +101,7 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
                     this.manifests.push(ManifestDecorator.decorate(result.manifest))
 
                     else {
-                        let builder = this.confirmationDialog() .title("Add Microfrontend")
+                        const builder = this.confirmationDialog() .title("Add Microfrontend")
 
                         switch (result.error) {
                             case "duplicate":
@@ -161,15 +157,15 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
 
     loadManifestFrom(url : string) {
         try {
-            let asUrl = new URL(url)
+            const asUrl = new URL(url)
 
             fetch(url + "/assets/manifest.json").then(async (response) => {
                 if (response.ok) {
-                    let manifest = await response.json()
+                    const manifest = await response.json()
 
                     // check for duplicates
 
-                    for (let manifest of this.manifests)
+                    for (const manifest of this.manifests)
                         if (manifest.remoteEntry == url) {
                             this.confirmationDialog()
                                 .title("Add Remote")
@@ -212,8 +208,8 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
             if (result) {
                 this.manifests.splice(this.manifests.indexOf(manifest), 1)
 
-                let url = new URL(manifest.remoteEntry!!)
-                let address : Address = {
+                const url = new URL(manifest.remoteEntry!)
+                const address : Address = {
                     protocol: url.protocol,
                     host: url.hostname,
                     port: +url.port
@@ -238,7 +234,7 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
     }
 
     private decorateManifests(manifests : Manifest[]) : Manifest[] {
-        for (let manifest of manifests)
+        for (const manifest of manifests)
             ManifestDecorator.decorate(manifest)
 
         return manifests

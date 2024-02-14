@@ -44,7 +44,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       finalize(() => {
         // restore context as found before the call
 
-        this.errorManager.setContext(context!!);
+        this.errorManager.setContext(context!);
       })
     );
   }

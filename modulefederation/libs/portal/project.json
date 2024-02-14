@@ -9,8 +9,7 @@
       "executor": "@nx/angular:ng-packagr-lite",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/portal/ng-package.json",
-        "updateBuildableProjectDepsInPackageJson": true
+        "project": "libs/portal/ng-package.json"
       },
       "configurations": {
         "production": {

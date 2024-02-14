@@ -1,4 +1,4 @@
-<ng-container *ngIf="type != 'json'">
+<ng-container *ngIf="type !== 'json'">
     <mat-form-field [ngSwitch]="type" class="param">
         <mat-label>{{parameter.name}}</mat-label>
 

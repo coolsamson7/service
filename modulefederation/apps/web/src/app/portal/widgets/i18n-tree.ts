@@ -304,7 +304,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
         }
     }
 
-    let result =  filter(array, 0)
+    const result =  filter(array, 0)
 
     return result
   }

@@ -190,36 +190,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
 
       this.sessionManager.start()
-
-      this.test()
     }
-
-    test() {
-      //const input = "a :parameter and :another"
-      //const input = "a ( funny ) :parameter"
-      const input = "a (funny) :parameter and :another with *rest"
-
-      console.log(input)
-
-      const optionalParam = /\((.*?)\)/g;
-      const namedParam    = /:(\w+)/g // new RegExp(":(?:w+)", "i");
-      const restParam    = /\*(\w+)/g;
-  
-      const command = input
-          .replace(optionalParam, '($1)?')
-          .replace(namedParam, '(?<$1>\\w+)')
-          .replace(restParam, '(?<$1>.*)')
-
-      console.log(command)
-
-
-      const re = new RegExp('^' + command + '$', 'i');
-
-      const s = re.exec("a funny foo and bar with chocolate with vanilla sauce")
-
-      console.log(s)
-      
-  }
 
     @Command({
       shortcut: "f1"

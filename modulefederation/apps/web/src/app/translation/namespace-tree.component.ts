@@ -38,7 +38,7 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
   }
     // input
 
-    @Input('namespaces') namespaces : NamespaceNode[] = []
+    @Input() namespaces : NamespaceNode[] = []
     @Output() onSelectionChange = new EventEmitter<NamespaceNode>();
 
     // instance data
@@ -47,11 +47,6 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     dataSource = new MatTreeNestedDataSource<NamespaceNode>();
 
     selection?: NamespaceNode
-
-    // constructor
-
-    constructor() {
-    }
 
     // private
 
@@ -64,9 +59,6 @@ export class NamespaceTreeComponent implements OnInit, OnChanges {
     // public
 
     select(node: NamespaceNode) {
-//
-console.log(this.treeControl.expansionModel.selected)
-        //
         this.selection = node
 
         this.onSelectionChange.emit(node)

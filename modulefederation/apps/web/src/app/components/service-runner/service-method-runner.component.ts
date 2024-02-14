@@ -19,9 +19,9 @@ export class ServiceMethodRunnerComponent implements OnInit {
     // input
 
 
-    @Input('model') model! : ComponentModel
-    @Input('service') service! : InterfaceDescriptor
-    @Input('method') method! : MethodDescriptor
+    @Input() model! : ComponentModel
+    @Input() service! : InterfaceDescriptor
+    @Input() method! : MethodDescriptor
 
     @ViewChild('form') public form! : NgForm
 
@@ -68,8 +68,8 @@ export class ServiceMethodRunnerComponent implements OnInit {
     }
 
     errorMessage(name : string) {
-        let errors = this.form.form.controls[name].errors
-        for (let error in errors) {
+        const errors = this.form.form.controls[name].errors
+        for (const error in errors) {
             switch (error) {
                 case "required":
                     return name + " is required"
@@ -108,7 +108,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
                 return "date"
 
             default:
-                let model = this.model.models.find(model => model.name == type.name)
+                const model = this.model.models.find(model => model.name == type.name)
                 if (model?.kind.includes("enum"))
                     return "enum"
                 else
@@ -127,16 +127,16 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
         this.error = false
 
-        let request : ServiceRequest = {
-            component: this.model.component!!.name,
+        const request : ServiceRequest = {
+            component: this.model.component!.name,
             service: this.service.name,
             method: this.method.name,
             parameters: []
         }
 
-        for (let param of this.query.params) {
+        for (const param of this.query.params) {
             if (param === this.body) {
-                let body = JSON.parse(param.value)
+                const body = JSON.parse(param.value)
 
                 request.parameters.push({
                     name: param.name,
@@ -149,7 +149,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
             })
         }
 
-        let json = JSON.stringify(request, null, "\t")
+        const json = JSON.stringify(request, null, "\t")
 
         this.componentService.executeMethod(request.component, json).subscribe({
             next: (result) => {
@@ -178,13 +178,13 @@ export class ServiceMethodRunnerComponent implements OnInit {
     }
 
     ngOnInit() : void {
-        let uri = "json://" + this.service.name + "/" + this.uuid + ".schema"
+        const uri = "json://" + this.service.name + "/" + this.uuid + ".schema"
 
         this.bodyModel.uri = uri
 
-        this.query = new QueryAnalyzer(this.service, this.model).analyzeMethod(this.method)!!
+        this.query = new QueryAnalyzer(this.service, this.model).analyzeMethod(this.method)!
 
-        for (let param of this.query.params) {
+        for (const param of this.query.params) {
             // @ts-ignore
             this.parameter[param.name] = param
             if (param.parameterType == ParameterType.BODY)
@@ -199,7 +199,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
     private updateURL() {
         this.executedURL = "";
 
-        let template = this.query.url
+        const template = this.query.url
 
         let i = 0
         let lbrace = template.indexOf("{")
@@ -208,10 +208,10 @@ export class ServiceMethodRunnerComponent implements OnInit {
 
             // find  }
 
-            let rbrace = template.indexOf("}", lbrace)
+            const rbrace = template.indexOf("}", lbrace)
             i = rbrace + 1
 
-            let variable = template.substring(lbrace + 1, rbrace)
+            const variable = template.substring(lbrace + 1, rbrace)
 
             // @ts-ignore
             this.executedURL += encodeURI(this.parameter[variable].value)
@@ -224,7 +224,7 @@ export class ServiceMethodRunnerComponent implements OnInit {
         if (this.query.params.find(param => param.parameterType == ParameterType.REQUEST_PARAM) != undefined) {
             this.executedURL += "?"
             let i = 0;
-            for (let param of this.query.params.filter(param => param.parameterType == ParameterType.REQUEST_PARAM)) {
+            for (const param of this.query.params.filter(param => param.parameterType == ParameterType.REQUEST_PARAM)) {
                 if (i++ > 0)
                     this.executedURL += "&"
 

@@ -7,7 +7,7 @@
         <ng-container *ngFor="let param of query.params">
             <!-- string -->
 
-            <mat-form-field *ngIf="inputType4(param.type) == 'string'">
+            <mat-form-field *ngIf="inputType4(param.type) === 'string'">
                 <mat-label>{{param.name}}</mat-label>
                 <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
                        [validateParameter]="param"
@@ -18,7 +18,7 @@
 
             <!-- number -->
 
-            <mat-form-field *ngIf="inputType4(param.type) == 'number'">
+            <mat-form-field *ngIf="inputType4(param.type) === 'number'">
                 <mat-label>{{param.name}}</mat-label>
                 <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
                        [validateParameter]="param"
@@ -29,7 +29,7 @@
 
             <!-- boolean -->
 
-            <mat-form-field *ngIf="inputType4(param.type) == 'boolean'">
+            <mat-form-field *ngIf="inputType4(param.type) === 'boolean'">
                 <mat-label>{{param.name}}</mat-label>
                 <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
                             name="{{param.name}}"
@@ -42,7 +42,7 @@
 
             <!-- enum -->
 
-            <mat-form-field *ngIf="inputType4(param.type) == 'enum'">
+            <mat-form-field *ngIf="inputType4(param.type) === 'enum'">
                 <mat-label>{{param.name}}</mat-label>
                 <mat-select (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
                             name="{{param.name}}"
@@ -54,7 +54,7 @@
 
             <!-- date -->
 
-            <mat-form-field *ngIf="inputType4(param.type) == 'date'">
+            <mat-form-field *ngIf="inputType4(param.type) === 'date'">
                 <mat-label>>{{param.name}}</mat-label>
                 <input (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name" [matDatepicker]="picker"
                        matInput name="{{param.name}}">
@@ -65,7 +65,7 @@
 
             <!-- json -->
 
-            <div *ngIf="inputType4(param.type) == 'json'">
+            <div *ngIf="inputType4(param.type) === 'json'">
                 <monaco-editor (ngModelChange)='onChange()' [(ngModel)]="param.value" [id]="param.name"
                                [model]="paramModel(param)"
                                [options]="{}" name="{{param.name}}"></monaco-editor>
@@ -88,7 +88,7 @@
                 <span>{{executedURL}}</span>
             </div>
 
-            <div *ngIf="query.method == 'post'" class="body">
+            <div *ngIf="query.method === 'post'" class="body">
                 <monaco-editor [(ngModel)]="body.value" [id]="'body_value'" [model]="resultModel" [options]="{}"
                                name="body_value"></monaco-editor>
             </div>
