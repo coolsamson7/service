@@ -58,32 +58,6 @@ class ChromeParser implements Parser {
   }
 }
 
-/*
-class WinJSParser implements Parser {
-  // instance data
-
-   winjsRe = /^\s*at (?:((?:\[object object\])?.+) )?\(?((?:file|ms-appx|https?|webpack|blob):.*?):(\d+)(?::(\d+))?\)?\s*$/i;
-
-  // implement Parser
-
-  parse(line: string) : StackFrame | null {
-
-    const parts = this.winjsRe.exec(line);
-
-    if (!parts)
-      return null;
-
-
-    return {
-      file: parts[2],
-      methodName: parts[1] || UNKNOWN_FUNCTION,
-      arguments: [],
-      lineNumber: +parts[3],
-      column: parts[4] ? +parts[4] : null,
-    };
-  }
-}
-
 class GeckoParser implements Parser {
   // instance data
 
@@ -118,6 +92,33 @@ class GeckoParser implements Parser {
       };
     }
 }
+
+/*
+class WinJSParser implements Parser {
+  // instance data
+
+   winjsRe = /^\s*at (?:((?:\[object object\])?.+) )?\(?((?:file|ms-appx|https?|webpack|blob):.*?):(\d+)(?::(\d+))?\)?\s*$/i;
+
+  // implement Parser
+
+  parse(line: string) : StackFrame | null {
+
+    const parts = this.winjsRe.exec(line);
+
+    if (!parts)
+      return null;
+
+
+    return {
+      file: parts[2],
+      methodName: parts[1] || UNKNOWN_FUNCTION,
+      arguments: [],
+      lineNumber: +parts[3],
+      column: parts[4] ? +parts[4] : null,
+    };
+  }
+}
+
 class JSCParser implements Parser {
   // instance data
 
@@ -173,6 +174,8 @@ class NodeParser implements Parser {
 function  determineParser() : Parser {
   if ( navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
     return new ChromeParser()
+  else if ( navigator.userAgent.toLowerCase().indexOf('gecko') > -1)
+        return new GeckoParser()
   else {
     console.log("## unable to parse stracktraces, agent is " + navigator.userAgent);
 
@@ -252,7 +255,7 @@ export class Stacktrace {
 
         //console.log("find source map for " + uri)
 
-        if (loading) 
+        if (loading)
             return loading;
 
         else {
