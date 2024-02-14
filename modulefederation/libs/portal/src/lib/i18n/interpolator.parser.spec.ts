@@ -30,7 +30,7 @@ class PlaceholderParser {
     let result: RegExpMatchArray | null
     if ((result = input.match(this.variable))) {
       return {
-        name: result.groups!!['variable']
+        name: result.groups!['variable']
       }
     }
 
@@ -38,29 +38,29 @@ class PlaceholderParser {
 
     else if ((result = input.match(this.variableFormat))) {
       return {
-        name:  result.groups!!['variable'],
-        format:  {format: result.groups!!['format']}
+        name:  result.groups!['variable'],
+        format:  {format: result.groups!['format']}
       }
     }
 
     // variable:format(<param>:<value>, ...)
     else if ((result = input.match(this.variableFormatArgs))) {
-      let formatParameter = {}
+      const formatParameter = {}
       const format = {
-        name: result.groups!!['variable'],
+        name: result.groups!['variable'],
         format: {
-          format: result.groups!!['format'],
+          format: result.groups!['format'],
           parameters: formatParameter
         },
       }
 
-      const parameters = result.groups!!['parameter']
+      const parameters = result.groups!['parameter']
 
       // parse parameters individually
 
       while ((result = this.parameter.exec(parameters))) {
-        const parameter = result.groups!!["parameter"]
-        let value: any = result.groups!!["value"] as string
+        const parameter = result.groups!["parameter"]
+        let value: any = result.groups!["value"] as string
 
         if (value.startsWith("'"))
           value = value.substring(1, value.length - 1)
@@ -102,18 +102,18 @@ describe('interpolator parser', () => {
     const placeholder : Placeholder = parser.parse('{num:number}');
 
     expect(placeholder.name).toBe('num');
-    expect(placeholder.format!!.format).toBe('number');
+    expect(placeholder.format!.format).toBe('number');
   });
 
   test('should parse parameters', () => {
     const placeholder : Placeholder = parser.parse("{num:number(number: 1 , negative: -1, t: true, f: false, str1: 'str1',  str2: 'str2')}");
 
     expect(placeholder.name).toBe('num');
-    expect(placeholder.format!!.format).toBe('number');
-    expect(placeholder.format!!.parameters!!['number']).toBe(1);
-    expect(placeholder.format!!.parameters!!['t']).toBe(true);
-    expect(placeholder.format!!.parameters!!['f']).toBe(false);
-    expect(placeholder.format!!.parameters!!['str1']).toBe('str1');
-    expect(placeholder.format!!.parameters!!['str2']).toBe('str2');
+    expect(placeholder.format!.format).toBe('number');
+    expect(placeholder.format!.parameters!['number']).toBe(1);
+    expect(placeholder.format!.parameters!['t']).toBe(true);
+    expect(placeholder.format!.parameters!['f']).toBe(false);
+    expect(placeholder.format!.parameters!['str1']).toBe('str1');
+    expect(placeholder.format!.parameters!['str2']).toBe('str2');
   })
 })

@@ -48,7 +48,7 @@ export class ModuleRegistry {
 
         // leave registered modules as is ( in case of a redeployment )
 
-        let entry = this.modules[metadata.name]
+        const entry = this.modules[metadata.name]
         if (!entry)
             this.modules[metadata.name] = metadata
         else {

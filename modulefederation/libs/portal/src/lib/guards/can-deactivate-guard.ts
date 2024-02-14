@@ -17,7 +17,7 @@ export class CanDeactivateGuard implements CanDeactivate<any> {
         currentState : RouterStateSnapshot,
         nextState? : RouterStateSnapshot
     ) : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        let feature = currentRoute.data['feature']
+        const feature = currentRoute.data['feature']
 
         if (component && component['canDeactivate'])
             return component.canDeactivate()

@@ -76,7 +76,7 @@ export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
 
     private checkRedirect() {
         if (this.oauthService.state!.length > 0) {
-            let url = decodeURIComponent(this.oauthService.state!);
+            const url = decodeURIComponent(this.oauthService.state!);
 
             if ( Tracer.ENABLED)
                 Tracer.Trace("session.oidc", TraceLevel.HIGH, "redirect to {0}", url)

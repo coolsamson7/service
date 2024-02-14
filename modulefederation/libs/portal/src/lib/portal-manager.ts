@@ -189,7 +189,8 @@ export class PortalManager {
 
           if (route.children && route.children.length > 0)
             this.linkRoutes(route.children, feature.children!);
-        } else {
+        } 
+        else {
           console.log('did not find feature for path ' + route.path!);
           //throw new Error("did not find feature for path " + route.path!!)
         }

@@ -93,7 +93,7 @@ export class ShortcutManager {
 
         // append shortcut to highest layer
 
-        this.currentShortcuts!!.push(shortcut);
+        this.currentShortcuts!.push(shortcut);
 
         return () => {
             this.unregister(shortcut);
@@ -106,8 +106,8 @@ export class ShortcutManager {
      * @see Shortcut
      */
     public unregister(shortcut : Shortcut) : void {
-        const index = this.currentShortcuts!!.indexOf(shortcut);
-        if (index >= 0) this.currentShortcuts!!.splice(index, 1);
+        const index = this.currentShortcuts!.indexOf(shortcut);
+        if (index >= 0) this.currentShortcuts!.splice(index, 1);
     }
 
     /**
@@ -179,12 +179,12 @@ export class ShortcutManager {
 
         if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.HIGH, 'check for shortcut {0}', toString(key));
 
-        const shortCuts = this.currentShortcuts!!.filter((shortcut) => match(key, shortcut.keys!!));
+        const shortCuts = this.currentShortcuts!.filter((shortcut) => match(key, shortcut.keys!));
 
         for (const shortCut of shortCuts) {
             if (!shortCut.handles || shortCut.handles(event)) {
                 if (Tracer.ENABLED)
-                    Tracer.Trace('views', TraceLevel.HIGH, 'execute shortcut {0}', toString(shortCut.keys!!));
+                    Tracer.Trace('views', TraceLevel.HIGH, 'execute shortcut {0}', toString(shortCut.keys!));
 
                 event.preventDefault();
 

@@ -18,7 +18,7 @@ import { TraceLevel, Tracer } from '../tracer';
     template: '<div>Unknown Feature {{feature}}</div>'
 })
 export class UnknownFeatureComponent {
-    feature : string = ""
+    feature  = ""
 }
 
 /**
@@ -109,7 +109,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
             if ( Tracer.ENABLED)
                Tracer.Trace("feature", TraceLevel.FULL, "lazy load {0}", next.path)
 
-            await next.load!!() // will set load to undefined in registerLazyRoutes
+            await next.load!() // will set load to undefined in registerLazyRoutes
         }
 
         this.component = this.container.createComponent(this.featureData?.ngComponent);

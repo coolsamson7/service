@@ -21,7 +21,7 @@ export class FeatureRegistry implements OnLocaleChange {
     // constructor
 
     constructor(localeManager: LocaleManager, private translator: Translator) {
-        ;(window as any)["features"] = () => {
+        (window as any)["features"] = () => {
             this.report()
             console.log(this.features)
         }
@@ -58,7 +58,7 @@ export class FeatureRegistry implements OnLocaleChange {
     }
 
     registerFolders(...folders : FolderData[]) {
-        const rememberPath = (folder : FolderData, prefix : string = "") => {
+        const rememberPath = (folder : FolderData, prefix  = "") => {
             this.path2Folder[prefix + folder.name] = folder
 
             for (const child of folder.children || [])
@@ -90,13 +90,13 @@ export class FeatureRegistry implements OnLocaleChange {
     }
 
     disable(microfrontend : string) {
-        let rootFeature = this.getFeature(microfrontend)
+        const rootFeature = this.getFeature(microfrontend)
 
-        let disable = (feature : FeatureData) => {
+        const disable = (feature : FeatureData) => {
             feature.enabled = false
 
             if (feature.children)
-                for (let child of feature.children)
+                for (const child of feature.children)
                     disable(child)
         }
 
@@ -140,7 +140,7 @@ export class FeatureRegistry implements OnLocaleChange {
 
         if (feature.children)
             for (const child of feature.children)
-                this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!!)
+                this.mergeFeature(child, newFeature.children?.find(f => f.id == child.id)!)
     }
 
     private registerFeature(featureConfig : FeatureConfig, parent? : FeatureData, path = "") {
@@ -235,12 +235,12 @@ export class FeatureFinder {
     }
 
     withVisibility(visibility : Visibility) : FeatureFinder {
-        this.filters.push((feature) => feature.visibility!!.includes(visibility))
+        this.filters.push((feature) => feature.visibility!.includes(visibility))
         return this
     }
 
     withTag(tag : string) : FeatureFinder {
-        this.filters.push((feature) => feature.tags!!.includes(tag))
+        this.filters.push((feature) => feature.tags!.includes(tag))
         return this
     }
 
@@ -260,12 +260,12 @@ export class FeatureFinder {
     }
 
     withPermission(permission : string) : FeatureFinder {
-        this.filters.push((feature) => feature.permissions!!.includes(permission))
+        this.filters.push((feature) => feature.permissions!.includes(permission))
         return this
     }
 
     withCategory(category : string) : FeatureFinder {
-        this.filters.push((feature) => feature.categories!!.includes(category))
+        this.filters.push((feature) => feature.categories!.includes(category))
         return this
     }
 

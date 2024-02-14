@@ -13,7 +13,7 @@ export class AbstractHTTPService {
     // constructor
 
     protected constructor(injector : Injector) {
-        let config = this.getConfig()
+        const config = this.getConfig()
 
         this.http = injector.get(HttpClient)
         this.url = injector.get(EndpointLocator).getEndpoint(config.domain) + (config.prefix || "")

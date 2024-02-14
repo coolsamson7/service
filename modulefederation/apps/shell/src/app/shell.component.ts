@@ -24,7 +24,7 @@ export class ShellComponent {
     // constructor
 
     determinePortal() : FeatureData {
-        let portals = this.featureRegistry.finder().withTag("portal").withVisibility(this.sessionManager.hasSession() ? "private" : "public").find()
+        const portals = this.featureRegistry.finder().withTag("portal").withVisibility(this.sessionManager.hasSession() ? "private" : "public").find()
 
         if (portals.length == 0)
             throw new Error("there must be a feature with tag 'portal'")

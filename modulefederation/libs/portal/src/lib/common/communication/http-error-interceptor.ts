@@ -70,7 +70,7 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
         catchError((error : HttpErrorResponse) => {
           console.log(error)
 
-          let translatedError = this.translateError(error)
+          const translatedError = this.translateError(error)
 
           // push context
 
@@ -90,7 +90,7 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
         finalize(() => {
           // restore context as found before the call
 
-          this.errorManager.setContext(context!!);
+          this.errorManager.setContext(context!);
         })
       )
   }

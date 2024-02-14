@@ -46,7 +46,7 @@ import { animate, state, style, transition, trigger, } from '@angular/animations
 export class BurgerComponent {
     // input & output
 
-    @Input() isBurger : boolean = true
+    @Input() isBurger  = true
     @Output() public toggle = new EventEmitter<boolean>();
 
     // callbacks

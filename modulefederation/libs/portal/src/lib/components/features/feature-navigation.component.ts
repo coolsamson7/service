@@ -19,7 +19,7 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
     collapsed = false;
     screenWidth = 0;
     navData : NavigationItem[] = [];
-    multiple : boolean = false;
+    multiple  = false;
 
     // constructor
 
@@ -32,21 +32,21 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
     // implement OnLocaleChange
 
     onLocaleChange(locale: Intl.Locale): Observable<any> {
-        let mapFeature = (feature : FeatureData, parent : NavigationItem) : NavigationItem => {
-            let item = {
-                routeLink: feature.routerPath!!,
-                icon: feature.icon!!,
-                label: feature.label!!,
+        const mapFeature = (feature : FeatureData, parent : NavigationItem) : NavigationItem => {
+            const item = {
+                routeLink: feature.routerPath!,
+                icon: feature.icon!,
+                label: feature.label!,
                 items: []
             }
 
-            parent.items!!.push(item)
+            parent.items!.push(item)
 
             return item
         }
 
-        let mapFolder = (folder : FolderData, parent? : NavigationItem) : NavigationItem => {
-            let item : NavigationItem = {
+        const mapFolder = (folder : FolderData, parent? : NavigationItem) : NavigationItem => {
+            const item : NavigationItem = {
                 routeLink: "",
                 icon: folder.icon,
                 label: folder.label || folder.name,
@@ -55,7 +55,7 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
 
             // features
 
-            for (let feature of folder.features || [])
+            for (const feature of folder.features || [])
                 if (feature.enabled) {
                     mapFeature(feature, item)
 
@@ -64,8 +64,8 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
 
             // folder recursion
 
-            for (let child of folder.children || []) {
-                let childFolder = mapFolder(child, item)
+            for (const child of folder.children || []) {
+                const childFolder = mapFolder(child, item)
                 if (childFolder.visible)
                     item.visible = true
             }
@@ -73,26 +73,26 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
             // add to parent
 
             if (parent && item.visible)
-                parent.items!!.push(item)
+                parent.items!.push(item)
 
             // done
 
             return item
         }
 
-        let folderItems = this.featureRegistry.folders
+        const folderItems = this.featureRegistry.folders
             .map(folder => mapFolder(folder, undefined))
             .filter(item => item.visible) // only folders that contain at least one enabled feature
 
         // features
 
-        let features = this.featureRegistry.finder().withTag("navigation").withoutFolder().find()
+        const features = this.featureRegistry.finder().withTag("navigation").withoutFolder().find()
 
-        let featureItems = features.map((feature) => {
+        const featureItems = features.map((feature) => {
             return {
-                routeLink: feature.routerPath!!,
-                icon: feature.icon!!,
-                label: feature.label!!,
+                routeLink: feature.routerPath!,
+                icon: feature.icon!,
+                label: feature.label!,
                 visible: true,
                 items: []
             }
@@ -136,7 +136,7 @@ export class FeatureNavigationComponent implements OnLocaleChange, OnInit {
 
     shrinkItems(item : NavigationItem) : void {
         if (!this.multiple) {
-            for (let modelItem of this.navData) {
+            for (const modelItem of this.navData) {
                 if (item !== modelItem && modelItem.expanded) {
                     modelItem.expanded = false;
                 }

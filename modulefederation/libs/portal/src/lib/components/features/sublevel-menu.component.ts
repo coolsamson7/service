@@ -51,7 +51,7 @@ export class SublevelMenuComponent {
     @Input() collapsed = false;
     @Input() animating : boolean | undefined;
     @Input() expanded : boolean | undefined;
-    @Input() multiple : boolean = false;
+    @Input() multiple  = false;
 
     // constructor
 
@@ -63,7 +63,7 @@ export class SublevelMenuComponent {
     handleClick(item : any) : void {
         if (!this.multiple) {
             if (this.data.items && this.data.items.length > 0) {
-                for (let modelItem of this.data.items) {
+                for (const modelItem of this.data.items) {
                     if (item !== modelItem && modelItem.expanded) {
                         modelItem.expanded = false;
                     }

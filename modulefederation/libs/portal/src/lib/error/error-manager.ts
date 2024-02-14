@@ -114,9 +114,9 @@ export class ErrorManager {
    * @internal
    */
   public registerHandler(handler : any) {
-    let type = TypeDescriptor.forType(handler.constructor)
+    const type = TypeDescriptor.forType(handler.constructor)
 
-    let handlers = type.getMethods().filter(method => method.hasDecorator(HandleError))
+    const handlers = type.getMethods().filter(method => method.hasDecorator(HandleError))
 
     for (const method of handlers) { //method.method.
       this.register({

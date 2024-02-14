@@ -46,7 +46,7 @@ export function WithRouting<T extends GConstructor<AbstractFeature>>(base: T) :G
         private trackRoutes() {
             // local functions
       
-            let collectFeatures = (route: ActivatedRoute, featureStack: FeatureConfig[] = []) => {
+            const collectFeatures = (route: ActivatedRoute, featureStack: FeatureConfig[] = []) => {
               route.data.subscribe((data: any) => {
                 if (data.feature) // hmmmm
                     featureStack.push(data.feature as FeatureData)
@@ -54,7 +54,7 @@ export function WithRouting<T extends GConstructor<AbstractFeature>>(base: T) :G
       
               // recursion
       
-              for ( let child of route.children)
+              for ( const child of route.children)
                 collectFeatures(child, featureStack)
             }
       

@@ -140,7 +140,7 @@ export class TypeDescriptor<T=any> {
             .filter(method => filter(<MethodDescriptor>method))
     }
 
-    public getMethods(all: boolean = true): MethodDescriptor[] {
+    public getMethods(all = true): MethodDescriptor[] {
         return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.METHOD))
     }
 
@@ -152,7 +152,7 @@ export class TypeDescriptor<T=any> {
         return <MethodDescriptor>Object.values(this.properties).find((property) => property.is(PropertyType.CONSTRUCTOR))
     }
 
-    public getMethod(name: string, all: boolean = true): MethodDescriptor | undefined {
+    public getMethod(name: string, all = true): MethodDescriptor | undefined {
         return  (all ? this.allProperties : this.properties)[name]?.asMethodDescriptor()
     }
 

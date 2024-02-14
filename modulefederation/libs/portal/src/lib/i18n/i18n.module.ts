@@ -110,7 +110,7 @@ export class I18nModule {
                 },
                 {
                     provide: I18nLoader,
-                    useClass: config.loader!!.type!!
+                    useClass: config.loader!.type!
                 },
                 {
                     provide: Translator,

@@ -13,13 +13,14 @@ export class ServerTranslationLoader implements I18nLoader {
     // private
 
     // implement I18nLoader
+    
     loadNamespace(locale : Intl.Locale, namespace : string) : Observable<any> {
         // local function
 
-        let handleTranslations = (namespace: string, translations: Translation[]) => {
-            let result = {}
+        const handleTranslations = (namespace: string, translations: Translation[]) => {
+            const result = {}
 
-            let findOrCreate = (name: string, folders: any) => {
+            const findOrCreate = (name: string, folders: any) => {
                 let folder = folders[name]
 
                 if (!folder) {
@@ -32,15 +33,15 @@ export class ServerTranslationLoader implements I18nLoader {
 
             // create namespace
 
-            let parent = result
+            const parent = result
             //for ( let leg of namespace.split("."))
             //    parent = findOrCreate(leg, parent)
 
             // add translations
 
-            for ( let translation of translations) {
+            for ( const translation of translations) {
                 let namespace = parent
-                let legs = translation.key.split(".")
+                const legs = translation.key.split(".")
                 for (let i = 0; i < legs.length - 1; i++)
                     namespace = findOrCreate(legs[i], namespace)
 

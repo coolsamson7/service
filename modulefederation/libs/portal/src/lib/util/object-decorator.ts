@@ -14,7 +14,7 @@ export class ObjectDecorator {
     // fluent
 
     defaultValue(name : string, defaultValue : any) : ObjectDecorator {
-        let isUndefined = (o : any) => {
+        const isUndefined = (o : any) => {
             return o == null || o == undefined
         }
 
@@ -27,7 +27,7 @@ export class ObjectDecorator {
     }
 
     defaultValueFunction(name : string, defaultValue : Getter) : ObjectDecorator {
-        let isUndefined = (o : any) => {
+        const isUndefined = (o : any) => {
             return o == null || o == undefined
         }
         this.properties[name] = (object : any) => {
@@ -41,7 +41,7 @@ export class ObjectDecorator {
     // public
 
     decorate(object : any) {
-        for (let property in this.properties)
+        for (const property in this.properties)
             this.properties[property](object)
     }
 }

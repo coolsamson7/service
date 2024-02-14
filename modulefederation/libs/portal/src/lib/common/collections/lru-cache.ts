@@ -12,7 +12,7 @@ export class LRUCache<T> {
    * create a new <code>LRUCache</code>
    * @param maxEntries the maximum number of entries.
    */
-  constructor(private maxEntries: number = 20) {}
+  constructor(private maxEntries = 20) {}
 
   // public
 

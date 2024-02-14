@@ -19,7 +19,7 @@ export class PlaceholderParser {
     let result: RegExpMatchArray | null
     if ((result = input.match(this.variable))) {
       return {
-        name: result.groups!!['variable']
+        name: result.groups!['variable']
       }
     }
 
@@ -27,29 +27,29 @@ export class PlaceholderParser {
 
     else if ((result = input.match(this.variableFormat))) {
       return {
-        name:  result.groups!!['variable'],
-        format:  {format: result.groups!!['format']}
+        name:  result.groups!['variable'],
+        format:  {format: result.groups!['format']}
       }
     }
 
     // variable:format(<param>:<value>, ...)
     else if ((result = input.match(this.variableFormatArgs))) {
-      let formatParameter = {}
+      const formatParameter = {}
       const format = {
-        name: result.groups!!['variable'],
+        name: result.groups!['variable'],
         format: {
-          format: result.groups!!['format'],
+          format: result.groups!['format'],
           parameters: formatParameter
         },
       }
 
-      const parameters = result.groups!!['parameter']
+      const parameters = result.groups!['parameter']
 
       // parse parameters individually
 
       while ((result = this.parameter.exec(parameters))) {
-        const parameter = result.groups!!["parameter"]
-        let value: any = result.groups!!["value"] as string
+        const parameter = result.groups!["parameter"]
+        let value: any = result.groups!["value"] as string
 
         if (value.startsWith("'"))
           value = value.substring(1, value.length - 1)

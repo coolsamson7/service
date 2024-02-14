@@ -80,9 +80,9 @@ export class Interpolator {
         const placeholder = this.parser.parse(input);
 
         return this.formatterRegistry.format(
-            placeholder.format!!.format,
+            placeholder.format!.format,
             parameters[placeholder.name],
-            placeholder.format!!.parameters
+            placeholder.format!.parameters
         );
     }
 

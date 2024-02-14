@@ -17,7 +17,7 @@
 </div>
 <div align="end" mat-dialog-actions>
     <button (click)="click(button)" *ngFor="let button of data.buttons"
-            [color]="button.primary == true ? 'primary' : 'basic'"
+            [color]="button.primary === true ? 'primary' : 'basic'"
             [mat-dialog-close]="button.result"
             mat-button mat-raised-button>
         {{button.label}}

@@ -53,7 +53,7 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * @param key the key
      */
     get<TYPE>(key : string) : TYPE {
-        return this.session!![key];
+        return this.session![key];
     }
 
     /**
@@ -62,7 +62,7 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * @param value the value
      */
     set<TYPE>(key : string, value : TYPE) : void {
-        this.session!![key] = value;
+        this.session![key] = value;
     }
 
     /**
@@ -76,14 +76,14 @@ export class SessionManager<U = any, T extends Ticket = Ticket> {
      * return the current session
      */
     currentSession() : Session<U, T> {
-        return this.session!!;
+        return this.session!;
     }
 
     /**
      * return the current user.
      */
     getUser() : U {
-        return this.session?.user!!;
+        return this.session?.user!;
     }
 
     /**
