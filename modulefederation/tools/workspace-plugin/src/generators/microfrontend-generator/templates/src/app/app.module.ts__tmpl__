@@ -19,6 +19,8 @@ import { appRoutes } from "./app.routes";
 import * as localManifest from "../assets/manifest.json"
 import { AppRouterModule } from "./app-router.module";
 
+// TODO: wohin?
+
 export class ApplicationEndpointLocator extends EndpointLocator {
   // instance data
 
@@ -36,7 +38,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
   getEndpoint(domain : string) : string {
     if (domain == "admin")
-      return this.environment.get<string>("administration.server")
+      return this.environment.get<string>("administration.server")! // TODO crap
     else
       throw new Error("unknown domain " + domain)
   }
@@ -47,7 +49,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   imports: [
     BrowserModule,
 
+    // autentication & authorization
+
     SecurityModule.forRoot({}),
+
+    // the portal logic
 
     PortalModule.forRoot({
       loader: {
@@ -58,6 +64,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       localManifest: localManifest as Manifest,
     }),
 
+    // tracing configuration
+
     TracerModule.forRoot({
       enabled: true,
       trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
@@ -66,14 +74,20 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       }
     }),
 
+    // manages the current locale
+
     LocaleModule.forRoot({
       locale: 'en-US',
       supportedLocales: ['en-US', 'de-DE']
     }),
 
+    // i18n 
+
     I18nModule.forRoot({
       loader: {type: ServerTranslationLoader}
     }),
+
+    // the application routes
 
     AppRouterModule,
   ],

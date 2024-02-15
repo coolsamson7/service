@@ -1,4 +1,4 @@
-import { formatFiles, generateFiles, getProjects, joinPathFragments, offsetFromRoot, readProjectConfiguration, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, getProjects, joinPathFragments, offsetFromRoot, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
 import { applicationGenerator } from '@nx/angular/generators';
 
 import { MicrofrontendGeneratorSchema } from './schema';
@@ -68,13 +68,30 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
   // delete existing files
 
   tree.delete(join(projectConfig.root, './src/app/app.routes.ts')); // replaced by own version 
+  tree.delete(join(projectConfig.root, './src/app/app.config.ts'));
   tree.delete(join(projectConfig.root, './src/app/app.component.ts'));
   tree.delete(join(projectConfig.root, './src/app/app.component.html'));
+  tree.delete(join(projectConfig.root, './src/app/nx-welcome.component.ts'));
+  tree.delete(join(projectConfig.root, './src/app/app.component.spec.ts'));
+
+  // modify tsconfig.json
+
+  const tsconfigPath = join(projectConfig.root, './tsconfig.json')
+
+  updateJson(tree, tsconfigPath, (json) => {
+    json.compilerOptions = {
+      ...json.compilerOptions,
+      'resolveJsonModule': true
+    }
+    
+    return json;
+  });
 
   // let's generate some files
 
   generateFiles(tree, join(__dirname, "/templates"), projectConfig.root, {
     name: schema.name,
+    style: schema.style || "scss",
     tmpl: '', // remove __tmpl__ from file endings
   });
 
