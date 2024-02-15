@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { InjectionToken, Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
-import { AbstractModule } from "../injection";
+import { AbstractModule } from "../injection/abstract-module";
 import { SpeechEngine } from './speech-engine';
 import { WebkitSpeechEngine } from './engine/webspeech-engine';
 

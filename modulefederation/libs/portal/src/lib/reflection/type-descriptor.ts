@@ -28,14 +28,12 @@ export class TypeDescriptor<T=any> {
     // static
 
     static forType<T>(type: Type<T>): TypeDescriptor<T> {
-        let typeDescriptor = Reflect.get(type, "$descriptor")
+        let typeDescriptor = Reflect.getOwnPropertyDescriptor(type, "$descriptor")?.value
         if (!typeDescriptor) 
            Reflect.set(type, "$descriptor", typeDescriptor = new TypeDescriptor<T>(type))
 
         return typeDescriptor
     }
-
-    // static
 
     // instance data
 
@@ -50,7 +48,8 @@ export class TypeDescriptor<T=any> {
     // constructor
 
     private constructor(public type: Type<T>) {
-        if (Tracer.ENABLED) Tracer.Trace("type", TraceLevel.HIGH, "create type descriptor for {0}", type.name)
+        if (Tracer.ENABLED)
+            Tracer.Trace("type", TraceLevel.HIGH, "create type descriptor for {0}", type.name)
 
         this.analyze(type)
     }
@@ -58,7 +57,8 @@ export class TypeDescriptor<T=any> {
     // public
 
     decorate(instance: any) {
-        for (const decorator of this.decorators) decorator.decorate(this, instance)
+        for (const decorator of this.decorators) 
+            decorator.decorate(this, instance)
     }
 
     public create(...args: any[]): T {
@@ -81,7 +81,8 @@ export class TypeDescriptor<T=any> {
     }
 
     public addTypeDecorator(decorator: ClassDecorator): TypeDescriptor<T> {
-        if (Tracer.ENABLED) Tracer.Trace("type", TraceLevel.FULL, "add type decorator {0} to {1}", decorator.name, this.type.name)
+        if (Tracer.ENABLED) 
+            Tracer.Trace("type", TraceLevel.FULL, "add type decorator {0} to {1}", decorator.name, this.type.name)
 
         this.typeDecorators.push(decorator)
 
@@ -96,7 +97,7 @@ export class TypeDescriptor<T=any> {
         const method = this.getMethod(property)
 
         if (method) {
-            method?.addDecorator(decorator, args)
+            method.addDecorator(decorator, args)
 
             method.returnType = Reflect.getMetadata("design:returntype", target, property)
             method.paramTypes = Reflect.getMetadata('design:paramtypes', target, property) as []
@@ -107,14 +108,7 @@ export class TypeDescriptor<T=any> {
 
     public addPropertyDecorator(target: any, property: string, decorator: PropertyDecorator): TypeDescriptor<T> {
         if (Tracer.ENABLED)
-            Tracer.Trace(
-                "type",
-                TraceLevel.FULL,
-                "add property decorator {0} to property {1}.{2}",
-                decorator.name,
-                this.type.name,
-                property
-            )
+            Tracer.Trace("type", TraceLevel.FULL, "add property decorator {0} to property {1}.{2}", decorator.name, this.type.name, property)
 
         let descriptor = this.properties[property] as FieldDescriptor
         if (!descriptor) {
@@ -144,20 +138,20 @@ export class TypeDescriptor<T=any> {
         return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.METHOD))
     }
 
-    public getProperties(): FieldDescriptor[] {
-        return <FieldDescriptor[]>Object.values(this.properties).filter((property) => property.is(PropertyType.FIELD))
+    public getProperties(all = true): FieldDescriptor[] {
+        return <FieldDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.FIELD))
     }
 
     public getConstructor(): MethodDescriptor {
-        return <MethodDescriptor>Object.values(this.properties).find((property) => property.is(PropertyType.CONSTRUCTOR))
+        return <MethodDescriptor>Object.values(this.properties).reverse().find((property) => property.is(PropertyType.CONSTRUCTOR))
     }
 
     public getMethod(name: string, all = true): MethodDescriptor | undefined {
         return  (all ? this.allProperties : this.properties)[name]?.asMethodDescriptor()
     }
 
-    public getField(name: string): FieldDescriptor | undefined {
-      return  this.properties[name]?.asFieldDescriptor()
+    public getField(name: string,  all = true): FieldDescriptor | undefined {
+      return  (all ? this.allProperties : this.properties)[name]?.asFieldDescriptor()
     }
 
     // private
@@ -167,8 +161,11 @@ export class TypeDescriptor<T=any> {
 
         const prototype = Object.getPrototypeOf(type)
 
-        if (prototype?.constructor.name != "Object" && prototype?.constructor.name != "Function") {
-            this.superClass = TypeDescriptor.forType(Object.getPrototypeOf(type))
+        console.log(prototype.name)
+        console.log(prototype.constructor.name)
+
+        if (prototype?.name !== "" && prototype?.name !== "Object") {
+            this.superClass = TypeDescriptor.forType(prototype)
 
             this.allProperties = {...this.superClass?.allProperties}
         }

@@ -1,5 +1,5 @@
 import { InjectionToken, Injector, ModuleWithProviders, NgModule } from '@angular/core';
-import { AbstractModule } from "../injection";
+import { AbstractModule } from "../injection/abstract-module";
 
 /**
  * @ignore

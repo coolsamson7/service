@@ -1,5 +1,5 @@
 import { Injector, NgModule } from '@angular/core';
-import { AbstractModule } from '../../injection';
+import { AbstractModule } from '../../injection/abstract-module';
 import { DateFormatter } from "./impl/date-formatter";
 import { StringFormatter } from "./impl/string-formatter";
 import { NumberFormatter } from "./impl/number-formatter";

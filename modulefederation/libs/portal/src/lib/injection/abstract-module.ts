@@ -1,6 +1,6 @@
 import { ReplaySubject } from "rxjs";
 import { Injector, Type } from "@angular/core";
-import { ModuleRegistry } from "../modules";
+import { ModuleRegistry } from "../modules/module-registry";
 import { TypeDescriptor } from "../reflection";
 
 declare type Ctr<T> = {new (...args: any[]) : T}
@@ -36,10 +36,12 @@ abstract class _AbstractModule {
     }
 }
 
-export type AbstractModule = typeof _AbstractModule; // Export so people can use the base type for variables but not derive it
+//export type AbstractModule = typeof _AbstractModule; // Export so people can use the base type for variables but not derive it
 
-export function AbstractModule(injectorSubject: ReplaySubject<Injector> = new ReplaySubject<Injector>(1))  {
-    const clazz =  class extends _AbstractModule {
+export const AbstractModule = () =>  {
+    const injectorSubject: ReplaySubject<Injector> = new ReplaySubject<Injector>(1)
+
+    return class AbstractModuleClass extends _AbstractModule {
         static override injectorSubject = injectorSubject
 
         constructor(injector: Injector) {
@@ -52,8 +54,4 @@ export function AbstractModule(injectorSubject: ReplaySubject<Injector> = new Re
             injectorSubject.next(injector)
         }
     }
-
-    clazz.injectorSubject = injectorSubject
-
-    return clazz
 }

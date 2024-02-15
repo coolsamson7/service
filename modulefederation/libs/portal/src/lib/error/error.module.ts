@@ -1,5 +1,5 @@
 import { Injector, NgModule } from '@angular/core';
-import { AbstractModule } from '../injection';
+import { AbstractModule } from '../injection/abstract-module';
 
 /**
  * Module for the error handling stuff.
