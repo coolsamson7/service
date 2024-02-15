@@ -1,0 +1,16 @@
+{
+    "name": "<%= name %>",
+    "version": "0.1",
+    "module": "RemoteEntryModule",
+    "features": [
+      {
+        "id": "",
+        "label": "<%= name %>",
+        "component": "RemoteEntryComponent",
+        "tags": ["navigation"],
+        "visibility": ["public", "private"]
+      }
+    ],
+    "folders": []
+  }
+  

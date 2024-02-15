@@ -1,0 +1,9 @@
+const { withModuleFederation } = require('@nx/angular/module-federation');
+
+module.exports = withModuleFederation({
+  name: '<%= name %>',
+  exposes: {
+    './Module':
+      'apps/<%= name %>/src/app/remote-entry/remote-entry.module.ts',
+  },
+});

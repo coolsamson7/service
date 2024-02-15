@@ -4,6 +4,11 @@
       "implementation": "./src/generators/microfrontend",
       "schema": "./src/generators/microfrontend/schema.json",
       "description": "Generator microfrontend"
+    },
+    "microfrontend-generator": {
+      "implementation": "./src/generators/microfrontend-generator",
+      "schema": "./src/generators/microfrontend-generator/schema.json",
+      "description": "Generator microfrontend code"
     }
   }
 }

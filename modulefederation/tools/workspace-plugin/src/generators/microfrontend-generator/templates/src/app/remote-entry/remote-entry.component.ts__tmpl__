@@ -1,0 +1,15 @@
+import { Component } from '@angular/core';
+import { AbstractFeature, Feature } from "@modulefederation/portal";
+
+@Feature({
+    id: '',
+    label: "<%= name %>",
+    tags: ["navigation"],
+    visibility: ["public", "private"]
+})
+@Component({
+    selector: '<%= name %>',
+    template: `<div><%= name %></div>`,
+})
+export class RemoteEntryComponent extends AbstractFeature {
+}
