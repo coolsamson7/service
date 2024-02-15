@@ -2,7 +2,7 @@ import { Injectable, Injector } from "@angular/core";
 import { Deployment, DeploymentLoader } from "../deployment";
 
 import { Observable } from "rxjs";
-import { AbstractHTTPService, Service } from "../common";
+import { AbstractHTTPService, Service } from "../common/communication";
 import { SessionManager, Ticket } from "../security";
 
 @Injectable({providedIn: 'root'})

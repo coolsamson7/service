@@ -1,4 +1,4 @@
-import { StringBuilder } from "../common";
+import { StringBuilder } from "../common/string-builder";
 import { MethodDescriptor } from "./method-descriptor";
 import { FieldDescriptor } from "./field-descriptor";
 

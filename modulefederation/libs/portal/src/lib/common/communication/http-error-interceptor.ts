@@ -8,8 +8,8 @@ import {
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, finalize, Observable } from "rxjs";
-import { ApplicationError, CommunicationError, HTTPCommunicationError, ServerError } from "../error";
-import { ErrorManager } from "../../error";
+import { ApplicationError, HTTPCommunicationError, ServerError } from "../error";
+import { ErrorManager } from "../../error/error-manager";
 import { tap } from "rxjs/operators";
 
 @Injectable()

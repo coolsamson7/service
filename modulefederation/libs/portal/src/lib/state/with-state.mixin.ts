@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { equals } from "../common";
+import { equals } from "../common/lang/equals";
 import { GConstructor } from "../common/lang/constructor.type";
 import { AbstractFeature } from "../feature";
 import { hasMixin, registerMixins } from "../mixin/mixin";

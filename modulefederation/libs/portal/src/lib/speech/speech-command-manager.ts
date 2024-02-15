@@ -5,7 +5,7 @@ import { SpeechEvent } from "./speech-engine";
 import { TraceLevel, Tracer } from "../tracer";
 import { ButtonConfiguration, ButtonData, DialogService } from "../dialog";
 import { CommonDialog } from "../dialog/dialog-builder";
-import { StringBuilder } from "../common";
+import { StringBuilder } from "../common/string-builder";
 
 interface CommandEntry {
     command: string

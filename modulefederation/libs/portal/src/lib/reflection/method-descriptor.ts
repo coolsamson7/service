@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { StringBuilder } from "../common";
+import { StringBuilder } from "../common/string-builder";
 import { PropertyDescriptor, PropertyType } from "./property-descriptor";
 
 interface MethodDecoratorSpec {

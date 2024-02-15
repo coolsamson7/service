@@ -1,13 +1,11 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Component, Injectable, OnInit, inject } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { Injectable } from "@angular/core";
 import { InputDialogBuilder } from "./input-dialog-builder";
 import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { tap } from "rxjs/operators";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Observable } from "rxjs";
-import { Translator } from "../i18n";
-import { get } from "../common";
 
 export interface ButtonConfiguration {
     label?: string

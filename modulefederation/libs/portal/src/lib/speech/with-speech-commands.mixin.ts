@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 import { inject } from "@angular/core";
-import { GConstructor } from "../common";
+import { GConstructor } from "../common/lang/constructor.type";
 import { registerMixins } from "../mixin/mixin";
 import { SpeechCommandManager } from "./speech-command-manager";
 import { CommandAdministration, CommandDescriptor, CommandManager } from "../command";
