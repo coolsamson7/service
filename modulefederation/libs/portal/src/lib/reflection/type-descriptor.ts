@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/member-ordering */
-import { StringBuilder } from "../common"
+import { StringBuilder } from "../common/string-builder"
 import { TraceLevel, Tracer } from "../tracer"
 import { MethodDescriptor } from "./method-descriptor";
 import { PropertyType } from "./property-descriptor";

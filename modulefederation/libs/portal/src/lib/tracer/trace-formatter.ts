@@ -1,4 +1,4 @@
-import { StringBuilder } from "../common";
+import { StringBuilder } from "../common/string-builder";
 import { StackFrame } from "../util";
 import { TraceEntry } from "./trace-entry";
 import { TraceLevel } from "./trace-level.enum";
