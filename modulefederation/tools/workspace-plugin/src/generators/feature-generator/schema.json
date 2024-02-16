@@ -20,6 +20,54 @@
       "type": "string",
       "description": "Provide the feature directory"
     },
+    "path": {
+      "type": "string",
+      "description": "Provide the optional path for the router if it differs from the name"
+    },
+    "categories": {
+      "type": "string",
+      "description": "Provide the feature directory"
+    },
+    "dialogMixin": {
+      "type": "boolean",
+      "description": "Provide the dialog mixin",
+      "default": false
+    },
+    "commandMixin": {
+      "type": "boolean",
+      "description": "Provide the command mixin",
+      "default": false
+    },
+    "stateMixin": {
+      "type": "boolean",
+      "description": "Provide the state mixin",
+      "default": false
+    },
+    "viewMixin": {
+      "type": "boolean",
+      "description": "Provide the view mixin",
+      "default": false
+    },
+    "routingMixin": {
+      "type": "boolean",
+      "description": "Provide the routing mixin",
+      "default": false
+    },
+    "speechCommandsMixin": {
+      "type": "boolean",
+      "description": "Provide the speech command mixin",
+      "default": false
+    },
+    "featureMetadataMixin": {
+      "type": "boolean",
+      "description": "Provide the feature mixin",
+      "default": false
+    },
+    "onLocaleChangeMixin": {
+      "type": "boolean",
+      "description": "Provide the feature mixin",
+      "default": false
+    },
     "style": {
       "description": "The file extension to be used for style files.",
       "type": "string",

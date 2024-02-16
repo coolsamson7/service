@@ -1,19 +1,78 @@
 import { Component, Injector } from '@angular/core';
-import { AbstractFeature, Feature } from "@modulefederation/portal";
+<% if (schema.onLocaleChangeMixin) { %>
+import { Observable, of } from 'rxjs';
+<% } %>
+import {
+<% if (schema.dialogMixin) { %>
+   WithDialogs,
+<% } %>
+<% if (schema.commandMixin) { %>
+   WithCommands,
+<% } %>
+<% if (schema.onLocaleChangeMixin) { %>
+   WithOnLocaleChange,
+<% } %>
+<% if (schema.stateMixin) { %>
+   WithState,
+<% } %>
+<% if (schema.viewMixin) { %>
+   WithView,
+<% } %>
+<% if (schema.routingMixin) { %>
+   WithRouting,
+<% } %>
+<% if (schema.featureMetadataMixin) { %>
+   WithFeatureMetadata,
+<% } %>
+<% if (schema.speechCommandsMixin) { %>
+   WithSpeechCommands,
+<% } %>
+  AbstractFeature,
+  Feature
+} from "@modulefederation/portal";
 
 @Feature({
-    id: 'home'
+   id: '<%= name %>',
+<% if (schema.path) { %>
+   router: {
+      path:  '<%= schema.path %>'
+   },
+<% } %>
+<% if (schema.categories) { %>
+   categories: [<%- format.formatList(schema.categories) %>],
+<% } %>
 })
 @Component({
     standalone: true,
-    selector: '<%= selector %>',
-    templateUrl: '<%= name %>.feature.html',
-    styleUrls: ['<%= name %>.feature.<%= style %>'],
+    selector: '<%= name %>',
+    templateUrl: './<%= name %>.feature.html',
+    styleUrls: ['./<%= name %>.feature.<%= style %>'],
 })
-export class <%= feature %>Component extends AbstractFeature {
+export class <%= format.classPrefix() %>Component extends <%= format.superclass() %> {
     // constructor
 
     constructor(injector: Injector) {
         super(injector);
     }
+
+<% if (schema.onLocaleChangeMixin) { %>
+     // implement WithOnLocaleChange
+
+     override onLocaleChange(_ : Intl.Locale) : Observable<any> {
+        // TODO
+
+        return of()
+     }
+<% } %>
+<% if (schema.stateMixin) { %>
+   // implement WithState
+
+   applyState(state: any) : void {
+      // TODO
+   }
+
+   writeState(state: any) : void {
+    // TODO
+   }
+<% } %>
 }
