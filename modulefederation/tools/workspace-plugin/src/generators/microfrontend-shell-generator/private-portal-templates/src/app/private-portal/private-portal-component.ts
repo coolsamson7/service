@@ -62,12 +62,4 @@ export class PrivatePortalComponent extends AbstractFeature {
     private computeNavigation() {
         this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
     }
-
-    // override OnInit
-
-    override ngOnInit() : void {
-      super.ngOnInit()
-
-      this.computeNavigation()
-    }
 }

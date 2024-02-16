@@ -1,4 +1,4 @@
-import { Injector, NgModule } from '@angular/core';
+import { Injectable, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ShellComponent } from './shell.component';
@@ -9,53 +9,41 @@ import {
     AbstractModule,
     CanActivateGuard,
     CanDeactivateGuard,
+    ConfigurationManager,
+    ConfigurationModule,
     ConsoleTrace,
     EndpointLocator,
-    Environment,
-    EnvironmentModule, I18nModule, I18nResolver, LocaleModule, PortalComponentsModule,
+    I18nModule, I18nResolver, LocaleModule, PortalComponentsModule,
     PortalModule,
     SecurityModule, ServerTranslationLoader,
     Shell,
     TraceLevel,
-    TracerModule
+    TracerModule,
+    ValueConfigurationSource
 } from "@modulefederation/portal";
-import {  Route, RouterModule } from "@angular/router";
+import {  Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"
 import { environment } from "../environments/environment";
 import { SampleAuthentication } from "./security/sample-authentication";
 import { SampleAuthorization } from "./security/sample-authorization";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
-
-@NgModule({
-    imports: [RouterModule.forRoot(localRoutes)],
-    exports: [RouterModule],
-})
-export class AppComponentRouterModule {
-}
+import { ShellRouterModule } from './shell-router.module';
 
 
+@Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
-    // instance data
+  // constructor
 
-    private environment : Environment
+  constructor(private configuration : ConfigurationManager) {
+    super()
+  }
 
-    // constructor
+  // implement
 
-    constructor(environment : any) {
-        super()
-
-        this.environment = new Environment(environment)
-    }
-
-    // implement
-
-    getEndpoint(domain : string) : string {
-        if (domain == "admin")
-            return this.environment.get<string>("administration.server")
-        else
-            throw new Error("unknown domain " + domain)
-    }
+  getEndpoint(domain : string) : string {
+    return this.configuration.get<string>(domain + '.server')!
+  }
 }
 
 
@@ -66,10 +54,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     declarations: [ShellComponent],
     imports: [
         BrowserModule,
-        AppComponentRouterModule,
+        ShellRouterModule,
         MatSnackBarModule,
 
-        EnvironmentModule.forRoot(environment),
+        ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
         SecurityModule.forRoot({
             authentication: SampleAuthentication,
@@ -112,9 +100,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     providers: [
         {
             provide: EndpointLocator,
-            useValue: new ApplicationEndpointLocator(environment)
+            useClass: ApplicationEndpointLocator
         },
-        {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+        {
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, 
+            useValue: {
+                duration: 2500
+            }
+        }
     ],
     bootstrap: [ShellComponent],
 })

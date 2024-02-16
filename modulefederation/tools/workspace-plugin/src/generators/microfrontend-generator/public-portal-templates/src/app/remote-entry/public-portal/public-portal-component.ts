@@ -10,7 +10,7 @@ import {
     SessionManager,
     Ticket
 } from "@modulefederation/portal";
-import { Component, Injector, OnInit } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Feature({
@@ -64,11 +64,5 @@ export class PublicPortalComponent extends AbstractFeature {
 
     private computeNavigation() {
         this.features = this.featureRegistry.finder().withEnabled().withTag("navigation").find()
-    }
-
-    // override OnInit
-
-    override ngOnInit() : void {
-        this.computeNavigation()
     }
 }

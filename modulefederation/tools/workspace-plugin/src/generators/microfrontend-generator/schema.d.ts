@@ -2,6 +2,7 @@ export interface MicrofrontendGeneratorSchema {
   name: string;
   generatePublicPortal?: boolean;
   generatePrivatePortal?: boolean;
+  serverURL?: boolean,
   skipFormat?: boolean;
   inlineStyle?: boolean;
   inlineTemplate?: boolean;

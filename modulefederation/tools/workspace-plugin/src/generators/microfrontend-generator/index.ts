@@ -48,6 +48,7 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
 
   generateFiles(tree, join(__dirname, "/templates"), projectConfig.root, {
     name: schema.name,
+    serverURL: schema.serverURL,
     publicPortal: schema.generatePublicPortal || false,
     privatePortal: schema.generatePrivatePortal || false,
     style: schema.style || "scss",

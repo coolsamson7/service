@@ -1,4 +1,4 @@
-import { Injector, NgModule } from '@angular/core';
+import { Injector, Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ShellComponent } from './shell.component';
@@ -10,8 +10,6 @@ import {
     CanDeactivateGuard,
     ConsoleTrace,
     EndpointLocator,
-    Environment,
-    EnvironmentModule,
     I18nModule,
     I18nResolver,
     LocaleModule,
@@ -21,7 +19,11 @@ import {
     ServerTranslationLoader,
     Shell,
     TraceLevel,
-    TracerModule
+    TracerModule,
+    Manifest,
+    ConfigurationModule,
+    ConfigurationManager,
+    ValueConfigurationSource
 } from "@modulefederation/portal";
 import {  Route } from "@angular/router";
 
@@ -31,30 +33,20 @@ import { SampleAuthentication } from "./security/sample-authentication";
 import { SampleAuthorization } from "./security/sample-authorization";
 import { ShellRouterModule } from './shell-router.module';
 
-// TODO
+@Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
-    // instance data
+  // constructor
 
-    private environment : Environment
+  constructor(private configuration : ConfigurationManager) {
+    super()
+  }
 
-    // constructor
+  // implement
 
-    constructor(environment : any) {
-        super()
-
-        this.environment = new Environment(environment)
-    }
-
-    // implement
-
-    getEndpoint(domain : string) : string {
-        if (domain == "admin")
-            return this.environment.get<string>("administration.server")!
-        else
-            throw new Error("unknown domain " + domain)
-    }
+  getEndpoint(domain : string) : string {
+    return this.configuration.get<string>(domain + '.server')!
+  }
 }
-
 
 @Shell({
     name: '<%= name %>'
@@ -65,7 +57,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         BrowserModule,
         ShellRouterModule,
 
-        EnvironmentModule.forRoot(environment),
+         // configuration
+
+        ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
         // authentication & authorization
 
@@ -109,7 +103,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 //remotes: ["http://localhost:4201", "http://localhost:4202"]
             },
             localRoutes: localRoutes,
-            localManifest: localManifest,
+            localManifest: localManifest as Manifest,
             decorateRoutes: (route : Route) => {
                 route.resolve = {i18n: I18nResolver}
                 route.canActivate = [CanActivateGuard]
@@ -120,7 +114,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     providers: [
         {
             provide: EndpointLocator,
-            useValue: new ApplicationEndpointLocator(environment)
+            useClass: ApplicationEndpointLocator
         }
     ],
     bootstrap: [ShellComponent],

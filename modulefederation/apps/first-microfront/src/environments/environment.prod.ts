@@ -6,7 +6,7 @@ export const environment = {
         client: 'service',
         scopes: ''
     },
-    administration: {
+    admin: {
         server: 'http://localhost:8083'
     }
 };

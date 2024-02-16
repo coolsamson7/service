@@ -1,10 +1,9 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import {
   ConsoleTrace,
   EndpointLocator,
-  Environment,
   I18nModule,
   LocaleModule,
   Manifest,
@@ -12,35 +11,28 @@ import {
   SecurityModule,
   ServerTranslationLoader,
   TraceLevel,
-  TracerModule
+  TracerModule,
+  ConfigurationModule,
+  ConfigurationManager,
+  ValueConfigurationSource
 } from "@modulefederation/portal";
 import { environment } from "../environments/environment";
 import { appRoutes } from "./app.routes";
 import * as localManifest from "../assets/manifest.json"
 import { AppRouterModule } from "./app-router.module";
 
-// TODO: wohin?
-
+@Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
-  // instance data
-
-  private environment : Environment
-
   // constructor
 
-  constructor(environment : any) {
+  constructor(private configuration : ConfigurationManager) {
     super()
-
-    this.environment = new Environment(environment)
   }
 
   // implement
 
   getEndpoint(domain : string) : string {
-    if (domain == "admin")
-      return this.environment.get<string>("administration.server")! // TODO crap
-    else
-      throw new Error("unknown domain " + domain)
+    return this.configuration.get<string>(domain + '.server')!
   }
 }
 
@@ -48,6 +40,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+
+    // configuration values
+
+    ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
     // autentication & authorization
 
@@ -81,7 +77,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       supportedLocales: ['en-US', 'de-DE']
     }),
 
-    // i18n 
+    // i18n
 
     I18nModule.forRoot({
       loader: {type: ServerTranslationLoader}
@@ -94,7 +90,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   providers: [
     {
       provide: EndpointLocator,
-      useValue: new ApplicationEndpointLocator(environment)
+      useClass: ApplicationEndpointLocator
     }
   ],
   bootstrap: [AppComponent],

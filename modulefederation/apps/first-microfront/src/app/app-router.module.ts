@@ -3,21 +3,11 @@
 
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { PortalManager } from '@modulefederation/portal';
-
-export const routes : Routes = [
-  {
-    path: '',
-    loadChildren: () =>
-      import('./remote-entry/remote-entry.module').then(
-        (m) => m.RemoteEntryModule
-      ),
-  },
-];
+import { appRoutes } from './app.routes';
 
 @NgModule({
   imports: [
-    RouterModule.forRoot( routes)
+    RouterModule.forRoot(appRoutes)
   ],
 
   exports: [RouterModule],

@@ -1,6 +1,6 @@
 export * from "./string-builder"
 export * from "./communication"
 export * from "./error"
-export * from "./util"
+export * from "./configuration"
 export * from "./lang"
 export * from "./collections/lru-cache"

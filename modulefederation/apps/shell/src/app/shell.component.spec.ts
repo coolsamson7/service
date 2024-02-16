@@ -2,7 +2,7 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ShellComponent } from './shell.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
-import { HomeComponent } from "./home/components/home/home.component";
+import { HomeComponent } from "./home/home.component";
 
 describe('AppComponent', () => {
     beforeEach(async () => {

@@ -2,12 +2,12 @@ import "reflect-metadata";
 
 import { environment } from "../environments/environment"
 
-import { SpeechRecognitionModule, Tracer } from "@modulefederation/portal";
+import { ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, Tracer, ValueConfigurationSource } from "@modulefederation/portal";
 
 Tracer.ENABLED = environment.production !== true
 
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, Injector, NgModule } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { AppComponent } from './app.component';
@@ -26,8 +26,7 @@ import {
   CommandModule,
   ConsoleTrace,
   EndpointLocator,
-  Environment,
-  EnvironmentModule, ErrorModule,
+  ErrorModule,
   FeatureReuseStrategy,
   HTTPErrorInterceptor, I18nModule, I18nResolver, LocaleModule,
   Manifest,
@@ -61,27 +60,19 @@ import { QuillModule } from "ngx-quill";
 import { HelpComponent } from "./help/help.component";
 import { ResizableModule } from "angular-resizable-element";
 
+@Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
-    // instance data
+  // constructor
 
-    private environment : Environment
+  constructor(private configuration : ConfigurationManager) {
+    super()
+  }
 
-    // constructor
+  // implement
 
-    constructor(environment : any) {
-        super()
-
-        this.environment = new Environment(environment)
-    }
-
-    // implement
-
-    getEndpoint(domain : string) : string {
-        if (domain.startsWith("admin"))
-            return this.environment.get<string>("administration.server")!
-        else
-            throw new Error("unknown domain " + domain)
-    }
+  getEndpoint(domain : string) : string {
+    return this.configuration.get<string>(domain + '.server')!
+  }
 }
 
 @Shell({
@@ -106,7 +97,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         },
         {
             provide: EndpointLocator,
-            useValue: new ApplicationEndpointLocator(environment)
+            useClass: ApplicationEndpointLocator
         },
         {
             provide: HTTP_INTERCEPTORS,
@@ -116,6 +107,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     ],
     bootstrap: [AppComponent],
     imports: [
+        ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
+
         TracerModule.forRoot({
             enabled: environment.production !== true,
             trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
@@ -156,9 +149,11 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             locale: 'en-US',
             supportedLocales: ['en-US', 'de-DE']
         }),
+
         I18nModule.forRoot({
             loader: { type: ServerTranslationLoader }
         }),
+
         PortalModule.forRoot({
             loader: {
                 //server: true,
@@ -172,26 +167,32 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 route.canDeactivate = [CanDeactivateGuard];
             }
         }),
+
         QuillModule.forRoot({
         //theme: "bubble"
         }),
+
         CommandModule.forRoot(),
+
         OIDCModule.forRoot({
             authConfig: authConfig
         }),
+
         StateModule.forRoot({}),
+
         SecurityModule.forRoot({
             sessionManager: OIDCSessionManager,
             authentication: OIDCAuthentication
         }),
+
         MonacoEditorModule.forRoot({
             defaultOptions: { theme: 'vs-dark', language: 'json' }
         }),
-        EnvironmentModule.forRoot(environment),
+
         SharedModule.forRoot(),
         OAuthModule.forRoot({
             resourceServer: {
-                allowedUrls: [environment.administration.server + '/administration'], // no service available yet...
+                allowedUrls: [environment.admin.server + '/administration'], // no service available yet...
                 sendAccessToken: true
             }
         }),

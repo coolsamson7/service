@@ -51,6 +51,7 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
     name: schema.name,
     publicPortal: schema.generatePublicPortal || false,
     privatePortal: schema.generatePrivatePortal || false,
+    serverURL: schema.serverURL,
     style: schema.style || "scss",
     tmpl: '', // remove __tmpl__ from file endings
   });

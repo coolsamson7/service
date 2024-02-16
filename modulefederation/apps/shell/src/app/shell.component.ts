@@ -15,9 +15,7 @@ export class ShellComponent {
     // private
 
     constructor(private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>) {
-        featureRegistry.registry$.subscribe(registry =>
-            this.portal = this.determinePortal()
-        )
+        featureRegistry.registry$.subscribe(registry => this.portal = this.determinePortal())
 
         this.portal = this.determinePortal();
     }

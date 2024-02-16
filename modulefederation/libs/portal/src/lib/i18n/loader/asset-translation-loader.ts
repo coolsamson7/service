@@ -8,7 +8,7 @@ import { TranslationLoaderConfig, TranslationLoaderConfigInjectionToken } from '
 import { TraceLevel, Tracer } from "../../tracer";
 
 /**
- * a {@link I18nLoader} tah will load translations form the static assets
+ * a {@link I18nLoader} that will load translations form the static assets
  */
 @Injectable({providedIn: 'root'})
 export class AssetTranslationLoader implements I18nLoader {

@@ -1,9 +1,11 @@
-import { NgModule } from '@angular/core';
+import { Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import {
+  ConfigurationManager,
+  ConfigurationModule,
   ConsoleTrace,
-  EndpointLocator, Environment,
+  EndpointLocator,
   I18nModule,
   LocaleModule,
   Manifest,
@@ -12,7 +14,8 @@ import {
   SecurityModule,
   ServerTranslationLoader,
   TraceLevel,
-  TracerModule
+  TracerModule,
+  ValueConfigurationSource
 } from "@modulefederation/portal";
 import { environment } from "../environments/environment";
 import { appRoutes } from "./app.routes";
@@ -20,26 +23,18 @@ import * as localManifest from "../assets/manifest.json"
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
 import { AppRouterModule } from "./app-router.module";
 
+@Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
-  // instance data
-
-  private environment : Environment
-
   // constructor
 
-  constructor(environment : any) {
+  constructor(private configuration : ConfigurationManager) {
     super()
-
-    this.environment = new Environment(environment)
   }
 
   // implement
 
   getEndpoint(domain : string) : string {
-    if (domain == "admin")
-      return this.environment.get<string>("administration.server")
-    else
-      throw new Error("unknown domain " + domain)
+    return this.configuration.get<string>(domain + '.server')!
   }
 }
 
@@ -47,6 +42,8 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+
+    ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
     SecurityModule.forRoot({}),
 
@@ -84,9 +81,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   providers: [
     {
       provide: EndpointLocator,
-      useValue: new ApplicationEndpointLocator(environment)
+      useClass: ApplicationEndpointLocator
     },
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, 
+      useValue: {
+        duration: 2500
+      }
+    }
   ],
   bootstrap: [AppComponent],
 })

@@ -6,7 +6,7 @@ import { SessionManager } from "../session-manager";
 import { Ticket } from "../ticket.interface";
 import { OIDCModuleConfig, OIDCModuleConfigToken } from "./oidc-module";
 import { Router } from "@angular/router";
-import { Environment } from "../../common/util/environment.service";
+import { ConfigurationManager } from "../../common/configuration";
 import { Tracer, TraceLevel } from "../../tracer";
 
 export interface OIDCTicket extends Ticket {
@@ -18,7 +18,7 @@ export interface OIDCTicket extends Ticket {
 export class OIDCSessionManager extends SessionManager<OIDCUser, OIDCTicket> {
     // constructor
 
-    constructor(@Inject(OIDCModuleConfigToken) oidcConfig : OIDCModuleConfig, private environment: Environment, private router : Router, private oauthService : OAuthService, authentication : OIDCAuthentication) {
+    constructor(@Inject(OIDCModuleConfigToken) oidcConfig : OIDCModuleConfig, private environment: ConfigurationManager, private router : Router, private oauthService : OAuthService, authentication : OIDCAuthentication) {
         super(authentication);
 
         this.configure(oidcConfig.authConfig)
