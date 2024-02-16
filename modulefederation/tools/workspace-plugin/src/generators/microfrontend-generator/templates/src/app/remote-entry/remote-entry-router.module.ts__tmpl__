@@ -13,6 +13,24 @@ export const routes: Routes = [
     component: RemoteEntryComponent,
     children: [],
   },
+<% if (publicPortal) { %>
+   {
+      path: 'public-portal',
+      loadChildren: () =>
+        import('./public-portal/public-portal.module').then(
+          (m) => m.PublicPortalModule
+        ),
+    },
+<% } %>
+<% if (privatePortal) { %>
+    {
+      path: 'private-portal',
+      loadChildren: () =>
+        import('./private-portal/private-portal.module').then(
+          (m) => m.PrivatePortalModule
+        ),
+    },
+<% } %>
 ];
 
 @NgModule({

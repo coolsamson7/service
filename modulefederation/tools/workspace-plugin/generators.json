@@ -1,14 +1,19 @@
 {
   "generators": {
-    "microfrontend": {
-      "implementation": "./src/generators/microfrontend",
-      "schema": "./src/generators/microfrontend/schema.json",
-      "description": "Generator microfrontend"
+    "portal-artifact-generator": {
+      "implementation": "./src/generators/portal-artifact-generator",
+      "schema": "./src/generators/portal-artifact-generator/schema.json",
+      "description": "Generator for microfrontend related artifacts"
     },
     "microfrontend-generator": {
       "implementation": "./src/generators/microfrontend-generator",
       "schema": "./src/generators/microfrontend-generator/schema.json",
-      "description": "Generator microfrontend code"
+      "description": "Generator for microfrontend code"
+    },
+    "microfrontend-shell-generator": {
+      "implementation": "./src/generators/microfrontend-shell-generator",
+      "schema": "./src/generators/microfrontend-shell-generator/schema.json",
+      "description": "Generator for microfrontend shell code"
     }
   }
 }

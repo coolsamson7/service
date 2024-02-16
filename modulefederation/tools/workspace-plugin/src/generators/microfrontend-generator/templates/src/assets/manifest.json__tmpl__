@@ -4,14 +4,39 @@
     "version": "0.1",
     "module": "RemoteEntryModule",
     "features": [
-      {
-        "id": "",
-        "label": "<%= name %>",
-        "component": "RemoteEntryComponent",
-        "tags": ["navigation"],
-        "visibility": ["public", "private"]
-      }
+<% if (publicPortal) { %>
+    {
+      "id": "public-portal",
+      "label": "public-portal",
+      "router": {
+        "lazyModule": "PublicPortalModule"
+      },
+      "component": "PublicPortalComponent",
+      "tags": ["portal"],
+      "visibility": ["public"],
+      "module": "PublicPortalModule"
+    },
+<% } %>
+<% if (publicPortal) { %>
+    {
+      "id": "private-portal",
+      "label": "private-portal",
+      "router": {
+        "lazyModule": "PrivatePortalModule"
+      },
+      "component": "PrivatePortalComponent",
+      "tags": ["portal"],
+      "visibility": ["private"],
+      "module": "PrivatePortalModule"
+    },
+<% } %>
+   {
+      "id": "",
+      "label": "<%= name %>",
+      "component": "RemoteEntryComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    }
     ],
     "folders": []
   }
-  

@@ -4,12 +4,6 @@
   "commitHash": "253c108b3fc289605e96fd654b99c7ab34c348fb",
   "module": "ShellModule",
   "features": [
-    {
-      "id": "home",
-      "label": "home",
-      "component": "HomeComponent"
-    },
-
 <% if (publicPortal) { %>
     {
       "id": "public-portal",
@@ -36,6 +30,11 @@
       "module": "PrivatePortalModule"
     },
 <% } %>
+  {
+      "id": "home",
+      "label": "home",
+      "component": "HomeComponent"
+    },
   ],
   "folders": []
 }

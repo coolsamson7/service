@@ -2,7 +2,7 @@ import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ShellComponent } from './shell.component';
-import { localRoutes } from "./shell.routes";
+import { localRoutes } from "./local.routes";
 
 import {
     AbstractModule,
