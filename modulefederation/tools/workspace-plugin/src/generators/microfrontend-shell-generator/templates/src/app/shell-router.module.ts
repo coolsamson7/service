@@ -3,7 +3,7 @@
 
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { localRoutes } from './shell.routes';
+import { localRoutes } from './local.routes';
 
 
 @NgModule({

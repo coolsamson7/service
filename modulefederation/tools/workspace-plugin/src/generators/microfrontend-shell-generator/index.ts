@@ -49,9 +49,31 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
 
   generateFiles(tree, join(__dirname, "/templates"), projectConfig.root, {
     name: schema.name,
+    publicPortal: schema.generatePublicPortal || false,
+    privatePortal: schema.generatePrivatePortal || false,
     style: schema.style || "scss",
     tmpl: '', // remove __tmpl__ from file endings
   });
+
+  if (schema.generatePrivatePortal === true) {
+    generateFiles(tree, join(__dirname, "/private-portal-templates"), projectConfig.root, {
+        name: schema.name,
+        publicPortal: schema.generatePublicPortal || false,
+        privatePortal: true,
+        style: schema.style || "scss",
+        tmpl: '', // remove __tmpl__ from file endings
+      });
+  }
+
+   if (schema.generatePublicPortal === true) {
+      generateFiles(tree, join(__dirname, "/public-portal-templates"), projectConfig.root, {
+          name: schema.name,
+          publicPortal: true,
+          privatePortal: schema.generatePrivatePortal || false,
+          style: schema.style || "scss",
+          tmpl: '', // remove __tmpl__ from file endings
+        });
+    }
 
   // write files
 
