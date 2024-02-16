@@ -1,0 +1,53 @@
+{
+  "cli": "nx",
+  "id": "feature",
+  "type": "object",
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "Project Name",
+      "$default": {
+        "$source": "projectName"
+      },
+      "x-prompt": "Which project will this generator take care of?",
+      "x-dropdown": "projects"
+    },
+    "name": {
+      "type": "string",
+      "description": "Provide the feature name"
+    },
+    "directory": {
+      "type": "string",
+      "description": "Provide the feature directory"
+    },
+    "style": {
+      "description": "The file extension to be used for style files.",
+      "type": "string",
+      "default": "scss",
+      "enum": ["css", "scss", "sass", "less"],
+      "x-prompt": {
+        "message": "Which stylesheet format would you like to use?",
+        "type": "list",
+        "items": [
+          {
+            "value": "css",
+            "label": "CSS"
+          },
+          {
+            "value": "scss",
+            "label": "SASS(.scss)  [ https://sass-lang.com   ]"
+          },
+          {
+            "value": "sass",
+            "label": "SASS(.sass)  [ https://sass-lang.com   ]"
+          },
+          {
+            "value": "less",
+            "label": "LESS         [ https://lesscss.org     ]"
+          }
+        ]
+      }
+    }
+  },
+  "required": ["projectName", "name"]
+}

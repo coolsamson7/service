@@ -14,6 +14,11 @@
       "implementation": "./src/generators/microfrontend-shell-generator",
       "schema": "./src/generators/microfrontend-shell-generator/schema.json",
       "description": "Generator for microfrontend shell code"
+    },
+    "feature-generator": {
+      "implementation": "./src/generators/feature-generator",
+      "schema": "./src/generators/feature-generator/schema.json",
+      "description": "Generator for features"
     }
   }
 }

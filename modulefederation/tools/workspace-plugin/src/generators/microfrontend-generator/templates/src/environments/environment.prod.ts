@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    admin: {
-        server:  "<%= serverURL %>"
+    backend: {
+        admin:  "<%= serverURL %>"
     }
 };
