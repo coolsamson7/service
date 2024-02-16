@@ -1,14 +1,15 @@
 import { formatFiles, generateFiles, getProjects, joinPathFragments, offsetFromRoot, readProjectConfiguration, Tree, updateJson } from '@nx/devkit';
 import { applicationGenerator } from '@nx/angular/generators';
 
-import { MicrofrontendGeneratorSchema } from './schema';
+import { MicrofrontendShellGeneratorSchema } from './schema';
 import { join } from 'path';
+
 /**
  * main function
  * @param tree the virtual file system
  * @param schema the config
  */
-export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema) {
+export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSchema) {
   // generate standard angular app first
 
   await applicationGenerator(tree, {
