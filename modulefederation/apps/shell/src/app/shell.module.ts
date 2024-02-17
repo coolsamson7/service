@@ -42,7 +42,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   // implement
 
   getEndpoint(domain : string) : string {
-    return this.configuration.get<string>(domain + '.server')!
+    return this.configuration.get<string>("backend." + domain)!
   }
 }
 

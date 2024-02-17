@@ -44,6 +44,26 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
     return json;
   });
 
+   // modify project.json
+
+   const projectJsonPath = join(projectConfig.root, './project.json')
+
+   updateJson(tree, projectJsonPath, json => {
+    json.targets.build.executor = "@nx/angular:webpack-browser"
+    json.targets.serve.executor = "@nx/angular:dev-server"
+
+     json.targets.build.options.customWebpackConfig = {
+        "path":  join(projectConfig.root, './webpack.config.js')
+       }
+
+      json.targets.build.configurations.production.customWebpackConfig = {
+         "path":  join(projectConfig.root, './webpack.config.js')
+       }
+
+     return json;
+   });
+
+
   // let's generate some files
 
   generateFiles(tree, join(__dirname, "/templates"), projectConfig.root, {

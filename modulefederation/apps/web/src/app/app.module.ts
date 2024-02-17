@@ -71,7 +71,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   // implement
 
   getEndpoint(domain : string) : string {
-    return this.configuration.get<string>(domain + '.server')!
+    return this.configuration.get<string>("backend." + domain)!
   }
 }
 
@@ -192,7 +192,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         SharedModule.forRoot(),
         OAuthModule.forRoot({
             resourceServer: {
-                allowedUrls: [environment.admin.server + '/administration'], // no service available yet...
+                allowedUrls: [environment.backend.admin + '/administration'], // no service available yet...
                 sendAccessToken: true
             }
         }),

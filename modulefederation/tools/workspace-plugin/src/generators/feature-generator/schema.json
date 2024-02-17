@@ -16,6 +16,22 @@
       "type": "string",
       "description": "Provide the feature name"
     },
+    "parent": {
+      "type": "string",
+      "description": "Provide the feature parent"
+    },
+    "folder": {
+      "type": "string",
+      "description": "Provide the feature folder"
+    },
+    "label": {
+      "type": "string",
+      "description": "Provide the feature label"
+    },
+    "labelKey": {
+      "type": "string",
+      "description": "Provide the feature label key"
+    },
     "directory": {
       "type": "string",
       "description": "Provide the feature directory"
@@ -24,9 +40,29 @@
       "type": "string",
       "description": "Provide the optional path for the router if it differs from the name"
     },
+    "lazyModule": {
+      "type": "string",
+      "description": "Provide the name of the module in case of lazy components"
+    },
     "categories": {
       "type": "string",
-      "description": "Provide the feature directory"
+      "description": "Provide a comma separated list of categories",
+      "pattern":  "\\w+(,\\w+)*"
+    },
+    "permissions": {
+      "type": "string",
+      "description": "Provide a comma separated list of permissions",
+      "pattern":  "\\w+(,\\w+)*"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Provide a comma separated list of tags",
+      "pattern":  "\\w+(,\\w+)*"
+    },
+    "i18n": {
+      "type": "string",
+      "description": "Provide a comma separated list of required i18n namespaces",
+      "pattern":  "\\w+(,\\w+)*"
     },
     "dialogMixin": {
       "type": "boolean",

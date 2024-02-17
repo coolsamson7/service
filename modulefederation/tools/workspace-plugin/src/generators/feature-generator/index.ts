@@ -18,26 +18,7 @@ export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
      return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  const mixins = ["dialogMixin", "commandMixin", "onLocaleChangeMixin", "stateMixin", "viewMixin", "routingMixin", "featureMetadataMixin", "speechCommandsMixin"]
-  const mixinExpressions = ["WithDialogs", "WithCommands", "WithOnLocaleChange", "WithState<any>", "WithWiew", "WithRouting", "WithFeatureMetadata", "WithSpeechCommands"]
-
-  const formatList = (str: string) => {
-    let result = ""
-
-    let first = true
-    for ( let item of str.split(',')) {
-       if ( !first )
-        result += ", "
-
-       result += "\"" + item + "\""
-
-       first = false
-    }
-
-    console.log(result)
-
-    return result
-  }
+  const formatList = (str: string) => str.split(',').map(item => "\"" + item + "\"").join(", ")
 
   const formatSuperclass = () => {
      let superClass = "AbstractFeature"
@@ -58,8 +39,9 @@ export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
      return superClass
   }
 
-  console.log(project)
-  console.log(schema)
+   const mixins = ["dialogMixin", "commandMixin", "onLocaleChangeMixin", "stateMixin", "viewMixin", "routingMixin", "featureMetadataMixin", "speechCommandsMixin"]
+   const mixinExpressions = ["WithDialogs", "WithCommands", "WithOnLocaleChange", "WithState<" + capitalized(schema.name) + "Component" + ">()", "WithWiew", "WithRouting", "WithFeatureMetadata", "WithSpeechCommands"]
+
 
   generateFiles(tree, join(__dirname, "/templates"), join(project.sourceRoot, schema.directory || ""), {
     name: schema.name,
@@ -67,7 +49,7 @@ export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
     feature: schema.name,
     format: {
        formatList: formatList,
-       classPrefix: () => capitalized(schema.name),
+       className: () => capitalized(schema.name) + "Component",
        superclass: formatSuperclass
     },
     selector: schema.name,

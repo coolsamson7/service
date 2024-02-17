@@ -11,7 +11,7 @@ import { AbstractHTTPService, Service } from "@modulefederation/portal";
 import { UserProfile } from "./user-profile.interface";
 
 @Injectable({providedIn: 'root'})
-@Service({domain: "administration", prefix: "/user-administration/"})
+@Service({domain: "admin", prefix: "/user-administration/"})
 export class UserProfileAdministrationService extends AbstractHTTPService {
 	// constructor
 

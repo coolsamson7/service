@@ -53,6 +53,7 @@
     "@nx/playwright": "18.0.2",
     "@nx/plugin": "18.0.2",
     "@nx/web": "18.0.2",
+    "@nx/webpack": "18.0.2",
     "@nx/workspace": "18.0.2",
     "@playwright/test": "^1.41.2",
     "@schematics/angular": "17.1.2",

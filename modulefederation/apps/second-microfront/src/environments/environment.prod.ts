@@ -6,7 +6,7 @@ export const environment = {
         client: 'service',
         scopes: ''
     },
-    administration: {
-        server: 'http://localhost:8083'
+    backend: {
+        admin: 'http://localhost:8083'
     }
 };

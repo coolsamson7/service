@@ -4,7 +4,7 @@ import { StringBuilder } from "../common/string-builder"
 import { TraceLevel, Tracer } from "../tracer"
 import { MethodDescriptor } from "./method-descriptor";
 import { PropertyType } from "./property-descriptor";
-import { PropertyDescriptor } from "./property-descriptor";
+import { PropertyDescriptor } from "./property-descriptor"
 import { FieldDescriptor } from "./field-descriptor";
 import { Decorator } from "./decorator";
 import { InjectProperty } from "./injector";
@@ -29,7 +29,7 @@ export class TypeDescriptor<T=any> {
 
     static forType<T>(type: Type<T>): TypeDescriptor<T> {
         let typeDescriptor = Reflect.getOwnPropertyDescriptor(type, "$descriptor")?.value
-        if (!typeDescriptor) 
+        if (!typeDescriptor)
            Reflect.set(type, "$descriptor", typeDescriptor = new TypeDescriptor<T>(type))
 
         return typeDescriptor
@@ -57,7 +57,7 @@ export class TypeDescriptor<T=any> {
     // public
 
     decorate(instance: any) {
-        for (const decorator of this.decorators) 
+        for (const decorator of this.decorators)
             decorator.decorate(this, instance)
     }
 
@@ -68,7 +68,7 @@ export class TypeDescriptor<T=any> {
     public inject(target: T, injector: Injector): T {
         if (Tracer.ENABLED) Tracer.Trace("type", TraceLevel.HIGH, "inject ", typeof target)
 
-        for (const injectProperty of this.injectors) 
+        for (const injectProperty of this.injectors)
             injectProperty.inject(target, injector)
 
         return target
@@ -81,7 +81,7 @@ export class TypeDescriptor<T=any> {
     }
 
     public addTypeDecorator(decorator: ClassDecorator): TypeDescriptor<T> {
-        if (Tracer.ENABLED) 
+        if (Tracer.ENABLED)
             Tracer.Trace("type", TraceLevel.FULL, "add type decorator {0} to {1}", decorator.name, this.type.name)
 
         this.typeDecorators.push(decorator)
@@ -161,9 +161,6 @@ export class TypeDescriptor<T=any> {
 
         const prototype = Object.getPrototypeOf(type)
 
-        console.log(prototype.name)
-        console.log(prototype.constructor.name)
-
         if (prototype?.name !== "" && prototype?.name !== "Object") {
             this.superClass = TypeDescriptor.forType(prototype)
 
@@ -203,7 +200,7 @@ export class TypeDescriptor<T=any> {
 
         if ( this.superClass)
             builder.append(" extends ").append(this.superClass.type.name)
-        
+
         builder.append("{\n")
 
         for (const field of this.getProperties()) {

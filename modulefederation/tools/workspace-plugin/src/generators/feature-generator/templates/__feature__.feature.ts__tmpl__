@@ -31,16 +31,51 @@ import {
   Feature
 } from "@modulefederation/portal";
 
+<% if (schema.stateMixin) { %>
+interface <%= format.className() -%>State {
+   // TODO add members here
+}
+<% } -%>
+
 @Feature({
-   id: '<%= name %>',
-<% if (schema.path) { %>
+   id: '<%= name -%>',
+<% if (schema.parent) { %>
+   parent: '<%- schema.parent -%>',
+<% } -%>
+<% if (schema.label) { %>
+   label: '<%- schema.label -%>',
+<% } -%>
+<% if (schema.labelKey) { %>
+   labelKey: '<%- schema.labelKey -%>',
+<% } -%>
+<% if (schema.folder) { %>
+   folder: '<%- schema.folder -%>',
+<% } -%>
+<% if (schema.permissions) { %>
+   permissions: [<%- format.formatList(schema.permissions) %>],
+<% } -%>
+<% if (schema.path ||  schema.lazyModule) { %>
    router: {
-      path:  '<%= schema.path %>'
+<% if (schema.path) { %>
+      path: '<%= schema.path -%>',
+<% } -%>
+<% if (schema.lazyModule) { %>
+      lazyModule: '<%= schema.lazyModule -%>',
+<% } -%>
    },
-<% } %>
+<% } -%>
+<% if (schema.permissions) { %>
+   permissions: [<%- format.formatList(schema.permissions) -%>],
+<% } -%>
 <% if (schema.categories) { %>
-   categories: [<%- format.formatList(schema.categories) %>],
-<% } %>
+   categories: [<%- format.formatList(schema.categories) -%>],
+<% } -%>
+<% if (schema.tags) { %>
+   tags: [<%- format.formatList(schema.tags) -%>],
+<% } -%>
+<% if (schema.i18n) { %>
+   i18n: [<%- format.formatList(schema.i18n) -%>],
+<% } -%>
 })
 @Component({
     standalone: true,
@@ -48,7 +83,7 @@ import {
     templateUrl: './<%= name %>.feature.html',
     styleUrls: ['./<%= name %>.feature.<%= style %>'],
 })
-export class <%= format.classPrefix() %>Component extends <%= format.superclass() %> {
+export class <%= format.className() %> extends <%- format.superclass() -%> {
     // constructor
 
     constructor(injector: Injector) {
@@ -58,7 +93,7 @@ export class <%= format.classPrefix() %>Component extends <%= format.superclass(
 <% if (schema.onLocaleChangeMixin) { %>
      // implement WithOnLocaleChange
 
-     override onLocaleChange(_ : Intl.Locale) : Observable<any> {
+     override onLocaleChange(locale : Intl.Locale) : Observable<any> {
         // TODO
 
         return of()
@@ -67,11 +102,11 @@ export class <%= format.classPrefix() %>Component extends <%= format.superclass(
 <% if (schema.stateMixin) { %>
    // implement WithState
 
-   applyState(state: any) : void {
+   override applyState(state: <%= format.className() -%>State) : void {
       // TODO
    }
 
-   writeState(state: any) : void {
+   override writeState(state: <%= format.className() -%>State) : void {
     // TODO
    }
 <% } %>

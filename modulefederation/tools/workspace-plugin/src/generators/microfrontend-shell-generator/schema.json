@@ -24,26 +24,25 @@
         "index": 0
       },
       "x-prompt": "Where is the portal server?",
-     // "pattern": "^((https?:\/\/)|(www.))(?:([a-zA-Z]+)|(\d+\.\d+.\d+.\d+)):\d{4}$"
+      "pattern": "^((https?:\/\/)|(www.))(?:([a-zA-Z]+)|(\\d+\\.\\d+.\\d+.\\d+)):\\d{4}$"
     },
     "generatePublicPortal": {
       "description": "If yes, a public portal component will be generated.",
       "type": "boolean",
       "default": false,
-      "x-prompt": "Would you like me to generate a public portal component??",
+      "x-prompt": "Would you like me to generate a public portal component??"
     },
     "generatePrivatePortal": {
       "description": "If yes, a private portal component will be generated.",
       "type": "boolean",
       "default": false,
-      "x-prompt": "Would you like me to generate a public private component??",
+      "x-prompt": "Would you like me to generate a public private component??"
     },
     "directory": {
       "description": "The directory of the new application.",
       "type": "string",
       "x-priority": "important"
     },
-
     "style": {
       "description": "The file extension to be used for style files.",
       "type": "string",
