@@ -2,7 +2,7 @@
 
 import { inject } from "@angular/core";
 import { GConstructor } from "../common/lang/constructor.type";
-import { registerMixins } from "../mixin/mixin";
+import { registerMixins } from "../common/lang/mixin";
 import { SpeechCommandManager } from "./speech-command-manager";
 import { CommandAdministration, CommandDescriptor, CommandManager } from "../command";
 import { AbstractFeature } from "../feature";

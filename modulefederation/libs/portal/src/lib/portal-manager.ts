@@ -189,7 +189,7 @@ export class PortalManager {
 
           if (route.children && route.children.length > 0)
             this.linkRoutes(route.children, feature.children!);
-        } 
+        }
         else {
           console.log('did not find feature for path ' + route.path!);
           //throw new Error("did not find feature for path " + route.path!!)
@@ -221,7 +221,9 @@ export class PortalManager {
           route = {
             path: key,
             loadChildren: () =>
-              loadRemoteModule(key, './Module').then((m) => m[module.module]),
+              loadRemoteModule(key, './Module').then((m) => {
+              console.log("loaded remote moudle " + key)
+              return m[module.module]}),
           };
 
           feature.origin = module.remoteEntry;

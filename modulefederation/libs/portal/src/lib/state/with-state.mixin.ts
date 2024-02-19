@@ -3,7 +3,7 @@
 import { equals } from "../common/lang/equals";
 import { GConstructor } from "../common/lang/constructor.type";
 import { AbstractFeature } from "../feature";
-import { hasMixin, registerMixins } from "../mixin/mixin";
+import { hasMixin, registerMixins } from "../common/lang/mixin";
 import { State } from "./state";
 import { Stateful } from "./stateful";
 

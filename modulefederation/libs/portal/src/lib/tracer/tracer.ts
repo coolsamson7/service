@@ -3,7 +3,7 @@ import { Trace } from './trace';
 import { TraceEntry } from './trace-entry';
 import { Injectable } from "@angular/core";
 import { TracerModule } from './tracer.module';
-import { StackFrame, Stacktrace } from '../util';
+import { StackFrame, Stacktrace } from '../common/util';
 
 
 /**

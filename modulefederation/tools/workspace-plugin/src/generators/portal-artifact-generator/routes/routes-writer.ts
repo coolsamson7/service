@@ -8,7 +8,7 @@ export class RoutesWriter {
     // write router module
 
     const routesTemplatePath =
-      'tools/workspace-plugin/src/generators/microfrontend/routes/templates';
+      'tools/workspace-plugin/src/generators/portal-artifact-generator/routes/templates';
 
     let fileName = manifest.module.file;
     fileName = fileName.substring(0, fileName.lastIndexOf('/') + 1);

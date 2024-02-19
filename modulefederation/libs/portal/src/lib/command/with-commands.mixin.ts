@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../mixin/mixin";
+import { registerMixins } from "../common/lang";
 import { Type, TypeDescriptor } from "../reflection";
 import { TraceLevel, Tracer } from "../tracer";
 import { CommandConfig } from "./command-config";

@@ -11,18 +11,24 @@ for the application. Depending on the visibility "private" or "public" it will p
 
 There are additional generators that will help you
 
+## Microfrontend generator
+
+`nx g microfrontend-generator`
+
+will let you scaffold a new microfrontend
+
 ### Feature generator
 
-nx g feature-generator
+`nx g feature-generator`
 
 is used to scaffold new features.
 
 ### Portal artifact generator
 
-nx g portal-artifact-generator
+`nx g portal-artifact-generator`
 
 is used to generate additional code artifacts based on a project, which are
-* webpack.config.js
-* the extracted meta-data in form of a manifest.json
+* `webpack.config.js`
+* the extracted meta-data in form of a `manifest.json`
 * Angular routes and the corresponding modules
 

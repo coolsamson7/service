@@ -1,6 +1,6 @@
 import { AbstractFeature } from "../feature";
 import { FeatureConfig } from "../feature-config";
-import { registerMixins } from "../mixin/mixin";
+import { registerMixins } from "../common/lang/mixin";
 
 type Constructor<T = any> =  new (...args: any[]) => T;
 

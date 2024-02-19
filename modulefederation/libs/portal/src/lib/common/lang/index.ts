@@ -1,4 +1,5 @@
 export * from "./constructor.type"
+export * from "./mixin"
 export * from "./equals"
 export * from "./get"
 export * from "./equals"

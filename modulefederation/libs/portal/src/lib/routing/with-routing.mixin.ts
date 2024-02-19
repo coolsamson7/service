@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../mixin/mixin";
+import { registerMixins } from "../common/lang/mixin";
 import { GConstructor } from "../common/lang/constructor.type";
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from "@angular/router";
 import { FeatureConfig } from "../feature-config";

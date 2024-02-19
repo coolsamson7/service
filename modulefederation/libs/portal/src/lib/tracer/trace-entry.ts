@@ -1,5 +1,5 @@
 
-import { StackFrame } from '../util';
+import { StackFrame } from '../common/util';
 import { TraceLevel } from './trace-level.enum';
 
 /**

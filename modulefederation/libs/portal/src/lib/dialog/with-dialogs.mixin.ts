@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../mixin/mixin";
+import { registerMixins } from "../common/lang/mixin";
 import { DialogService, Dialogs } from "./dialogs";
 import { ComponentType } from "@angular/cdk/portal";
 import { Observable } from "rxjs";

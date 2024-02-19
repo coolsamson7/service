@@ -1,6 +1,6 @@
 import { InjectionToken, Type } from '@angular/core';
 import { ModuleMetadata } from './module.interface';
-import { addProviders } from '../util/add-providers';
+import { addProviders } from '../common/util/add-providers';
 
 /**
  * Abstract decorator for modules.

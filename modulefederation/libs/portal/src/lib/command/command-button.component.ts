@@ -5,7 +5,7 @@ import { CommandDescriptor, CommandListener } from "./command-descriptor";
 import { ExecutionContext } from "./execution-context";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { AbstractFeature } from "../feature";
-import { hasMixin } from "../mixin/mixin";
+import { hasMixin } from "../common/lang";
 import { CommandManager } from "./commands";
 import { WithCommands } from "./with-commands.mixin";
 

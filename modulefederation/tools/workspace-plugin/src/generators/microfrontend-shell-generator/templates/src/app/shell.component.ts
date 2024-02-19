@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FeatureData, FeatureRegistry, SessionManager, Ticket } from "@modulefederation/portal";
 
 @Component({
-    selector: '<%= name %>',
+    selector: 'app-root',
     templateUrl: './shell.component.html',
     styleUrls: ['./shell.component.scss'],
 })

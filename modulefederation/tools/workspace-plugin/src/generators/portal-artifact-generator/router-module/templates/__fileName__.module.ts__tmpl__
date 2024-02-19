@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core'
 import { PortalManager } from "@modulefederation/portal";
 
 <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/microfrontend/router-module/includes/import.tmpl', { feature: feature, execute: execute }) -%>
+          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/router-module/includes/import.tmpl', { feature: feature, execute: execute }) -%>
 <% } %>
 
 export const routes: Routes = [
@@ -18,10 +18,10 @@ export const routes: Routes = [
     },
      <% } %>
      <% for (let feature of features ) if (feature.pageNotFoundFeature !== true) { -%>
-          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/microfrontend/router-module/includes/route.tmpl', { feature: feature, isChild: isChild, rootModule: rootModule, execute: execute }) -%>
+          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/router-module/includes/route.tmpl', { feature: feature, isChild: isChild, rootModule: rootModule, execute: execute }) -%>
      <% } %>
         <% if (pageNotFoundFeature) { -%>
-      <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/microfrontend/router-module/includes/wildcardRoute.tmpl', { feature: pageNotFoundFeature }) -%>
+      <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/router-module/includes/wildcardRoute.tmpl', { feature: pageNotFoundFeature }) -%>
      <% } %>
 ]
 
