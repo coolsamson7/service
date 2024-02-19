@@ -89,7 +89,7 @@
       "description": "Provide the routing mixin",
       "default": false
     },
-    "speechCommandsMixin": {
+    "speechCommandMixin": {
       "type": "boolean",
       "description": "Provide the speech command mixin",
       "default": false

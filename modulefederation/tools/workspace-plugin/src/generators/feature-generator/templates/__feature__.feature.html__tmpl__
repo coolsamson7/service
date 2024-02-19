@@ -1,0 +1,5 @@
+<% if (schema.viewMixin) { -%>
+<view>
+   <!-- add content here -->
+</view>
+<% } %>

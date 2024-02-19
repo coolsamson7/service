@@ -8,6 +8,11 @@ import { join } from 'path';
  * @param schema the config
  */
 export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
+  // validate some settings
+
+  if ( schema.speechCommandMixin)
+     schema.commandMixin
+
   // read project from workspace.json / angular.json
 
   const project = getProjects(tree).get(schema.projectName);
@@ -19,6 +24,9 @@ export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
   }
 
   const formatList = (str: string) => str.split(',').map(item => "\"" + item + "\"").join(", ")
+
+  const mixins = ["dialogMixin", "commandMixin", "onLocaleChangeMixin", "stateMixin", "viewMixin", "routingMixin", "featureMetadataMixin", "speechCommandsMixin"]
+  const mixinExpressions = ["WithDialogs", "WithCommands", "WithOnLocaleChange", "WithState<" + capitalized(schema.name) + "Component" + ">()", "WithView", "WithRouting", "WithFeatureMetaData", "WithSpeechCommands"]
 
   const formatSuperclass = () => {
      let superClass = "AbstractFeature"
@@ -38,10 +46,6 @@ export default async function (tree: Tree, schema: FeatureGeneratorSchema) {
 
      return superClass
   }
-
-   const mixins = ["dialogMixin", "commandMixin", "onLocaleChangeMixin", "stateMixin", "viewMixin", "routingMixin", "featureMetadataMixin", "speechCommandsMixin"]
-   const mixinExpressions = ["WithDialogs", "WithCommands", "WithOnLocaleChange", "WithState<" + capitalized(schema.name) + "Component" + ">()", "WithWiew", "WithRouting", "WithFeatureMetadata", "WithSpeechCommands"]
-
 
   generateFiles(tree, join(__dirname, "/templates"), join(project.sourceRoot, schema.directory || ""), {
     name: schema.name,

@@ -16,6 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@modulefederation/portal": ["libs/portal/src/index.ts"],
+      "mf/Routes": ["mf/src/app/remote-entry/entry.routes.ts"],
+      "mf/mf": ["apps"],
       "workspace-plugin": ["tools/workspace-plugin/src/index.ts"]
     }
   },

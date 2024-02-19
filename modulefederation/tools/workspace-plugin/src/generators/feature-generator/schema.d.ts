@@ -18,7 +18,7 @@ export interface FeatureGeneratorSchema {
   stateMixin?: boolean
   viewMixin?: boolean
   routingMixin?: boolean
-  speechCommandsMixin?: boolean
+  speechCommandMixin?: boolean
   featureMetadataMixin?: boolean
   onLocaleChangeMixin?: boolean
 }

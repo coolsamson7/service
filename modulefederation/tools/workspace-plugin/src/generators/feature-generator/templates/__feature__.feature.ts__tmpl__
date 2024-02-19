@@ -3,28 +3,29 @@ import { Component, Injector } from '@angular/core';
 import { Observable, of } from 'rxjs';
 <% } %>
 import {
-<% if (schema.dialogMixin) { %>
+<% if (schema.dialogMixin) { -%>
    WithDialogs,
 <% } %>
-<% if (schema.commandMixin) { %>
+<% if (schema.commandMixin) { -%>
    WithCommands,
+   Command
 <% } %>
-<% if (schema.onLocaleChangeMixin) { %>
+<% if (schema.onLocaleChangeMixin) { -%>
    WithOnLocaleChange,
 <% } %>
-<% if (schema.stateMixin) { %>
+<% if (schema.stateMixin) { -%>
    WithState,
 <% } %>
-<% if (schema.viewMixin) { %>
+<% if (schema.viewMixin) { -%>
    WithView,
 <% } %>
-<% if (schema.routingMixin) { %>
+<% if (schema.routingMixin) { -%>
    WithRouting,
 <% } %>
-<% if (schema.featureMetadataMixin) { %>
+<% if (schema.featureMetadataMixin) { -%>
    WithFeatureMetadata,
 <% } %>
-<% if (schema.speechCommandsMixin) { %>
+<% if (schema.speechCommandsMixin) { -%>
    WithSpeechCommands,
 <% } %>
   AbstractFeature,
@@ -39,46 +40,42 @@ interface <%= format.className() -%>State {
 
 @Feature({
    id: '<%= name -%>',
-<% if (schema.parent) { %>
+<% if (schema.parent) { -%>
    parent: '<%- schema.parent -%>',
 <% } -%>
-<% if (schema.label) { %>
+<% if (schema.label) { -%>
    label: '<%- schema.label -%>',
 <% } -%>
-<% if (schema.labelKey) { %>
+<% if (schema.labelKey) { -%>
    labelKey: '<%- schema.labelKey -%>',
 <% } -%>
-<% if (schema.folder) { %>
+<% if (schema.folder) { -%>
    folder: '<%- schema.folder -%>',
 <% } -%>
-<% if (schema.permissions) { %>
+<% if (schema.permissions) { -%>
    permissions: [<%- format.formatList(schema.permissions) %>],
 <% } -%>
-<% if (schema.path ||  schema.lazyModule) { %>
+<% if (schema.path ||  schema.lazyModule) { -%>
    router: {
-<% if (schema.path) { %>
+<% if (schema.path) { -%>
       path: '<%= schema.path -%>',
 <% } -%>
-<% if (schema.lazyModule) { %>
+<% if (schema.lazyModule) { -%>
       lazyModule: '<%= schema.lazyModule -%>',
 <% } -%>
    },
 <% } -%>
-<% if (schema.permissions) { %>
-   permissions: [<%- format.formatList(schema.permissions) -%>],
-<% } -%>
-<% if (schema.categories) { %>
+<% if (schema.categories) { -%>
    categories: [<%- format.formatList(schema.categories) -%>],
 <% } -%>
-<% if (schema.tags) { %>
+<% if (schema.tags) { -%>
    tags: [<%- format.formatList(schema.tags) -%>],
 <% } -%>
-<% if (schema.i18n) { %>
+<% if (schema.i18n) { -%>
    i18n: [<%- format.formatList(schema.i18n) -%>],
 <% } -%>
 })
 @Component({
-    standalone: true,
     selector: '<%= name %>',
     templateUrl: './<%= name %>.feature.html',
     styleUrls: ['./<%= name %>.feature.<%= style %>'],
@@ -89,6 +86,17 @@ export class <%= format.className() %> extends <%- format.superclass() -%> {
     constructor(injector: Injector) {
         super(injector);
     }
+
+<% if (schema.commandMixin) { %>
+    // commands
+
+    @Command({
+       label: "Test" // or better i18n!
+    })
+    test() {
+    }
+<% } %>
+
 
 <% if (schema.onLocaleChangeMixin) { %>
      // implement WithOnLocaleChange
