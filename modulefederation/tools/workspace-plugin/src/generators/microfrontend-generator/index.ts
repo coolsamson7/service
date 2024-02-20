@@ -24,6 +24,7 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
 
   // delete existing files
 
+  tree.delete(join(projectConfig.root, './src/app/styles.scss'));
   tree.delete(join(projectConfig.root, './src/app/app.routes.ts')); // replaced by own version
   tree.delete(join(projectConfig.root, './src/app/app.config.ts'));
   tree.delete(join(projectConfig.root, './src/app/app.component.ts'));

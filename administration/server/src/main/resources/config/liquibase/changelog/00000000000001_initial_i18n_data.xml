@@ -40,7 +40,7 @@
             <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="ok.speech" />
             <column name="LOCALE" value="de-DE" />
-            <column name="TRANSLATION" value="ok" />
+            <column name="TRANSLATION" value="okay" />
         </insert>
 
         <insert tableName="MESSAGE">
@@ -54,7 +54,7 @@
             <column name="NAMESPACE" value="portal.commands" />
             <column name="NAME" value="ok.speech" />
             <column name="LOCALE" value="en-US" />
-            <column name="TRANSLATION" value="ok" />
+            <column name="TRANSLATION" value="okay" />
         </insert>
 
         <!-- cancel -->

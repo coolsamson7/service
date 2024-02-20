@@ -221,9 +221,13 @@ export class PortalManager {
           route = {
             path: key,
             loadChildren: () =>
-              loadRemoteModule(key, './Module').then((m) => {
+              loadRemoteModule(key, './Module').
+              then((m) => {
               console.log("loaded remote moudle " + key)
-              return m[module.module]}),
+              return m[module.module]}) .catch(e => {
+                console.log(e)
+                throw e
+              }),
           };
 
           feature.origin = module.remoteEntry;

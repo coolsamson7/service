@@ -4,6 +4,7 @@
 import { Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
+import { PageNotFoundComponent } from './page-not-found.component';
 
 export const localRoutes: Routes = [
   {
@@ -15,5 +16,10 @@ export const localRoutes: Routes = [
     path: 'home',
     component: HomeComponent,
     children: [],
+  },
+  {
+    path: '**',
+    pathMatch: 'full', // ??
+    component: PageNotFoundComponent, 
   },
 ];

@@ -45,7 +45,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
     ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
-    // autentication & authorization
+    // authentication & authorization
 
     SecurityModule.forRoot({}),
 
