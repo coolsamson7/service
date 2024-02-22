@@ -78,8 +78,10 @@ export class PortalManager {
 
     if (this.portalConfig.loader.server)
       loader = this.injector.get(HTTPDeploymentLoader);
+    else if (this.portalConfig.loader.local)
+      loader = new LocalDeploymentLoader(...this.portalConfig.loader.local.remotes);
     else
-      loader = new LocalDeploymentLoader(...this.portalConfig.loader.remotes!);
+       throw new Error("you need to specify either a server  or local loader")
 
     return loader
       .load()
@@ -221,10 +223,9 @@ export class PortalManager {
           route = {
             path: key,
             loadChildren: () =>
-              loadRemoteModule(key, './Module').
-              then((m) => {
-              console.log("loaded remote moudle " + key)
-              return m[module.module]}) .catch(e => {
+              loadRemoteModule(key, './Module')
+              .then(m => m[module.module])
+              .catch(e => {
                 console.log(e)
                 throw e
               }),
@@ -253,7 +254,11 @@ export class PortalManager {
       this.linkRoutes(localRoutes, localFeatures);
     }
 
-    const routes = [...localRoutes, ...lazyRoutes];
+    const pageNotFound = localRoutes.find(route => route.path === "**")
+
+    const routes = pageNotFound === undefined ?
+      [...localRoutes, ...lazyRoutes] :
+      [...localRoutes.filter(route => route !== pageNotFound), ...lazyRoutes, pageNotFound];
 
     // done
 
