@@ -3,6 +3,8 @@
 
 This library is based on spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
 
+By coincidence 😄 while i was busy working on the integrated ui, i thought that refactoring a complete ui framework including a complete microfrontend absed approach woudl be cool as well...Check the associated Wiki for details...
+
 ## Motivation and goals
 
 While there are a number of - mostly spring - libraries
