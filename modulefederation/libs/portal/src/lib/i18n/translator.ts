@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 export type Translations = any;
 
 /**
- * A <code>Translator</code> is repsonsible to load and fetch i18n values given keys that consist of a namespace and a path.
+ * A <code>Translator</code> is responsible to load and fetch i18n values given keys that consist of a namespace and a path.
  */
 export abstract class Translator {
     /**

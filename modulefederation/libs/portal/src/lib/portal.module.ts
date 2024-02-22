@@ -13,9 +13,15 @@ import { AboutModule } from "./about/about.module";
 import { AbstractModule } from "./injection/abstract-module";
 import { CommonModule } from "@angular/common";
 
+export type LocalConfig = {
+  remotes : string[]
+}
+
+export type ServerConfig = any
+
 export type LoaderConfig = {
-    remotes? : string[],
-    server? : boolean
+    server? : ServerConfig,
+    local?: LocalConfig
 }
 export type PortalModuleConfig = {
     loader : LoaderConfig,

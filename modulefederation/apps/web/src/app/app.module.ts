@@ -156,8 +156,10 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
         PortalModule.forRoot({
             loader: {
-                //server: true,
-                remotes: []
+                //server: {},
+                local: {
+                    remotes: []
+                  }
             },
             localRoutes: localRoutes,
             localManifest: localManifest as Manifest,

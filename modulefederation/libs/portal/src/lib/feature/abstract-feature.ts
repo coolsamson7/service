@@ -142,12 +142,12 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
 
   /**
    * add a lifecycle object for a specific phase
-   * @param lifecyle the lifecycle method
+   * @param lifecycle the lifecycle method
    * @protected
    * @see LifecycleAware
    */
-  protected pushLifecycle(lifecyle: LifecycleAware) {
-    this.lifecycleAware.push(lifecyle);
+  protected pushLifecycle(lifecycle: LifecycleAware) {
+    this.lifecycleAware.push(lifecycle);
   }
 
   /**
