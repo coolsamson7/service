@@ -35,6 +35,12 @@
       "label": "home",
       "component": "HomeComponent"
     },
+    {
+       "id": "**",
+       "label": "Page not found",
+       "icon": "language",
+       "component": "PageNotFoundComponent"
+     },
   ],
   "folders": []
 }

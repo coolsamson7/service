@@ -50,14 +50,14 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
 
   updateJson(tree, projectJsonPath, json => {
     json.targets.build.executor = "@nx/angular:webpack-browser"
-    json.targets.serve.executor = "@nx/angular:dev-server"
+    json.targets.serve.executor = "@nx/angular:module-federation-dev-server"
 
     json.targets.build.options.customWebpackConfig = {
        "path":  join(projectConfig.root, './webpack.config.js')
       }
 
      json.targets.build.configurations.production.customWebpackConfig = {
-        "path":  join(projectConfig.root, './webpack.config.js')
+        "path":  join(projectConfig.root, './webpack.prod.config.js')
       }
 
     return json;
