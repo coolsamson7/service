@@ -25,7 +25,8 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
 
   // delete existing files
 
-  tree.delete(join(projectConfig.root, './src/app/styles.scss'));
+  tree.delete(join(projectConfig.root, './src/index.html'));
+  tree.delete(join(projectConfig.root, './src/styles.scss'));
   tree.delete(join(projectConfig.root, './src/app/app.routes.ts')); // replaced by own version
   tree.delete(join(projectConfig.root, './src/app/app.config.ts'));
   tree.delete(join(projectConfig.root, './src/app/app.component.ts'));
@@ -49,6 +50,7 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
   const projectJsonPath = join(projectConfig.root, './project.json')
 
   updateJson(tree, projectJsonPath, json => {
+    //json.targets.serve.options.liveReload = false //  not here, right?
     json.targets.build.executor = "@nx/angular:webpack-browser"
     json.targets.serve.executor = "@nx/angular:module-federation-dev-server"
 

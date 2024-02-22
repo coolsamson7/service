@@ -22,9 +22,10 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
 
   const projectConfig = getProjects(tree).get(schema.name);
 
-  // delete existing files
+  // delete existing files ( also those that we will recreate )
 
-  tree.delete(join(projectConfig.root, './src/app/styles.scss'));
+  tree.delete(join(projectConfig.root, './src/index.html'));
+  tree.delete(join(projectConfig.root, './src/styles.scss'));
   tree.delete(join(projectConfig.root, './src/app/app.routes.ts')); // replaced by own version
   tree.delete(join(projectConfig.root, './src/app/app.config.ts'));
   tree.delete(join(projectConfig.root, './src/app/app.component.ts'));
@@ -50,6 +51,7 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
    const projectJsonPath = join(projectConfig.root, './project.json')
 
    updateJson(tree, projectJsonPath, json => {
+    json.targets.serve.options.liveReload = false // WTF
     json.targets.build.executor = "@nx/angular:webpack-browser"
     json.targets.serve.executor = "@nx/angular:dev-server"
 
@@ -58,7 +60,7 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
        }
 
       json.targets.build.configurations.production.customWebpackConfig = {
-         "path":  join(projectConfig.root, './webpack.config.js')
+         "path":  join(projectConfig.root, './webpack.prod.config.js')
        }
 
      return json;
