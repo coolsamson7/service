@@ -19,7 +19,6 @@ export const localRoutes: Routes = [
   },
   {
     path: '**',
-    pathMatch: 'full', // ??
-    component: PageNotFoundComponent, 
+    component: PageNotFoundComponent,
   },
 ];

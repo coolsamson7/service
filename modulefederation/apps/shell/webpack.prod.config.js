@@ -15,7 +15,7 @@ module.exports = withModuleFederation({
   name: 'shell',
   exposes: {
     './Module': 'apps/shell/src/app/shell.module.ts',
-  },
+  },/*
   shared: (libraryName, defaultConfig) => {
     if (coreLibraries.has(libraryName)) {
       console.log('shell share ' + libraryName);
@@ -27,5 +27,5 @@ module.exports = withModuleFederation({
     // Returning false means the library is not shared.
 
     return false;
-  },
+  },*/
 });

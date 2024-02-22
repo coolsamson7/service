@@ -222,8 +222,7 @@ export class PortalManager {
         if (!route) {
           route = {
             path: key,
-            loadChildren: () =>
-              loadRemoteModule(key, './Module')
+            loadChildren: () => loadRemoteModule(key, './Module')
               .then(m => m[module.module])
               .catch(e => {
                 console.log(e)
