@@ -10,7 +10,7 @@ import { Routes, RouterModule } from '@angular/router'
 export const localRoutes: Routes = [
    {
       path: '',
-      redirectTo: '<%= features.find(f => f.isDefault === true) || features[0].id %>',
+      redirectTo: '<%= features.find(f => f.isDefault === true)?.id || features[0].id %>',
       pathMatch: 'full'
     },
      <% for (let feature of features ) if (feature.isPageNotFound !== true) { -%>

@@ -17,7 +17,7 @@
       "module": "PublicPortalModule"
     },
 <% } %>
-<% if (publicPortal) { %>
+<% if (privatePortal) { %>
     {
       "id": "private-portal",
       "label": "private-portal",

@@ -1,4 +1,8 @@
 module.exports = {
     name: '<%= name %>',
     remotes: [],
+    exposes: {
+        './Module':
+          'apps/<%= name %>/src/app/shell.module.ts',
+      },
 };

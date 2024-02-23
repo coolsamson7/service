@@ -318,15 +318,13 @@ export class ManifestGenerator {
 
       // create feature
 
-      if (decorator.isPageNotFound) console.log('KHKJHKJHKHJKHJKHJ');
-
       feature = {
         fqn: decorator.id, // new
         id: decorator.id,
         label: decorator.label || (decorator.labelKey ? '' : decorator.id),
         labelKey: decorator.labelKey || '',
         i18n: decorator.i18n || [],
-        isPageNotFound: decorator.isPageNotFound,
+        //isPageNotFound: decorator.isPageNotFound || decorator.id == "**",
         icon: decorator.icon || '',
         folder: decorator.folder || '',
         router: decorator.router || null,
@@ -340,6 +338,12 @@ export class ManifestGenerator {
         file: this.file(data.file),
         relative: this.relativeImport(modulePath, this.path(data.file)),
       };
+
+      if (decorator.isPageNotFound || decorator.id == "**")
+        feature.isPageNotFound = true
+
+      if (decorator.isDefault == true)
+        feature.isDefault = true
 
       // check for lazy modules
 
@@ -383,8 +387,10 @@ export class ManifestGenerator {
 
         parent = mapFeature(decorator);
 
-        if (!parent.children) parent.children = [feature];
-        else parent.children.push(feature);
+        if (!parent.children)
+           parent.children = [feature];
+        else
+           parent.children.push(feature);
       }
 
       // done
@@ -394,13 +400,29 @@ export class ManifestGenerator {
 
     // traverse
 
-    for (const feature of features) mapFeature(feature);
+    for (const feature of features)
+       mapFeature(feature);
 
-    // done
+    // find root features
 
     features = features
       .filter((data) => !data.data.parent)
       .map((data) => result[data.data.id]);
+
+    // sort alphabetically, so the generators are stable
+
+    let sortFeatures = (features: any[]) => {
+      features.sort((a, b) => a.id.localeCompare(b.id))
+
+      // recursion
+
+      for ( let feature of features)
+         if ( feature.children &&  feature.children.length > 0)
+            sortFeatures(feature.children)
+    }
+
+    sortFeatures(features)
+
     // make sure the "" feature comes first since it will get a special handling
 
     const index = features.find((feature) => feature.id == '');

@@ -1,9 +1,4 @@
 const { withModuleFederation } = require('@nx/angular/module-federation');
+const config = require('./module-federation.config');
 
-module.exports = withModuleFederation({
-  name: '<%= name %>',
-  exposes: {
-    './Module':
-      'apps/<%= name %>/src/app/shell.module.ts',
-  },
-});
+module.exports = withModuleFederation(config);

@@ -24,7 +24,7 @@
         "index": 0
       },
       "x-prompt": "Where is the portal server?",
-      //"pattern": "^((https?:\/\/)|(www.))(?:([a-zA-Z]+)d+.d+.d+.d+)):d{4})$"
+      "pattern": "^((https?:\/\/)|(www.))(?:([a-zA-Z]+)|(\\d+\\.\\d+.\\d+.\\d+)):\\d{4}$"
     },
     "generatePublicPortal": {
       "description": "If yes, a public portal component will be generated.",
