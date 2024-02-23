@@ -217,6 +217,7 @@ export class FeatureRegistry implements OnLocaleChange {
 export class FeatureFinder {
     // instance data
 
+    private filter = ""
     private filters : FeatureFilter[] = []
 
     // constructor
@@ -230,26 +231,35 @@ export class FeatureFinder {
     // fluent
 
     withId(id : string) : FeatureFinder {
+        this.filter += " id='" + id + "'"
         this.filters.push((feature) => feature.id == id)
         return this
     }
 
     withVisibility(visibility : Visibility) : FeatureFinder {
+        this.filter += " visibility includes '" + visibility + "'"
+
         this.filters.push((feature) => feature.visibility!.includes(visibility))
         return this
     }
 
     withTag(tag : string) : FeatureFinder {
+        this.filter += " tags includes '" + tag + "'"
+
         this.filters.push((feature) => feature.tags!.includes(tag))
         return this
     }
 
     withoutFolder() : FeatureFinder {
+        this.filter += " without folder"
+
         this.filters.push((feature) => feature.folder === undefined || feature.folder == "")
         return this
     }
 
     withEnabled(enabled = true) : FeatureFinder {
+        this.filter += " enabled = " + enabled
+
         this.filters.push((feature) => {
             if (feature.enabled !== null)
                 return feature.enabled == enabled
@@ -260,16 +270,29 @@ export class FeatureFinder {
     }
 
     withPermission(permission : string) : FeatureFinder {
+        this.filter += " permissions includes '" + permission + "'"
+
         this.filters.push((feature) => feature.permissions!.includes(permission))
         return this
     }
 
     withCategory(category : string) : FeatureFinder {
+        this.filter += " category includes '" + category + "'"
+
         this.filters.push((feature) => feature.categories!.includes(category))
         return this
     }
 
     // public
+
+    findOne() : FeatureData {
+       const result = this.find()
+
+       if ( result.length == 1)
+          return result[0]
+       else
+          throw new Error("expected 1 feature with filter" + this.filter + ", got " + result.length)
+    }
 
     find() : FeatureData[] {
         return this.featureRegistry.findFeatures((feature) => {

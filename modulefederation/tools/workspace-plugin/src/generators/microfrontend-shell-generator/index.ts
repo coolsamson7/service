@@ -50,9 +50,19 @@ export default async function (tree: Tree, schema: MicrofrontendShellGeneratorSc
   const projectJsonPath = join(projectConfig.root, './project.json')
 
   updateJson(tree, projectJsonPath, json => {
+    json.targets.build.options.styles.push("node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css")
+
     //json.targets.serve.options.liveReload = false //  not here, right?
-    json.targets.build.executor = "@nx/angular:webpack-browser"
-    json.targets.serve.executor = "@nx/angular:module-federation-dev-server"
+
+    if (  json.targets.build.executor !== "@nx/angular:webpack-browser") {
+      console.log("switched build executor from " + json.targets.build.executor + " to @nx/angular:webpack-browser")
+      json.targets.build.executor = "@nx/angular:webpack-browser"
+    }
+
+    if (  json.targets.serve.executor !== "@nx/angular:module-federation-dev-server") {
+      console.log("switched serve executor from " + json.targets.serve.executor + " to @nx/angular:module-federation-dev-server")
+      json.targets.serve.executor = "@nx/angular:module-federation-dev-server"
+    }
 
     json.targets.build.options.customWebpackConfig = {
        "path":  join(projectConfig.root, './webpack.config.js')

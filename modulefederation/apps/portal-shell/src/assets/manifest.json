@@ -1,19 +1,21 @@
 {
-  "name": "shell",
-  "version": "0.1",
-  "commitHash": "253c108b3fc289605e96fd654b99c7ab34c348fb",
+  "name": "modulefederation",
+  "version": "0.0.0",
+  "commitHash": "204f5ae1f41b27510d3f820e182135b8efcaf1ed",
   "module": "ShellModule",
   "features": [
-    {
-      "id": "home",
-      "label": "home",
-      "component": "HomeComponent"
-    },
     {
       "id": "**",
       "label": "Page not found",
       "icon": "language",
-      "component": "PageNotFoundComponent"
+      "component": "PageNotFoundComponent",
+      "isPageNotFound": true
+    },
+    {
+      "id": "home",
+      "label": "home",
+      "component": "HomeComponent",
+      "isDefault": true
     }
   ],
   "folders": []

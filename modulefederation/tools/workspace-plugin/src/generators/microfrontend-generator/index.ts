@@ -51,17 +51,29 @@ export default async function (tree: Tree, schema: MicrofrontendGeneratorSchema)
    const projectJsonPath = join(projectConfig.root, './project.json')
 
    updateJson(tree, projectJsonPath, json => {
-    json.targets.serve.options.liveReload = false // WTF
-    json.targets.build.executor = "@nx/angular:webpack-browser"
-    json.targets.serve.executor = "@nx/angular:dev-server"
+     json.targets.build.options.styles.push("node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css")
+
+     // WHAT THE FUCK!!!!
+
+     json.targets.serve.options.liveReload = false
+
+     if (json.targets.build.executor !== "@nx/angular:webpack-browser") {
+       console.log("switched build executor from " + json.targets.build.executor + " to @nx/angular:webpack-browser")
+       json.targets.build.executor = "@nx/angular:webpack-browser"
+     }
+
+     if ( json.targets.serve.executor !== "@nx/angular:dev-server") {
+       console.log("switched serve executor from " + json.targets.serve.executor + " to @nx/angular:dev-server")
+       json.targets.serve.executor = "@nx/angular:dev-server"
+     }
 
      json.targets.build.options.customWebpackConfig = {
         "path":  join(projectConfig.root, './webpack.config.js')
-       }
+     }
 
-      json.targets.build.configurations.production.customWebpackConfig = {
-         "path":  join(projectConfig.root, './webpack.prod.config.js')
-       }
+     json.targets.build.configurations.production.customWebpackConfig = {
+        "path":  join(projectConfig.root, './webpack.prod.config.js')
+     }
 
      return json;
    });

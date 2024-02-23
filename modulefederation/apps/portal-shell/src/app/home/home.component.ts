@@ -3,6 +3,7 @@ import { AbstractFeature, Feature } from '@modulefederation/portal';
 
 @Feature({
   id: 'home',
+  isDefault: true,
 })
 @Component({
   standalone: true,

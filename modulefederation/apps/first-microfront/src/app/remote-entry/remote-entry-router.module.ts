@@ -14,17 +14,17 @@ export const routes: Routes = [
     children: [],
   },
   {
-    path: 'public-portal',
-    loadChildren: () =>
-      import('./public-portal/public-portal.module').then(
-        (m) => m.PublicPortalModule
-      ),
-  },
-  {
     path: 'private-portal',
     loadChildren: () =>
       import('./private-portal/private-portal.module').then(
         (m) => m.PrivatePortalModule
+      ),
+  },
+  {
+    path: 'public-portal',
+    loadChildren: () =>
+      import('./public-portal/public-portal.module').then(
+        (m) => m.PublicPortalModule
       ),
   },
 ];

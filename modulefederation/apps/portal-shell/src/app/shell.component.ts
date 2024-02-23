@@ -23,9 +23,7 @@ export class ShellComponent {
     private featureRegistry: FeatureRegistry,
     private sessionManager: SessionManager<any, Ticket>
   ) {
-    featureRegistry.registry$.subscribe(
-      (registry) => (this.portal = this.determinePortal())
-    );
+    featureRegistry.registry$.subscribe(registry => (this.portal = this.determinePortal()));
 
     this.portal = this.determinePortal();
   }
@@ -33,17 +31,10 @@ export class ShellComponent {
   // constructor
 
   determinePortal(): FeatureData {
-    const portals = this.featureRegistry
+    return this.featureRegistry
       .finder()
       .withTag('portal')
       .withVisibility(this.sessionManager.hasSession() ? 'private' : 'public')
-      .find();
-
-    if (portals.length == 0)
-      throw new Error("there must be a feature with tag 'portal'");
-    else if (portals.length > 1)
-      throw new Error("there must be exactly one feature with tag 'portal'");
-
-    return portals[0];
+      .findOne()
   }
 }
