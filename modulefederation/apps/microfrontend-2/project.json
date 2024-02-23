@@ -1,0 +1,92 @@
+{
+  "name": "microfrontend-2",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/microfrontend-2/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/microfrontend-2",
+        "index": "apps/microfrontend-2/src/index.html",
+        "main": "apps/microfrontend-2/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/microfrontend-2/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/microfrontend-2/src/favicon.ico",
+          "apps/microfrontend-2/src/assets"
+        ],
+        "styles": ["apps/microfrontend-2/src/styles.scss"],
+        "scripts": [],
+        "customWebpackConfig": {
+          "path": "apps/microfrontend-2/webpack.config.js"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all",
+          "customWebpackConfig": {
+            "path": "apps/microfrontend-2/webpack.prod.config.js"
+          }
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:dev-server",
+      "options": {
+        "port": 4202,
+        "liveReload": false
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "microfrontend-2:build:production"
+        },
+        "development": {
+          "buildTarget": "microfrontend-2:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "microfrontend-2:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/microfrontend-2/jest.config.ts"
+      }
+    }
+  }
+}

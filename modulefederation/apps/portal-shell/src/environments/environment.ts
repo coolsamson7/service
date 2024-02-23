@@ -1,0 +1,6 @@
+export const environment = {
+  production: false,
+  backend: {
+    admin: 'http://localhost:8083',
+  },
+};

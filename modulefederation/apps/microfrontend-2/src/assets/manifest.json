@@ -1,0 +1,40 @@
+{
+  "name": "microfrontend-2",
+  "commitHash": "253c108b3fc289605e96fd654b99c7ab34c348fb",
+  "version": "0.1",
+  "module": "RemoteEntryModule",
+  "features": [
+    {
+      "id": "public-portal",
+      "label": "public-portal",
+      "router": {
+        "lazyModule": "PublicPortalModule"
+      },
+      "component": "PublicPortalComponent",
+      "tags": ["portal"],
+      "visibility": ["public"],
+      "module": "PublicPortalModule"
+    },
+
+    {
+      "id": "private-portal",
+      "label": "private-portal",
+      "router": {
+        "lazyModule": "PrivatePortalModule"
+      },
+      "component": "PrivatePortalComponent",
+      "tags": ["portal"],
+      "visibility": ["private"],
+      "module": "PrivatePortalModule"
+    },
+
+    {
+      "id": "",
+      "label": "microfrontend-2",
+      "component": "RemoteEntryComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    }
+  ],
+  "folders": []
+}
