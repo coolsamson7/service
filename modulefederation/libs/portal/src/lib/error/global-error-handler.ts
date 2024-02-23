@@ -1,11 +1,5 @@
-import { ErrorHandler, Injectable, NgZone } from "@angular/core";
-import { ErrorContext, ErrorManager } from "@modulefederation/portal";
-
-export interface ErrorEntry {
-  date: Date,
-  error: any,
-  context: ErrorContext
-}
+import { Injectable, ErrorHandler, NgZone } from "@angular/core"
+import { ErrorManager } from "./error-manager"
 
 @Injectable({ providedIn: 'root' })
 export class GlobalErrorHandler extends ErrorHandler {

@@ -2,7 +2,7 @@
 import { Component, HostListener, Injectable, Injector, ViewChild, forwardRef } from '@angular/core';
 import {
   AboutDialogService, AbstractFeature, Command, DialogService, ErrorContext,
-  ErrorHandler, FeatureManager, FeatureRegistry, HandleError,
+  HandleError,
   HelpAdministrationService,
   LocaleManager,
   SessionManager,
@@ -16,18 +16,16 @@ import {
 } from "@modulefederation/portal";
 import { MessageBus } from "./message-bus/message-bus";
 import { ErrorDialog } from "./error/error-dialog";
-import { ErrorEntry } from "./error/global-error-handler";
-import { ErrorStorage } from "./error/error-storage";
+import { ErrorEntry, ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
 import { ResizeEvent } from 'angular-resizable-element';
 import { MatIconButton } from '@angular/material/button';
 
 @Injectable({ providedIn: 'root' })
-@ErrorHandler()
-export class Handler {
+export class ApplicationErrorHandler {
   // constructor
 
-  constructor(private errorStorage: ErrorStorage, private dialog: DialogService, private messageBus: MessageBus) {
+  constructor( private errorStorage: ErrorStorage, private dialog: DialogService, private messageBus: MessageBus) {
   }
 
   // private

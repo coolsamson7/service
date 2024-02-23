@@ -10,7 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, Injectable, Injector, NgModule } from '@angular/core';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
-import { AppComponent } from './app.component';
+import { AppComponent, ApplicationErrorHandler } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,8 +27,7 @@ import {
   ConsoleTrace,
   EndpointLocator,
   ErrorModule,
-  FeatureReuseStrategy,
-  HTTPErrorInterceptor, I18nModule, I18nResolver, LocaleModule,
+  I18nModule, I18nResolver, LocaleModule,
   Manifest,
   OIDCAuthentication, OIDCModule,
   OIDCSessionManager,
@@ -52,7 +51,6 @@ import * as localManifest from "../assets/manifest.json"
 import { ComponentsModule } from "./components/components.module";
 import { authConfig } from './auth.config';
 import { TranslationModule } from "./translation/translation.module";
-import { GlobalErrorHandler } from './error/global-error-handler';
 import { UserComponent } from "./header/user/user.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -83,14 +81,6 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         AppComponent
     ],
     providers: [
-        /*{
-          provide: ErrorHandler,
-          useClass: GlobalErrorHandler
-        },*/
-        {
-            provide: RouteReuseStrategy,
-            useClass: FeatureReuseStrategy
-        },
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: { duration: 2500 }
@@ -99,15 +89,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             provide: EndpointLocator,
             useClass: ApplicationEndpointLocator
         },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HTTPErrorInterceptor,
-            multi: true
-        }
     ],
     bootstrap: [AppComponent],
     imports: [
         ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
+
+        ErrorModule.forRoot({
+           handler: [ApplicationErrorHandler]
+        }),
 
         TracerModule.forRoot({
             enabled: environment.production !== true,

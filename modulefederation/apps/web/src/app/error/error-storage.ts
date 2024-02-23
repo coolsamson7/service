@@ -1,5 +1,11 @@
 import { Injectable } from "@angular/core";
-import { ErrorEntry } from "./global-error-handler";
+import { ErrorContext } from "@modulefederation/portal";
+
+export interface ErrorEntry {
+  date: Date,
+  error: any,
+  context: ErrorContext
+}
 
 @Injectable({ providedIn: 'root' })
 export class ErrorStorage {

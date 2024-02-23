@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { catchError, finalize, Observable } from 'rxjs';
-import { ErrorManager } from '@modulefederation/portal';
+import { ErrorManager } from './error-manager';
 
 /**
  * http interceptor that will remember the request details as an error context.

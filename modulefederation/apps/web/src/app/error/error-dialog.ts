@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/materia
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { I18nModule, PortalComponentsModule } from "@modulefederation/portal";
-import { ErrorEntry } from "./global-error-handler";
+import { ErrorEntry } from "./error-storage";
 
 export interface ErrorDialogConfig {
   title: string,

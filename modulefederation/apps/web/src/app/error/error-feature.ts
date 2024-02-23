@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
 import { AbstractFeature, Feature, StackFrame, Stacktrace } from "@modulefederation/portal";
-import { ErrorStorage } from "./error-storage";
+import { ErrorEntry, ErrorStorage } from "./error-storage";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -8,7 +8,6 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
-import { ErrorEntry } from "./global-error-handler";
 import { AngularSplitModule } from "angular-split";
 
 @Component({
