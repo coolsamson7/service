@@ -15,23 +15,20 @@ import {
 export class ShellComponent {
   // instance data
 
-  portal: FeatureData | undefined = undefined;
+  portal: FeatureData
 
   // private
 
-  constructor(
-    private featureRegistry: FeatureRegistry,
-    private sessionManager: SessionManager<any, Ticket>
-  ) {
-    featureRegistry.registry$.subscribe(registry => (this.portal = this.determinePortal()));
+  constructor(featureRegistry: FeatureRegistry, private sessionManager: SessionManager<any, Ticket>) {
+    featureRegistry.registry$.subscribe(registry => (this.portal = this.determinePortal(featureRegistry)));
 
-    this.portal = this.determinePortal();
+    this.portal = this.determinePortal(featureRegistry);
   }
 
   // constructor
 
-  determinePortal(): FeatureData {
-    return this.featureRegistry
+  determinePortal(featureRegistry: FeatureRegistry): FeatureData {
+    return featureRegistry
       .finder()
       .withTag('portal')
       .withVisibility(this.sessionManager.hasSession() ? 'private' : 'public')

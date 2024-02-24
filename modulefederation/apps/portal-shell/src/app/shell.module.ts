@@ -24,6 +24,12 @@ import {
   ConfigurationModule,
   ConfigurationManager,
   ValueConfigurationSource,
+  ErrorModule,
+  ErrorContext,
+  HandleError,
+  ErrorManager,
+  CommandModule,
+  CommandErrorInterceptor,
 } from '@modulefederation/portal';
 import { Route } from '@angular/router';
 
@@ -48,6 +54,52 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   }
 }
 
+class FooError extends Error {
+   constructor(message: string) {
+      super(message)
+   }
+}
+
+@Injectable({ providedIn: 'root' })
+export class ErrorHandler {
+  // handler
+
+  @HandleError()
+  handleAny(error: any, context: ErrorContext) {
+    console.log("ouch, any")
+
+    ErrorManager.proceed()
+  }
+
+  @HandleError()
+  handleObject(error: Object, context: ErrorContext) {
+    console.log("ouch, Object")
+
+    ErrorManager.proceed()
+  }
+
+  @HandleError()
+  handleFooError(error: FooError, context: ErrorContext) {
+    console.log("ouch, FooError")
+
+    ErrorManager.proceed()
+  }
+
+  @HandleError()
+  handleString(error: string, context: ErrorContext) {
+    console.log("ouch, string")
+
+    ErrorManager.proceed()
+  }
+
+  @HandleError()
+  handleError(error: Error, context: ErrorContext) {
+    console.log("ouch, Error")
+
+    ErrorManager.proceed()
+  }
+}
+
 @Shell({
   name: 'portal-shell',
 })
@@ -56,6 +108,18 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   imports: [
     BrowserModule,
     ShellRouterModule,
+
+    // error
+
+    ErrorModule.forRoot({
+      handler: [ErrorHandler]
+    }),
+
+    // commands
+
+    CommandModule.forRoot({
+      interceptors: [CommandErrorInterceptor]
+    }),
 
     // configuration
 
@@ -75,6 +139,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
       trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
       paths: {
         portal: TraceLevel.FULL,
+        error: TraceLevel.FULL
       },
     }),
 
@@ -122,5 +187,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 export class ShellModule extends AbstractModule() {
   constructor(injector: Injector) {
     super(injector);
+
+    injector.get(ErrorManager).handle(new FooError("ocuh"))
+    injector.get(ErrorManager).handle("ouch")
+    injector.get(ErrorManager).handle({})
   }
 }

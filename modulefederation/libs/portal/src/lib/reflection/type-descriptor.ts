@@ -3,12 +3,11 @@
 import { StringBuilder } from "../common/util/string-builder"
 import { TraceLevel, Tracer } from "../tracer"
 import { MethodDescriptor } from "./method-descriptor";
-import { PropertyType } from "./property-descriptor";
 import { PropertyDescriptor } from "./property-descriptor"
-import { FieldDescriptor } from "./field-descriptor";
 import { Decorator } from "./decorator";
 import { InjectProperty } from "./injector";
 import { Injector } from "@angular/core";
+import { MemberDescriptor, PropertyType } from "./member-descriptor";
 
 export declare const Type: FunctionConstructor
 
@@ -40,10 +39,11 @@ export class TypeDescriptor<T=any> {
     superClass: TypeDescriptor<T> | undefined = undefined
 
     public typeDecorators: ClassDecorator[] = []
-    private allProperties : { [name: string]: PropertyDescriptor } = {}
-    private properties: { [name: string]: PropertyDescriptor } = {}
+    private allMembers : { [name: string]: MemberDescriptor } = {}
+    private members: { [name: string]: MemberDescriptor } = {}
     private injectors: InjectProperty[] = []
     private decorators: Decorator[] = []
+    private constructorMethod! : MethodDescriptor
 
     // constructor
 
@@ -110,10 +110,10 @@ export class TypeDescriptor<T=any> {
         if (Tracer.ENABLED)
             Tracer.Trace("type", TraceLevel.FULL, "add property decorator {0} to property {1}.{2}", decorator.name, this.type.name, property)
 
-        let descriptor = this.properties[property] as FieldDescriptor
+        let descriptor = this.members[property] as PropertyDescriptor
         if (!descriptor) {
             // @ts-ignore
-          this.properties[property] = descriptor = new FieldDescriptor(property)
+          this.properties[property] = descriptor = new PropertyDescriptor(property)
         }
 
         descriptor.addDecorator(decorator)
@@ -128,30 +128,48 @@ export class TypeDescriptor<T=any> {
         return this
     }
 
-    public filterMethods(filter: (method: MethodDescriptor) => boolean, all = true) : MethodDescriptor[] {
-        return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties)
+    public filterMethods(filter: (method: MethodDescriptor) => boolean) : MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(this.allMembers)
             .filter((property) => property.is(PropertyType.METHOD))
             .filter(method => filter(<MethodDescriptor>method))
     }
 
-    public getMethods(all = true): MethodDescriptor[] {
-        return <MethodDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.METHOD))
+    public filterOwnMethods(filter: (method: MethodDescriptor) => boolean) : MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(this.members)
+            .filter((property) => property.is(PropertyType.METHOD))
+            .filter(method => filter(<MethodDescriptor>method))
     }
 
-    public getProperties(all = true): FieldDescriptor[] {
-        return <FieldDescriptor[]>Object.values(all ? this.allProperties : this.properties).filter((property) => property.is(PropertyType.FIELD))
+    public getMethods(): MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(this.allMembers).filter((property) => property.is(PropertyType.METHOD))
+    }
+
+    public getOwnMethods(): MethodDescriptor[] {
+        return <MethodDescriptor[]>Object.values(this.members).filter((property) => property.is(PropertyType.METHOD))
+    }
+
+    public getProperties(): PropertyDescriptor[] {
+        return <PropertyDescriptor[]>Object.values(this.allMembers).filter((property) => property.is(PropertyType.FIELD))
+    }
+
+    public getOwnProperties(): PropertyDescriptor[] {
+        return <PropertyDescriptor[]>Object.values(this.members).filter((property) => property.is(PropertyType.FIELD))
     }
 
     public getConstructor(): MethodDescriptor {
-        return <MethodDescriptor>Object.values(this.properties).reverse().find((property) => property.is(PropertyType.CONSTRUCTOR))
+        return this.constructorMethod
     }
 
-    public getMethod(name: string, all = true): MethodDescriptor | undefined {
-        return  (all ? this.allProperties : this.properties)[name]?.asMethodDescriptor()
+    public getMethod(name: string): MethodDescriptor | undefined {
+        return this.allMembers[name]?.asMethodDescriptor()
     }
 
-    public getField(name: string,  all = true): FieldDescriptor | undefined {
-      return  (all ? this.allProperties : this.properties)[name]?.asFieldDescriptor()
+    public getOwnMethod(name: string): MethodDescriptor | undefined {
+        return this.members[name]?.asMethodDescriptor()
+    }
+
+    public getProperty(name: string): PropertyDescriptor | undefined {
+      return this.allMembers[name]?.asPropertyDescriptor()
     }
 
     // private
@@ -164,7 +182,7 @@ export class TypeDescriptor<T=any> {
         if (prototype?.name !== "" && prototype?.name !== "Object") {
             this.superClass = TypeDescriptor.forType(prototype)
 
-            this.allProperties = {...this.superClass?.allProperties}
+            this.allMembers = {...this.superClass?.allMembers}
         }
 
         // methods
@@ -177,16 +195,20 @@ export class TypeDescriptor<T=any> {
             const isMethod = descriptor?.value instanceof Function
 
             if (isMethod) {
-                // @ts-ignore
-              this.properties[propertyName] = new MethodDescriptor(
+                const methodDescriptor = new MethodDescriptor(
                     propertyName,
                     descriptor?.value,
                     descriptor?.value == type ? PropertyType.CONSTRUCTOR : PropertyType.METHOD
                 )
+
+                this.members[propertyName] = methodDescriptor
+
+                if (propertyName == "constructor" )
+                    this.constructorMethod = methodDescriptor
             }
         } // for
 
-        this.allProperties = { ...this.allProperties, ...this.properties}
+        this.allMembers = { ...this.allMembers, ...this.members}
     }
 
     // public

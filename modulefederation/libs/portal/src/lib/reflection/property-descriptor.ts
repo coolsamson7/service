@@ -1,31 +1,37 @@
 import { StringBuilder } from "../common/util/string-builder";
-import { MethodDescriptor } from "./method-descriptor";
-import { FieldDescriptor } from "./field-descriptor";
+import { MemberDescriptor, PropertyType } from "./member-descriptor";
 
 
-export enum PropertyType {
-  FIELD,
-  CONSTRUCTOR,
-  METHOD,
-}
-export abstract class PropertyDescriptor {
+export class PropertyDescriptor extends MemberDescriptor {
+  // instance data
+
+  public decorators: MethodDecorator[] = []
+  public propertyType: any
+
   // constructor
 
-  protected constructor(public name: string, public type: PropertyType) {}
-
-  // protected
-
-  is(type : PropertyType) {
-    return this.type == type
+  constructor(name: string) {
+    super(name, PropertyType.FIELD)
   }
 
-  asMethodDescriptor() : MethodDescriptor | undefined {
-    return undefined
+  // public
+
+  override asPropertyDescriptor() : PropertyDescriptor | undefined {
+    return this
   }
 
-  asFieldDescriptor() : FieldDescriptor | undefined {
-    return undefined
+
+  addDecorator(decorator: MethodDecorator) {
+    this.decorators.push(decorator)
   }
 
-  abstract report(builder: StringBuilder): void
+  report(builder: StringBuilder): void {
+    for (const decorator of this.decorators) builder.append("\t@").append(decorator.name).append("()\n")
+
+    builder.append("\t").append(this.name)
+
+    if (this.propertyType) builder.append(": ").append(this.propertyType.name)
+
+    builder.append("\n")
+  }
 }

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { StringBuilder } from "../common/util/string-builder";
-import { PropertyDescriptor, PropertyType } from "./property-descriptor";
+import { MemberDescriptor, PropertyType } from "./member-descriptor";
 
 interface MethodDecoratorSpec {
   decorator: Function
   arguments: any
 }
 
-export class MethodDescriptor extends PropertyDescriptor {
+export class MethodDescriptor extends MemberDescriptor {
   // instance data
 
   public returnType: any
