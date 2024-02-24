@@ -1,7 +1,7 @@
 {
-  "name": "modulefederation",
+  "name": "web",
   "version": "0.0.0",
-  "commitHash": "253c108b3fc289605e96fd654b99c7ab34c348fb",
+  "commitHash": "c8a67ccb565506ff8d741c3a2031dbeb56e6e301",
   "module": "AppModule",
   "features": [
     {
@@ -13,96 +13,6 @@
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],
       "visibility": ["private"]
-    },
-    {
-      "id": "microfrontends",
-      "label": "Microfrontends",
-      "i18n": ["portal.commands"],
-      "icon": "folder",
-      "folder": "microfrontends",
-      "component": "MirofrontendsComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"],
-      "children": [
-        {
-          "id": "microfrontend",
-          "label": "microfrontend",
-          "i18n": ["portal.commands"],
-          "router": {
-            "path": ":microfrontend"
-          },
-          "component": "MicrofrontendDetailsComponent"
-        }
-      ]
-    },
-    {
-      "id": "**",
-      "label": "Page not found",
-      "isPageNotFound": true,
-      "icon": "language",
-      "component": "PageNotFoundComponent"
-    },
-    {
-      "id": "nodes",
-      "label": "Nodes",
-      "icon": "computer",
-      "component": "NodesComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"],
-      "children": [
-        {
-          "id": "node",
-          "label": "node",
-          "router": {
-            "path": ":node"
-          },
-          "component": "NodeDetailsComponent"
-        }
-      ]
-    },
-    {
-      "id": "other-preferences",
-      "label": "Other",
-      "component": "OtherPreferences",
-      "tags": ["preferences"]
-    },
-    {
-      "id": "language-preferences",
-      "label": "Language",
-      "component": "LocalePreferences",
-      "tags": ["preferences"]
-    },
-    {
-      "id": "home",
-      "label": "Home",
-      "icon": "home",
-      "component": "HomeComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
-    },
-    {
-      "id": "help",
-      "label": "Help",
-      "icon": "home",
-      "component": "HelpComponent",
-      "visibility": ["public", "private"]
-    },
-    {
-      "id": "help-administration",
-      "label": "Help",
-      "i18n": ["portal.commands"],
-      "icon": "home",
-      "component": "HelpAdministrationComponent",
-      "tags": ["navigation"],
-      "visibility": ["public", "private"]
-    },
-    {
-      "id": "error",
-      "label": "Error",
-      "icon": "bug_report",
-      "component": "ErrorComponent",
-      "tags": ["error", "navigation"],
-      "visibility": ["public", "private"]
     },
     {
       "id": "components",
@@ -131,6 +41,96 @@
           ]
         }
       ]
+    },
+    {
+      "id": "error",
+      "label": "Error",
+      "icon": "bug_report",
+      "component": "ErrorComponent",
+      "tags": ["error", "navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "help",
+      "label": "Help",
+      "icon": "home",
+      "component": "HelpComponent",
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "help-administration",
+      "label": "Help",
+      "i18n": ["portal.commands"],
+      "icon": "home",
+      "component": "HelpAdministrationComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "home",
+      "label": "Home",
+      "icon": "home",
+      "component": "HomeComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "language-preferences",
+      "label": "Language",
+      "component": "LocalePreferences",
+      "tags": ["preferences"]
+    },
+    {
+      "id": "microfrontends",
+      "label": "Microfrontends",
+      "i18n": ["portal.commands"],
+      "icon": "folder",
+      "folder": "microfrontends",
+      "component": "MirofrontendsComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"],
+      "children": [
+        {
+          "id": "microfrontend",
+          "label": "microfrontend",
+          "i18n": ["portal.commands"],
+          "router": {
+            "path": ":microfrontend"
+          },
+          "component": "MicrofrontendDetailsComponent"
+        }
+      ]
+    },
+    {
+      "id": "nodes",
+      "label": "Nodes",
+      "icon": "computer",
+      "component": "NodesComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"],
+      "children": [
+        {
+          "id": "node",
+          "label": "node",
+          "router": {
+            "path": ":node"
+          },
+          "component": "NodeDetailsComponent"
+        }
+      ]
+    },
+    {
+      "id": "other-preferences",
+      "label": "Other",
+      "component": "OtherPreferences",
+      "tags": ["preferences"]
+    },
+    {
+      "id": "**",
+      "label": "Page not found",
+      "icon": "language",
+      "component": "PageNotFoundComponent",
+      "isPageNotFound": true
     }
   ],
   "folders": [

@@ -5,11 +5,25 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { TranslationEditorComponent } from './translation/translation-editor.component';
 
+import { ComponentsComponent } from './components/components.component';
+
+import { ComponentDetailsComponent } from './components/component-details.component';
+
+import { ServiceInstanceComponent } from './components/service-instance.component';
+
+import { ErrorComponent } from './error/error-feature';
+
+import { HelpComponent } from './help/help.component';
+
+import { HelpAdministrationComponent } from './help/help-administration.component';
+
+import { HomeComponent } from './home/home-component';
+
+import { LocalePreferences } from './home/locale-preferences';
+
 import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 import { MicrofrontendDetailsComponent } from './portal/microfrontend-details.component';
-
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 import { NodesComponent } from './nodes/nodes.component';
 
@@ -17,21 +31,7 @@ import { NodeDetailsComponent } from './nodes/node-details.component';
 
 import { OtherPreferences } from './home/preferences-dialog';
 
-import { LocalePreferences } from './home/locale-preferences';
-
-import { HomeComponent } from './home/home-component';
-
-import { HelpComponent } from './help/help.component';
-
-import { HelpAdministrationComponent } from './help/help-administration.component';
-
-import { ErrorComponent } from './error/error-feature';
-
-import { ComponentsComponent } from './components/components.component';
-
-import { ComponentDetailsComponent } from './components/component-details.component';
-
-import { ServiceInstanceComponent } from './components/service-instance.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 export const localRoutes: Routes = [
   {
@@ -42,6 +42,48 @@ export const localRoutes: Routes = [
   {
     path: 'translations',
     component: TranslationEditorComponent,
+    children: [],
+  },
+  {
+    path: 'components',
+    component: ComponentsComponent,
+    children: [
+      {
+        path: ':component',
+        component: ComponentDetailsComponent,
+        children: [
+          {
+            path: ':instance',
+            component: ServiceInstanceComponent,
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: 'error',
+    component: ErrorComponent,
+    children: [],
+  },
+  {
+    path: 'help',
+    component: HelpComponent,
+    children: [],
+  },
+  {
+    path: 'help-administration',
+    component: HelpAdministrationComponent,
+    children: [],
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    children: [],
+  },
+  {
+    path: 'language-preferences',
+    component: LocalePreferences,
     children: [],
   },
   {
@@ -70,48 +112,6 @@ export const localRoutes: Routes = [
     path: 'other-preferences',
     component: OtherPreferences,
     children: [],
-  },
-  {
-    path: 'language-preferences',
-    component: LocalePreferences,
-    children: [],
-  },
-  {
-    path: 'home',
-    component: HomeComponent,
-    children: [],
-  },
-  {
-    path: 'help',
-    component: HelpComponent,
-    children: [],
-  },
-  {
-    path: 'help-administration',
-    component: HelpAdministrationComponent,
-    children: [],
-  },
-  {
-    path: 'error',
-    component: ErrorComponent,
-    children: [],
-  },
-  {
-    path: 'components',
-    component: ComponentsComponent,
-    children: [
-      {
-        path: ':component',
-        component: ComponentDetailsComponent,
-        children: [
-          {
-            path: ':instance',
-            component: ServiceInstanceComponent,
-            children: [],
-          },
-        ],
-      },
-    ],
   },
 
   {

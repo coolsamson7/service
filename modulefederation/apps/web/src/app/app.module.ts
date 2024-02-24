@@ -163,7 +163,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
         //theme: "bubble"
         }),
 
-        CommandModule.forRoot(),
+        CommandModule.forRoot({
+          interceptors: [CommandErrorInterceptor]
+        }),
 
         OIDCModule.forRoot({
             authConfig: authConfig
