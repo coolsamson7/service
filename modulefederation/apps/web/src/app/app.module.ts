@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import { environment } from "../environments/environment"
 
-import { ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, Tracer, ValueConfigurationSource } from "@modulefederation/portal";
+import { CommandErrorInterceptor, ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, Tracer, ValueConfigurationSource } from "@modulefederation/portal";
 
 Tracer.ENABLED = environment.production !== true
 
