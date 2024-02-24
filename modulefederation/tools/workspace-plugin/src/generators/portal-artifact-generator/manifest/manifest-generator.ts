@@ -26,7 +26,7 @@ export class ManifestGenerator {
 
   // constructor
 
-  constructor(private dir: string, private shell: boolean) {}
+  constructor(private dir: string, private project: string, private shell: boolean) {}
 
   // private
 
@@ -108,7 +108,7 @@ export class ManifestGenerator {
     const { name, version } = packageJson;
 
     const manifest: unknown = {
-      name,
+      name: this.project,
       version,
       commitHash,
       module,
@@ -411,12 +411,12 @@ export class ManifestGenerator {
 
     // sort alphabetically, so the generators are stable
 
-    let sortFeatures = (features: any[]) => {
+    const sortFeatures = (features: any[]) => {
       features.sort((a, b) => a.id.localeCompare(b.id))
 
       // recursion
 
-      for ( let feature of features)
+      for ( const feature of features)
          if ( feature.children &&  feature.children.length > 0)
             sortFeatures(feature.children)
     }
@@ -425,12 +425,23 @@ export class ManifestGenerator {
 
     // make sure the "" feature comes first since it will get a special handling
 
-    const index = features.find((feature) => feature.id == '');
-    if (index > 0) {
-      const tmp = features[0];
-      features[0] = features[index];
-      features[index] = tmp;
-    }
+   let swap = (array: any[], i1: number, i2: number) => {
+       const tmp = array[i1];
+       array[i1] = array[i2];
+       array[i2] = tmp;
+   }
+
+    let feature = features.find((feature) => feature.id == '');
+    if (feature)
+       swap(features, 0, features.indexOf(feature) )
+
+    // make sure, that any "**" is last :-)
+
+    feature = features.find((feature) => feature.isPageNotFound == true || feature.id === "**");
+    if (feature)
+       swap(features, features.length - 1, features.indexOf(feature))
+
+    // done
 
     return features;
   }
