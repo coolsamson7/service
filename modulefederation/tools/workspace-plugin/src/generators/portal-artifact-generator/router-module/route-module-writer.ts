@@ -1,8 +1,6 @@
-import { generateFiles, names, Tree } from '@nx/devkit';
+import { generateFiles, names, Tree, joinPathFragments } from '@nx/devkit';
 
 export class RouteModuleWriter {
-  constructor() {}
-
   // private
 
   private relativeImport(
@@ -39,8 +37,8 @@ export class RouteModuleWriter {
   ) {
     // write router module
 
-    const routesTemplatePath =
-      'tools/workspace-plugin/src/generators/portal-artifact-generator/router-module/templates';
+    //const routesTemplatePath = 'tools/workspace-plugin/src/generators/portal-artifact-generator/router-module/templates';
+    const routesTemplatePath = joinPathFragments(__dirname, './templates')
 
     let moduleName = forModule;
     if (moduleName.endsWith('Module'))
@@ -95,6 +93,7 @@ export class RouteModuleWriter {
     generateFiles(host, routesTemplatePath, inFolder, {
       execute: execute,
       manifest,
+      path: (path: string) => joinPathFragments(routesTemplatePath, path),
       requiresRedirect,
       featureName,
       pageNotFoundFeature,

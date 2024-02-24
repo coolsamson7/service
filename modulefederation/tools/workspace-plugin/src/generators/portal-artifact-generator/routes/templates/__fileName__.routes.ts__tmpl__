@@ -3,9 +3,9 @@
 
 import { Routes, RouterModule } from '@angular/router'
 
- <% for (let feature of features ) { -%>
-          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/routes/includes/import.tmpl', { feature: feature }) -%>
-     <% } %>
+<% for (let feature of features ) { -%>
+          <%- include(path('../includes/import.tmpl'), { feature: feature }) -%>
+<% } %>
 
 export const localRoutes: Routes = [
    {
@@ -14,9 +14,9 @@ export const localRoutes: Routes = [
       pathMatch: 'full'
     },
      <% for (let feature of features ) if (feature.isPageNotFound !== true) { -%>
-          <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/routes/includes/route.tmpl', { feature: feature }) -%>
+          <%- include(path('../includes/route.tmpl'), { feature: feature }) -%>
      <% } %>
      <% if (pageNotFoundFeature) { -%>
-     <%- include(process.cwd() + '/tools/workspace-plugin/src/generators/portal-artifact-generator/routes/includes/wildcardRoute.tmpl', { feature: pageNotFoundFeature }) -%>
+     <%- include(path('../includes/wildcardRoute.tmpl'), { feature: pageNotFoundFeature }) -%>
      <% } %>
 ]

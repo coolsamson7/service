@@ -1,4 +1,4 @@
-import { generateFiles, Tree } from '@nx/devkit';
+import { generateFiles, Tree, joinPathFragments } from '@nx/devkit';
 import { RouteModuleWriter } from '../router-module/route-module-writer';
 
 export class RoutesWriter {
@@ -7,8 +7,8 @@ export class RoutesWriter {
   async write(host: Tree, manifest: any) {
     // write router module
 
-    const routesTemplatePath =
-      'tools/workspace-plugin/src/generators/portal-artifact-generator/routes/templates';
+    //const routesTemplatePath = 'tools/workspace-plugin/src/generators/portal-artifact-generator/routes/templates';
+    const routesTemplatePath = joinPathFragments(__dirname, './templates')
 
     let fileName = manifest.module.file;
     fileName = fileName.substring(0, fileName.lastIndexOf('/') + 1);
@@ -29,6 +29,7 @@ export class RoutesWriter {
 
     generateFiles(host, routesTemplatePath, fileName, {
       manifest,
+      path: (path: string) => joinPathFragments(routesTemplatePath, path),
       requiresRedirect,
       pageNotFoundFeature,
       isChild: false,
