@@ -72,7 +72,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
 
         TracerModule.forRoot({
             enabled: !environment.production,
-            trace: new ConsoleTrace('%d [%p]: %m\n'), // d(ate), l(evel), p(ath), m(message)
+            trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
             paths: {
                 "portal": TraceLevel.FULL,
             }

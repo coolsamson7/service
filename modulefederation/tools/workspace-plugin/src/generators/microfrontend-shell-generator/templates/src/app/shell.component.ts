@@ -10,7 +10,7 @@ import { FeatureData, FeatureRegistry, SessionManager, Ticket } from "@modulefed
 export class ShellComponent {
     // instance data
 
-    portal : FeatureData | undefined = undefined
+    portal : FeatureData
 
     // private
 
@@ -23,13 +23,9 @@ export class ShellComponent {
     // constructor
 
     determinePortal() : FeatureData {
-        const portals = this.featureRegistry.finder().withTag("portal").withVisibility(this.sessionManager.hasSession() ? "private" : "public").find()
-
-        if (portals.length == 0)
-            throw new Error("there must be a feature with tag 'portal'")
-        else if (portals.length > 1)
-            throw new Error("there must be exactly one feature with tag 'portal'")
-
-        return portals[0]
+        return this.featureRegistry.finder()
+          .withTag("portal")
+          .withVisibility(this.sessionManager.hasSession() ? "private" : "public")
+          .findOne()
     }
 }

@@ -2,7 +2,8 @@ import { Component, Injector } from '@angular/core';
 import { AbstractFeature, Feature } from "@modulefederation/portal";
 
 @Feature({
-    id: 'home'
+    id: 'home',
+    isDefault: true
 })
 @Component({
     standalone: true,
