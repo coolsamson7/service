@@ -1,7 +1,6 @@
 import 'reflect-metadata';
-import { TypeDescriptor } from '../reflection';
-import { InjectProperty } from '../reflection/injector';
 import { Injector } from '@angular/core';
+import { InjectProperty, TypeDescriptor } from '../common/reflection';
 
 /**
  * we still need to add the type manually.

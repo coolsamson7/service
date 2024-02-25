@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
 import { FeatureManager } from './feature-manager';
+import { FeatureConfig } from '../feature-config';
 
 /**
  * a <code>LifecycleAware</code> can include functions that will be executed in the different phases of a component.
@@ -71,6 +72,12 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
         injector.get(FeatureManager).onDestroy(this)
       })
     }
+  }
+
+  // public
+
+  getConfiguration() : FeatureConfig {
+     return  (<any>this.constructor)['$$config']
   }
 
   // private

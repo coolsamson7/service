@@ -1,9 +1,10 @@
-import { Constructor } from "../common/lang/constructor.type"
-import { TraceLevel, Tracer } from "../tracer"
+import { TraceLevel, Tracer } from "../../tracer";
+import { Constructor } from "../lang/constructor.type"
+import { TypeDescriptor } from "../reflection";
 import { ErrorContext } from "./error-context"
 import { Injectable } from "@angular/core";
-import { TypeDescriptor } from "../reflection";
-import { HandleError } from "./error.decorator";
+import { ErrorHandler } from "./error-handler.decorator";
+
 
 /**
  * @internal
@@ -175,7 +176,7 @@ export class ErrorManager {
   public registerHandler(handler : any) {
     const type = TypeDescriptor.forType(handler.constructor)
 
-    const handlers = type.getMethods().filter(method => method.hasDecorator(HandleError))
+    const handlers = type.getMethods().filter(method => method.hasDecorator(ErrorHandler))
 
     for (const method of handlers) {
       this.register({

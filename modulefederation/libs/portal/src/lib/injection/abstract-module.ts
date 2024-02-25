@@ -1,7 +1,7 @@
 import { ReplaySubject } from "rxjs";
 import { Injector, Type } from "@angular/core";
 import { ModuleRegistry } from "../modules/module-registry";
-import { TypeDescriptor } from "../reflection";
+import { TypeDescriptor } from "../common/reflection";
 
 declare type Ctr<T> = {new (...args: any[]) : T}
 type GetConstructorArgs<T> = T extends new (...args: infer U) => any ? U : never

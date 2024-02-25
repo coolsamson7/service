@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/member-ordering */
-import { StringBuilder } from "../common/util/string-builder"
-import { TraceLevel, Tracer } from "../tracer"
+
 import { MethodDescriptor } from "./method-descriptor";
 import { PropertyDescriptor } from "./property-descriptor"
 import { Decorator } from "./decorator";
 import { InjectProperty } from "./injector";
 import { Injector } from "@angular/core";
 import { MemberDescriptor, PropertyType } from "./member-descriptor";
+import { TraceLevel, Tracer } from "../../tracer";
+import { StringBuilder } from "../util";
 
 export declare const Type: FunctionConstructor
 

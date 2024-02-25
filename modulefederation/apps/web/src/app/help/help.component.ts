@@ -3,10 +3,9 @@ import { Component, Injector } from "@angular/core"
 import { FormsModule } from "@angular/forms"
 import { MatDividerModule } from "@angular/material/divider"
 import { MatToolbarModule } from "@angular/material/toolbar"
-import { AbstractFeature, CommandButtonComponent, Feature, HelpAdministrationService, ViewComponent, WithCommands, WithDialogs, WithState, WithView } from "@modulefederation/portal"
+import { MessageBus, AbstractFeature, CommandButtonComponent, Feature, HelpAdministrationService, ViewComponent, WithCommands, WithDialogs, WithState, WithView } from "@modulefederation/portal"
 import { QuillEditorComponent } from "ngx-quill"
 import { DeltaStatic, Quill } from "quill"
-import { MessageBus } from "../message-bus/message-bus"
 import { HelpTreeComponent } from "./help-tree.component"
 
 @Component({
@@ -37,8 +36,8 @@ export class HelpComponent extends WithDialogs(WithView(WithState<any>()(WithCom
   constructor(private helpAdministrationService : HelpAdministrationService, messageBus: MessageBus, injector: Injector) {
      super(injector)
 
-    messageBus.listenFor("help").subscribe(message => {
-      this.helpAdministrationService.readHelp(message.payload.feature).subscribe(help => {
+    messageBus.listenFor<any>("help").subscribe(message => {
+      this.helpAdministrationService.readHelp(message.arguments?.feature).subscribe(help => {
         this.editor.setContents(help as any as DeltaStatic)
       })
     })

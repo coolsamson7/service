@@ -26,7 +26,7 @@ import {
   ValueConfigurationSource,
   ErrorModule,
   ErrorContext,
-  HandleError,
+  ErrorHandler,
   ErrorManager,
   CommandModule,
   CommandErrorInterceptor,
@@ -61,38 +61,38 @@ class FooError extends Error {
 }
 
 @Injectable({ providedIn: 'root' })
-export class ErrorHandler {
+export class ErrorHandlers {
   // handler
 
-  @HandleError()
+  @ErrorHandler()
   handleAny(error: any, context: ErrorContext) {
     console.log("ouch, any")
 
     ErrorManager.proceed()
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleObject(error: Object, context: ErrorContext) {
     console.log("ouch, Object")
 
     ErrorManager.proceed()
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleFooError(error: FooError, context: ErrorContext) {
     console.log("ouch, FooError")
 
     ErrorManager.proceed()
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleString(error: string, context: ErrorContext) {
     console.log("ouch, string")
 
     ErrorManager.proceed()
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleError(error: Error, context: ErrorContext) {
     console.log("ouch, Error")
 
@@ -112,7 +112,7 @@ export class ErrorHandler {
     // error
 
     ErrorModule.forRoot({
-      handler: [ErrorHandler]
+      handler: [ErrorHandlers]
     }),
 
     // commands

@@ -1,34 +1,9 @@
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { TraceLevel, Tracer } from '@modulefederation/portal';
 
-/**
- * A <code>Message</code> consists of
- * <ul>
- *   <li>a topic</li>
- *   <li>a message</li>
- *   <li>additional optional arguments</li>
- * </ul>
- */
-export interface Message {
-  /**
-   * optional sender information.
-   */
-  sender?: any;
-  /**
-   * the topic of the message
-   */
-  topic: string;
-  /**
-   * the message type
-   */
-  message: string;
-  /**
-   * any payload information of the specific message
-   */
-  payload?: any;
-}
+import { BusMessage } from "./message"
+import { TraceLevel, Tracer } from '../../tracer';
 
 /**
  * A <code>MessageBus</code> is a central hub where messages can be sent which will be delivered to any subscribed client.
@@ -37,7 +12,7 @@ export interface Message {
 export class MessageBus {
   // instance data
 
-  private stream = new Subject<Message>();
+  private stream = new Subject<BusMessage>();
 
   // constructor
 
@@ -49,7 +24,7 @@ export class MessageBus {
    * broadcast a message to all subscribers
    * @param message the message object
    */
-  broadcast(message: Message): void {
+  broadcast(message: BusMessage<any>): void {
     if (Tracer.ENABLED)
       Tracer.Trace('message-bus', TraceLevel.MEDIUM, 'broadcast topic {0}: {1}', message.topic, message.message);
 
@@ -60,9 +35,11 @@ export class MessageBus {
    * subscribe to a specific topic
    * @param topic the topic
    */
-  listenFor(topic: string): Observable<Message> {
+  listenFor<T>(topic: string): Observable<BusMessage<T>> {
     if (Tracer.ENABLED) Tracer.Trace('message-bus', TraceLevel.MEDIUM, 'subscribe to message bus');
 
-    return this.stream.pipe(filter((msg) => msg.topic === topic));
+    return this.stream.pipe(
+       filter((msg) => msg.topic === topic)
+    );
   }
 }

@@ -2,7 +2,8 @@
 import { Component, HostListener, Injectable, Injector, ViewChild, forwardRef } from '@angular/core';
 import {
   AboutDialogService, AbstractFeature, Command, DialogService, ErrorContext,
-  HandleError,
+  ErrorHandler,
+  MessageBus,
   HelpAdministrationService,
   LocaleManager,
   SessionManager,
@@ -14,7 +15,6 @@ import {
   WithRouting,
   WithState
 } from "@modulefederation/portal";
-import { MessageBus } from "./message-bus/message-bus";
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry, ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
@@ -46,17 +46,17 @@ export class ApplicationErrorHandler {
 
   // handler
 
-  @HandleError()
+  @ErrorHandler()
   handleAnyError(e: any, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleStringError(e: string, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
   }
 
-  @HandleError()
+  @ErrorHandler()
   handleError(e: Error, context: ErrorContext) {
     this.openDialog({error: e, context: context, date: new Date()})
 
@@ -65,7 +65,7 @@ export class ApplicationErrorHandler {
     this.messageBus.broadcast({
       topic: 'errors',
       message: 'new',
-      payload: {
+      arguments: {
         error: e,
         context: context
       }
@@ -199,7 +199,7 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
 
          if (this.helpEntries.includes(feature.path!)) {
           this.sidenav.open()
-          this.messageBus.broadcast({topic: "help", message: "show", payload: {feature: feature.path}})
+          this.messageBus.broadcast({topic: "help", message: "show", arguments: {feature: feature.path}})
           return
          }
         }

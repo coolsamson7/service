@@ -1,4 +1,4 @@
-export * from "./commands"
+export * from "./command-manager"
 export * from "./command-descriptor"
 export * from "./command.decorator"
 export * from "./command-config"

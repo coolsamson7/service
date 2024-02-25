@@ -1,6 +1,7 @@
 import { Injector } from "@angular/core"
-import { InjectProperty, TypeDescriptor } from "../../reflection"
+
 import { ConfigurationManager } from "./configuration-manager"
+import { InjectProperty, TypeDescriptor } from "../reflection"
 
 export function Value(key: string, defaultValue: any = undefined): any {
     return function (target: any, propertyKey: string) {

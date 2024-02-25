@@ -1,9 +1,9 @@
-import { ErrorHandler, InjectionToken, Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
-import { AbstractModule } from '../injection/abstract-module';
+import { ErrorHandler, Injector, ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HTTPErrorInterceptor } from '../common';
 import { GlobalErrorHandler } from './global-error-handler';
 import { ErrorManager } from './error-manager';
+import { AbstractModule } from '../../injection';
+import { HTTPErrorInterceptor } from '../communication';
 
 export interface ErrorModuleConfig {
   handler: Type<any>[]
@@ -49,7 +49,7 @@ export class ErrorModule extends AbstractModule() {
   constructor(injector: Injector) {
     super(injector)
 
-    // construct the handlers
+    // create and register the handlers
 
     const manager = injector.get(ErrorManager)
 

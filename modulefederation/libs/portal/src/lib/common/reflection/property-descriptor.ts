@@ -1,4 +1,5 @@
-import { StringBuilder } from "../common/util/string-builder";
+
+import { StringBuilder } from "../util/string-builder";
 import { MemberDescriptor, PropertyType } from "./member-descriptor";
 
 

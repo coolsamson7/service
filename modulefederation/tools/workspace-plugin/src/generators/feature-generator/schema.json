@@ -94,11 +94,6 @@
       "description": "Provide the speech command mixin",
       "default": false
     },
-    "featureMetadataMixin": {
-      "type": "boolean",
-      "description": "Provide the feature mixin",
-      "default": false
-    },
     "onLocaleChangeMixin": {
       "type": "boolean",
       "description": "Provide the feature mixin",

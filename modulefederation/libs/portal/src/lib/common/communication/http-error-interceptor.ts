@@ -8,8 +8,8 @@ import {
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, finalize, Observable } from "rxjs";
-import { ApplicationError, HTTPCommunicationError, ServerError } from "../error";
-import { ErrorManager } from "../../error/error-manager";
+import { ApplicationError, ErrorManager, HTTPCommunicationError, ServerError } from "../error";
+
 import { tap } from "rxjs/operators";
 
 @Injectable()
@@ -22,8 +22,6 @@ export class HTTPErrorInterceptor implements HttpInterceptor {
   // private
 
   private translateError(error : HttpErrorResponse) : Error {
-    console.log(error)
-
     if ( !error.error)
       throw new HTTPCommunicationError(error.status, error.message, error)
 

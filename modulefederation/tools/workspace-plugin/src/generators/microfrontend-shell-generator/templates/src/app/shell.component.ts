@@ -12,17 +12,21 @@ export class ShellComponent {
 
     portal : FeatureData
 
-    // private
-
-    constructor(private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>) {
-        featureRegistry.registry$.subscribe(registry => this.portal = this.determinePortal())
-
-        this.portal = this.determinePortal();
-    }
-
     // constructor
 
-    determinePortal() : FeatureData {
+    constructor(private featureRegistry : FeatureRegistry, private sessionManager : SessionManager<any, Ticket>) {
+        // public portal
+
+        this.portal = this.determinePortal();
+
+        // subscribe in order to react to a login
+
+        featureRegistry.registry$.subscribe(registry => this.portal = this.determinePortal())
+    }
+
+    // private
+
+    private determinePortal() : FeatureData {
         return this.featureRegistry.finder()
           .withTag("portal")
           .withVisibility(this.sessionManager.hasSession() ? "private" : "public")

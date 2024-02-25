@@ -6,7 +6,7 @@ import { ExecutionContext } from "./execution-context";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { AbstractFeature } from "../feature";
 import { hasMixin } from "../common/lang";
-import { CommandManager } from "./commands";
+import { CommandManager } from "./command-manager";
 import { WithCommands } from "./with-commands.mixin";
 
 

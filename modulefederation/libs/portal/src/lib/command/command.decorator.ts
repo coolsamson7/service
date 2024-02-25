@@ -1,4 +1,4 @@
-import { TypeDescriptor } from '../reflection';
+import { TypeDescriptor } from '../common/reflection';
 import { CommandConfig } from './command-config';
 
 /**

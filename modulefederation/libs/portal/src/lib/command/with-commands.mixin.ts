@@ -2,14 +2,14 @@
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
 import { registerMixins } from "../common/lang";
-import { Type, TypeDescriptor } from "../reflection";
+import { Type, TypeDescriptor } from "../common/reflection";
 import { TraceLevel, Tracer } from "../tracer";
 import { CommandConfig } from "./command-config";
 import { CommandDescriptor } from "./command-descriptor";
 import { CommandFactory } from "./command-factory";
 import { CommandInterceptor } from "./command-interceptor";
 import { Command } from "./command.decorator";
-import { CommandManager } from "./commands";
+import { CommandManager } from "./command-manager";
 import { ExecutionContext } from "./execution-context";
 import { CommandError } from "./command-error";
 import { ShortcutManager } from "../shortcuts";
@@ -124,7 +124,6 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
          * @param filter a <code>CommandFilter</code>
          * @see CommandFilter
          */
-
         getCommands(filter: CommandFilter = {}): CommandDescriptor[] {
             const commands: { [key: string]: CommandDescriptor } = {};
 
@@ -254,7 +253,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                         // clear old values that only make sense in the context of i18n
                         // TODO: these are??
 
-                        ["speeech"].forEach(name => (<any>commandConfig)[name] = undefined)
+                        ["speech"].forEach(name => (<any>commandConfig)[name] = undefined)
 
                         // set new values
 

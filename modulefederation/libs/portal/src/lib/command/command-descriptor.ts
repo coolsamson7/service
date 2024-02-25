@@ -2,7 +2,7 @@
 import { TraceLevel, Tracer } from "../tracer";
 import { CommandConfig } from "./command-config";
 import { CommandInterceptor } from "./command-interceptor";
-import { CommandManager } from "./commands";
+import { CommandManager } from "./command-manager";
 import { ExecutionContext } from "./execution-context";
 import { CommandAdministration } from "./with-commands.mixin";
 
@@ -70,9 +70,9 @@ export class CommandDescriptor {
     // public
 
     addListener(listener: CommandListener) {
-      if (!this.listeners) 
+      if (!this.listeners)
          this.listeners = [listener];
-      else 
+      else
          this.listeners.push(listener);
     }
 
@@ -80,15 +80,15 @@ export class CommandDescriptor {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on call {0}', context.command.name);
 
       if (this.listeners)
-        for (const listener of this.listeners) 
+        for (const listener of this.listeners)
           listener.onCall(context);
     }
 
     onResult(context: ExecutionContext): void {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on result {0}', context.result);
 
-      if (this.listeners) 
-        for (const listener of this.listeners) 
+      if (this.listeners)
+        for (const listener of this.listeners)
           listener.onResult(context);
     }
 
@@ -96,7 +96,7 @@ export class CommandDescriptor {
       if (Tracer.ENABLED) Tracer.Trace('command', TraceLevel.FULL, 'command on error {0}', context.error);
 
       if (this.listeners)
-        for (const listener of this.listeners) 
+        for (const listener of this.listeners)
           listener.onError(context);
     }
 
@@ -115,56 +115,56 @@ export class CommandDescriptor {
        this.onCall(context)
 
        // run the "onCall" pipeline, the last interceptor is the function call
- 
+
        let index = 0;
- 
+
        try {
          for (; index < this.interceptors.length; index++)
              this.interceptors[index].onCall(context);
        }
        catch (error) {
          context.error = error;
- 
+
          // run the "onError" pipeline in reverse order
- 
+
          while (index >= 0)
              this.interceptors[index--].onError(context);
- 
+
          // call listeners
- 
+
          this.onError(context.error);
- 
+
          return Promise.reject(error);
        }
- 
+
        // now we have an object or a promise...
- 
+
        index = this.interceptors.length - 1;
- 
+
        return Promise.resolve(context.result) // start with the initial result
          .then((result) => {
            context.result = result;
- 
+
            // run the "onResult" pipeline in reverse order
- 
+
            while (index >= 0)
             this.interceptors[index--].onResult(context);
- 
+
            // call listeners
- 
+
            this.onResult(context.result);
- 
+
            return context.result;
          })
          .catch((error) => {
            context.error = error;
- 
+
            // run the "onError" pipeline in reverse order
- 
+
            while (index >= 0) this.interceptors[index--].onError(context);
- 
+
            // call listeners
- 
+
            this.onError(context.error);
          });
     }
