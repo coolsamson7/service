@@ -1,7 +1,7 @@
 {
   "name": "web",
   "version": "0.0.0",
-  "commitHash": "c8a67ccb565506ff8d741c3a2031dbeb56e6e301",
+  "commitHash": "7e9a2e916fd1da6786caac41b0fe6b838fbbb12d",
   "module": "AppModule",
   "features": [
     {

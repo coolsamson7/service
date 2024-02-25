@@ -1,21 +1,21 @@
 {
-  "name": "modulefederation",
+  "name": "portal-shell",
   "version": "0.0.0",
-  "commitHash": "204f5ae1f41b27510d3f820e182135b8efcaf1ed",
+  "commitHash": "7e9a2e916fd1da6786caac41b0fe6b838fbbb12d",
   "module": "ShellModule",
   "features": [
+    {
+      "id": "home",
+      "label": "home",
+      "component": "HomeComponent",
+      "isDefault": true
+    },
     {
       "id": "**",
       "label": "Page not found",
       "icon": "language",
       "component": "PageNotFoundComponent",
       "isPageNotFound": true
-    },
-    {
-      "id": "home",
-      "label": "home",
-      "component": "HomeComponent",
-      "isDefault": true
     }
   ],
   "folders": []

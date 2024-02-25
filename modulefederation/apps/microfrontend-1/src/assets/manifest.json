@@ -1,7 +1,7 @@
 {
-  "name": "modulefederation",
+  "name": "microfrontend-1",
   "version": "0.0.0",
-  "commitHash": "204f5ae1f41b27510d3f820e182135b8efcaf1ed",
+  "commitHash": "7e9a2e916fd1da6786caac41b0fe6b838fbbb12d",
   "module": "RemoteEntryModule",
   "features": [
     {
