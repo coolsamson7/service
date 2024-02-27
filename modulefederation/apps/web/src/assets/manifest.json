@@ -7,6 +7,7 @@
     {
       "id": "translations",
       "label": "Translations",
+      "folder": "portals",
       "labelKey": "translations:title.label",
       "i18n": ["translations", "portal.commands"],
       "icon": "language",
@@ -17,6 +18,7 @@
     {
       "id": "components",
       "label": "Components",
+      "folder": "microservices",
       "icon": "folder",
       "component": "ComponentsComponent",
       "tags": ["navigation"],
@@ -45,6 +47,7 @@
     {
       "id": "error",
       "label": "Error",
+      "folder": "portals",
       "icon": "bug_report",
       "component": "ErrorComponent",
       "tags": ["error", "navigation"],
@@ -60,8 +63,9 @@
     {
       "id": "help-administration",
       "label": "Help",
+      "folder": "portals",
       "i18n": ["portal.commands"],
-      "icon": "home",
+      "icon": "help",
       "component": "HelpAdministrationComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"]
@@ -84,8 +88,8 @@
       "id": "microfrontends",
       "label": "Microfrontends",
       "i18n": ["portal.commands"],
-      "icon": "folder",
-      "folder": "microfrontends",
+      "icon": "code",
+      "folder": "portals",
       "component": "MirofrontendsComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -105,6 +109,7 @@
       "id": "nodes",
       "label": "Nodes",
       "icon": "computer",
+      "folder": "microservices",
       "component": "NodesComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -135,9 +140,14 @@
   ],
   "folders": [
     {
-      "name": "microfrontends",
-      "label": "Microfrontend Stuff",
-      "icon": "home"
+      "name": "portals",
+      "label": "Portals",
+      "icon": "apps"
+    },
+    {
+      "name": "microservices",
+      "label": "Microservices",
+      "icon": "apps"
     }
   ]
 }

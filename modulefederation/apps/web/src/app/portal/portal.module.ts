@@ -22,9 +22,9 @@ import { Folder, NgModelSuggestionsDirective } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
 
 @Folder({
-    name: "microfrontends",
-    label: "Microfrontend Stuff",
-    icon: "home"
+    name: "portals",
+    label: "Portals",
+    icon: "apps"
 })
 @NgModule({
     declarations: [

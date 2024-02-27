@@ -6,7 +6,7 @@ import { MemberDescriptor, PropertyType } from "./member-descriptor";
 export class PropertyDescriptor extends MemberDescriptor {
   // instance data
 
-  public decorators: MethodDecorator[] = []
+  public decorators: PropertyDecorator[] = []
   public propertyType: any
 
   // constructor
@@ -22,7 +22,7 @@ export class PropertyDescriptor extends MemberDescriptor {
   }
 
 
-  addDecorator(decorator: MethodDecorator) {
+  addDecorator(decorator: PropertyDecorator) {
     this.decorators.push(decorator)
   }
 

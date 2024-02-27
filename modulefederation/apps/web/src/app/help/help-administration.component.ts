@@ -17,8 +17,10 @@ import { HelpNode, HelpTreeComponent } from "./help-tree.component"
 })
 @Feature({
     id: "help-administration",
+    folder: "translations",
     i18n: ["portal.commands"],
-    label: "Help", icon: "home",
+    label: "Help",
+    icon: "help",
     visibility: ["public", "private"],
     categories: [],
     tags: ["navigation"],
@@ -128,7 +130,7 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
         .message("save first")
         .ok()
         .show().subscribe()
-      return 
+      return
     }
 
     this.helpTree.select( this.selection = node)
@@ -158,14 +160,14 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
         this.editor.setContents(this.delta as any as DeltaStatic)
 
         this.dirty = false
-    
+
         this.updateCommandState()
       })
       else {
         this.editor.setContents(this.delta = {ops: []} as any as DeltaStatic)
 
         this.dirty = false
-    
+
         this.updateCommandState()
       }
   }
@@ -224,7 +226,7 @@ export class HelpAdministrationComponent extends WithDialogs(WithState<any>()(Wi
   onContentChanged = (change: ContentChange) => {
     if (change.source == "user") {
       this.dirty = true
-      
+
       this.updateCommandState()
     }
   }

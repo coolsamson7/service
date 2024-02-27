@@ -13,7 +13,7 @@
            class="sublevel-nav-link"
         >
             <!--i class="sublevel-link-icon fa fa-circle"></i-->
-            <mat-icon class="sublevel-link-icon">lens</mat-icon>
+            <mat-icon class="sublevel-link-icon">{{item.icon}}</mat-icon>
             <span *ngIf="collapsed" @fadeInOut
                   class="sublevel-link-text">{{item.label}}</span>
             <!--i *ngIf="item.items && collapsed" class="menu-collapse-icon"
@@ -30,7 +30,7 @@
            routerLinkActive="active-sublevel"
         >
             <!--i class="sublevel-link-icon fa fa-circle"></i-->
-            <mat-icon class="sublevel-link-icon">lens</mat-icon>
+            <mat-icon class="sublevel-link-icon">{{item.icon}}</mat-icon>
             <span *ngIf="collapsed" @fadeInOut
                   class="sublevel-link-text">{{item.label}}</span>
         </a>

@@ -21,6 +21,7 @@ import { AngularSplitModule } from "angular-split";
 @Feature({
   id: "error",
   label: "Error",
+  folder: "portals",
   icon: "bug_report",
   visibility: ["public", "private"],
   categories: [],
@@ -52,7 +53,7 @@ export class ErrorComponent extends AbstractFeature {
       this.stack = ""
 
       for ( const frame of frames )
-         this.stack += "\n" + frame.file + ":" + frame.lineNumber + ":" + frame.column + " " + frame.methodName 
+         this.stack += "\n" + frame.file + ":" + frame.lineNumber + ":" + frame.column + " " + frame.methodName
     }
     else this.stack = undefined
   }

@@ -28,7 +28,7 @@ export function WithSpeechCommands<T extends GConstructor<CommandManager & Abstr
 
         getSpeechCommandManager() {
             if ( !this.speechCommandManager)
-                this.speechCommandManager = this.injector.get(SpeechCommandManager);
+                this.speechCommandManager = this.inject(SpeechCommandManager);
 
             return this.speechCommandManager
         }

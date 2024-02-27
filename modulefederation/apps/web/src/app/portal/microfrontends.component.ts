@@ -19,7 +19,7 @@ import { catchError, of, switchMap } from "rxjs";
 @Feature({
     id: "microfrontends",
     label: "Microfrontends",
-    icon: "folder",
+    icon: "apps",
     i18n: ["portal.commands"],
     visibility: ["public", "private"],
     categories: [],

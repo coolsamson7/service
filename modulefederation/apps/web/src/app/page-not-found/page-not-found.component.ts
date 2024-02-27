@@ -9,8 +9,7 @@ import { AbstractFeature, Feature } from '@modulefederation/portal';
 @Feature({
   id: "**",
   label: "Page not found",
-  icon: "language",
-  isPageNotFound: true
+  icon: "language"
 })
 export class PageNotFoundComponent extends AbstractFeature {
   // constructor

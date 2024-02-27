@@ -17,7 +17,8 @@ import { HelpTreeComponent } from "./help-tree.component"
 })
 @Feature({
     id: "help",
-    label: "Help", icon: "home",
+    label: "Help", 
+    icon: "help",
     visibility: ["public", "private"],
     categories: [],
     tags: [],

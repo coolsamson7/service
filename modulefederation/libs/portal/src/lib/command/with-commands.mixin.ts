@@ -223,7 +223,7 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
         // private
 
         private registerShortcut(command: CommandDescriptor) {
-            command.shortcutSubscription = this.injector.get(ShortcutManager).register({
+            command.shortcutSubscription = this.inject(ShortcutManager).register({
                 shortcut: command.shortcut!,
                 onShortcut: () => {
                   return command.runWithContext(command.createContext([], {fromShortcut: true}));

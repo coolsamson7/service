@@ -2,13 +2,18 @@ import {
   AfterContentInit,
   AfterViewInit,
   Component,
+  InjectFlags,
+  InjectOptions,
   Injector,
   OnDestroy,
-  OnInit
+  OnInit,
+  ProviderToken,
+  Type
 } from '@angular/core';
 import { TraceLevel, Tracer } from '../tracer';
 import { FeatureManager } from './feature-manager';
 import { FeatureConfig } from '../feature-config';
+import { TypeDescriptor } from '../common';
 
 /**
  * a <code>LifecycleAware</code> can include functions that will be executed in the different phases of a component.
@@ -60,6 +65,12 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
    * @param injector the appropriate injector that will be used internally to inject objects
    */
   constructor(protected injector: Injector) {
+    // execute injectors
+
+    TypeDescriptor.forType(this.constructor as Type<any>).inject(this, injector)
+
+    // link parent
+
     const parent = injector.get(AbstractFeature, undefined, {skipSelf: true, optional: true})
     if ( parent ) {
       this.linkParent(this.parent = parent)
@@ -78,6 +89,12 @@ export class AbstractFeature implements OnInit, AfterViewInit, AfterContentInit,
 
   getConfiguration() : FeatureConfig {
      return  (<any>this.constructor)['$$config']
+  }
+
+  // protected
+
+  protected inject<T>(token: ProviderToken<T>, notFoundValue?: T, options?: InjectOptions | InjectFlags) : T {
+    return this.injector.get<T>(token, notFoundValue, options)
   }
 
   // private

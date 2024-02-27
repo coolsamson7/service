@@ -44,6 +44,7 @@ interface Link {
 @Feature({
     id: "nodes",
     label: "Nodes",
+    folder: "microservices",
     icon: "computer",
     visibility: ["public", "private"],
     categories: [],

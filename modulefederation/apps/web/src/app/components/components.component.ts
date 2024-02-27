@@ -11,6 +11,7 @@ import { Feature } from "@modulefederation/portal";
 @Feature({
     id: "components",
     label: "Components",
+    folder: "microservices",
     icon: "folder",
     visibility: ["public", "private"],
     categories: [],

@@ -19,7 +19,7 @@ export function WithOnLocaleChange<T extends GConstructor<AbstractFeature>>(base
       constructor(...args: any[]) {
         super(...args);
 
-        const unsubscribe = this.injector.get(LocaleManager).subscribe(this)
+        const unsubscribe = this.inject(LocaleManager).subscribe(this)
         this.onDestroy(() => unsubscribe())
       }
 

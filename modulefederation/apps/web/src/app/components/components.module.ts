@@ -28,7 +28,14 @@ import { QueryParamComponent } from "./service-runner/query-parameter.component"
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DescriptionComponent } from "./service/description.component";
+import { Folder } from "@modulefederation/portal";
 
+
+@Folder({
+    name: "microservices",
+    label: "Microservices",
+    icon: "apps"
+})
 @NgModule({
     declarations: [
         ComponentsComponent,

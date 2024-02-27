@@ -63,6 +63,7 @@ interface TranslationState {
 @Feature({
   id: "translations",
   label: "Translations",
+  folder: "translations",
   labelKey: "translations:title.label",
   i18n: ["translations", "portal.commands"],
   icon: "language",
