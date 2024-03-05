@@ -8,15 +8,20 @@ package com.serious.service.administration.portal.impl
 import com.serious.portal.ManifestLoader
 import com.serious.portal.ManifestManager
 import com.serious.portal.PortalAdministrationService
-import com.serious.portal.model.Address
-import com.serious.portal.model.Manifest
-import com.serious.portal.model.RegistryError
-import com.serious.portal.model.RegistryResult
+import com.serious.portal.model.*
+import com.serious.portal.persistence.ApplicationRepository
+import com.serious.portal.persistence.ApplicationVersionRepository
+import com.serious.portal.persistence.StageRepository
+import com.serious.portal.persistence.entity.ApplicationEntity
+import com.serious.portal.persistence.entity.ApplicationVersionEntity
+import com.serious.portal.persistence.entity.StageEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 
 @Component
 @RestController
@@ -25,6 +30,15 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var manifestManager: ManifestManager
     @Autowired
     lateinit var manifestLoader: ManifestLoader
+
+    @Autowired
+    lateinit var stageRepository: StageRepository
+
+    @Autowired
+    lateinit var applicationRepository: ApplicationRepository
+
+    @Autowired
+    lateinit var applicationVersionRepository: ApplicationVersionRepository
 
     // implement PortalAdministrationService
 
@@ -107,5 +121,109 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     override fun throwException(): String {
         throw NullPointerException("ouch")
+    }
+
+    // NEW
+
+    // stage
+
+    @Transactional
+    override fun createStage(stage: String) {
+        this.stageRepository.save(StageEntity(stage))
+    }
+    @Transactional
+    override fun deleteStage( stage: String) {
+        this.stageRepository.deleteById(stage)
+    }
+    @Transactional
+    override fun readStages() : List<String> {
+        return this.stageRepository.findAll().map { stageEntity ->  stageEntity.name}
+    }
+
+    // application
+    @Transactional
+    override fun createApplication(application: Application) {
+       this.applicationRepository.save(ApplicationEntity(application.name, application.configuration, ArrayList()))
+    }
+    @Transactional
+    override fun readApplication(application: String) : Optional<Application> {
+        fun mapVersion(entity: ApplicationVersionEntity): ApplicationVersion {
+            return ApplicationVersion(
+                entity.id!!,
+                entity.version,
+                entity.configuration
+            )
+        }
+
+        return this.applicationRepository.findById(application).map { entity ->
+            Application(
+                entity.name,
+                entity.configuration,
+                entity.versions.map { versionEntity -> mapVersion(versionEntity) }
+            )
+        }
+    }
+    @Transactional
+    override fun updateApplication(application: Application) {
+        var entity : ApplicationEntity = applicationRepository.findById(application.name).get()
+
+        entity.configuration = application.configuration
+        //this.applicationRepository.save(ApplicationEntity(application.name, application.configuration))
+    }
+    @Transactional
+    override fun deleteApplication(application: String){
+        this.applicationRepository.deleteById(application)
+    }
+    @Transactional
+    override fun readApplications() : List<Application> {
+        fun mapVersion(entity: ApplicationVersionEntity): ApplicationVersion {
+            return ApplicationVersion(
+                entity.id!!,
+                entity.version,
+                entity.configuration
+            )
+        }
+
+        return this.applicationRepository.findAll().map { entity ->
+            Application(
+                entity.name,
+                entity.configuration,
+                entity.versions.map { versionEntity -> mapVersion(versionEntity) }
+            )
+        }
+    }
+
+    // application version
+
+    @Transactional
+    override fun createApplicationVersion(application: String, applicationVersion: ApplicationVersion) : ApplicationVersion {
+        val applicationEntity = this.applicationRepository.findById(application).get()
+        val entity = this.applicationVersionRepository.save(ApplicationVersionEntity(
+           null,
+            applicationEntity,
+            applicationVersion. version,
+            applicationVersion.configuration
+        ))
+
+        applicationVersion.id = entity.id!!
+
+        return applicationVersion
+    }
+    @Transactional
+    override fun updateApplicationVersion(application: ApplicationVersion) : ApplicationVersion {
+        val entity = this.applicationVersionRepository.findById(application.id).get()
+
+        entity.version = application.version
+        entity.configuration = application.configuration
+
+        return application
+    }
+    @Transactional
+    override fun deleteApplicationVersion(application: String, version: Long) {
+        val applicationEntity = this.applicationRepository.findById(application).get()
+
+        val entity = applicationEntity.versions.find { entity -> entity.id == version }
+
+        applicationEntity.versions.remove(entity)
     }
 }

@@ -5,6 +5,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { TranslationEditorComponent } from './translation/translation-editor.component';
 
+import { ApplicationFeatureComponent } from './portal/application.feature';
+
 import { ComponentsComponent } from './components/components.component';
 
 import { ComponentDetailsComponent } from './components/component-details.component';
@@ -42,6 +44,11 @@ export const localRoutes: Routes = [
   {
     path: 'translations',
     component: TranslationEditorComponent,
+    children: [],
+  },
+  {
+    path: 'application',
+    component: ApplicationFeatureComponent,
     children: [],
   },
   {

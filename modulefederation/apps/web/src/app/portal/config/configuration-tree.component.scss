@@ -1,0 +1,62 @@
+
+.tree {
+   font-size: 16px;
+
+    .value {
+        display: flex;
+        column-gap: 5px;
+
+        .type {
+
+        }
+
+        .input {
+        }
+
+        .add {
+            visibility: hidden;
+            float: right;
+
+
+
+            .mat-icon {
+              height: 20px;
+              width: 20px;
+              font-size: 20px;
+
+            }
+        }
+
+        .delete {
+            visibility: hidden;
+            float: right;
+
+
+
+            .mat-icon {
+              height: 20px;
+              width: 20px;
+              font-size: 20px;
+
+            }
+        }
+    }
+
+    .value:hover {
+        .delete {
+          visibility: visible;
+        }
+
+        .add {
+            visibility: visible;
+          }
+    }
+}
+
+.tree table {
+    table-layout: auto !important;
+}
+
+.tree th, .myclass td, .myclass thead th, .myclass tbody td, .myclass tfoot td, .myclass tfoot th {
+    width: auto !important;
+}

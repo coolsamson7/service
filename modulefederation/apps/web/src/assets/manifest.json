@@ -1,25 +1,35 @@
 {
   "name": "web",
   "version": "0.0.0",
-  "commitHash": "7e9a2e916fd1da6786caac41b0fe6b838fbbb12d",
+  "commitHash": "6fe6c8a3e43ae7957c3c81f2096e396f7f79a962",
   "module": "AppModule",
   "features": [
     {
       "id": "translations",
       "label": "Translations",
-      "folder": "portals",
       "labelKey": "translations:title.label",
       "i18n": ["translations", "portal.commands"],
       "icon": "language",
+      "folder": "portals",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],
       "visibility": ["private"]
     },
     {
+      "id": "application",
+      "label": "Application",
+      "i18n": ["portal.commands"],
+      "icon": "apps",
+      "folder": "portals",
+      "component": "ApplicationFeatureComponent",
+      "tags": ["navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
       "id": "components",
       "label": "Components",
-      "folder": "microservices",
       "icon": "folder",
+      "folder": "portals",
       "component": "ComponentsComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -47,8 +57,8 @@
     {
       "id": "error",
       "label": "Error",
-      "folder": "portals",
       "icon": "bug_report",
+      "folder": "portals",
       "component": "ErrorComponent",
       "tags": ["error", "navigation"],
       "visibility": ["public", "private"]
@@ -56,16 +66,16 @@
     {
       "id": "help",
       "label": "Help",
-      "icon": "home",
+      "icon": "help",
       "component": "HelpComponent",
       "visibility": ["public", "private"]
     },
     {
       "id": "help-administration",
       "label": "Help",
-      "folder": "portals",
       "i18n": ["portal.commands"],
       "icon": "help",
+      "folder": "portals",
       "component": "HelpAdministrationComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"]
@@ -88,7 +98,7 @@
       "id": "microfrontends",
       "label": "Microfrontends",
       "i18n": ["portal.commands"],
-      "icon": "code",
+      "icon": "apps",
       "folder": "portals",
       "component": "MirofrontendsComponent",
       "tags": ["navigation"],
@@ -109,7 +119,7 @@
       "id": "nodes",
       "label": "Nodes",
       "icon": "computer",
-      "folder": "microservices",
+      "folder": "portals",
       "component": "NodesComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],

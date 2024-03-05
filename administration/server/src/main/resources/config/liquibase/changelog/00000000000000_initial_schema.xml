@@ -43,4 +43,36 @@
             <column name="locale" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
+
+    <!-- new -->
+
+    <changeSet author="andreasernst (generated)" id="1706792913947-6">
+        <createTable tableName="stage">
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="stage_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="andreasernst (generated)" id="1706792913947-7">
+        <createTable tableName="APPLICATION">
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="application_pkey"/>
+            </column>
+            <column name="configuration" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="andreasernst (generated)" id="1706792913947-8">
+        <createTable tableName="APPLICATION_VERSION">
+            <column name="ID" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="application_version_pkey"/>
+            </column>
+            <column name="OR_APPLICATION" type="VARCHAR(255)">
+                <constraints nullable="false" foreignKeyName="app_version_or_application_fk" references="APPLICATION(name)"/>
+            </column>
+            <column name="VERSION" type="VARCHAR(255)"/>
+            <column name="CONFIGURATION" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

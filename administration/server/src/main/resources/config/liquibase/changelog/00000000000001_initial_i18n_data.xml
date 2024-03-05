@@ -218,5 +218,38 @@
             <column name="LOCALE" value="de-DE" />
             <column name="TRANSLATION" value="Übersetzungen" />
         </insert>
+
+        <!-- TODO -->
+
+        <insert tableName="STAGE">
+            <column name="NAME" value="QA" />
+        </insert>
+
+        <insert tableName="STAGE">
+            <column name="NAME" value="DEV" />
+        </insert>
+
+        <insert tableName="STAGE">
+            <column name="NAME" value="PROD" />
+        </insert>
+
+        <insert tableName="APPLICATION">
+            <column name="NAME" value="APP" />
+            <column name="CONFIGURATION" value="{}" />
+        </insert>
+
+        <insert tableName="APPLICATION_VERSION">
+            <column name="ID" value="0" />
+            <column name="OR_APPLICATION" value="APP" />
+            <column name="VERSION" value="V1.0" />
+            <column name="CONFIGURATION" value="{}" />
+        </insert>
+
+        <insert tableName="APPLICATION_VERSION">
+            <column name="ID" value="1" />
+            <column name="OR_APPLICATION" value="APP" />
+            <column name="VERSION" value="LATEST" />
+            <column name="CONFIGURATION" value="{}" />
+        </insert>
     </changeSet>
 </databaseChangeLog>

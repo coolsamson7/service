@@ -1,0 +1,48 @@
+<div class="application">
+  <!-- toolbar -->
+
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <command-button command="save"></command-button>
+
+      <!-- TODO --->
+      <command-button command="addApplication"></command-button>
+      <command-button command="addVersion"></command-button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="view">
+
+    <!-- tree -->
+
+    <application-tree class="tree" [applications]="applications" (onSelectionChange)="selectNode($event)"></application-tree>
+
+    <!-- content area. -->
+
+    <div class="content">
+      <!-- application -->
+
+      <mat-tab-group  *ngIf="selectedApplication">
+        <mat-tab label="General">
+          Name {{selectedApplication.name}}
+        </mat-tab>
+
+        <mat-tab label="Configuration">
+          <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+        </mat-tab>
+      </mat-tab-group>
+
+      <!-- version -->
+      
+      <mat-tab-group  *ngIf="selectedVersion">
+          <mat-tab label="General">
+            Version {{selectedVersion.version}}
+          </mat-tab>
+      
+          <mat-tab label="Configuration">
+            <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+          </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

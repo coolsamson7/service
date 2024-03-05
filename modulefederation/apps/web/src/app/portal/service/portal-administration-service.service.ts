@@ -7,7 +7,7 @@
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { AbstractHTTPService, Manifest, Service } from "@modulefederation/portal";
-import { Address } from "../model";
+import { Address, Application, ApplicationVersion } from "../model";
 import { RegistryResult } from "../model/registry-result.interface";
 
 @Injectable({providedIn: 'root'})
@@ -60,5 +60,56 @@ export class PortalAdministrationService extends AbstractHTTPService {
     return this.get<any>(`xxx`)
   }
 
+  // NEW
 
+  // stage
+
+  createStage(stage: string): Observable<any> {
+    return this.post<any>(`create-stage`, stage)
+  }
+
+  deleteStage(stage: String) : Observable<any>{
+    return this.delete<any>(`delete-stage/${stage}`)
+  }
+
+
+  readStages() : Observable<string[]>{
+    return this.get<any>(`read-stages`)
+  }
+
+  // application
+
+  createApplication(application: Application) : Observable<Application>{
+    return this.post<any>(`create-application`, application)
+  }
+
+  readApplication(application: String) : Observable<Application>{
+    return this.get<any>(`read-application/${application}`)
+  }
+
+  updateApplication(application: Application) {
+    return this.post<any>(`update-application`, application)
+  }
+
+  deleteApplication(application: String) {
+    return this.delete<any>(`delete-application/${application}`)
+  }
+
+  readApplications() : Observable<Application[]>{
+    return this.get<any>(`read-applications`)
+  }
+
+  // application version
+
+  createApplicationVersion(application: string, applicationVersion: ApplicationVersion) : Observable<ApplicationVersion> {
+      return this.post<any>(`create-application-version/${application}`, applicationVersion)
+  }
+
+  updateApplicationVersion(application: ApplicationVersion) : Observable<ApplicationVersion> {
+      return this.post<any>(`update-application-version`, application)
+  }
+
+  deleteApplicationVersion( application: String, version: number) {
+      return this.delete<any>(`delete-application-version/${application}/${version}`)
+  }
 }

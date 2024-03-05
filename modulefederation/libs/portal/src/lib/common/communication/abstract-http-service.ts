@@ -73,7 +73,38 @@ export class AbstractHTTPService {
         return this.http.post<T>(this.url + url, body, options)
     }
 
-    // TODO put, etc.
+    put<T>(url: string, body: any | null, options?: {
+        headers?: HttpHeaders | {
+            [header: string]: string | string[];
+        };
+        context?: HttpContext;
+        observe?: 'body';
+        params?: HttpParams | {
+            [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+        };
+        reportProgress?: boolean;
+        responseType?: 'json';
+        withCredentials?: boolean;
+    }): Observable<T> {
+        return this.http.put<T>(this.url + url, body, options)
+    }
+
+    delete<T>(url: string, options?: {
+        headers?: HttpHeaders | {
+            [header: string]: string | string[];
+        };
+        context?: HttpContext;
+        observe?: 'body';
+        params?: HttpParams | {
+            [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+        };
+        reportProgress?: boolean;
+        responseType?: 'json';
+        withCredentials?: boolean;
+        body?: any | null;
+    }): Observable<T> {
+        return this.http.delete<T>(this.url + url, options)
+    }
 
     // protected
 

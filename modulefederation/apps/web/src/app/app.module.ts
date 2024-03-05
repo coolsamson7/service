@@ -94,9 +94,9 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     imports: [
         ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
-        ErrorModule.forRoot({
+        /*ErrorModule.forRoot({
            handler: [ApplicationErrorHandler]
-        }),
+        }),*/
 
         TracerModule.forRoot({
             enabled: environment.production !== true,
