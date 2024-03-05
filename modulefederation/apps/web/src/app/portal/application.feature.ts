@@ -10,6 +10,7 @@ import { ConfigurationData } from "./config/configuration-model";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { config } from "jointjs";
 import { U } from "@angular/cdk/keycodes";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
     standalone: true,
@@ -21,6 +22,7 @@ import { U } from "@angular/cdk/keycodes";
         // material
 
         MatTabsModule,
+        MatFormFieldModule,
         MatToolbarModule,
 
         // components
@@ -70,6 +72,10 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
         console.log(stages)
      )
 
+     portalAdministrationService.readMicrofrontendVersions().subscribe(stages =>
+       console.log(stages)
+     )
+
      portalAdministrationService.readApplications().subscribe(applications =>
         this.applications = applications
      )
@@ -100,7 +106,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
 
     for ( const root of this.configurationData.value ) {
         const result = find(this.configurationData, root, configuration)
-        
+
         if ( result !== undefined )
             return result
     }
@@ -187,19 +193,19 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
           type: "object",
           value: []
         }
-  
+
         // copy all values which either dont't inherit or overwrite
-  
+
         const copy = (properties: ConfigurationData[], result: ConfigurationData[]) => {
           for ( const property of properties) {
             if ( property.type == "object") {
               // recursive structure
-  
+
               // TODO
             }
             else {
               // literal property
-  
+
               if ( property.inherits == undefined || property.value !== property.inherits.value) {
                 result.push({
                   type: property.type,
@@ -210,13 +216,13 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
             }
           }
         }
-  
+
         // go
-  
+
         copy(configuration.value, result.value)
-  
+
         // done
-  
+
         return result
       }
 
@@ -246,9 +252,9 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
             this.selectedApplication = node.data
 
             this.configurationData =  JSON.parse(this.selectedApplication!.configuration)
-    
+
             // TODO HACK
-    
+
             if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
                 this.configurationData.type = "object"
                 this.configurationData.value = [
@@ -265,7 +271,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
         this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration)]
 
         this.configurationData =  JSON.parse(this.selectedVersion!.configuration)
-    
+
         // TODO HACK
 
         if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
@@ -335,7 +341,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
     })
     save() {
         if (this.selectedApplication) {
-            
+
             this.selectedApplication!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateApplication(this.selectedApplication).subscribe()

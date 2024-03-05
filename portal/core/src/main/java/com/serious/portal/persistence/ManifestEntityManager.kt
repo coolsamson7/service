@@ -7,12 +7,16 @@ package com.serious.portal.persistence
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.portal.ManifestEntity
+import com.serious.portal.MicrofrontendInstanceEntity
+import com.serious.portal.MicrofrontendVersionEntity
 import com.serious.portal.model.Manifest
 import org.springframework.transaction.annotation.Transactional
 
 import jakarta.persistence.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Component
 class ManifestEntityManager {
@@ -24,6 +28,11 @@ class ManifestEntityManager {
     private lateinit var objectMapper : ObjectMapper
     @Autowired
     private lateinit var  repository : ManifestRepository
+    // NEW
+    @Autowired
+    private lateinit var  microfrontendVersionRepository: MicrofrontedVersionRepository
+    @Autowired
+    private lateinit var  microfrontendInstanceRepository: MicrofrontedInstanceRepository
 
     // private
 
@@ -49,7 +58,31 @@ class ManifestEntityManager {
 
     @Transactional
     fun createManifest(manifest: Manifest) {
-        this.entityManager.persist(toEntity(manifest))
+        val manifestEntity = toEntity(manifest)
+
+        this.entityManager.persist(manifestEntity)
+
+        // NEW TODO
+
+        val id = manifest.name + ":" + manifest.version
+        val instances :  MutableList<MicrofrontendInstanceEntity> = ArrayList()
+        val versionEntity : MicrofrontendVersionEntity = microfrontendVersionRepository.findById(id).orElse(this.microfrontendVersionRepository.save(MicrofrontendVersionEntity(
+            id,
+            manifestEntity.json,
+            true,
+            "{}",
+            instances
+        )))
+
+        val instanceEntity = MicrofrontendInstanceEntity(
+            manifestEntity.uri,
+            true,
+            "PROD",
+            "{}",
+            versionEntity
+        )
+
+        microfrontendInstanceRepository.save(instanceEntity)
     }
 
     @Transactional
@@ -92,13 +125,6 @@ class ManifestEntityManager {
     @Transactional
     fun deleteManifest(manifest: Manifest) {
         this.repository.deleteById(manifest.remoteEntry!!)
-
-        //this.entityManager.remove(toEntity(manifest))// TODO id?????
-
-        /*val id = 1
-        this.entityManager.createQuery("delete from ManifestEntity p where p.id=:id")
-            .setParameter("id", id)
-            .executeUpdate();*/
     }
 
     @Transactional

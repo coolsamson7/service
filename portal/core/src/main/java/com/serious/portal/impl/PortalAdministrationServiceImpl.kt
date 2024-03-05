@@ -7,10 +7,12 @@ package com.serious.service.administration.portal.impl
 
 import com.serious.portal.ManifestLoader
 import com.serious.portal.ManifestManager
+import com.serious.portal.MicrofrontendInstanceEntity
 import com.serious.portal.PortalAdministrationService
 import com.serious.portal.model.*
 import com.serious.portal.persistence.ApplicationRepository
 import com.serious.portal.persistence.ApplicationVersionRepository
+import com.serious.portal.persistence.MicrofrontedVersionRepository
 import com.serious.portal.persistence.StageRepository
 import com.serious.portal.persistence.entity.ApplicationEntity
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
@@ -39,6 +41,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Autowired
     lateinit var applicationVersionRepository: ApplicationVersionRepository
+
+    @Autowired
+    lateinit var microfrontendVersionRepository: MicrofrontedVersionRepository
 
     // implement PortalAdministrationService
 
@@ -225,5 +230,29 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         val entity = applicationEntity.versions.find { entity -> entity.id == version }
 
         applicationEntity.versions.remove(entity)
+    }
+
+    // microfrontend versions
+
+    @Transactional
+    override fun readMicrofrontendVersions() : List<MicrofrontendVersion> {
+        fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
+            return MicrofrontendInstance(
+                entity.uri,
+                entity.enabled,
+                entity.configuration,
+                entity.stage,
+            )
+        }
+
+        return this.microfrontendVersionRepository.findAll().map { entity ->
+            MicrofrontendVersion(
+                entity.id,
+                entity.manifest,
+                entity.configuration,
+                entity.enabled,
+                entity.instances.map { instanceEntity -> mapInstance(instanceEntity) }
+            )
+        }
     }
 }

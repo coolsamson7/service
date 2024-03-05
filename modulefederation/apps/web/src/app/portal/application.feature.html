@@ -21,10 +21,13 @@
 
     <div class="content">
       <!-- application -->
-
       <mat-tab-group  *ngIf="selectedApplication">
         <mat-tab label="General">
-          Name {{selectedApplication.name}}
+          <div class="application">
+         
+              <mat-label>Name</mat-label>
+              <div>{{selectedApplication.name}}</div>
+          </div>
         </mat-tab>
 
         <mat-tab label="Configuration">
@@ -36,7 +39,10 @@
       
       <mat-tab-group  *ngIf="selectedVersion">
           <mat-tab label="General">
-            Version {{selectedVersion.version}}
+            <div class="version">
+              <mat-label>Version</mat-label>
+              <div>{{selectedVersion.version}}</div>
+            </div>
           </mat-tab>
       
           <mat-tab label="Configuration">

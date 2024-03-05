@@ -11,6 +11,7 @@
             <column name="translation" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
+
     <changeSet author="andreasernst (generated)" id="1706792913947-2">
         <createIndex indexName="idxjaanst835oe6vhkh8u5k9t6dv" tableName="message">
             <column name="namespace"/>
@@ -18,6 +19,7 @@
             <column name="locale"/>
         </createIndex>
     </changeSet>
+
     <changeSet author="andreasernst (generated)" id="1706792913947-3">
         <createTable tableName="language">
             <column name="locale" type="VARCHAR(255)">
@@ -25,6 +27,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="andreasernst (generated)" id="1706792913947-4">
         <createTable tableName="MANIFEST">
             <column name="uri" type="VARCHAR(255)">
@@ -35,6 +38,7 @@
             <column name="json" type="VARCHAR(5000)"/>
         </createTable>
     </changeSet>
+
     <changeSet author="andreasernst (generated)" id="1706792913947-5">
         <createTable tableName="user_profile">
             <column name="user_id" type="VARCHAR(255)">
@@ -73,6 +77,31 @@
             </column>
             <column name="VERSION" type="VARCHAR(255)"/>
             <column name="CONFIGURATION" type="VARCHAR(4000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="andreasernst (generated)" id="1706792913947-9">
+        <createTable tableName="MICROFRONTEND_VERSION">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_version_pkey"/>
+            </column>
+            <column name="VERSION" type="VARCHAR(255)"/>
+            <column name="ENABLED" type="BOOLEAN"/>
+            <column name="configuration" type="VARCHAR(4000)"/>
+            <column name="MANIFEST" type="VARCHAR(5000)"/>
+        </createTable>
+
+
+        <createTable tableName="MICROFRONTEND_INSTANCE">
+            <column name="URI" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_instance_pkey"/>
+            </column>
+            <column name="OR_MICROFRONTEND_VERSION" type="VARCHAR(255)">
+                <constraints nullable="false" foreignKeyName="mirofrontebd_instance_or_microfrontend_version_fk" references="MICROFRONTEND_VERSION(id)"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN"/>
+            <column name="configuration" type="VARCHAR(4000)"/>
+            <column name="STAGE" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

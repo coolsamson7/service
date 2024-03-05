@@ -10,10 +10,3 @@ data class Application(
     var configuration : String,
     var versions: List<ApplicationVersion>
 )
-
-data class ApplicationVersion(
-    var id : Long,
-    //var application : Application,
-    var version : String,
-    var configuration : String
-)

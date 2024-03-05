@@ -12,6 +12,29 @@
         }
     
         .content {
+            .application {
+                padding: 10px 0px 10px 0px;
+                display: grid;
+                grid-column-gap: 10px;
+                grid-row-gap: 10px;
+                grid-template-columns: min-content 1fr min-content 1fr;
+            
+                mat-label {
+                  font-weight: bold;
+                }
+            }
+
+            .version {
+                padding: 10px 0px 10px 0px;
+                display: grid;
+                grid-column-gap: 10px;
+                grid-row-gap: 10px;
+                grid-template-columns: min-content 1fr min-content 1fr;
+            
+                mat-label {
+                  font-weight: bold;
+                }
+            }
     
         }
     }

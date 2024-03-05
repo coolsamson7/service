@@ -11,12 +11,11 @@
       <mat-icon class="mat-icon-rtl-mirror">expand_more</mat-icon>
     </button>
 
-
     <!-- content -->
 
-    <span *ngIf="node.type === 'version'">
+    <ng-container *ngIf="node.type === 'version'">
       {{node.data.version}}
-    </span>
+    </ng-container>
   </mat-tree-node>
 
   <!-- This is the tree node template for expandable nodes -->
@@ -31,24 +30,25 @@
         </mat-icon>
       </button>
 
-      <!-- content -->
+      <!-- application -->
 
-      <span *ngIf="node.type === 'application'">
+      <ng-container *ngIf="node.type === 'application'">
         <mat-icon class="mat-icon-rtl-mirror">apps</mat-icon>
 
         {{node.data.name}}
-      </span>
+      </ng-container>
 
-      <span *ngIf="node.type === 'version'">
+      <!--version -->
+
+      <ng-container *ngIf="node.type === 'version'">
         {{node.data.version}}
-      </span>
+      </ng-container>
     </div>
 
     <!-- There is inline padding applied to this div using styles.
         This padding value depends on the mat-icon-button width.  -->
 
-    <div [class.namespace-tree-invisible]="!treeControl.isExpanded(node)"
-         role="group">
+    <div [class.namespace-tree-invisible]="!treeControl.isExpanded(node)" role="group">
       <ng-container matTreeNodeOutlet></ng-container>
     </div>
   </mat-nested-tree-node>
