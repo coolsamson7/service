@@ -1,62 +1,25 @@
+.configuration {
+  display: grid;
+  grid-template-columns: auto min-content;
 
-.tree {
-   font-size: 16px;
-
+  .table {
+    .property {
+      position:relative;
+      bottom: 16px
+    }
     .value {
-        display: flex;
-        column-gap: 5px;
+      display: grid;
+      grid-column-gap: 2px;
+      grid-template-columns: min-content auto auto auto;
 
-        .type {
+      .input {
+      }
 
-        }
+      .add {
+      }
 
-        .input {
-        }
-
-        .add {
-            visibility: hidden;
-            float: right;
-
-
-
-            .mat-icon {
-              height: 20px;
-              width: 20px;
-              font-size: 20px;
-
-            }
-        }
-
-        .delete {
-            visibility: hidden;
-            float: right;
-
-
-
-            .mat-icon {
-              height: 20px;
-              width: 20px;
-              font-size: 20px;
-
-            }
-        }
+      .delete {
+      }
     }
-
-    .value:hover {
-        .delete {
-          visibility: visible;
-        }
-
-        .add {
-            visibility: visible;
-          }
-    }
-}
-
-.tree table {
-    table-layout: auto !important;
-}
-
-.tree th, .myclass td, .myclass thead th, .myclass tbody td, .myclass tfoot td, .myclass tfoot th {
-    width: auto !important;
+  }
 }

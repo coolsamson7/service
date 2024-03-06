@@ -1,76 +1,81 @@
-<table class="mat-elevation-z0" mat-table [dataSource]="dataSource">
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>
-      <span [style.paddingLeft.px]="40"> Name </span>
-    </th>
-    <td mat-cell *matCellDef="let data">
-        <button  (click)="treeControl.toggle(data)" mat-icon-button>
-            <mat-icon class="mat-icon-rtl-mirror"  [style.visibility]="!data.expandable ? 'hidden' : ''"
-            [style.marginLeft.px]="data.level * 32"
-           >
-            {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}
-            </mat-icon>
-        </button>
+<div class="configuration">
+  <!-- table -->
 
-        <mat-label>{{data.name}}</mat-label>
-    </td>
-  </ng-container>
+  <table class="table mat-elevation-z0" mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>
+        <span [style.paddingLeft.px]="40"> Name </span>
+      </th>
 
-  <ng-container matColumnDef="value">
-    <th mat-header-cell *matHeaderCellDef>Value </th>
-    <td mat-cell *matCellDef="let data">
-      <div class="value" *ngIf="data.property">
-        <!-- type picker -->
+      <td mat-cell *matCellDef="let data">
+          <button  (click)="treeControl.toggle(data)" mat-icon-button>
+              <mat-icon class="mat-icon-rtl-mirror"  [style.visibility]="!data.expandable ? 'hidden' : ''"
+              [style.marginLeft.px]="data.level * 32"
+            >
+              {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+          </button>
 
-        <!--mat-form-field-->
-          <mat-select  *ngIf="data.property.type !== 'object'" [disabled]="data.property.inherits !== undefined && data.property.overwrite !== true" class="type" [(ngModel)]="data.property.type">
-            <mat-option *ngFor="let type of types" [value]="type">
-              {{type}}
-            </mat-option>
-          </mat-select>
-        <!--/mat-form-field-->
+          <mat-label class="property">{{data.name}}</mat-label>
+      </td>
+    </ng-container>
 
-        <!-- input field -->
+    <ng-container matColumnDef="value">
+      <th mat-header-cell *matHeaderCellDef>Value </th>
+      <td mat-cell *matCellDef="let data">
+        <div class="value" *ngIf="data.property">
+          <!-- type picker -->
 
-        <ng-container *ngIf="data.property.type !== 'object'" class="input" parameter [data]="data.property" [type]="data.property.type" [disabled]="data.property.inherits !== undefined  && data.property.overwrite !== true" (onChange)="changed($event)"></ng-container>
+          <mat-form-field>
+            <mat-select  *ngIf="data.property.type !== 'object'" [disabled]="data.property.inherits !== undefined && data.property.overwrite !== true" class="type" [(ngModel)]="data.property.type">
+              <mat-option *ngFor="let type of types" [value]="type">
+                {{type}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <!-- + -->
+          <!-- input field -->
 
-        <button aria-label="Add" [matMenuTriggerFor]="menu" class="add" mat-icon-button>
-            <mat-icon class="delete" matSuffix>add</mat-icon>
+          <ng-container *ngIf="data.property.type !== 'object'" class="input" parameter [data]="data.property" [type]="data.property.type" [disabled]="data.property.inherits !== undefined  && data.property.overwrite !== true" (onChange)="changed($event)"></ng-container>
 
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item  (click)="addItem(data)">Value</button>
-              <button mat-menu-item  (click)="addFolder(data)">Folder</button>
-            </mat-menu>
-        </button>
+          <!-- + -->
 
-        <!-- x -->
+          <button aria-label="Add" [matMenuTriggerFor]="menu" class="add" mat-icon-button>
+              <mat-icon class="delete" matSuffix>add_circle_outline</mat-icon>
 
-        <button *ngIf="data.property.inherits === undefined ||  data.property.overwrite === true" (click)="deleteItem(data)" aria-label="Clear" class="delete" mat-icon-button>
-            <mat-icon class="delete" matSuffix>close</mat-icon>
-        </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item  (click)="addItem(data)">Value</button>
+                <button mat-menu-item  (click)="addFolder(data)">Folder</button>
+              </mat-menu>
+          </button>
 
-        <!-- edit -->
+          <!-- x -->
 
-        <button *ngIf="data.property.inherits !== undefined && data.property.overwrite !== true" (click)="editItem(data)" aria-label="Clear" class="delete" mat-icon-button>
-            <mat-icon class="edit" matSuffix>edit</mat-icon>
-        </button>
-    </div>
-    </td>
-  </ng-container>
+          <button *ngIf="data.property.inherits === undefined ||  data.property.overwrite === true" (click)="deleteItem(data)" aria-label="Clear" class="delete" mat-icon-button>
+              <mat-icon class="delete" matSuffix>remove_circle_outline</mat-icon>
+          </button>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+          <!-- edit -->
 
-  <!-- + -->
+          <button *ngIf="data.property.inherits !== undefined && data.property.overwrite !== true" (click)="editItem(data)" aria-label="Clear" class="delete" mat-icon-button>
+              <mat-icon class="edit" matSuffix>edit</mat-icon>
+          </button>
+      </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- + in case of empty entries -->
 
   <button *ngIf="configuration.value.length === 0" aria-label="Add" [matMenuTriggerFor]="menu" class="add" mat-icon-button>
-    <mat-icon class="delete" matSuffix>add</mat-icon>
+    <mat-icon class="delete">add_box</mat-icon>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item  (click)="addItem()">Value</button>
+      <button mat-menu-item  (click)="addItem()">Property</button>
       <button mat-menu-item  (click)="addFolder()">Folder</button>
     </mat-menu>
   </button>
+</div>
