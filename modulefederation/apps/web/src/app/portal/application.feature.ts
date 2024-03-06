@@ -1,5 +1,5 @@
-import { Component, Injector } from "@angular/core";
-import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, SuggestionProvider, ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
+import { AfterViewInit, Component, Directive, Injector } from "@angular/core";
+import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, SuggestionProvider, ArraySuggestionProvider, NgModelSuggestionsDirective, VersionRange } from "@modulefederation/portal";
 import { PortalAdministrationService } from "./service";
 import { Node, ApplicationTreeComponent } from "./application-tree.component";
 import { CommonModule } from "@angular/common";
@@ -8,15 +8,122 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { ConfigurationTreeComponent } from "./config/configuration-tree.component";
 import { ConfigurationData } from "./config/configuration-model";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { forkJoin } from "rxjs";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import { FormsModule } from "@angular/forms";
+import { AbstractControl, AbstractControlDirective, FormsModule, NG_VALIDATORS, NgControl, NgForm, Validator } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
+
+
+@Directive({
+    selector: '[versionValidator]',
+    standalone: true,
+    providers: [{
+      provide: NG_VALIDATORS,
+      useExisting: VersionValidatorDirective,
+      multi: true
+    }]
+  })
+  export class VersionValidatorDirective implements Validator {
+    // implement Validator
+
+    validate(control: AbstractControl) : {[key: string]: any} | null {
+        try {
+            new VersionRange(control.value)
+
+            return null
+        }
+        catch(e) {
+            return { 
+                'versionInvalid': true 
+            };
+        }
+    }
+  }
+
+  @Directive({
+    selector: '[microfrontendValidator]',
+    standalone: true,
+    providers: [{
+      provide: NG_VALIDATORS,
+      useExisting: MicrofrontendValidatorDirective,
+      multi: true
+    }]
+  })
+  export class MicrofrontendValidatorDirective implements Validator {
+    // constructor
+
+    constructor(private feature: ApplicationFeatureComponent) {
+    }
+
+    // implement Validator
+
+    validate(control: AbstractControl) : {[key: string]: any} | null {
+    
+     if (this.feature.selectedVersion!.microfrontends.find(mfe => mfe.id === control.value) === undefined)
+        return { 
+            'microfrontendInvalid': true 
+        };
+
+      return null;
+    }
+  }
+
+@Component({
+    standalone: true,
+    selector: '[showErrors]',
+    template: '{{ error }}'
+})
+export class MatErrorMessagesComponent implements AfterViewInit {
+    // instance data
+
+    public error = ''
+    private control: NgControl | AbstractControlDirective | null = null
+
+    // constructor
+
+    constructor(private formField: MatFormField, private feature: ApplicationFeatureComponent) {
+    }
+
+    /// implement AfterViewInit
+
+    public ngAfterViewInit(): void {
+        this.control = this.formField._control.ngControl;
+
+        // sub to the control's status stream
+
+        this.control?.statusChanges!.subscribe(this.updateErrors);
+    }
+
+    // private
+
+    private updateErrors = (state: 'VALID' | 'INVALID'): void => {
+        this.feature.state((<any>this.control)["name"], state)
+
+        if (state === 'INVALID') {
+            // active errors on the FormControl
+
+            const controlErrors = this.control!.errors!
+
+            // just grab one error
+
+            const firstError = Object.keys(controlErrors)[0]
+
+            if (firstError === 'required')
+                this.error = 'This field is required.'
+
+            else if (firstError === 'versionInvalid')
+                this.error = "invalid version specifier"
+            
+            else if (firstError === 'microfrontendInvalid')
+                this.error = "unknown microfrontend"
+        }
+    };
+}
 
 export interface AssignedMicrofrontendRow {
     isSelected: boolean;
@@ -56,6 +163,7 @@ export const Columns = [
         // angular
 
         CommonModule,
+        FormsModule,
 
         // material
 
@@ -68,10 +176,13 @@ export const Columns = [
         MatFormFieldModule,
         MatToolbarModule,
         MatCheckboxModule,
-        FormsModule,
-
+        
         // components
 
+        MicrofrontendValidatorDirective,
+        VersionValidatorDirective,
+
+        MatErrorMessagesComponent,
         NgModelSuggestionsDirective,
         CommandButtonComponent,
 
@@ -95,6 +206,19 @@ export const Columns = [
 })
 export class ApplicationFeatureComponent extends WithCommands(WithDialogs(AbstractFeature)) {
 // NEW TODO
+
+ errors : any = {}
+
+state(control: string, state: 'VALID' | 'INVALID') {
+    if (state == "INVALID")
+       this.errors[control] = true
+    else
+        delete this.errors[control]
+}
+
+canFinishEdit() {
+    return Object.getOwnPropertyNames(this.errors).length == 0
+}
 
 displayedColumns: string[] = Columns.map((col) => col.key)
   columnsSchema: any = Columns
@@ -393,7 +517,7 @@ displayedColumns: string[] = Columns.map((col) => col.key)
             this.inheritedConfigurationData = []
             this.selectedMicrofrontendVersion = node.data
 
-            this.configurationData =  JSON.parse(this.selectedMicrofrontendVersion!.configuration)
+            this.configurationData = JSON.parse(this.selectedMicrofrontendVersion!.configuration)
         }
 
         else if ( node.type == "microfrontend-instance") {
@@ -409,7 +533,6 @@ displayedColumns: string[] = Columns.map((col) => col.key)
                 this.configurationData.value = []
             }   // if
         }
-
 
         else if ( node.type == "application") {
             this.inheritedConfigurationData = []

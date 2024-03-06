@@ -1,4 +1,4 @@
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="namespace-tree">
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="application-tree">
   <!-- This is the tree node template for leaf nodes -->
 
   <!-- There is inline padding applied to this node using styles.
@@ -15,6 +15,12 @@
 
     <ng-container *ngIf="node.type === 'version'">
       {{node.data.version}}
+    </ng-container>
+
+    <!-- microfrontend instance -->
+
+    <ng-container *ngIf="node.type === 'microfrontend-instance'">
+      {{node.data.uri}}
     </ng-container>
   </mat-tree-node>
 
@@ -49,18 +55,12 @@
       <ng-container *ngIf="node.type === 'microfrontend-version'">
         {{node.data.id}}
       </ng-container>
-
-       <!-- microfrontend instance -->
-
-       <ng-container *ngIf="node.type === 'microfrontend-version'">
-        {{node.data.uri}}
-      </ng-container>
     </div>
 
     <!-- There is inline padding applied to this div using styles.
         This padding value depends on the mat-icon-button width.  -->
 
-    <div [class.namespace-tree-invisible]="!treeControl.isExpanded(node)" role="group">
+    <div [class.application-tree-invisible]="!treeControl.isExpanded(node)" role="group">
       <ng-container matTreeNodeOutlet></ng-container>
     </div>
   </mat-nested-tree-node>

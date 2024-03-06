@@ -53,7 +53,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         this.onSelectionChange.emit(node)
     }
 
-    hasChild = (_: number, node: Node) => !!node.children && node.children.length > 0;
+    hasChild = (_: number, node: Node) => node.children && node.children.length > 0;
 
     // state
 

@@ -224,7 +224,8 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
       // let's move
 
       for ( const inheritedConfiguration of inherited)
-        copy(inheritedConfiguration.value, result.value, false) // we assume, the root is an object
+        if (inheritedConfiguration.value)
+          copy(inheritedConfiguration.value, result.value, false) // we assume, the root is an object
 
       // own values
 
