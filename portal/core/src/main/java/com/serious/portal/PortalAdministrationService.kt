@@ -95,9 +95,18 @@ interface PortalAdministrationService : Service {
     fun deleteApplicationVersion(@PathVariable application: String, @PathVariable version: Long)
 
     // microfrontend version
+
     @GetMapping("read-microfrontend-versions")
     @ResponseBody
     fun readMicrofrontendVersions() : List<MicrofrontendVersion>
 
+    @PostMapping("update-microfrontend-version")
+    @ResponseBody
+    fun updateMicrofrontendVersion(@RequestBody version: MicrofrontendVersion) : MicrofrontendVersion
+
     // microfrontend instance
+
+    @PostMapping("update-microfrontend-instance")
+    @ResponseBody
+    fun updateMicrofrontendInstance(@RequestBody instance: MicrofrontendInstance) : MicrofrontendInstance
 }

@@ -43,6 +43,18 @@
       <ng-container *ngIf="node.type === 'version'">
         {{node.data.version}}
       </ng-container>
+
+      <!-- microfrontend version -->
+
+      <ng-container *ngIf="node.type === 'microfrontend-version'">
+        {{node.data.id}}
+      </ng-container>
+
+       <!-- microfrontend instance -->
+
+       <ng-container *ngIf="node.type === 'microfrontend-version'">
+        {{node.data.uri}}
+      </ng-container>
     </div>
 
     <!-- There is inline padding applied to this div using styles.

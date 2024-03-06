@@ -7,7 +7,7 @@
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { AbstractHTTPService, Manifest, Service } from "@modulefederation/portal";
-import { Address, Application, ApplicationVersion, MicrofrontendVersion } from "../model";
+import { Address, Application, ApplicationVersion, MicrofrontendInstance, MicrofrontendVersion } from "../model";
 import { RegistryResult } from "../model/registry-result.interface";
 
 @Injectable({providedIn: 'root'})
@@ -80,11 +80,11 @@ export class PortalAdministrationService extends AbstractHTTPService {
   // application
 
   createApplication(application: Application) : Observable<Application>{
-    return this.post<any>(`create-application`, application)
+    return this.post<Application>(`create-application`, application)
   }
 
   readApplication(application: String) : Observable<Application>{
-    return this.get<any>(`read-application/${application}`)
+    return this.get<Application>(`read-application/${application}`)
   }
 
   updateApplication(application: Application) {
@@ -102,20 +102,30 @@ export class PortalAdministrationService extends AbstractHTTPService {
   // application version
 
   createApplicationVersion(application: string, applicationVersion: ApplicationVersion) : Observable<ApplicationVersion> {
-      return this.post<any>(`create-application-version/${application}`, applicationVersion)
+      return this.post<ApplicationVersion>(`create-application-version/${application}`, applicationVersion)
   }
 
   updateApplicationVersion(application: ApplicationVersion) : Observable<ApplicationVersion> {
-      return this.post<any>(`update-application-version`, application)
+      return this.post<ApplicationVersion>(`update-application-version`, application)
   }
 
   deleteApplicationVersion( application: String, version: number) {
       return this.delete<any>(`delete-application-version/${application}/${version}`)
   }
 
-  // microfrontend verisons
+  // microfrontend versions
 
   readMicrofrontendVersions() : Observable<MicrofrontendVersion[]>  {
     return this.get<MicrofrontendVersion[]>(`read-microfrontend-versions`)
+  }
+
+  updateMicrofrontendVersion(version : MicrofrontendVersion) : Observable<MicrofrontendVersion>  {
+    return this.post<MicrofrontendVersion>(`update-microfrontend-version`, version)
+  }
+
+  // microfrontend insatcnes
+
+  updateMicrofrontendInstance(instance: MicrofrontendInstance) : Observable<MicrofrontendInstance>  {
+    return this.post<MicrofrontendInstance>(`update-microfrontend-instance`, instance)
   }
 }

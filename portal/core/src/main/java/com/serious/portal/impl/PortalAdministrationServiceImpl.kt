@@ -10,10 +10,7 @@ import com.serious.portal.ManifestManager
 import com.serious.portal.MicrofrontendInstanceEntity
 import com.serious.portal.PortalAdministrationService
 import com.serious.portal.model.*
-import com.serious.portal.persistence.ApplicationRepository
-import com.serious.portal.persistence.ApplicationVersionRepository
-import com.serious.portal.persistence.MicrofrontedVersionRepository
-import com.serious.portal.persistence.StageRepository
+import com.serious.portal.persistence.*
 import com.serious.portal.persistence.entity.ApplicationEntity
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
 import com.serious.portal.persistence.entity.StageEntity
@@ -44,6 +41,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Autowired
     lateinit var microfrontendVersionRepository: MicrofrontedVersionRepository
+
+    @Autowired
+    lateinit var microfrontendInstanceRepository: MicrofrontedInstanceRepository
 
     // implement PortalAdministrationService
 
@@ -255,4 +255,28 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             )
         }
     }
+
+    override fun updateMicrofrontendVersion(version: MicrofrontendVersion) : MicrofrontendVersion {
+        val entity = this.microfrontendVersionRepository.findById(version.id).get()
+
+        entity.configuration = version.configuration
+
+        // TODO!!! hmmmm
+
+        return version
+    }
+
+    // microfrontend instance
+
+    override fun updateMicrofrontendInstance(instance: MicrofrontendInstance) : MicrofrontendInstance {
+        val entity = this.microfrontendInstanceRepository.findById(instance.uri).get()
+
+        entity.configuration = instance.configuration
+        entity.stage = instance.stage
+
+        // TODO!!! hmmmm
+
+        return instance
+    }
+
 }

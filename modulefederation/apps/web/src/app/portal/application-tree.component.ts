@@ -6,10 +6,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { Application, ApplicationVersion } from "./model";
+import { Application, ApplicationVersion, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 
 export interface Node {
-    type: "application" | "version"
+    type: "application" | "version" | "microfrontend-version"| "microfrontend-instance"
     parent?: Node
     children?: Node[]
     data : any
@@ -26,6 +26,8 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     // input
 
     @Input() applications : Application[] = []
+    @Input() microfrontendVersions : MicrofrontendVersion[] = []
+
     @Output() onSelectionChange = new EventEmitter<Node>();
 
     // instance data
@@ -71,7 +73,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     // private
 
-    createData(applications: Application[]) : Node[] {
+    createData(applications: Application[], microfrontendVersions: MicrofrontendVersion[]) : Node[] {
         const mapVersion = (parent: Node, version: ApplicationVersion) : Node => {
             return {
                 type: "version",
@@ -80,7 +82,15 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
             }
         }
 
-        return  <Node[]>applications.map(application => {
+        const mapInstance = (parent: Node, instance: MicrofrontendInstance) : Node => {
+            return {
+                type: "microfrontend-instance",
+                parent: parent,
+                data: instance
+            }
+        }
+
+        return  [...<Node[]>applications.map(application => {
             const parent : Node =  {
                 type: "application",
                 data: application
@@ -89,13 +99,23 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
             parent.children = application.versions?.map(version => mapVersion(parent, version))
 
             return parent
-        });
+        }),
+        ...<Node[]>microfrontendVersions.map(microfrontendVersion => {
+            const parent : Node =  {
+                type: "microfrontend-version",
+                data: microfrontendVersion
+            }
+
+            parent.children = microfrontendVersion.instances?.map(instance => mapInstance(parent, instance))
+
+            return parent
+        })]
     }
 
     // implement OnInit
 
     ngOnInit() : void {
-        this.dataSource.data = this.createData(this.applications)
+        this.dataSource.data = this.createData(this.applications, this.microfrontendVersions)
 
         this.refreshData()
     }
@@ -104,7 +124,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes : SimpleChanges) : void {
         if (changes['applications'] && !changes['applications'].isFirstChange())
-            this.dataSource.data = this.createData(this.applications)
+            this.dataSource.data = this.createData(this.applications, this.microfrontendVersions)
 
         this.refreshData()
     }

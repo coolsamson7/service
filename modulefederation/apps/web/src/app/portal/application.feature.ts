@@ -1,16 +1,54 @@
 import { Component, Injector } from "@angular/core";
-import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent } from "@modulefederation/portal";
+import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, SuggestionProvider, ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
 import { PortalAdministrationService } from "./service";
 import { Node, ApplicationTreeComponent } from "./application-tree.component";
 import { CommonModule } from "@angular/common";
-import { Application, ApplicationVersion } from "./model";
+import { Application, ApplicationVersion, AssignedMicrofrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ConfigurationTreeComponent } from "./config/configuration-tree.component";
 import { ConfigurationData } from "./config/configuration-model";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { config } from "jointjs";
-import { U } from "@angular/cdk/keycodes";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { forkJoin } from "rxjs";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDividerModule } from "@angular/material/divider";
+
+export interface AssignedMicrofrontendRow {
+    isSelected: boolean;
+    isEdit: boolean;
+
+    data: AssignedMicrofrontend
+  }
+
+export const Columns = [
+    {
+      key: 'isSelected',
+      type: 'isSelected',
+      label: '',
+    },
+    {
+      key: 'id',
+      type: 'mfe',
+      label: 'Id',
+      required: true,
+    },
+    {
+        key: 'version',
+        type: 'text',
+        label: 'Version',
+        required: true,
+      },
+      {
+        key: 'isEdit',
+        type: 'isEdit',
+        label: '',
+      },
+]
 
 @Component({
     standalone: true,
@@ -22,11 +60,19 @@ import { MatFormFieldModule } from "@angular/material/form-field";
         // material
 
         MatTabsModule,
+        MatDividerModule,
+        MatIconModule,
+        MatButtonModule,
+        MatInputModule,
+        MatTableModule,
         MatFormFieldModule,
         MatToolbarModule,
+        MatCheckboxModule,
+        FormsModule,
 
         // components
 
+        NgModelSuggestionsDirective,
         CommandButtonComponent,
 
         ApplicationTreeComponent,
@@ -48,13 +94,98 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     folder: "portals"
 })
 export class ApplicationFeatureComponent extends WithCommands(WithDialogs(AbstractFeature)) {
+// NEW TODO
+
+displayedColumns: string[] = Columns.map((col) => col.key)
+  columnsSchema: any = Columns
+  dataSource = new MatTableDataSource<AssignedMicrofrontendRow>()
+  //valid: any = {}
+
+  finishEdit(row: AssignedMicrofrontendRow) {
+    row.isEdit = false
+
+    console.log(row)
+  }
+
+  addRow() {
+    const newRow: AssignedMicrofrontendRow = {
+      isEdit: true,
+      isSelected: false,
+      data: {
+        id: "",
+        version: ""
+      }
+    }
+    this.dataSource.data = [newRow, ...this.dataSource.data]
+  }
+
+  removeRow(row: AssignedMicrofrontendRow) {
+    /*this.userService.deleteUser(id).subscribe(() => {
+      this.dataSource.data = this.dataSource.data.filter(
+        (u: User) => u.id !== id,
+      )
+    })*/
+  }
+
+  removeSelectedRows() {
+    //const users = this.dataSource.data.filter((u: AssignedMicrofrontend) => u.isSelected)
+    /*this.dialog
+      .open(ConfirmDialogComponent)
+      .afterClosed()
+      .subscribe((confirm) => {
+        if (confirm) {
+          this.userService.deleteUsers(users).subscribe(() => {
+            this.dataSource.data = this.dataSource.data.filter(
+              (u: User) => !u.isSelected,
+            )
+          })
+        }
+      })*/
+  }
+
+  inputHandler(e: any, row: AssignedMicrofrontendRow, key: string) {
+    /*if (!this.valid[id]) {
+      this.valid[id] = {}
+    }
+    this.valid[id][key] = e.target.validity.valid*/
+  }
+/*
+  disableSubmit(id: number) {
+    if (this.valid[id]) {
+      return Object.values(this.valid[id]).some((item) => item === false)
+    }
+    return false
+  }*/
+
+  /*
+  isAllSelected() {
+    return this.dataSource.data.every((item) => item.isSelected)
+  }
+
+  isAnySelected() {
+    return this.dataSource.data.some((item) => item.isSelected)
+  }
+
+  selectAll(event: any) {
+    this.dataSource.data = this.dataSource.data.map((item) => ({
+      ...item,
+      isSelected: event.checked,
+    }))
+  }*/
+  
+    // NEW TODO
    // instance data
 
    applications: Application[] = []
+   microfrontendVersions : MicrofrontendVersion[] = []
+   suggestionProvider : SuggestionProvider = new ArraySuggestionProvider([])
    selectedNode : Node| undefined  = undefined
    selectedApplication : Application | undefined  = undefined
    selectedVersion : ApplicationVersion | undefined  = undefined
+   selectedMicrofrontendVersion: MicrofrontendVersion |  undefined  = undefined
+   selectedMicrofrontendInstance: MicrofrontendInstance |  undefined  = undefined
    dirty = false
+   stages: string[] = []
    configurationData: ConfigurationData = {
     type: "object",
     value: []
@@ -66,19 +197,28 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
    constructor(injector: Injector, private portalAdministrationService : PortalAdministrationService) {
       super(injector)
 
-      // TEST
+      // read some masterdata
 
       portalAdministrationService.readStages().subscribe(stages =>
-        console.log(stages)
+        this.stages = stages
      )
 
-     portalAdministrationService.readMicrofrontendVersions().subscribe(stages =>
-       console.log(stages)
-     )
+     // read microfrontend data
 
-     portalAdministrationService.readApplications().subscribe(applications =>
-        this.applications = applications
-     )
+     forkJoin({
+        microfrontends: portalAdministrationService.readMicrofrontendVersions(),
+        applications: portalAdministrationService.readApplications()
+      }).subscribe((data: any) => {
+        // microfrontends
+
+        this.microfrontendVersions = data.microfrontends
+
+        this.suggestionProvider = new ArraySuggestionProvider(this.microfrontendVersions.map(version => version.id))
+
+        // applications
+
+        this.applications = data.applications;
+        })
    }
 
 
@@ -246,45 +386,62 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
 
         this.selectedApplication = undefined
         this.selectedVersion = undefined
+        this.selectedMicrofrontendVersion = undefined
+        this.selectedMicrofrontendInstance = undefined
 
-        if ( node.type == "application") {
+        if ( node.type == "microfrontend-version") {
             this.inheritedConfigurationData = []
-            this.selectedApplication = node.data
+            this.selectedMicrofrontendVersion = node.data
 
-            this.configurationData =  JSON.parse(this.selectedApplication!.configuration)
+            this.configurationData =  JSON.parse(this.selectedMicrofrontendVersion!.configuration)
+        }
+
+        else if ( node.type == "microfrontend-instance") {
+            this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration)]
+            this.selectedMicrofrontendInstance = node.data
+
+            this.configurationData =  JSON.parse(this.selectedMicrofrontendInstance!.configuration)
 
             // TODO HACK
 
             if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
                 this.configurationData.type = "object"
-                this.configurationData.value = [
-                    {
-                    name: "application",
-                    type: "string",
-                    value: this.selectedApplication?.name
-                    }
-                ]
+                this.configurationData.value = []
             }   // if
-    }
-    else if ( node.type == "version") {
-        this.selectedVersion = node.data
-        this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration)]
+        }
 
-        this.configurationData =  JSON.parse(this.selectedVersion!.configuration)
 
-        // TODO HACK
+        else if ( node.type == "application") {
+            this.inheritedConfigurationData = []
+            this.selectedApplication = node.data
+
+            this.configurationData =  JSON.parse(this.selectedApplication!.configuration)
+        }
+
+        else if ( node.type == "version") {
+            this.selectedVersion = node.data
+            this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration) ]
+
+            this.configurationData =  JSON.parse(this.selectedVersion!.configuration)
+
+            if (this.selectedVersion!.microfrontends == undefined)
+                this.selectedVersion!.microfrontends = []
+
+            this.dataSource = new MatTableDataSource<AssignedMicrofrontendRow>(
+                this.selectedVersion?.microfrontends.map(assigned => {
+                    return {
+                        isSelected: false,
+                        isEdit: false,
+                        data: assigned
+                    }
+                })
+            )
+        }
 
         if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
             this.configurationData.type = "object"
-            this.configurationData.value = [
-                {
-                name: "version",
-                type: "string",
-                value: this.selectedVersion?.version
-                }
-            ]
+            this.configurationData.value = []
         }   // if
-    }
 
     this.updateCommandState()
    }
@@ -292,7 +449,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
    // private
 
     updateCommandState() {
-        this.setCommandEnabled("save", this.dirty)//TODO this.selectedApplication != undefined)
+        this.setCommandEnabled("save", this.dirty)
         this.setCommandEnabled("addApplication", !this.dirty)
         this.setCommandEnabled("addVersion", !this.dirty)
     }
@@ -309,6 +466,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
         .title("New Version")
         .message("Input version")
         .placeholder("version")
+        .okCancel()
         .show()
         .subscribe(name => {
             if ( name ) {
@@ -327,6 +485,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
             .title("New Application")
             .message("Input name")
             .placeholder("application")
+            .okCancel()
             .show()
             .subscribe(name => {
                 if ( name ) {
@@ -350,6 +509,16 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
             this.selectedVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateApplicationVersion(this.selectedVersion).subscribe()
+        }
+        else if (this.selectedMicrofrontendVersion) {
+            this.selectedMicrofrontendVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
+
+            this.portalAdministrationService.updateMicrofrontendVersion(this.selectedMicrofrontendVersion).subscribe()
+        }
+        else if (this.selectedMicrofrontendInstance) {
+            this.selectedMicrofrontendInstance!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
+
+            this.portalAdministrationService.updateMicrofrontendInstance(this.selectedMicrofrontendInstance).subscribe()
         }
 
         this.dirty = false

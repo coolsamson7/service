@@ -26,16 +26,37 @@
 
             .version {
                 padding: 10px 0px 10px 0px;
-                display: grid;
-                grid-column-gap: 10px;
-                grid-row-gap: 10px;
-                grid-template-columns: min-content 1fr min-content 1fr;
-            
+
                 mat-label {
-                  font-weight: bold;
+                    font-weight: bold;
                 }
-            }
-    
+
+                .general {
+                    margin-top: 10px;
+
+                    display: grid;
+                    grid-column-gap: 10px;
+                    grid-row-gap: 10px;
+                    grid-template-columns: min-content 1fr;
+                }
+
+                .configuration {
+                    margin-top: 10px;
+                }
+
+                .microfrontends {
+                    margin-top: 10px;
+
+                    .table {
+                        display: grid;
+                        grid-template-columns: auto auto min-content;
+
+                        table {
+                            box-shadow: none !important;
+                        }
+                    }
+                }
+            } 
         }
     }
 
