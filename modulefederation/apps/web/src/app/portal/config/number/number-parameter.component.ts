@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common"
-import { Component, EventEmitter, OnInit, Output } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { FormsModule } from "@angular/forms"
 import { MatInputModule } from "@angular/material/input"
 import { ParamComponent } from "../parameter-component"

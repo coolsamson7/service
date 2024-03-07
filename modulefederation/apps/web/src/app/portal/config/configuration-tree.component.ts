@@ -8,7 +8,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { MatTreeModule, MatTreeFlattener, MatTreeFlatDataSource } from "@angular/material/tree";
-import { ConfigurationData } from "./configuration-model";
+import { ConfigurationProperty } from "./configuration-model";
 import { ParameterDirective } from "./parameter.directive";
 import { MatInput } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -17,7 +17,7 @@ import { MatMenuModule } from "@angular/material/menu";
 interface FlatNode {
   expandable: boolean;
   name: string;
-  property: ConfigurationData,
+  property: ConfigurationProperty,
   add?: boolean
   level: number;
 }
@@ -65,22 +65,22 @@ interface FlatNode {
 export class ConfigurationTreeComponent implements OnInit, OnChanges {
     // input & output
 
-    @Input() inherits! : ConfigurationData[]
-    @Input() configuration! : ConfigurationData
+    @Input() inherits! : ConfigurationProperty[]
+    @Input() configuration! : ConfigurationProperty
 
-    @Output() onAdd = new EventEmitter<ConfigurationData>();
-    @Output() onAddFolder = new EventEmitter<ConfigurationData>();
-    @Output() onDelete = new EventEmitter<ConfigurationData>();
+    @Output() onAdd = new EventEmitter<ConfigurationProperty>();
+    @Output() onAddFolder = new EventEmitter<ConfigurationProperty>();
+    @Output() onDelete = new EventEmitter<ConfigurationProperty>();
 
     @Output() onChanged = new EventEmitter<boolean>();
 
     // instance data
 
-    types = ["string", "number"]
+    types = ["string", "number", "boolean"]
 
     displayedColumns: string[] = ['name', 'value'];
 
-    transformer = (node: ConfigurationData, level: number) : FlatNode => {
+    transformer = (node: ConfigurationProperty, level: number) : FlatNode => {
        return {
          expandable: node.type == "object" && node.value.length > 0,
          name: node.name!,
@@ -94,7 +94,7 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
          node => node.expandable
          );
 
-    treeFlattener = new MatTreeFlattener<ConfigurationData, FlatNode>(
+    treeFlattener = new MatTreeFlattener<ConfigurationProperty, FlatNode>(
          this.transformer,
          node => node.level,
          node => node.expandable,
@@ -174,51 +174,46 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
         return undefined
     }
 
-   addInherited(data: ConfigurationData, ...inherited: ConfigurationData[]): ConfigurationData {
-      const result : ConfigurationData = {
+   addInherited(data: ConfigurationProperty, ...inherited: ConfigurationProperty[]): ConfigurationProperty {
+      const result : ConfigurationProperty = {
         type: "object",
         value: []
       }
 
-      const copy = (properties: ConfigurationData[], result: ConfigurationData[], local: boolean) => {
+      const copy = (properties: ConfigurationProperty[], result: ConfigurationProperty[], local: boolean) => {
         for ( const property of properties) {
-          if ( property.type == "object") {
-            // recursive structure
-
-            // TODO
-
-            console.log()
-          }
-          else {
-            // single property
-
+            const newProperty = {...property}
             const match = result.find(prop => prop.name == property.name)
 
             if (match) {
               // replace 
 
               const index = result.indexOf(match)
-              result[index] = property
+              result[index] = newProperty
               
               // and remember parent
 
-              property.inherits = match
-              property.overwrite = property.value !== match.value // overwrite if different...
+              newProperty.inherits = match
+              // object??
+              newProperty.overwrite = newProperty.value !== match.value // overwrite if different...
             } 
             else {
-              const p : ConfigurationData = {
-                type: property.type,
-                name: property.name,
-                value: property.value
-              }
+              // add new item, and mark as inherited
 
               if ( !local )
-                 p.inherits = property
+                 newProperty.inherits = property
 
-              result.push(p)
+              result.push(newProperty)
+            } // else
+
+            if ( property.type == "object") {
+              newProperty.value = []
+
+              // recursion
+
+              copy(property.value, newProperty.value, local)
             }
-          }
-        }
+          } // for
       }
 
       // let's move

@@ -39,9 +39,19 @@
       <!-- application -->
 
       <ng-container *ngIf="node.type === 'application'">
-        <mat-icon class="mat-icon-rtl-mirror">apps</mat-icon>
+        <mat-icon class="icon mat-icon-rtl-mirror">apps</mat-icon>
 
-        {{node.data.name}}
+        <span class="name">{{node.data.name}}</span>
+
+        <!-- add -->
+
+        <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
+          <mat-icon class="add" matSuffix>more_vert</mat-icon>
+
+          <mat-menu #applicationMenu="matMenu">
+            <button mat-menu-item  (click)="triggeredMenu(node, 'add-version')">Version</button>
+          </mat-menu>
+      </button>
       </ng-container>
 
       <!--version -->

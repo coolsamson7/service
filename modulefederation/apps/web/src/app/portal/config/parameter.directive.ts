@@ -1,5 +1,4 @@
-import { get, set } from "@modulefederation/portal";
-import { ConfigurationData } from "./configuration-model";
+import { ConfigurationProperty } from "./configuration-model";
 import { ComponentRef, Directive, EventEmitter, Input, OnChanges, OnDestroy, Output, Type, ViewContainerRef } from "@angular/core";
 import { ParamComponent } from "./parameter-component";
 import { StringParamComponent } from "./string/string-parameter.component";
@@ -12,13 +11,13 @@ type GetterSetter = {
 };
 
 type Accessors = {
-  [valueType: string]: (config: ConfigurationData, model: any) => GetterSetter;
+  [valueType: string]: (config: ConfigurationProperty, model: any) => GetterSetter;
 };
 
 const accessors: Accessors = {
   // binding from model
 
-  binding: (config: ConfigurationData, model) => ({
+  binding: (config: ConfigurationProperty, model) => ({
     get: () => {
       return config.value // get(model, config.path!)
     },
@@ -43,7 +42,7 @@ export class ParameterDirective implements OnChanges, OnDestroy {
   // in- & output
 
   @Input()
-  data!: ConfigurationData;
+  data!: ConfigurationProperty;
   @Input()
   type!: string;
   @Input()
@@ -77,7 +76,7 @@ export class ParameterDirective implements OnChanges, OnDestroy {
     Object.defineProperty(instance, 'value', { get, set, configurable: true });
   }
 
-  private findComponentType4(metadata: ConfigurationData) :Type<any> {
+  private findComponentType4(metadata: ConfigurationProperty) :Type<any> {
     switch (metadata.type) {
       case "string":
         return StringParamComponent
@@ -94,7 +93,7 @@ export class ParameterDirective implements OnChanges, OnDestroy {
 
   }
 
-  private addComponent(metadata: ConfigurationData) {
+  private addComponent(metadata: ConfigurationProperty) {
     if (this.component)
       this.component.destroy();
 

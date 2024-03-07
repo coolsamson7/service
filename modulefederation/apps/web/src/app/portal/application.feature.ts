@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, Directive, Injector } from "@angular/core";
 import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, SuggestionProvider, ArraySuggestionProvider, NgModelSuggestionsDirective, VersionRange } from "@modulefederation/portal";
 import { PortalAdministrationService } from "./service";
-import { Node, ApplicationTreeComponent } from "./application-tree.component";
+import { Node, ApplicationTreeComponent, MenuRequest } from "./application-tree.component";
 import { CommonModule } from "@angular/common";
 import { Application, ApplicationVersion, AssignedMicrofrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ConfigurationTreeComponent } from "./config/configuration-tree.component";
-import { ConfigurationData } from "./config/configuration-model";
+import { ConfigurationProperty } from "./config/configuration-model";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
 import { forkJoin } from "rxjs";
@@ -38,8 +38,8 @@ import { MatDividerModule } from "@angular/material/divider";
             return null
         }
         catch(e) {
-            return { 
-                'versionInvalid': true 
+            return {
+                'versionInvalid': true
             };
         }
     }
@@ -63,10 +63,10 @@ import { MatDividerModule } from "@angular/material/divider";
     // implement Validator
 
     validate(control: AbstractControl) : {[key: string]: any} | null {
-    
+
      if (this.feature.selectedVersion!.microfrontends.find(mfe => mfe.id === control.value) === undefined)
-        return { 
-            'microfrontendInvalid': true 
+        return {
+            'microfrontendInvalid': true
         };
 
       return null;
@@ -118,7 +118,7 @@ export class MatErrorMessagesComponent implements AfterViewInit {
 
             else if (firstError === 'versionInvalid')
                 this.error = "invalid version specifier"
-            
+
             else if (firstError === 'microfrontendInvalid')
                 this.error = "unknown microfrontend"
         }
@@ -176,7 +176,7 @@ export const Columns = [
         MatFormFieldModule,
         MatToolbarModule,
         MatCheckboxModule,
-        
+
         // components
 
         MicrofrontendValidatorDirective,
@@ -296,7 +296,7 @@ displayedColumns: string[] = Columns.map((col) => col.key)
       isSelected: event.checked,
     }))
   }*/
-  
+
     // NEW TODO
    // instance data
 
@@ -310,11 +310,11 @@ displayedColumns: string[] = Columns.map((col) => col.key)
    selectedMicrofrontendInstance: MicrofrontendInstance |  undefined  = undefined
    dirty = false
    stages: string[] = []
-   configurationData: ConfigurationData = {
+   configurationData: ConfigurationProperty = {
     type: "object",
     value: []
   }
-   inheritedConfigurationData: ConfigurationData[] = []
+   inheritedConfigurationData: ConfigurationProperty[] = []
 
    // constructor
 
@@ -348,15 +348,15 @@ displayedColumns: string[] = Columns.map((col) => col.key)
 
    // private
 
-   private getConfigurationParent4(configuration: ConfigurationData) : ConfigurationData {
+   private getConfigurationParent4(configuration: ConfigurationProperty) : ConfigurationProperty {
     // local function
 
-    const find = (parent: ConfigurationData, node: ConfigurationData, target: ConfigurationData ) : ConfigurationData | undefined => {
+    const find = (parent: ConfigurationProperty, node: ConfigurationProperty, target: ConfigurationProperty ) : ConfigurationProperty | undefined => {
         if ( node === target )
            return parent
 
         else if (node.type == "object" ) {
-            for ( const child of <ConfigurationData[]>node.value ) {
+            for ( const child of <ConfigurationProperty[]>node.value ) {
                 const result = find(node, child, target)
                 if ( result )
                    return result
@@ -386,23 +386,30 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     this.updateCommandState()
    }
 
-   addItem(configuration: ConfigurationData) {
+   menuRequest(request: MenuRequest) {
+       switch ( request.action) {
+        case "add-version":
+            this.addVersion(request.node.data)
+            break;
+       }
+   }
+
+   addItem(configuration: ConfigurationProperty) {
     const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
 
     this.inputDialog()
-        .title("New Item")
-        .message("Enter item name")
-        .placeholder("item name")
+        .title("New Property")
+        .message("Enter property name")
+        .placeholder("property")
         .okCancel()
         .show()
         .subscribe(value => {
             if ( value ) {
-                (<ConfigurationData[]>parent.value).push({
+                (<ConfigurationProperty[]>parent.value).push({
                     type: "string",
                     name: value,
                     value: ""
                 })
-
 
                 this.configurationData = {... this.configurationData}
 
@@ -412,18 +419,18 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         })
    }
 
-   addFolder(configuration: ConfigurationData) {
+   addFolder(configuration: ConfigurationProperty) {
     const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
 
     this.inputDialog()
-        .title("New Item")
-        .message("Enter item name")
-        .placeholder("item name")
+        .title("New folder")
+        .message("Enter folder name")
+        .placeholder("folder")
         .okCancel()
         .show()
         .subscribe(value => {
             if ( value ) {
-                (<ConfigurationData[]>parent.value).push({
+                (<ConfigurationProperty[]>parent.value).push({
                     type: "object",
                     name: value,
                     value: []
@@ -438,47 +445,41 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         })
    }
 
-    deleteItem(configuration: ConfigurationData) {
+    deleteItem(configuration: ConfigurationProperty) {
         const parent = this.getConfigurationParent4(configuration)
 
+        const index = parent.value.indexOf(configuration)
+        parent.value.splice(index, 1)
+
+        this.configurationData = {... this.configurationData}
+        
         this.dirty = true
         this.updateCommandState()
-
-        // TODO
-
-    // const index = <Number>(parent.value).indexOf(configuration)
-    // (parent.value as ConfigurationData[]).splice(1, 1)
     }
 
       // strip inherited
 
-      stripInherited(configuration: ConfigurationData) : ConfigurationData {
-        const result : ConfigurationData = {
+      stripInherited(configuration: ConfigurationProperty) : ConfigurationProperty {
+        const result : ConfigurationProperty = {
           type: "object",
           value: []
         }
 
         // copy all values which either dont't inherit or overwrite
 
-        const copy = (properties: ConfigurationData[], result: ConfigurationData[]) => {
+        const copy = (properties: ConfigurationProperty[], result: ConfigurationProperty[]) => {
           for ( const property of properties) {
+            const newProperty = {...property}
+            if ( property.inherits == undefined || property.value !== property.inherits.value)
+                result.push(newProperty)
+        
+            // recursion
+
             if ( property.type == "object") {
-              // recursive structure
-
-              // TODO
-            }
-            else {
-              // literal property
-
-              if ( property.inherits == undefined || property.value !== property.inherits.value) {
-                result.push({
-                  type: property.type,
-                  name: property.name,
-                  value: property.value
-                })
-              }
-            }
-          }
+                newProperty.value = []
+                copy(property.value, newProperty.value)
+            } // if
+          } // for
         }
 
         // go
@@ -574,17 +575,11 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     updateCommandState() {
         this.setCommandEnabled("save", this.dirty)
         this.setCommandEnabled("addApplication", !this.dirty)
-        this.setCommandEnabled("addVersion", !this.dirty)
     }
 
     // commands
 
-    @Command({
-        //: "portal.commands:save",
-        label: "Add Version",
-        icon: "add"
-    })
-    addVersion() {
+    addVersion(application: Application) {
         this.inputDialog()
         .title("New Version")
         .message("Input version")
@@ -592,8 +587,20 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         .okCancel()
         .show()
         .subscribe(name => {
-            if ( name ) {
-                console.log(name)
+            if ( name && application.versions?.find(version => version.version == name ) === undefined) {
+                const newVersion : ApplicationVersion = {
+                    version : name,
+                    configuration : "",
+                    microfrontends: []
+                }
+
+                application.versions?.push(newVersion)
+
+                // force recalculate
+
+                this.applications = [...this.applications]
+                this.dirty = true
+                this.updateCommandState()
             }
         })
     }

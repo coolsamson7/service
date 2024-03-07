@@ -34,9 +34,26 @@
 }
 
 
+.node:hover {
+  .menu {
+    visibility: visible
+  }
+}
+
 .node {
   cursor: pointer;
   padding-right: 10px;
+
+  .icon {
+  }
+
+  .name {
+    flex-grow: 2
+  }
+
+  .menu {
+    visibility: hidden
+  }
 
   .invisible {
     visibility: hidden

@@ -6,8 +6,8 @@
       <command-button command="save"></command-button>
 
       <!-- TODO --->
+
       <command-button command="addApplication"></command-button>
-      <command-button command="addVersion"></command-button>
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -15,7 +15,7 @@
 
     <!-- tree -->
 
-    <application-tree class="tree" [applications]="applications"  [microfrontendVersions]="microfrontendVersions" (onSelectionChange)="selectNode($event)"></application-tree>
+    <application-tree class="tree" [applications]="applications"  [microfrontendVersions]="microfrontendVersions" (onMenu)="menuRequest($event)" (onSelectionChange)="selectNode($event)"></application-tree>
 
     <!-- content area. -->
 

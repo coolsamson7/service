@@ -7,6 +7,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { Application, ApplicationVersion, MicrofrontendInstance, MicrofrontendVersion } from "./model";
+import { MatMenuModule } from "@angular/material/menu";
 
 export interface Node {
     type: "application" | "version" | "microfrontend-version"| "microfrontend-instance"
@@ -15,12 +16,17 @@ export interface Node {
     data : any
 }
 
+export interface MenuRequest {
+    node: Node, 
+    action: string
+}
+
 @Component({
     selector: 'application-tree',
     templateUrl: './application-tree.component.html',
     styleUrls: ['./application-tree.component.scss'],
     standalone: true,
-  imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule],
+  imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatMenuModule],
 })
 export class ApplicationTreeComponent implements OnInit, OnChanges {
     // input
@@ -29,6 +35,8 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     @Input() microfrontendVersions : MicrofrontendVersion[] = []
 
     @Output() onSelectionChange = new EventEmitter<Node>();
+    @Output() onMenu = new EventEmitter<MenuRequest>();
+
 
     // instance data
 
@@ -110,6 +118,15 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
             return parent
         })]
+    }
+
+    // callbacks
+
+    triggeredMenu(node: Node, action: string) {
+        this.onMenu.emit({
+            node: node,
+            action: action
+        })
     }
 
     // implement OnInit
