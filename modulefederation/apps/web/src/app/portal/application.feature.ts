@@ -3,7 +3,7 @@ import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandBu
 import { PortalAdministrationService } from "./service";
 import { Node, ApplicationTreeComponent, MenuRequest } from "./application-tree.component";
 import { CommonModule } from "@angular/common";
-import { Application, ApplicationVersion, AssignedMicrofrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
+import { Application, ApplicationVersion, AssignedMicrofrontend, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ConfigurationTreeComponent } from "./config/configuration-tree.component";
 import { ConfigurationProperty } from "./config/configuration-model";
@@ -63,8 +63,7 @@ import { MatDividerModule } from "@angular/material/divider";
     // implement Validator
 
     validate(control: AbstractControl) : {[key: string]: any} | null {
-
-     if (this.feature.selectedVersion!.microfrontends.find(mfe => mfe.id === control.value) === undefined)
+     if (this.feature!.microfrontends.find(mfe => mfe.name === control.value) === undefined)
         return {
             'microfrontendInvalid': true
         };
@@ -139,9 +138,9 @@ export const Columns = [
       label: '',
     },
     {
-      key: 'id',
+      key: 'microfrontend',
       type: 'mfe',
-      label: 'Id',
+      label: 'Name',
       required: true,
     },
     {
@@ -236,19 +235,17 @@ displayedColumns: string[] = Columns.map((col) => col.key)
       isEdit: true,
       isSelected: false,
       data: {
-        id: "",
+        microfrontend: "",
         version: ""
       }
     }
+    this.selectedVersion?.assignedMicrofrontends.push(newRow.data)
     this.dataSource.data = [newRow, ...this.dataSource.data]
   }
 
   removeRow(row: AssignedMicrofrontendRow) {
-    /*this.userService.deleteUser(id).subscribe(() => {
-      this.dataSource.data = this.dataSource.data.filter(
-        (u: User) => u.id !== id,
-      )
-    })*/
+    this.dataSource.data.splice(this.dataSource.data.indexOf(row), 1)
+    this.selectedVersion?.assignedMicrofrontends.splice(this.selectedVersion?.assignedMicrofrontends.indexOf(row.data), 1)
   }
 
   removeSelectedRows() {
@@ -266,20 +263,6 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         }
       })*/
   }
-
-  inputHandler(e: any, row: AssignedMicrofrontendRow, key: string) {
-    /*if (!this.valid[id]) {
-      this.valid[id] = {}
-    }
-    this.valid[id][key] = e.target.validity.valid*/
-  }
-/*
-  disableSubmit(id: number) {
-    if (this.valid[id]) {
-      return Object.values(this.valid[id]).some((item) => item === false)
-    }
-    return false
-  }*/
 
   /*
   isAllSelected() {
@@ -301,11 +284,14 @@ displayedColumns: string[] = Columns.map((col) => col.key)
    // instance data
 
    applications: Application[] = []
-   microfrontendVersions : MicrofrontendVersion[] = []
+   microfrontends : Microfrontend[] = []
+   //microfrontendVersions : MicrofrontendVersion[] = []
    suggestionProvider : SuggestionProvider = new ArraySuggestionProvider([])
    selectedNode : Node| undefined  = undefined
+
    selectedApplication : Application | undefined  = undefined
    selectedVersion : ApplicationVersion | undefined  = undefined
+   selectedMicrofrontend: Microfrontend |  undefined  = undefined
    selectedMicrofrontendVersion: MicrofrontendVersion |  undefined  = undefined
    selectedMicrofrontendInstance: MicrofrontendInstance |  undefined  = undefined
    dirty = false
@@ -330,14 +316,14 @@ displayedColumns: string[] = Columns.map((col) => col.key)
      // read microfrontend data
 
      forkJoin({
-        microfrontends: portalAdministrationService.readMicrofrontendVersions(),
+        microfrontends: portalAdministrationService.readMicrofrontends(),
         applications: portalAdministrationService.readApplications()
       }).subscribe((data: any) => {
         // microfrontends
 
-        this.microfrontendVersions = data.microfrontends
+        this.microfrontends = data.microfrontends
 
-        this.suggestionProvider = new ArraySuggestionProvider(this.microfrontendVersions.map(version => version.id))
+        this.suggestionProvider = new ArraySuggestionProvider(this.microfrontends.map(microfrontend => microfrontend.name))
 
         // applications
 
@@ -511,28 +497,29 @@ displayedColumns: string[] = Columns.map((col) => col.key)
 
         this.selectedApplication = undefined
         this.selectedVersion = undefined
+        this.selectedMicrofrontend = undefined
         this.selectedMicrofrontendVersion = undefined
         this.selectedMicrofrontendInstance = undefined
 
-        if ( node.type == "microfrontend-version") {
+        if ( node.type == "microfrontend") {
             this.inheritedConfigurationData = []
+            this.selectedMicrofrontend = node.data
+
+            this.configurationData = JSON.parse(this.selectedMicrofrontend!.configuration)
+        }
+
+        else if ( node.type == "microfrontend-version") {
+            this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration)]
             this.selectedMicrofrontendVersion = node.data
 
             this.configurationData = JSON.parse(this.selectedMicrofrontendVersion!.configuration)
         }
 
         else if ( node.type == "microfrontend-instance") {
-            this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration)]
+            this.inheritedConfigurationData = [ JSON.parse(node.parent?.parent?.data.configuration), JSON.parse(node.parent?.data.configuration)]
             this.selectedMicrofrontendInstance = node.data
 
             this.configurationData =  JSON.parse(this.selectedMicrofrontendInstance!.configuration)
-
-            // TODO HACK
-
-            if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
-                this.configurationData.type = "object"
-                this.configurationData.value = []
-            }   // if
         }
 
         else if ( node.type == "application") {
@@ -542,17 +529,17 @@ displayedColumns: string[] = Columns.map((col) => col.key)
             this.configurationData =  JSON.parse(this.selectedApplication!.configuration)
         }
 
-        else if ( node.type == "version") {
+        else if ( node.type == "application-version") {
             this.selectedVersion = node.data
             this.inheritedConfigurationData = [ JSON.parse(node.parent?.data.configuration) ]
 
             this.configurationData =  JSON.parse(this.selectedVersion!.configuration)
 
-            if (this.selectedVersion!.microfrontends == undefined)
-                this.selectedVersion!.microfrontends = []
+            if (this.selectedVersion!.assignedMicrofrontends == undefined)
+                this.selectedVersion!.assignedMicrofrontends = []
 
             this.dataSource = new MatTableDataSource<AssignedMicrofrontendRow>(
-                this.selectedVersion?.microfrontends.map(assigned => {
+                this.selectedVersion?.assignedMicrofrontends.map(assigned => {
                     return {
                         isSelected: false,
                         isEdit: false,
@@ -562,10 +549,10 @@ displayedColumns: string[] = Columns.map((col) => col.key)
             )
         }
 
-        if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
-            this.configurationData.type = "object"
-            this.configurationData.value = []
-        }   // if
+    if ( Object.getOwnPropertyNames(this.configurationData).length == 0 ) {
+        this.configurationData.type = "object"
+        this.configurationData.value = []
+    }   // if
 
     this.updateCommandState()
    }
@@ -591,7 +578,7 @@ displayedColumns: string[] = Columns.map((col) => col.key)
                 const newVersion : ApplicationVersion = {
                     version : name,
                     configuration : "",
-                    microfrontends: []
+                    assignedMicrofrontends: []
                 }
 
                 application.versions?.push(newVersion)
@@ -639,6 +626,11 @@ displayedColumns: string[] = Columns.map((col) => col.key)
             this.selectedVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateApplicationVersion(this.selectedVersion).subscribe()
+        }
+        else if (this.selectedMicrofrontend) {
+            this.selectedMicrofrontend!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
+
+            this.portalAdministrationService.updateMicrofrontend(this.selectedMicrofrontend).subscribe()
         }
         else if (this.selectedMicrofrontendVersion) {
             this.selectedMicrofrontendVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))

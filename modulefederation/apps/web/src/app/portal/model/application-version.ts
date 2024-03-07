@@ -1,6 +1,7 @@
 
 export interface AssignedMicrofrontend {
-    id: string,
+    id?: number,
+    microfrontend: string,
     version: string
 }
 
@@ -8,5 +9,5 @@ export interface ApplicationVersion {
     id? : number,
     version : string,
     configuration : string
-    microfrontends: AssignedMicrofrontend[]
+    assignedMicrofrontends: AssignedMicrofrontend[]
 }

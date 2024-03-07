@@ -7,6 +7,7 @@ package com.serious.portal.persistence
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.portal.ManifestEntity
+import com.serious.portal.MicrofrontendEntity
 import com.serious.portal.MicrofrontendInstanceEntity
 import com.serious.portal.MicrofrontendVersionEntity
 import com.serious.portal.model.Manifest
@@ -29,6 +30,8 @@ class ManifestEntityManager {
     @Autowired
     private lateinit var  repository : ManifestRepository
     // NEW
+    @Autowired
+    private lateinit var  microfrontendRepository: MicrofrontedRepository
     @Autowired
     private lateinit var  microfrontendVersionRepository: MicrofrontedVersionRepository
     @Autowired
@@ -62,17 +65,35 @@ class ManifestEntityManager {
 
         this.entityManager.persist(manifestEntity)
 
+        // check instance, microfrontend-version and microfrontend and create on the fly...
+
         // NEW TODO
+
+        // microfrontend
+
+        val versions :  MutableList<MicrofrontendVersionEntity> = ArrayList()
+        val microfrontendEntity : MicrofrontendEntity = microfrontendRepository.findById(manifest.name).orElse(this.microfrontendRepository.save(MicrofrontendEntity(
+            manifest.name,
+            manifest.enabled,
+            "{}",
+            versions
+        )))
+
+        // version
 
         val id = manifest.name + ":" + manifest.version
         val instances :  MutableList<MicrofrontendInstanceEntity> = ArrayList()
         val versionEntity : MicrofrontendVersionEntity = microfrontendVersionRepository.findById(id).orElse(this.microfrontendVersionRepository.save(MicrofrontendVersionEntity(
             id,
+            manifest.version,
             manifestEntity.json,
             true,
             "{}",
+            microfrontendEntity,
             instances
         )))
+
+        // instance
 
         val instanceEntity = MicrofrontendInstanceEntity(
             manifestEntity.uri,

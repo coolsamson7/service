@@ -6,11 +6,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { Application, ApplicationVersion, MicrofrontendInstance, MicrofrontendVersion } from "./model";
+import { Application, ApplicationVersion, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 import { MatMenuModule } from "@angular/material/menu";
 
 export interface Node {
-    type: "application" | "version" | "microfrontend-version"| "microfrontend-instance"
+    type: "application" | "application-version" | "microfrontend" | "microfrontend-version"| "microfrontend-instance"
     parent?: Node
     children?: Node[]
     data : any
@@ -32,7 +32,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     // input
 
     @Input() applications : Application[] = []
-    @Input() microfrontendVersions : MicrofrontendVersion[] = []
+    @Input() microfrontends : Microfrontend[] = []
 
     @Output() onSelectionChange = new EventEmitter<Node>();
     @Output() onMenu = new EventEmitter<MenuRequest>();
@@ -81,16 +81,24 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     // private
 
-    createData(applications: Application[], microfrontendVersions: MicrofrontendVersion[]) : Node[] {
-        const mapVersion = (parent: Node, version: ApplicationVersion) : Node => {
+    createData(applications: Application[], microfrontends: Microfrontend[]) : Node[] {
+        const mapApplicationVersion = (parent: Node, version: ApplicationVersion) : Node => {
             return {
-                type: "version",
+                type: "application-version",
                 parent: parent,
                 data: version
             }
         }
 
-        const mapInstance = (parent: Node, instance: MicrofrontendInstance) : Node => {
+        const mapMicrofrontendVersion = (parent: Node, version: MicrofrontendVersion) : Node => {
+            return {
+                type: "microfrontend-version",
+                parent: parent,
+                data: version
+            }
+        }
+
+        const mapMicrofrontendInstance = (parent: Node, instance: MicrofrontendInstance) : Node => {
             return {
                 type: "microfrontend-instance",
                 parent: parent,
@@ -104,17 +112,17 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
                 data: application
             }
 
-            parent.children = application.versions?.map(version => mapVersion(parent, version))
+            parent.children = application.versions?.map(version => mapApplicationVersion(parent, version))
 
             return parent
         }),
-        ...<Node[]>microfrontendVersions.map(microfrontendVersion => {
+        ...<Node[]>microfrontends.map(microfrontend => {
             const parent : Node =  {
-                type: "microfrontend-version",
-                data: microfrontendVersion
+                type: "microfrontend",
+                data: microfrontend
             }
 
-            parent.children = microfrontendVersion.instances?.map(instance => mapInstance(parent, instance))
+            parent.children = microfrontend.versions?.map(instance => mapMicrofrontendVersion(parent, instance))
 
             return parent
         })]
@@ -132,7 +140,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     // implement OnInit
 
     ngOnInit() : void {
-        this.dataSource.data = this.createData(this.applications, this.microfrontendVersions)
+        this.dataSource.data = this.createData(this.applications, this.microfrontends)
 
         this.refreshData()
     }
@@ -141,7 +149,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes : SimpleChanges) : void {
         if (changes['applications'] && !changes['applications'].isFirstChange())
-            this.dataSource.data = this.createData(this.applications, this.microfrontendVersions)
+            this.dataSource.data = this.createData(this.applications, this.microfrontends)
 
         this.refreshData()
     }

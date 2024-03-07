@@ -13,12 +13,17 @@ class MicrofrontendVersionEntity(
     @Id
     @Column(name = "ID")
     var id: String,
+    @Column(name = "VERSION")
+    var version : String,
     @Column(name = "MANIFEST", length = 5000)
     var manifest : String,
     @Column(name = "ENABLED")
     var enabled : Boolean,
     @Column(name = "CONFIGURATION", length = 4000)
     var configuration : String,
+    @ManyToOne
+    @JoinColumn(name="OR_MICROFRONTEND")
+    var microfrontend : MicrofrontendEntity,
     @OneToMany(mappedBy="microfrontendVersion", cascade=[CascadeType.ALL])
     var instances : MutableList<MicrofrontendInstanceEntity>
 )

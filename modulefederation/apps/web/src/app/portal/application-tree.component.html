@@ -11,9 +11,21 @@
       <mat-icon class="mat-icon-rtl-mirror">expand_more</mat-icon>
     </button>
 
-    <!-- content -->
+    <!-- application version -->
 
-    <ng-container *ngIf="node.type === 'version'">
+    <ng-container *ngIf="node.type === 'application-version'">
+      {{node.data.version}}
+    </ng-container>
+
+    <!-- microfrontend -->
+
+    <ng-container *ngIf="node.type === 'microfrontend'">
+      {{node.data.name}}
+    </ng-container>
+
+    <!-- microfrontend versio  -->
+
+    <ng-container *ngIf="node.type === 'microfrontend-version'">
       {{node.data.version}}
     </ng-container>
 
@@ -54,16 +66,22 @@
       </button>
       </ng-container>
 
-      <!--version -->
+      <!-- application version -->
 
-      <ng-container *ngIf="node.type === 'version'">
+      <ng-container *ngIf="node.type === 'application-version'">
         {{node.data.version}}
+      </ng-container>
+
+      <!-- microfrontend -->
+
+      <ng-container *ngIf="node.type === 'microfrontend'">
+        {{node.data.name}}
       </ng-container>
 
       <!-- microfrontend version -->
 
       <ng-container *ngIf="node.type === 'microfrontend-version'">
-        {{node.data.id}}
+        {{node.data.version}}
       </ng-container>
     </div>
 

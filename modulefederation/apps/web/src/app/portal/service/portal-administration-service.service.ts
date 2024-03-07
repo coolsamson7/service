@@ -7,7 +7,7 @@
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { AbstractHTTPService, Manifest, Service } from "@modulefederation/portal";
-import { Address, Application, ApplicationVersion, MicrofrontendInstance, MicrofrontendVersion } from "../model";
+import { Address, Application, ApplicationVersion, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "../model";
 import { RegistryResult } from "../model/registry-result.interface";
 
 @Injectable({providedIn: 'root'})
@@ -113,6 +113,16 @@ export class PortalAdministrationService extends AbstractHTTPService {
       return this.delete<any>(`delete-application-version/${application}/${version}`)
   }
 
+  // microfrontend
+
+  readMicrofrontends() : Observable<Microfrontend[]> {
+    return this.get<Microfrontend[]>(`read-microfrontends`)
+  }
+
+  updateMicrofrontend(microfrontend: Microfrontend) : Observable<Microfrontend> {
+      return this.post<Microfrontend>(`update-microfrontend`, microfrontend)
+  }
+
   // microfrontend versions
 
   readMicrofrontendVersions() : Observable<MicrofrontendVersion[]>  {
@@ -123,7 +133,7 @@ export class PortalAdministrationService extends AbstractHTTPService {
     return this.post<MicrofrontendVersion>(`update-microfrontend-version`, version)
   }
 
-  // microfrontend insatcnes
+  // microfrontend instances
 
   updateMicrofrontendInstance(instance: MicrofrontendInstance) : Observable<MicrofrontendInstance>  {
     return this.post<MicrofrontendInstance>(`update-microfrontend-instance`, instance)

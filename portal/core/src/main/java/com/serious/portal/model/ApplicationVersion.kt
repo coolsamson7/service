@@ -9,5 +9,6 @@ data class ApplicationVersion(
     var id : Long,
     //var application : Application,
     var version : String,
-    var configuration : String
+    var configuration : String,
+    var assignedMicrofrontends: List<AssignedMicrofrontend>
 )

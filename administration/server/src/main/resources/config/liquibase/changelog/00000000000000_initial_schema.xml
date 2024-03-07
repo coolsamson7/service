@@ -69,7 +69,7 @@
 
     <changeSet author="andreasernst (generated)" id="1706792913947-8">
         <createTable tableName="APPLICATION_VERSION">
-            <column name="ID" type="INTEGER">
+            <column  autoIncrement="true" startWith="205" name="ID" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="application_version_pkey"/>
             </column>
             <column name="OR_APPLICATION" type="VARCHAR(255)">
@@ -81,16 +81,39 @@
     </changeSet>
 
     <changeSet author="andreasernst (generated)" id="1706792913947-9">
+        <createTable tableName="MICROFRONTEND">
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_pkey"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN"/>
+            <column name="CONFIGURATION" type="VARCHAR(4000)"/>
+        </createTable>
+
+        <createTable tableName="ASSIGNED_MICROFRONTEND">
+            <column autoIncrement="true" startWith="205"  name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="assigned_microfrontend_pkey"/>
+            </column>
+            <column name="OR_APPLICATION_VERSION" type="INTEGER">
+                <constraints nullable="false" foreignKeyName="assigned_microfrontend_or_application_version_fk" references="APPLICATION_VERSION(id)"/>
+            </column>
+            <column name="OR_MICROFRONTEND" type="VARCHAR(255)">
+                <constraints nullable="false" foreignKeyName="assigned_microfrontend_or_micrpfrontend_fk" references="MICROFRONTEND(name)"/>
+            </column>
+            <column name="VERSION" type="VARCHAR(255)"/>
+        </createTable>
+
         <createTable tableName="MICROFRONTEND_VERSION">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_version_pkey"/>
             </column>
+            <column name="OR_MICROFRONTEND" type="VARCHAR(255)">
+                <constraints nullable="false" foreignKeyName="mirofrontebd_version_or_microfrontend_fk" references="MICROFRONTEND(NAME)"/>
+            </column>
             <column name="VERSION" type="VARCHAR(255)"/>
             <column name="ENABLED" type="BOOLEAN"/>
-            <column name="configuration" type="VARCHAR(4000)"/>
+            <column name="CONFIGURATION" type="VARCHAR(4000)"/>
             <column name="MANIFEST" type="VARCHAR(5000)"/>
         </createTable>
-
 
         <createTable tableName="MICROFRONTEND_INSTANCE">
             <column name="URI" type="VARCHAR(255)">
