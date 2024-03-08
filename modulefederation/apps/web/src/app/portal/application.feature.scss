@@ -12,6 +12,25 @@
         }
     
         .content {
+            .microfrontend {
+                padding: 10px 10px 10px 10px;
+
+                .general {
+                    display: grid;
+                    grid-column-gap: 10px;
+                    grid-row-gap: 10px;
+                    grid-template-columns: min-content 1fr;
+                
+                    mat-label {
+                    font-weight: bold;
+                    }
+                }
+
+                .mat-divider {
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                }
+            }
 
             .microfrontend-instance {
                 padding: 10px 10px 10px 10px;
@@ -90,7 +109,7 @@
                     grid-template-columns: min-content 1fr;
                 }
 
-                .mat-divider {
+                 .mat-divider {
                     margin-top: 10px;
                     margin-bottom: 10px;
                 }

@@ -4,10 +4,11 @@ import { FormsModule } from "@angular/forms"
 import { ParamComponent } from "../parameter-component"
 import { MatCheckboxModule } from "@angular/material/checkbox"
 import { MatFormFieldModule } from "@angular/material/form-field"
+import { MatSelectModule } from "@angular/material/select"
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatCheckboxModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule],
   selector: 'string-parameter',
   templateUrl: './boolean-parameter.component.html'
 })

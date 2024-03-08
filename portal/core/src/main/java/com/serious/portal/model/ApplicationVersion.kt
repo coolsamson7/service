@@ -6,7 +6,7 @@ package com.serious.portal.model
  */
 
 data class ApplicationVersion(
-    var id : Long,
+    var id : Long?,
     //var application : Application,
     var version : String,
     var configuration : String,

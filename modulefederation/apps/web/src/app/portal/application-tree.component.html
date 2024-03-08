@@ -11,28 +11,55 @@
       <mat-icon class="mat-icon-rtl-mirror">expand_more</mat-icon>
     </button>
 
+    <ng-container *ngIf="node.type === 'application'">
+      <mat-icon class="icon mat-icon-rtl-mirror">apps</mat-icon>
+
+      <span class="name">{{node.data.name}}</span>
+
+      <!-- menu -->
+
+      <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
+        <mat-icon class="add" matSuffix>more_vert</mat-icon>
+
+        <mat-menu #applicationMenu="matMenu">
+          <button mat-menu-item  (click)="triggeredMenu(node, 'add-version')">Add Version</button>
+          <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
+        </mat-menu>
+      </button>
+    </ng-container>
+
     <!-- application version -->
 
     <ng-container *ngIf="node.type === 'application-version'">
-      {{node.data.version}}
+      <span class="name">{{node.data.version}}</span>
+
+       <!-- menu -->
+
+       <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
+        <mat-icon class="add" matSuffix>more_vert</mat-icon>
+
+        <mat-menu #applicationMenu="matMenu">
+          <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
+        </mat-menu>
+      </button>
     </ng-container>
 
     <!-- microfrontend -->
 
     <ng-container *ngIf="node.type === 'microfrontend'">
-      {{node.data.name}}
+      <span class="name">{{node.data.name}}</span>
     </ng-container>
 
     <!-- microfrontend versio  -->
 
     <ng-container *ngIf="node.type === 'microfrontend-version'">
-      {{node.data.version}}
+      <span class="name">{{node.data.version}}</span>
     </ng-container>
 
     <!-- microfrontend instance -->
 
     <ng-container *ngIf="node.type === 'microfrontend-instance'">
-      {{node.data.uri}}
+      <span class="name">{{node.data.uri}}</span>
     </ng-container>
   </mat-tree-node>
 
@@ -55,15 +82,16 @@
 
         <span class="name">{{node.data.name}}</span>
 
-        <!-- add -->
+        <!-- menu -->
 
         <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
           <mat-icon class="add" matSuffix>more_vert</mat-icon>
 
           <mat-menu #applicationMenu="matMenu">
-            <button mat-menu-item  (click)="triggeredMenu(node, 'add-version')">Version</button>
+            <button mat-menu-item  (click)="triggeredMenu(node, 'add-version')">Add Version</button>
+            <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
           </mat-menu>
-      </button>
+        </button>
       </ng-container>
 
       <!-- application version -->

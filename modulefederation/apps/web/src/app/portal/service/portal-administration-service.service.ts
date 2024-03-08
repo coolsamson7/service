@@ -83,15 +83,15 @@ export class PortalAdministrationService extends AbstractHTTPService {
     return this.post<Application>(`create-application`, application)
   }
 
-  readApplication(application: String) : Observable<Application>{
+  readApplication(application: String) : Observable<Application> {
     return this.get<Application>(`read-application/${application}`)
   }
 
-  updateApplication(application: Application) {
+  updateApplication(application: Application) : Observable<Application> {
     return this.post<any>(`update-application`, application)
   }
 
-  deleteApplication(application: String) {
+  deleteApplication(application: String) :Observable<any> {
     return this.delete<any>(`delete-application/${application}`)
   }
 
@@ -109,7 +109,7 @@ export class PortalAdministrationService extends AbstractHTTPService {
       return this.post<ApplicationVersion>(`update-application-version`, application)
   }
 
-  deleteApplicationVersion( application: String, version: number) {
+  deleteApplicationVersion( application: String, version: string) : Observable<any> {
       return this.delete<any>(`delete-application-version/${application}/${version}`)
   }
 

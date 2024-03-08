@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Directive, Injector } from "@angular/core";
+import { AfterViewInit, Component, Directive, Injector, ViewChild } from "@angular/core";
 import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, SuggestionProvider, ArraySuggestionProvider, NgModelSuggestionsDirective, VersionRange } from "@modulefederation/portal";
 import { PortalAdministrationService } from "./service";
 import { Node, ApplicationTreeComponent, MenuRequest } from "./application-tree.component";
@@ -222,12 +222,11 @@ canFinishEdit() {
 displayedColumns: string[] = Columns.map((col) => col.key)
   columnsSchema: any = Columns
   dataSource = new MatTableDataSource<AssignedMicrofrontendRow>()
-  //valid: any = {}
 
   finishEdit(row: AssignedMicrofrontendRow) {
     row.isEdit = false
 
-    console.log(row)
+    this.setDirty()
   }
 
   addRow() {
@@ -241,11 +240,17 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     }
     this.selectedVersion?.assignedMicrofrontends.push(newRow.data)
     this.dataSource.data = [newRow, ...this.dataSource.data]
+
+    this.setDirty()
   }
 
   removeRow(row: AssignedMicrofrontendRow) {
     this.dataSource.data.splice(this.dataSource.data.indexOf(row), 1)
     this.selectedVersion?.assignedMicrofrontends.splice(this.selectedVersion?.assignedMicrofrontends.indexOf(row.data), 1)
+
+    this.dataSource.data = [...this.dataSource.data]
+
+    this.setDirty()
   }
 
   removeSelectedRows() {
@@ -302,6 +307,8 @@ displayedColumns: string[] = Columns.map((col) => col.key)
   }
    inheritedConfigurationData: ConfigurationProperty[] = []
 
+   @ViewChild(ApplicationTreeComponent) tree!: ApplicationTreeComponent
+
    // constructor
 
    constructor(injector: Injector, private portalAdministrationService : PortalAdministrationService) {
@@ -334,6 +341,18 @@ displayedColumns: string[] = Columns.map((col) => col.key)
 
    // private
 
+   microfrontendName(id: string) : string{
+    const colon = id.indexOf(":")
+    return id.substring(0, colon)
+ }
+
+ microfrontendVersion(id: string) : string {
+    const colon = id.indexOf(":")
+    return id.substring(colon + 1)
+ }
+
+
+
    private getConfigurationParent4(configuration: ConfigurationProperty) : ConfigurationProperty {
     // local function
 
@@ -364,18 +383,29 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     throw new Error("should not happen")
    }
 
+   setDirty(dirty = true) {
+    this.dirty = dirty
+
+    this.updateCommandState()
+   }
+
    // callbacks
 
    changed($event: any) {
-    this.dirty = true
-
-    this.updateCommandState()
+     this.setDirty()
    }
 
    menuRequest(request: MenuRequest) {
        switch ( request.action) {
         case "add-version":
-            this.addVersion(request.node.data)
+            this.addVersion(request.node)
+            break;
+
+        case "delete":
+            if ( request.node.type == "application")
+                this.deleteApplication(request.node)
+            else if  ( request.node.type == "application-version")
+                this.deleteApplicationVersion(request.node)
             break;
        }
    }
@@ -566,7 +596,7 @@ displayedColumns: string[] = Columns.map((col) => col.key)
 
     // commands
 
-    addVersion(application: Application) {
+    addVersion(applicationNode: Node) {
         this.inputDialog()
         .title("New Version")
         .message("Input version")
@@ -574,26 +604,43 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         .okCancel()
         .show()
         .subscribe(name => {
+            const application : Application = applicationNode.data
+
             if ( name && application.versions?.find(version => version.version == name ) === undefined) {
                 const newVersion : ApplicationVersion = {
                     version : name,
-                    configuration : "",
+                    configuration : "{\"type\":\"object\",\"value\": []}",
                     assignedMicrofrontends: []
                 }
 
-                application.versions?.push(newVersion)
+                application.versions!.push(newVersion)
 
-                // force recalculate
+                this.portalAdministrationService.updateApplication(application).subscribe(returnApplication => {
+                    application.versions = returnApplication.versions // we have a key now
 
-                this.applications = [...this.applications]
-                this.dirty = true
-                this.updateCommandState()
-            }
+                    this.selectNode(this.tree.addVersion(newVersion, applicationNode))
+                })
+            } // if
+        })
+    }
+
+    deleteApplication(node: Node) {
+        this.portalAdministrationService.deleteApplication(node.data.name).subscribe(_ => {
+
+        })
+    }
+
+    deleteApplicationVersion(node: Node) {
+        const application : Application = node.parent?.data
+
+        this.portalAdministrationService.deleteApplicationVersion(application.name, node.data.version).subscribe(_ => {
+            this.tree.deletedApplicationVersion(node)
+
+            this.selectNode(node.parent!)
         })
     }
 
     @Command({
-        //: "portal.commands:save",
         label: "Add Application",
         icon: "add"
     })
@@ -605,9 +652,14 @@ displayedColumns: string[] = Columns.map((col) => col.key)
             .okCancel()
             .show()
             .subscribe(name => {
-                if ( name ) {
-                    console.log(name)
-                }
+                if ( name )
+                    this.portalAdministrationService.createApplication({
+                        name : name,
+                        configuration : "{\"type\":\"object\",\"value\": []}",
+                        versions: []
+                }).subscribe(application => {
+                    this.selectNode(this.tree.addApplication(application))
+                })
             })
     }
 
@@ -625,7 +677,13 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         else if (this.selectedVersion) {
             this.selectedVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
-            this.portalAdministrationService.updateApplicationVersion(this.selectedVersion).subscribe()
+            this.portalAdministrationService.updateApplicationVersion(this.selectedVersion).subscribe(version => {
+                // copy back possibly pks of the assigned microfrontends
+
+                for ( let i = 0; i < this.selectedVersion!.assignedMicrofrontends.length; i++) {
+                    this.selectedVersion!.assignedMicrofrontends[i].id = version.assignedMicrofrontends[i].id
+                }
+            })
         }
         else if (this.selectedMicrofrontend) {
             this.selectedMicrofrontend!.configuration = JSON.stringify(this.stripInherited(this.configurationData))

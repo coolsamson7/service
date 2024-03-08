@@ -28,7 +28,7 @@
           <!-- type picker -->
 
           <mat-form-field *ngIf="data.property.type !== 'object'" >
-            <mat-select [disabled]="data.property.inherits !== undefined && data.property.overwrite !== true" class="type" [(ngModel)]="data.property.type">
+            <mat-select [disabled]="data.property.inherits !== undefined" class="type" [(ngModel)]="data.property.type" (ngModelChange)="changed(data.property.value)">
               <mat-option *ngFor="let type of types" [value]="type">
                 {{type}}
               </mat-option>
@@ -52,8 +52,12 @@
 
           <!-- x -->
 
-          <button *ngIf="data.property.inherits === undefined ||  data.property.overwrite === true" (click)="deleteItem(data)" aria-label="Clear" class="delete" mat-icon-button>
+          <button *ngIf="data.property.inherits === undefined" (click)="deleteItem(data)" aria-label="Clear" class="delete" mat-icon-button>
               <mat-icon class="delete" matSuffix>remove_circle_outline</mat-icon>
+          </button>
+
+          <button *ngIf="data.property.overwrite === true" (click)="deleteItem(data)" aria-label="Clear" class="delete" mat-icon-button>
+            <mat-icon class="delete" matSuffix>clear</mat-icon>
           </button>
 
           <!-- edit -->
@@ -71,7 +75,7 @@
 
   <!-- + in case of empty entries -->
 
-  <button *ngIf="configuration.value.length === 0" aria-label="Add" [matMenuTriggerFor]="menu" class="add" mat-icon-button>
+  <button aria-label="Add" [matMenuTriggerFor]="menu" class="add" mat-icon-button>
     <mat-icon class="delete">add_box</mat-icon>
 
     <mat-menu #menu="matMenu">

@@ -55,6 +55,58 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     // public
 
+    addVersion(applicationVersion: ApplicationVersion, applicationNode: Node) : Node {
+        const node : Node =  {
+            type: "application-version",
+            data: applicationVersion
+        }
+
+        if (!applicationNode.children)
+            applicationNode.children = []
+
+        applicationNode.children!.push(node)
+
+        this.refreshData()
+        this.select(node)
+
+        return node
+    }
+
+    deletedApplication(node: Node) {
+        this.dataSource.data.splice(this.dataSource.data.indexOf(node), 1)
+        this.refreshData()
+    }
+
+    deletedApplicationVersion(node: Node) {
+        node.parent?.children?.splice(node.parent?.children.indexOf(node), 1)
+        this.refreshData()
+    }
+
+    addApplication(application: Application) : Node{
+        const node : Node =  {
+            type: "application",
+            data: application
+        }
+
+        let after = -1
+        for ( let i = 0; i < this.dataSource.data.length; i++)
+           if (this.dataSource.data[i].type == "application")
+              after = i
+            else
+               break
+
+        if ( after == -1)
+            this.dataSource.data.push(node)
+        else
+            this.dataSource.data.splice(after + 1, 0, node)
+
+        this.refreshData()
+
+        this.select(node)
+
+        return node
+    }
+
     select(node: Node) {
         this.selection = node
 

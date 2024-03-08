@@ -66,14 +66,14 @@ interface PortalAdministrationService : Service {
 
     @PostMapping("create-application")
     @ResponseBody
-    fun createApplication(@RequestBody application: Application)
+    fun createApplication(@RequestBody application: Application) : Application
 
     @GetMapping("read-application/{application}")
     @ResponseBody
     fun readApplication(@PathVariable application: String) : Optional<Application>
 
     @PostMapping("update-application")
-    fun updateApplication(@RequestBody application: Application)
+    fun updateApplication(@RequestBody application: Application) : Application
 
     @DeleteMapping("delete-application/{application}")
     fun deleteApplication(@PathVariable application: String)
@@ -92,7 +92,7 @@ interface PortalAdministrationService : Service {
     fun updateApplicationVersion(@RequestBody application: ApplicationVersion) : ApplicationVersion
 
     @DeleteMapping("delete-application-version/{application}/{version}")
-    fun deleteApplicationVersion(@PathVariable application: String, @PathVariable version: Long)
+    fun deleteApplicationVersion(@PathVariable application: String, @PathVariable version: String)
 
     // microfrontend
 

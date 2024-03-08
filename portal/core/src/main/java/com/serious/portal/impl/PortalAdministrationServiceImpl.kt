@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 
 typealias PKGetter<T,PK> = (any: T) -> PK
 abstract class RelationSynchronizer<TO, ENTITY, PK> protected constructor(private val toPK: PKGetter<TO,PK>, private val entityPK: PKGetter<ENTITY,PK>) {
@@ -220,8 +221,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // application
     @Transactional
-    override fun createApplication(application: Application) {
+    override fun createApplication(application: Application) : Application {
        this.applicationRepository.save(ApplicationEntity(application.name, application.configuration, ArrayList()))
+
+        return application
     }
     @Transactional
     override fun readApplication(application: String) : Optional<Application> {
@@ -251,12 +254,57 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         }
     }
     @Transactional
-    override fun updateApplication(application: Application) {
+    override fun updateApplication(application: Application) :Application {
         var entity : ApplicationEntity = applicationRepository.findById(application.name).get()
 
         entity.configuration = application.configuration
-        //this.applicationRepository.save(ApplicationEntity(application.name, application.configuration))
+
+        // local class
+
+        val synchronizer = object : RelationSynchronizer<ApplicationVersion, ApplicationVersionEntity, Long?>(
+            fun (to: ApplicationVersion) : Long? { return to.id },
+            fun (entity: ApplicationVersionEntity) : Long { return entity.id }) {
+
+            override fun missingPK(pk: Long?) : Boolean {
+                return pk == null || pk == 0L
+            }
+
+            override fun provideEntity(referencedTransportObject: ApplicationVersion): ApplicationVersionEntity {
+                val entity = ApplicationVersionEntity(
+                    0, // pk
+                    entity, // applicationVersion
+                    referencedTransportObject.version,
+                    referencedTransportObject.configuration,
+                    ArrayList(),
+                )
+
+                entityManager.persist(entity)
+
+                referencedTransportObject.id = entity.id
+
+                return entity
+            }
+
+            override fun deleteEntity(entity: ApplicationVersionEntity) {
+                applicationVersionRepository.deleteById(entity.id)
+            }
+
+            override fun updateEntity(entity: ApplicationVersionEntity, transportObject: ApplicationVersion) {
+                entity.version = transportObject.version
+                entity.configuration = transportObject.configuration
+                //entity.microfrontend = transportObject.microfrontend
+            }
+        }
+
+        // synchronize
+
+        synchronizer.synchronize(application.versions, entity.versions)
+
+        // done
+
+        return application
     }
+
     @Transactional
     override fun deleteApplication(application: String){
         this.applicationRepository.deleteById(application)
@@ -308,7 +356,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
     @Transactional
     override fun updateApplicationVersion(application: ApplicationVersion) : ApplicationVersion {
-        val entity = this.applicationVersionRepository.findById(application.id).get()
+        val entity = this.applicationVersionRepository.findById(application.id!!).get()
 
         entity.version = application.version
         entity.configuration = application.configuration
@@ -319,8 +367,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             fun (to: AssignedMicrofrontend) : Long? { return to.id },
             fun (entity: AssignedMicrofrontendEntity) : Long { return entity.id }) {
 
-            protected fun missingPK(pk: Long) : Boolean {
-                return pk == 0L
+             override fun missingPK(pk: Long?) : Boolean {
+                return pk == null || pk == 0L
             }
 
             override fun provideEntity(referencedTransportObject: AssignedMicrofrontend): AssignedMicrofrontendEntity {
@@ -332,6 +380,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                     )
 
                 entityManager.persist(entity)
+
+                referencedTransportObject.id = entity.id
 
                 return entity
             }
@@ -355,12 +405,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return application
     }
     @Transactional
-    override fun deleteApplicationVersion(application: String, version: Long) {
+    override fun deleteApplicationVersion(application: String, version: String) {
         val applicationEntity = this.applicationRepository.findById(application).get()
 
-        val entity = applicationEntity.versions.find { entity -> entity.id == version }
+        val versionEntity = applicationEntity.versions.find { entity -> entity.version == version }
 
-        applicationEntity.versions.remove(entity)
+        applicationEntity.versions.remove(versionEntity)
+
+        this.applicationVersionRepository.delete(versionEntity!!)
     }
 
     // microfrontend

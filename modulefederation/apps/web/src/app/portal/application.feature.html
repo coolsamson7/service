@@ -20,12 +20,27 @@
     <!-- content area. -->
 
     <div class="content">
+       <!-- microfrontend -->
+
+       <div class="microfrontend" *ngIf="selectedMicrofrontend">
+        <div class="general">
+          <mat-label>Name</mat-label>
+          <div>{{selectedMicrofrontend.name}}</div>
+        </div>
+
+        <mat-divider></mat-divider>
+          
+        <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+      </div>
+
       <!-- microfrontend version -->
 
       <div class="microfrontend-version" *ngIf="selectedMicrofrontendVersion">
         <div class="general">
           <mat-label>Name</mat-label>
-          <div>{{selectedMicrofrontendVersion.id}}</div>
+          <div>{{microfrontendName(selectedMicrofrontendVersion.id)}}</div>
+          <mat-label>Version</mat-label>
+          <div>{{microfrontendVersion(selectedMicrofrontendVersion.id)}}</div>
         </div>
 
         <mat-divider></mat-divider>
@@ -40,6 +55,13 @@
             <mat-label>Name</mat-label>
             <div>{{selectedMicrofrontendInstance.uri}}</div>
         </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="general">
+          <mat-label>Stage</mat-label>
+          <div>{{selectedMicrofrontendInstance.stage}}</div>
+      </div>
 
         <mat-divider></mat-divider>
 
@@ -59,7 +81,7 @@
         <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
       </div>
 
-      <!-- version -->
+      <!-- application version -->
       
       <div class="version" *ngIf="selectedVersion">
         <!-- general -->
@@ -121,10 +143,6 @@
                       </button>
                     </div>
 
-                    <!--span *ngSwitchCase="'date'">
-                      {{ element[col.key] | date: 'mediumDate' }}
-                    </span-->
-
                     <span *ngSwitchDefault>
                       {{ element.data[col.key] }}
                     </span>
@@ -133,7 +151,10 @@
                   <!-- edit mode -->
 
                   <form [ngSwitch]="col.type" *ngIf="element.isEdit">
+                    <!-- selection -->
+
                     <div *ngSwitchCase="'isSelected'"></div>
+
                     <!-- done -->
                     
                     <div class="btn-edit" *ngSwitchCase="'isEdit'">
@@ -144,6 +165,7 @@
 
                     <mat-form-field class="form-input" *ngSwitchCase="'mfe'">
                       <input
+                        [disabled]="element.data.id !== undefined"
                         [name]="col.key"
                         [id]="col.key"
                         matInput
