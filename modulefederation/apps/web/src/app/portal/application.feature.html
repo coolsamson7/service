@@ -44,8 +44,11 @@
         </div>
 
         <mat-divider></mat-divider>
-          
-        <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+
+        <div class="configuration">
+          <mat-label>Configuration</mat-label>
+          <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+        </div>
       </div>
 
       <!-- microfrontend instance -->
@@ -65,7 +68,10 @@
 
         <mat-divider></mat-divider>
 
-        <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+        <div class="configuration">
+          <mat-label>Configuration</mat-label>
+          <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (onAdd)="addItem($event)"(onAddFolder)="addFolder($event)"  (onDelete)="deleteItem($event)" (onChanged)="changed($event)"></configuration-tree>
+        </div>
       </div>
 
       <!-- application -->
@@ -101,6 +107,9 @@
         <mat-divider></mat-divider>
 
         <div class="microfrontends">
+          
+         <button (click)="computeApplicationVersionConfiguration()" matButton>Compute Config</button>
+
           <mat-label>Microfrontends</mat-label>
           <div class="table">
 

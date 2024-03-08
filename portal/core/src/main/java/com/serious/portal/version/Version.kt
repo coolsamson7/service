@@ -43,7 +43,7 @@ class Version(version: String) {
 
         // and same elements
 
-        for ( i in this.len() - 1 downTo 0 step -1)
+        for ( i in 0..this.len() - 1)
             if ( this.pos(i) != version.pos(i))
                 return false
 
@@ -53,21 +53,20 @@ class Version(version: String) {
     fun lt(version: Version) :Boolean {
         val len = Math.max(this.numbers.size, version.numbers.size)
 
-        var eq = true
         for ( i in 0..len-1) {
             if ( this.pos(i) < version.pos(i))
                 return true
-            else if (this.pos(i) != version.pos(i))
-                eq = false
+            else if (this.pos(i) > version.pos(i))
+                return false
         }
 
-        return !eq
+        return false
     }
 
     fun le(version: Version) :Boolean {
-        val len = Math.max(this.numbers.size, version.numbers.size)
+        val len = Math.max(this.numbers.size, version.numbers.size) - 1
 
-        for (i in 0..len-1) {
+        for (i in 0..len) {
             if ( this.pos(i) > version.pos(i))
                 return false
         }
@@ -76,24 +75,25 @@ class Version(version: String) {
     }
 
     fun gt(version: Version) :Boolean {
-        val len = Math.max(this.numbers.size, version.numbers.size)
+        val len = Math.max(this.numbers.size, version.numbers.size) - 1
 
-        var eq = true
-        for ( i in 0..len-1) {
+        for ( i in 0..len) {
             if ( this.pos(i) > version.pos(i))
                 return true
-            else if (this.pos(i) != version.pos(i))
-                eq = false
+            else if (this.pos(i) < version.pos(i))
+                return false
         }
 
-        return !eq
+        return false
     }
 
     fun ge(version: Version) :Boolean {
-        val len = Math.max(this.numbers.size, version.numbers.size)
+        val len = Math.max(this.numbers.size, version.numbers.size) - 1
 
-        for (i in 0..len-1) {
-            if ( this.pos(i) < version.pos(i))
+        for (i in 0..len) {
+            if ( this.pos(i) > version.pos(i))
+                return true
+            else if ( this.pos(i) < version.pos(i))
                 return false
         }
 

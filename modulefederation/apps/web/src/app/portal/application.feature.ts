@@ -406,6 +406,10 @@ displayedColumns: string[] = Columns.map((col) => col.key)
                 this.deleteApplication(request.node)
             else if  ( request.node.type == "application-version")
                 this.deleteApplicationVersion(request.node)
+            else if  ( request.node.type == "microfrontend")
+                this.deleteMicrofrontend(request.node)
+            else if  ( request.node.type == "microfrontend-version")
+                this.deleteMicrofrontendVersion(request.node)
             break;
        }
    }
@@ -630,6 +634,14 @@ displayedColumns: string[] = Columns.map((col) => col.key)
         })
     }
 
+    deleteMicrofrontend(node: Node) {
+        // TODO
+    }
+
+    deleteMicrofrontendVersion(node: Node) {
+        // TODO
+    }
+
     deleteApplicationVersion(node: Node) {
         const application : Application = node.parent?.data
 
@@ -638,6 +650,10 @@ displayedColumns: string[] = Columns.map((col) => col.key)
 
             this.selectNode(node.parent!)
         })
+    }
+
+    computeApplicationVersionConfiguration() {
+        this.portalAdministrationService.computeApplicationVersionConfiguration(this.selectedVersion!.id!)
     }
 
     @Command({
@@ -669,11 +685,11 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     })
     save() {
         if (this.selectedApplication) {
-
             this.selectedApplication!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateApplication(this.selectedApplication).subscribe()
         }
+
         else if (this.selectedVersion) {
             this.selectedVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
@@ -685,16 +701,19 @@ displayedColumns: string[] = Columns.map((col) => col.key)
                 }
             })
         }
+
         else if (this.selectedMicrofrontend) {
             this.selectedMicrofrontend!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateMicrofrontend(this.selectedMicrofrontend).subscribe()
         }
+
         else if (this.selectedMicrofrontendVersion) {
             this.selectedMicrofrontendVersion!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
             this.portalAdministrationService.updateMicrofrontendVersion(this.selectedMicrofrontendVersion).subscribe()
         }
+
         else if (this.selectedMicrofrontendInstance) {
             this.selectedMicrofrontendInstance!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 

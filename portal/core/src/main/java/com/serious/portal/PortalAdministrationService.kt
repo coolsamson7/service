@@ -94,6 +94,14 @@ interface PortalAdministrationService : Service {
     @DeleteMapping("delete-application-version/{application}/{version}")
     fun deleteApplicationVersion(@PathVariable application: String, @PathVariable version: String)
 
+    // TEST
+
+    @GetMapping("compute-application-version-configuration/{application}")
+    fun computeApplicationVersionConfiguration(@PathVariable application: Long)
+
+
+    // TEST
+
     // microfrontend
 
     @GetMapping("read-microfrontends")

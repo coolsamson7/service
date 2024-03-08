@@ -138,4 +138,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
   updateMicrofrontendInstance(instance: MicrofrontendInstance) : Observable<MicrofrontendInstance>  {
     return this.post<MicrofrontendInstance>(`update-microfrontend-instance`, instance)
   }
+
+  // TEST
+
+  computeApplicationVersionConfiguration(application: number) : Observable<any> {
+    return this.get<any>(`compute-application-version-configuration/${application}`)
+  }
 }

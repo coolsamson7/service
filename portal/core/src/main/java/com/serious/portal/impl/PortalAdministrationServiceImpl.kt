@@ -417,6 +417,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // microfrontend
 
+    @Transactional
     override fun readMicrofrontends() : List<Microfrontend> {
         fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
             return MicrofrontendInstance(
@@ -447,12 +448,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             )
         }
     }
+
+    @Transactional
     override fun updateMicrofrontend(@RequestBody microfrontend: Microfrontend) : Microfrontend {
         val entity = this.microfrontendRepository.findById(microfrontend.name).get()
 
         entity.configuration = microfrontend.configuration
 
-        // TODO!!! hmmmm
+        // TODO!!! hmmmm whats up with versions?
 
         return microfrontend
     }
@@ -482,6 +485,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         }
     }
 
+    @Transactional
     override fun updateMicrofrontendVersion(version: MicrofrontendVersion) : MicrofrontendVersion {
         val entity = this.microfrontendVersionRepository.findById(version.id).get()
 
@@ -494,6 +498,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // microfrontend instance
 
+    @Transactional
     override fun updateMicrofrontendInstance(instance: MicrofrontendInstance) : MicrofrontendInstance {
         val entity = this.microfrontendInstanceRepository.findById(instance.uri).get()
 
@@ -503,5 +508,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         // TODO!!! hmmmm
 
         return instance
+    }
+
+    // TEST
+
+
+    override fun computeApplicationVersionConfiguration(application: Long) {
+        // TODO
+
+
     }
 }
