@@ -6,11 +6,13 @@ package com.serious.service.administration.portal.impl
  */
 
 import com.serious.portal.*
+import com.serious.portal.configuration.ConfigurationMerger
 import com.serious.portal.model.*
 import com.serious.portal.persistence.*
 import com.serious.portal.persistence.entity.ApplicationEntity
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
 import com.serious.portal.persistence.entity.StageEntity
+import com.serious.portal.version.VersionRange
 import jakarta.persistence.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -512,10 +514,53 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // TEST
 
+    @Autowired
+    lateinit var merger : ConfigurationMerger
 
+    @Transactional
     override fun computeApplicationVersionConfiguration(application: Long) {
-        // TODO
+        // TODO: cache Long -> ... ( Deployment )
+        // read version
 
+        val applicationVersion : ApplicationVersionEntity = this.applicationVersionRepository.findById(application).get()
 
+        val configurations = ArrayList<String>()
+
+        configurations.add(applicationVersion.application.configuration)
+        configurations.add(applicationVersion.configuration)
+
+        // local function
+
+        fun matchingVersion(microfrontend: MicrofrontendEntity, range: VersionRange) :MicrofrontendVersionEntity? {
+            val versions = ArrayList(microfrontend.versions)
+            versions.sortByDescending { version -> version.version }
+
+            for ( version in versions)
+                if ( range.matches(com.serious.portal.version.Version(version.version)))
+                    return version
+
+            return null
+        }
+
+        val versions = ArrayList<MicrofrontendVersionEntity>()
+
+        for ( assigned in applicationVersion.assignedMicrofrontends) {
+            assigned.microfrontend.configuration
+
+            val match = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
+            if ( match != null) {
+                versions.add(match)
+                configurations.add(match.configuration)
+
+                println(match.microfrontend.name + "." + match.version)
+            }
+            else {
+                println("no match for " + assigned.version)
+            }
+        }
+
+        val configuration = merger.mergeConfigurationValues(configurations)
+
+        println("configuration: " + configuration)
     }
 }

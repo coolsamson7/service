@@ -89,6 +89,16 @@ class ConfigurationMerger {
 
     // public
 
+    fun mergeConfigurationValues(configurations: List<String>) : String {
+        val result = mapper.createObjectNode()
+
+        configurations.forEach { configuration ->
+            traverse(parse(configuration), result )
+        }
+
+        return result.toString()
+    }
+
     fun mergeConfigurationValues(vararg configurations: String) : String {
         val result = mapper.createObjectNode()
 

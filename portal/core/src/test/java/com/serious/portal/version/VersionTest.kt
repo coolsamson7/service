@@ -17,6 +17,8 @@ class VersionTest {
         assertEquals(true, VersionRange(">1.0,<=2.0").matches(Version("2.0")), "expected match")
         assertEquals(false, VersionRange(">1.0,<=2.0").matches(Version("3.0")), "expected match")
 
+        assertEquals(true, VersionRange(">1.0").matches(Version("1.1")), "expected match")
+        assertEquals(false, VersionRange(">1.0").matches(Version("1.0")), "expected match")
     }
 
     @Test

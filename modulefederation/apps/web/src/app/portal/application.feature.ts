@@ -653,7 +653,7 @@ displayedColumns: string[] = Columns.map((col) => col.key)
     }
 
     computeApplicationVersionConfiguration() {
-        this.portalAdministrationService.computeApplicationVersionConfiguration(this.selectedVersion!.id!)
+        this.portalAdministrationService.computeApplicationVersionConfiguration(this.selectedVersion!.id!).subscribe()
     }
 
     @Command({

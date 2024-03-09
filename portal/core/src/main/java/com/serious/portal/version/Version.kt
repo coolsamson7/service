@@ -51,9 +51,9 @@ class Version(version: String) {
     }
 
     fun lt(version: Version) :Boolean {
-        val len = Math.max(this.numbers.size, version.numbers.size)
+        val len = Math.max(this.numbers.size, version.numbers.size) - 1
 
-        for ( i in 0..len-1) {
+        for ( i in 0..len) {
             if ( this.pos(i) < version.pos(i))
                 return true
             else if (this.pos(i) > version.pos(i))
@@ -67,7 +67,9 @@ class Version(version: String) {
         val len = Math.max(this.numbers.size, version.numbers.size) - 1
 
         for (i in 0..len) {
-            if ( this.pos(i) > version.pos(i))
+            if ( this.pos(i) < version.pos(i))
+                return true
+            else if (this.pos(i) > version.pos(i))
                 return false
         }
 
