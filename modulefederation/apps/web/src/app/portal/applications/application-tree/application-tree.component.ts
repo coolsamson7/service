@@ -6,8 +6,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { Application, ApplicationVersion, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "./model";
 import { MatMenuModule } from "@angular/material/menu";
+import { Application, Microfrontend, ApplicationVersion, MicrofrontendVersion, MicrofrontendInstance } from "../../model";
 
 export interface Node {
     type: "application" | "application-version" | "microfrontend" | "microfrontend-version"| "microfrontend-instance"

@@ -13,6 +13,7 @@ import { ParameterDirective } from "./parameter.directive";
 import { MatInput } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
+import { DialogService, InputDialogBuilder } from "@modulefederation/portal";
 
 interface FlatNode {
   expandable: boolean;
@@ -27,119 +28,211 @@ interface FlatNode {
     selector: '[matInputAutofocus]',
   })
   export class AutofocusDirective implements OnInit {
-  
+
     constructor(private matInput: MatInput) { }
-  
+
     ngOnInit() {
       setTimeout(() => this.matInput.focus());
     }
-  
+
   }
 
 @Component({
   standalone: true,
   imports: [
-    AutofocusDirective, 
+    AutofocusDirective,
     ParameterDirective,
 
     // material
 
-    MatTableModule, 
+    MatTableModule,
     MatIconModule ,
-    MatButtonModule, 
-    MatTreeModule, 
+    MatButtonModule,
+    MatTreeModule,
     MatMenuModule,
-    MatSelectModule, 
+    MatSelectModule,
     MatFormFieldModule,
-     
+
      // angular
 
-     CommonModule, 
+     CommonModule,
      FormsModule
-    
+
   ],
   selector: 'configuration-tree',
   templateUrl: './configuration-tree.component.html',
   styleUrls: ['./configuration-tree.component.scss'],
 })
 export class ConfigurationTreeComponent implements OnInit, OnChanges {
-    // input & output
+  // input & output
 
-    @Input() inherits! : ConfigurationProperty[]
-    @Input() configuration! : ConfigurationProperty
+  @Input() inherits! : ConfigurationProperty[]
+  @Input() configuration! : ConfigurationProperty
 
-    @Output() onAdd = new EventEmitter<ConfigurationProperty>();
-    @Output() onAddFolder = new EventEmitter<ConfigurationProperty>();
-    @Output() onDelete = new EventEmitter<ConfigurationProperty>();
+  @Output() dirty = new EventEmitter<boolean>();
 
-    @Output() onChanged = new EventEmitter<boolean>();
+  // instance data
 
-    // instance data
+  types = ["string", "number", "boolean"]
+  displayedColumns: string[] = ['name', 'value'];
 
-    types = ["string", "number", "boolean"]
-
-    displayedColumns: string[] = ['name', 'value'];
-
-    transformer = (node: ConfigurationProperty, level: number) : FlatNode => {
+  transformer = (node: ConfigurationProperty, level: number) : FlatNode => {
        return {
          expandable: node.type == "object" && node.value.length > 0,
          name: node.name!,
          property: node,
          level: level,
        };
-     }
+  }
 
-    treeControl = new FlatTreeControl<FlatNode>(
-         node => node.level, 
+  treeControl = new FlatTreeControl<FlatNode>(
+         node => node.level,
          node => node.expandable
-         );
+  );
 
-    treeFlattener = new MatTreeFlattener<ConfigurationProperty, FlatNode>(
+  treeFlattener = new MatTreeFlattener<ConfigurationProperty, FlatNode>(
          this.transformer,
          node => node.level,
          node => node.expandable,
          node => node.value
-         );
+  );
 
-    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    hasChild = (_: number, node: FlatNode) => node.expandable;
+  hasChild = (_: number, node: FlatNode) => node.expandable;
 
-    // constructor
+  // constructor
+
+  constructor(private dialogs : DialogService) {
+  }
+
+  // private
+
+  private inputDialog() : InputDialogBuilder {
+    return this.dialogs.inputDialog()
+  }
+
+  private getConfigurationParent4(configuration: ConfigurationProperty) : ConfigurationProperty {
+    // local function
+
+    const find = (parent: ConfigurationProperty, node: ConfigurationProperty, target: ConfigurationProperty ) : ConfigurationProperty | undefined => {
+        if ( node === target )
+           return parent
+
+        else if (node.type == "object" ) {
+            for ( const child of <ConfigurationProperty[]>node.value ) {
+                const result = find(node, child, target)
+                if ( result )
+                   return result
+            }
+        } // if
+
+        return undefined
+    }
+
+    // go
+
+    for ( const root of this.configuration.value ) {
+        const result = find(this.configuration, root, configuration)
+
+        if ( result !== undefined )
+            return result
+    }
+
+    throw new Error("should not happen")
+   }
+
+   setDirty(dirty = true) {
+    this.dirty.emit(dirty)
+   }
 
     // callbacks
 
-    changed(value: any) {
-      this.onChanged.emit(true)
-    }
+  changed(value: any) {
+     this.setDirty()
+  }
 
-    addFolder(node: FlatNode | undefined = undefined) {
-      this.onAddFolder.emit(node? node?.property : this.configuration)
-    }
+  addFolder(node: FlatNode | undefined = undefined) {
+      //this.onAddFolder.emit(node? node?.property : this.configuration)
+      const configuration = node? node?.property : this.configuration
+      const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
 
-    addItem(node: FlatNode | undefined = undefined) {
-      this.onAdd.emit(node? node?.property : this.configuration)
-    }
+          this.inputDialog()
+              .title("New folder")
+              .message("Enter folder name")
+              .placeholder("folder")
+              .okCancel()
+              .show()
+              .subscribe(value => {
+                  if ( value ) {
+                      (<ConfigurationProperty[]>parent.value).push({
+                          type: "object",
+                          name: value,
+                          value: []
+                      })
 
-    editItem(node: FlatNode) {
+
+                      this.configuration = {... this.configuration}
+
+                      this.setDirty ()
+                  }
+              })
+  }
+
+  addItem(node: FlatNode | undefined = undefined) {
+      //this.onAdd.emit(node? node?.property : this.configuration)
+      const configuration = node? node?.property : this.configuration
+      const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
+
+          this.inputDialog()
+              .title("New Property")
+              .message("Enter property name")
+              .placeholder("property")
+              .okCancel()
+              .show()
+              .subscribe(value => {
+                  if ( value ) {
+                      (<ConfigurationProperty[]>parent.value).push({
+                          type: "string",
+                          name: value,
+                          value: ""
+                      })
+
+                      this.configuration = {... this.configuration}
+
+                      this.setDirty ()
+                  }
+              })
+  }
+
+  editItem(node: FlatNode) {
       node.property.overwrite = true
-    }
+  }
 
-    deleteItem(node: FlatNode) { 
+    deleteItem(node: FlatNode) {
       if ( node.property.overwrite == true) {
         node.property.overwrite = false
         node.property.value = node.property.inherits?.value
       }
       else {
-        const parent = this.getParent(node)?.property
-        this.onDelete.emit(node.property)
+        //const parent = this.getParent(node)?.property
+        //this.onDelete.emit(node.property)
+
+        const configuration = node.property
+        const parent = this.getConfigurationParent4(configuration)
+
+                const index = parent.value.indexOf(configuration)
+                parent.value.splice(index, 1)
+
+                this.configuration = {... this.configuration}
+
+                this.setDirty ()
       }
-    
     }
 
     // private
 
-    refreshTree() {  
+    refreshTree() {
         const state =  this.treeControl.expansionModel.selected.map(node => node.name)
 
         const nodes = this.treeControl.dataNodes
@@ -158,15 +251,15 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
     private getParent(node: FlatNode) : FlatNode | undefined {
         const { treeControl } = this;
         const currentLevel = treeControl.getLevel(node);
-    
+
         if (currentLevel < 1)
           return undefined;
-    
+
         const startIndex = treeControl.dataNodes.indexOf(node) - 1;
-    
+
         for (let i = startIndex; i >= 0; i--) {
           const currentNode = treeControl.dataNodes[i];
-    
+
           if (treeControl.getLevel(currentNode) < currentLevel)
             return currentNode;
         } // for
@@ -186,17 +279,17 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
             const match = result.find(prop => prop.name == property.name)
 
             if (match) {
-              // replace 
+              // replace
 
               const index = result.indexOf(match)
               result[index] = newProperty
-              
+
               // and remember parent
 
               newProperty.inherits = match
               // object??
               newProperty.overwrite = newProperty.value !== match.value // overwrite if different...
-            } 
+            }
             else {
               // add new item, and mark as inherited
 
@@ -226,7 +319,7 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
 
       copy(data.value, result.value, true)
 
-      // copy to initial object 
+      // copy to initial object
 
       data.value = result.value
 
@@ -236,7 +329,7 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
     }
 
 
-    // implement OnInit 
+    // implement OnInit
 
     ngOnInit() {
         this.addInherited(this.configuration, ...this.inherits)
@@ -248,7 +341,7 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
     ngOnChanges(changes : SimpleChanges) : void {
       if (changes['configuration'] && !changes['configuration'].isFirstChange()) {
           this.addInherited(this.configuration, ...this.inherits)
-          
+
           this.dataSource.data = this.configuration.value!;
       }
 

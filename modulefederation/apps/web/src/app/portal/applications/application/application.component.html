@@ -1,0 +1,13 @@
+<div class="application">
+  <div class="general">
+    <mat-label>Name</mat-label>
+    <div>{{application.name}}</div>
+  </div>
+
+  <mat-divider></mat-divider>
+  ´
+  <div class="configuration">
+    <div>Configuration</div>
+    <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData"  (dirty)="onDirty($event)"></configuration-tree>
+  </div>
+</div>

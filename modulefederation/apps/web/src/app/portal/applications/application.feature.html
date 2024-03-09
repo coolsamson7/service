@@ -1,0 +1,37 @@
+<div class="application">
+  <!-- toolbar -->
+
+  <mat-toolbar class="toolbar">
+    <mat-toolbar-row>
+      <command-button command="save"></command-button>
+      <command-button command="addApplication"></command-button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="view">
+
+    <!-- tree -->
+
+    <application-tree class="tree" [applications]="applications" [microfrontends]="microfrontends" (onMenu)="menuRequest($event)" (onSelectionChange)="selectNode($event)"></application-tree>
+
+    <!-- content area. -->
+
+    <div class="content">
+      <!-- microfrontend -->
+
+      <microfrontend [microfrontend]="selectedMicrofrontend!" *ngIf="selectedMicrofrontend" (dirty)="changed($event)"></microfrontend>
+
+      <!-- microfrontend version -->
+
+      <microfrontend-version [microfrontend]="microfrontend!"  [microfrontendVersion]="selectedMicrofrontendVersion" *ngIf="selectedMicrofrontendVersion"></microfrontend-version>
+
+      <!-- application -->
+
+      <application *ngIf="selectedApplication" [application]="selectedApplication!" (dirty)="changed($event)"></application>
+
+      <!-- application version -->
+
+      <application-version [application]="application!" [microfrontends]="microfrontends" [applicationVersion]="selectedVersion" *ngIf="selectedVersion"></application-version>
+    </div>
+  </div>
+</div>

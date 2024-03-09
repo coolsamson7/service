@@ -1,0 +1,15 @@
+<div class="microfrontend-version">
+  <div class="general">
+    <div>Name</div>
+    <div>{{name(microfrontendVersion.id)}}</div>
+    <div>Version</div>
+    <div>{{version(microfrontendVersion.id)}}</div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="configuration">
+    <div>Configuration</div>
+    <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (dirty)="onDirty($event)"></configuration-tree>
+  </div>
+</div>

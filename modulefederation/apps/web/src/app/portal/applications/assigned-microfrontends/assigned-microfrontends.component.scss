@@ -1,0 +1,12 @@
+.assigned-microfrontends {
+    margin-top: 10px;
+
+    .table {
+        display: grid;
+        grid-template-columns: auto auto min-content;
+
+        table {
+            box-shadow: none !important;
+        }
+    }
+}

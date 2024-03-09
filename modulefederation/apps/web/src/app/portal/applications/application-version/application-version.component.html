@@ -1,0 +1,19 @@
+<div class="application-version">
+  <!-- general -->
+
+  <div class="general">
+    <mat-label>Name</mat-label>
+    <div>{{applicationVersion.version}}</div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="configuration">
+    <mat-label>Configuration</mat-label>
+    <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (dirty)="onDirty($event)"></configuration-tree>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <assigned-microfrontends [applicationVersion]="applicationVersion" [microfrontends]="microfrontends"></assigned-microfrontends>
+</div>

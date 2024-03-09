@@ -5,7 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { TranslationEditorComponent } from './translation/translation-editor.component';
 
-import { ApplicationFeatureComponent } from './portal/application.feature';
 
 import { ComponentsComponent } from './components/components.component';
 
@@ -23,7 +22,6 @@ import { HomeComponent } from './home/home-component';
 
 import { LocalePreferences } from './home/locale-preferences';
 
-import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 import { MicrofrontendDetailsComponent } from './portal/microfrontend-details.component';
 
@@ -34,6 +32,8 @@ import { NodeDetailsComponent } from './nodes/node-details.component';
 import { OtherPreferences } from './home/preferences-dialog';
 
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ApplicationFeatureComponent } from './portal/applications/application.feature';
+import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 export const localRoutes: Routes = [
   {

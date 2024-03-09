@@ -1,0 +1,109 @@
+<div class="assigned-microfrontends">
+
+  <!-- table -->
+
+  <table class="mat-elevation-z0" mat-table [dataSource]="dataSource">
+    <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
+      <!-- header -->
+
+      <th mat-header-cell *matHeaderCellDef [ngSwitch]="col.key">
+        <span *ngSwitchCase="'isSelected'"></span>
+        <!--TODO WTF span *ngSwitchCase="'isSelected'">
+          <mat-checkbox
+            (change)="selectAll($event)"
+            [checked]="isAllSelected()"
+            [indeterminate]="!isAllSelected() && isAnySelected()"
+          ></mat-checkbox>
+        </span-->
+        <span *ngSwitchDefault>{{ col.label }}</span>
+      </th>
+
+      <td mat-cell *matCellDef="let element">
+        <!-- non edit -->
+
+        <div [ngSwitch]="col.type" *ngIf="!element.isEdit">
+          <ng-container *ngSwitchCase="'isSelected'">
+            <mat-checkbox
+              (change)="element.isSelected = $event.checked"
+              [checked]="element.isSelected"
+            ></mat-checkbox>
+          </ng-container>
+
+          <div class="btn-edit" *ngSwitchCase="'isEdit'">
+            <button mat-icon-button (click)="element.isEdit = !element.isEdit">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button mat-icon-button class="button-remove" (click)="removeRow(element)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+          <span *ngSwitchDefault>{{ element.data[col.key] }}</span>
+        </div>
+
+        <!-- edit mode -->
+
+        <form [ngSwitch]="col.type" *ngIf="element.isEdit">
+          <!-- selection -->
+
+          <div *ngSwitchCase="'isSelected'"></div>
+
+          <!-- done -->
+
+          <div class="btn-edit" *ngSwitchCase="'isEdit'">
+            <button mat-icon-button [disabled]="!canFinishEdit()" (click)="finishEdit(element)" >
+              <mat-icon>done</mat-icon>
+            </button>
+          </div>
+
+          <mat-form-field class="form-input" *ngSwitchCase="'mfe'">
+            <input
+              [disabled]="element.data.id !== undefined"
+              [name]="col.key"
+              [id]="col.key"
+              matInput
+              [required]="col.required"
+              type="text"
+              [(ngModel)]="element.data[col.key]"
+              [suggestionProvider]="suggestionProvider"
+              microfrontendValidator
+            />
+            <mat-error showErrors></mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="form-input" *ngSwitchDefault>
+            <input
+              [name]="col.key"
+              [id]="col.key"
+              matInput
+              [required]="col.required"
+              [type]="col.type"
+              [(ngModel)]="element.data[col.key]"
+              versionValidator
+            />
+            <mat-error showErrors></mat-error>
+          </mat-form-field>
+        </form>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <!-- + button -->
+
+  <div>
+    <!--button
+      class="button-remove-rows"
+      mat-button
+      (click)="removeSelectedRows()"
+    >
+      Remove Rows
+    </button-->
+    <button class="button-add-row" mat-icon-button (click)="addRow()">
+      <mat-icon>add_box</mat-icon>
+    </button>
+  </div>
+</div>
