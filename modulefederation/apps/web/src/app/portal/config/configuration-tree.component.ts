@@ -153,119 +153,119 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
   }
 
   addFolder(node: FlatNode | undefined = undefined) {
-      //this.onAddFolder.emit(node? node?.property : this.configuration)
-      const configuration = node? node?.property : this.configuration
-      const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
+    //this.onAddFolder.emit(node? node?.property : this.configuration)
+    const configuration = node? node?.property : this.configuration
+    const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
 
-          this.inputDialog()
-              .title("New folder")
-              .message("Enter folder name")
-              .placeholder("folder")
-              .okCancel()
-              .show()
-              .subscribe(value => {
-                  if ( value ) {
-                      (<ConfigurationProperty[]>parent.value).push({
-                          type: "object",
-                          name: value,
-                          value: []
-                      })
+    this.inputDialog()
+        .title("New folder")
+        .message("Enter folder name")
+        .placeholder("folder")
+        .okCancel()
+        .show()
+        .subscribe(value => {
+            if ( value ) {
+                (<ConfigurationProperty[]>parent.value).push({
+                    type: "object",
+                    name: value,
+                    value: []
+                })
 
 
-                      this.configuration = {... this.configuration}
+                this.refreshTree()
 
-                      this.setDirty ()
-                  }
-              })
+                this.setDirty ()
+            }
+        })
   }
 
   addItem(node: FlatNode | undefined = undefined) {
-      //this.onAdd.emit(node? node?.property : this.configuration)
-      const configuration = node? node?.property : this.configuration
-      const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
+    //this.onAdd.emit(node? node?.property : this.configuration)
+    const configuration = node? node?.property : this.configuration
+    const parent = configuration.type == "object" ? configuration : this.getConfigurationParent4(configuration)
 
-          this.inputDialog()
-              .title("New Property")
-              .message("Enter property name")
-              .placeholder("property")
-              .okCancel()
-              .show()
-              .subscribe(value => {
-                  if ( value ) {
-                      (<ConfigurationProperty[]>parent.value).push({
-                          type: "string",
-                          name: value,
-                          value: ""
-                      })
+    this.inputDialog()
+        .title("New Property")
+        .message("Enter property name")
+        .placeholder("property")
+        .okCancel()
+        .show()
+        .subscribe(value => {
+            if ( value ) {
+                (<ConfigurationProperty[]>parent.value).push({
+                    type: "string",
+                    name: value,
+                    value: ""
+                })
 
-                      this.configuration = {... this.configuration}
+                this.refreshTree()
 
-                      this.setDirty ()
-                  }
-              })
+                this.setDirty ()
+            }
+        })
   }
 
   editItem(node: FlatNode) {
       node.property.overwrite = true
   }
 
-    deleteItem(node: FlatNode) {
-      if ( node.property.overwrite == true) {
-        node.property.overwrite = false
-        node.property.value = node.property.inherits?.value
-      }
-      else {
-        //const parent = this.getParent(node)?.property
-        //this.onDelete.emit(node.property)
+  deleteItem(node: FlatNode) {
+    if ( node.property.overwrite == true) {
+      node.property.overwrite = false
+      node.property.value = node.property.inherits?.value
+    }
+    else {
+      //const parent = this.getParent(node)?.property
+      //this.onDelete.emit(node.property)
 
-        const configuration = node.property
-        const parent = this.getConfigurationParent4(configuration)
+      const configuration = node.property
+      const parent = this.getConfigurationParent4(configuration)
 
-                const index = parent.value.indexOf(configuration)
-                parent.value.splice(index, 1)
+      const index = parent.value.indexOf(configuration)
+      parent.value.splice(index, 1)
 
-                this.configuration = {... this.configuration}
+      this.refreshTree()
 
-                this.setDirty ()
-      }
+      this.setDirty ()
+    }
+  }
+
+  // private
+
+  refreshTree() {
+      const state =  this.treeControl.expansionModel.selected.map(node => node.name)
+
+      const nodes = this.treeControl.dataNodes
+
+      const data = this.dataSource.data;
+      this.dataSource.data = [];
+      this.dataSource.data = data;
+
+      state.forEach(path => {
+          const node = nodes.find(n => n.name === path);
+          if (node !== undefined)
+              this.treeControl.expand(node);
+          })
     }
 
-    // private
+  private getParent(node: FlatNode) : FlatNode | undefined {
+      const { treeControl } = this;
+      const currentLevel = treeControl.getLevel(node);
 
-    refreshTree() {
-        const state =  this.treeControl.expansionModel.selected.map(node => node.name)
+      if (currentLevel < 1)
+        return undefined;
 
-        const nodes = this.treeControl.dataNodes
+      const startIndex = treeControl.dataNodes.indexOf(node) - 1;
 
-        const data = this.dataSource.data;
-        this.dataSource.data = [];
-        this.dataSource.data = data;
+      for (let i = startIndex; i >= 0; i--) {
+        const currentNode = treeControl.dataNodes[i];
 
-        state.forEach(path => {
-            const node = nodes.find(n => n.name === path);
-            if (node !== undefined)
-                this.treeControl.expand(node);
-            })
-      }
+        if (treeControl.getLevel(currentNode) < currentLevel)
+          return currentNode;
+      } // for
 
-    private getParent(node: FlatNode) : FlatNode | undefined {
-        const { treeControl } = this;
-        const currentLevel = treeControl.getLevel(node);
-
-        if (currentLevel < 1)
-          return undefined;
-
-        const startIndex = treeControl.dataNodes.indexOf(node) - 1;
-
-        for (let i = startIndex; i >= 0; i--) {
-          const currentNode = treeControl.dataNodes[i];
-
-          if (treeControl.getLevel(currentNode) < currentLevel)
-            return currentNode;
-        } // for
-
-        return undefined
-    }
+      return undefined
+  }
 
    addInherited(data: ConfigurationProperty, ...inherited: ConfigurationProperty[]): ConfigurationProperty {
       const result : ConfigurationProperty = {
@@ -332,6 +332,11 @@ export class ConfigurationTreeComponent implements OnInit, OnChanges {
     // implement OnInit
 
     ngOnInit() {
+      if ( !this.configuration.type) {
+        this.configuration.type = "object"
+        this.configuration.value = []
+      }
+
         this.addInherited(this.configuration, ...this.inherits)
         this.dataSource.data = this.configuration.value!;
     }

@@ -58,7 +58,8 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     addVersion(applicationVersion: ApplicationVersion, applicationNode: Node) : Node {
         const node : Node =  {
             type: "application-version",
-            data: applicationVersion
+            data: applicationVersion,
+            parent: applicationNode
         }
 
         if (!applicationNode.children)

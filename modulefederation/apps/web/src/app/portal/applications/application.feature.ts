@@ -78,7 +78,6 @@ import { MicrofrontendInstance } from "../model/microfrontend-instance";
     folder: "portals"
 })
 export class ApplicationFeatureComponent extends WithCommands(WithDialogs(AbstractFeature)) {
-
    // instance data
 
    applications: Application[] = []
@@ -219,16 +218,16 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
 
     addVersion(applicationNode: Node) {
         this.inputDialog()
-        .title("New Version")
-        .message("Input version")
-        .placeholder("version")
-        .okCancel()
-        .show()
-        .subscribe(name => {
+            .title("New Version")
+            .message("Input version")
+            .placeholder("version")
+            .okCancel()
+            .show()
+            .subscribe(name => {
             const application : Application = applicationNode.data
 
             if ( name && application.versions?.find(version => version.version == name ) === undefined) {
-                const newVersion : ApplicationVersion = {
+                let newVersion : ApplicationVersion = {
                     version : name,
                     configuration : "{\"type\":\"object\",\"value\": []}",
                     assignedMicrofrontends: []
@@ -237,7 +236,11 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
                 application.versions!.push(newVersion)
 
                 this.portalAdministrationService.updateApplication(application).subscribe(returnApplication => {
-                    application.versions = returnApplication.versions // we have a key now
+                    newVersion = <ApplicationVersion>returnApplication.versions?.find(version => version.version === name)
+
+                    const index = application.versions?.indexOf(<ApplicationVersion>application.versions?.find(version => version.version === name))
+                    
+                    application.versions![index!] = newVersion // we have a key now
 
                     this.selectNode(this.tree.addVersion(newVersion, applicationNode))
                 })

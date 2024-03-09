@@ -6,6 +6,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { PortalAdministrationService } from "../../service";
 import { ApplicationFeatureComponent } from "../application.feature";
 import { ApplicationView } from "../application-view";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 
 @Component({
@@ -15,6 +16,7 @@ import { ApplicationView } from "../application-view";
     styleUrls: ["./microfrontend-version.component.scss"],
     imports: [
         MatDividerModule,
+        MatFormFieldModule,
 
         ConfigurationTreeComponent
     ]
@@ -46,7 +48,6 @@ export class MicrofrontendVersionComponent extends ApplicationView  implements O
    }
 
    save() {
-   
         this.microfrontendVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
         this.portalAdministrationService.updateMicrofrontendVersion(this.microfrontendVersion).subscribe()

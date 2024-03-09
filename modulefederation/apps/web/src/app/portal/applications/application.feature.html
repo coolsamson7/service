@@ -19,11 +19,11 @@
     <div class="content">
       <!-- microfrontend -->
 
-      <microfrontend [microfrontend]="selectedMicrofrontend!" *ngIf="selectedMicrofrontend" (dirty)="changed($event)"></microfrontend>
+      <microfrontend *ngIf="selectedMicrofrontend" [microfrontend]="selectedMicrofrontend!"  (dirty)="changed($event)"></microfrontend>
 
       <!-- microfrontend version -->
 
-      <microfrontend-version [microfrontend]="microfrontend!"  [microfrontendVersion]="selectedMicrofrontendVersion" *ngIf="selectedMicrofrontendVersion"></microfrontend-version>
+      <microfrontend-version *ngIf="selectedMicrofrontendVersion"  [microfrontend]="microfrontend!"  [microfrontendVersion]="selectedMicrofrontendVersion" (dirty)="changed($event)"></microfrontend-version>
 
       <!-- application -->
 
@@ -31,7 +31,7 @@
 
       <!-- application version -->
 
-      <application-version [application]="application!" [microfrontends]="microfrontends" [applicationVersion]="selectedVersion" *ngIf="selectedVersion"></application-version>
+      <application-version *ngIf="selectedVersion" [application]="application!" [microfrontends]="microfrontends" [applicationVersion]="selectedVersion"  (dirty)="changed($event)"></application-version>
     </div>
   </div>
 </div>
