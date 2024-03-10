@@ -30,12 +30,18 @@ import { I18NTreeComponent } from "./widgets/i18n-tree";
     declarations: [
         MirofrontendsComponent,
         MicrofrontendDetailsComponent,
-        ChipsComponent,
         MatErrorMessagesComponent
     ],
     imports: [
+        // angular
+
         CommonModule,
         RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+
+        // material
+
         MatListModule,
         MatButtonModule,
         MatTabsModule,
@@ -44,14 +50,18 @@ import { I18NTreeComponent } from "./widgets/i18n-tree";
         MatAutocompleteModule,
         MatFormFieldModule,
         MatIconModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MonacoEditorModule,
+    
         MatChipsModule,
         MatSlideToggleModule,
         MatLineModule,
         MatDialogModule,
         MatToolbarModule,
+
+        // components
+
+        MonacoEditorModule,
+
+        ChipsComponent,
         I18NTreeComponent,
         NgModelSuggestionsDirective
     ]

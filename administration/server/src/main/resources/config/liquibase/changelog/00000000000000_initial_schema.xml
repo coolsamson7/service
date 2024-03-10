@@ -123,7 +123,8 @@
                 <constraints nullable="false" foreignKeyName="mirofrontebd_instance_or_microfrontend_version_fk" references="MICROFRONTEND_VERSION(id)"/>
             </column>
             <column name="ENABLED" type="BOOLEAN"/>
-            <column name="configuration" type="VARCHAR(4000)"/>
+            <column name="CONFIGURATION" type="VARCHAR(4000)"/>
+            <column name="MANIFEST" type="VARCHAR(5000)"/>
             <column name="STAGE" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>

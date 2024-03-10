@@ -7,6 +7,7 @@ import { PortalAdministrationService } from "../../service";
 import { ApplicationFeatureComponent } from "../application.feature";
 import { ApplicationView } from "../application-view";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { ManifestComponent } from "../manifest/manifest.component";
 
 
 @Component({
@@ -15,9 +16,14 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     templateUrl: "./microfrontend-version.component.html",
     styleUrls: ["./microfrontend-version.component.scss"],
     imports: [
+        // material
+
         MatDividerModule,
         MatFormFieldModule,
 
+        // components
+
+        ManifestComponent,
         ConfigurationTreeComponent
     ]
 })

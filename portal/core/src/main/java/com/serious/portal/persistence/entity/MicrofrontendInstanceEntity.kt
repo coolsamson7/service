@@ -19,6 +19,8 @@ class MicrofrontendInstanceEntity(
     var stage : String,
     @Column(name = "CONFIGURATION", length = 4000)
     var configuration : String,
+    @Column(name = "MANIFEST", length = 5000)
+    var manifest : String,
     @ManyToOne
     @JoinColumn(name="OR_MICROFRONTEND_VERSION")
     var microfrontendVersion : MicrofrontendVersionEntity,

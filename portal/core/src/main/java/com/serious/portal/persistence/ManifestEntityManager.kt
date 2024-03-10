@@ -86,9 +86,9 @@ class ManifestEntityManager {
         val versionEntity : MicrofrontendVersionEntity = microfrontendVersionRepository.findById(id).orElse(this.microfrontendVersionRepository.save(MicrofrontendVersionEntity(
             id,
             manifest.version,
-            manifestEntity.json,
             true,
             "{}",
+            manifestEntity.json,
             microfrontendEntity,
             instances
         )))
@@ -100,6 +100,7 @@ class ManifestEntityManager {
             true,
             "PROD",
             "{}",
+            manifestEntity.json,
             versionEntity
         )
 

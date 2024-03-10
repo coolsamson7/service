@@ -8,7 +8,7 @@ package com.serious.portal.model
 data class MicrofrontendVersion(
     var id: String, // combination of mfe:version
     var version: String,
-    var manifest : String,
+    var manifest : Manifest,
     var configuration : String,
     var enabled : Boolean,
     var instances : List<MicrofrontendInstance>

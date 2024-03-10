@@ -1,18 +1,39 @@
-import { ControlValueAccessor, FormControl, NgControl } from "@angular/forms";
+import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from "@angular/forms";
 
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent } from "@angular/material/chips";
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
+import { MatChip, MatChipInputEvent, MatChipsModule } from "@angular/material/chips";
+import { MatAutocomplete, MatAutocompleteModule, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { Component, ElementRef, HostBinding, Inject, Input, OnDestroy, Optional, Self, ViewChild } from "@angular/core";
 import { map, Observable, startWith, Subject } from "rxjs";
 import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from "@angular/material/form-field";
+import { CommonModule } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
 
 
 @Component({
+    standalone: true,
     selector: 'chips',
     templateUrl: "chips.component.html",
     styleUrls: ["chips.component.scss"],
-    providers: [{provide: MatFormFieldControl, useExisting: ChipsComponent}]
+    providers: [{provide: MatFormFieldControl, useExisting: ChipsComponent}],
+    imports: [
+        // angular
+
+        CommonModule,
+        ReactiveFormsModule,
+
+        // material
+
+        MatChipsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatInputModule,
+        MatAutocompleteModule,
+
+        // components
+    ]
 })
 export class ChipsComponent implements ControlValueAccessor, MatFormFieldControl<string[]>, OnDestroy {
     // constants

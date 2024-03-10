@@ -5,6 +5,8 @@ package com.serious.service.administration.portal.impl
  * All rights reserved
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.serious.portal.*
 import com.serious.portal.configuration.ConfigurationMerger
 import com.serious.portal.model.*
@@ -92,6 +94,9 @@ abstract class RelationSynchronizer<TO, ENTITY, PK> protected constructor(privat
 @Component
 @RestController
 class PortalAdministrationServiceImpl : PortalAdministrationService {
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
+
     @Autowired
     lateinit var manifestManager: ManifestManager
     @Autowired
@@ -426,6 +431,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 entity.uri,
                 entity.enabled,
                 entity.configuration,
+                objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.stage,
             )
         }
@@ -434,7 +440,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             return MicrofrontendVersion(
                 entity.id,
                 entity.version,
-                entity.manifest,
+                objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
                 entity.enabled,
                 entity.instances.map { entity -> mapInstance(entity) }
@@ -471,6 +477,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 entity.uri,
                 entity.enabled,
                 entity.configuration,
+                objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.stage,
             )
         }
@@ -479,7 +486,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             MicrofrontendVersion(
                 entity.id,
                 entity.version,
-                entity.manifest,
+                objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
                 entity.enabled,
                 entity.instances.map { instanceEntity -> mapInstance(instanceEntity) }
@@ -492,6 +499,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         val entity = this.microfrontendVersionRepository.findById(version.id).get()
 
         entity.configuration = version.configuration
+        entity.manifest = objectMapper.writeValueAsString(version.manifest)
 
         // TODO!!! hmmmm
 
@@ -505,6 +513,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         val entity = this.microfrontendInstanceRepository.findById(instance.uri).get()
 
         entity.configuration = instance.configuration
+        entity.manifest = objectMapper.writeValueAsString(instance.manifest)
         entity.stage = instance.stage
 
         // TODO!!! hmmmm
