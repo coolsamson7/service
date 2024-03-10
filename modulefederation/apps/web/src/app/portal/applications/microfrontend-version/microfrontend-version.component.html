@@ -13,8 +13,8 @@
     <configuration-tree [configuration]="configurationData" [inherits]="inheritedConfigurationData" (dirty)="onDirty($event)"></configuration-tree>
   </div>
 
-  <div class="configuration">
-    <mat-label>Configuration</mat-label>
-    <manifest [manifest]="microfrontendVersion.manifest"></manifest>
+  <div class="manifest">
+    <mat-label>Manifest</mat-label>
+    <manifest [manifest]="microfrontendVersion.manifest"  (onSave)="save()" (dirty)="onDirty($event)"></manifest>
   </div>
 </div>

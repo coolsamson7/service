@@ -1,42 +1,9 @@
 <div class="manifest">
-    <h1>{{manifest.name}}</h1>
-    <hr/>
     <mat-tab-group>
       <!-- details -->
 
       <mat-tab label="Details">
         <div class="details">
-          <!-- toolbar -->
-
-          <mat-toolbar>
-            <mat-toolbar-row>
-              <button (click)="save()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
-                <mat-icon>save</mat-icon>
-              </button>
-              <button (click)="revert()" [disabled]="!isDirty" class="example-icon" mat-icon-button>
-                <mat-icon>undo</mat-icon>
-              </button>
-            </mat-toolbar-row>
-          </mat-toolbar>
-
-          <!-- header -->
-
-          <div class="header">
-            <mat-label>Name</mat-label>
-            <div>{{manifest.name}}</div>
-
-            <mat-label>Version</mat-label>
-            <div>{{manifest.version}}</div>
-
-            <mat-label>Commit</mat-label>
-            <div>{{manifest.commitHash}}</div>
-
-            <mat-label>Remote</mat-label>
-            <div>{{manifest.remoteEntry}}</div>
-          </div>
-
-          <mat-divider></mat-divider>
-
           <!--  body -->
 
           <div class="body">

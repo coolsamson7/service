@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { Microfrontend, MicrofrontendVersion } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
@@ -8,6 +8,7 @@ import { ApplicationFeatureComponent } from "../application.feature";
 import { ApplicationView } from "../application-view";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ManifestComponent } from "../manifest/manifest.component";
+import { Command } from "@modulefederation/portal";
 
 
 @Component({
@@ -27,17 +28,19 @@ import { ManifestComponent } from "../manifest/manifest.component";
         ConfigurationTreeComponent
     ]
 })
-export class MicrofrontendVersionComponent extends ApplicationView  implements OnInit {
+export class MicrofrontendVersionComponent extends ApplicationView implements OnInit {
     // inputs
 
     @Input() microfrontend! : Microfrontend
     @Input() microfrontendVersion! : MicrofrontendVersion
 
-     // outputs
+    // outputs
 
      @Output() dirty = new EventEmitter<boolean>();
 
-   // instance data
+     @ViewChild(ManifestComponent) manifestComponent!: ManifestComponent
+
+    // instance data
 
    configurationData: ConfigurationProperty = {
        type: "object",
@@ -47,8 +50,8 @@ export class MicrofrontendVersionComponent extends ApplicationView  implements O
 
    // constructor
 
-   constructor(feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
-    super();
+   constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
+    super(injector);
 
     feature.currentView = this
    }
@@ -71,16 +74,25 @@ export class MicrofrontendVersionComponent extends ApplicationView  implements O
         return id.substring(colon + 1)
     }
 
+    // TEST
+
+    @Command({
+            label: "test",
+            icon: "add"
+    })
+    test() {}
+
    // callbacks
 
    onDirty(dirty: boolean) {
     this.dirty.emit(dirty)
    }
 
-
    // implement OnInit
 
-    ngOnInit(): void {
+    override ngOnInit(): void {
+        super.ngOnInit()
+
         this.inheritedConfigurationData = [ JSON.parse(this.microfrontendVersion.configuration)]
         this.configurationData = JSON.parse(this.microfrontendVersion.configuration)
    }

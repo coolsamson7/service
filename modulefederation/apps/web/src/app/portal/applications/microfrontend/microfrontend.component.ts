@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Injector, Input, OnInit, Output } from "@angular/core";
 import { Microfrontend } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
@@ -51,10 +51,10 @@ export class MicrofrontendComponent extends ApplicationView implements OnInit {
 
    // constructor
 
-   constructor(feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
-    super();
+   constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
+        super(injector);
 
-    feature.currentView = this
+        feature.currentView = this
    }
 
    save() {
@@ -70,7 +70,9 @@ export class MicrofrontendComponent extends ApplicationView implements OnInit {
 
    // implement OnInit
 
-   ngOnInit(): void {
+   override ngOnInit(): void {
+    super.ngOnInit()
+
     this.configurationData = JSON.parse(this.microfrontend.configuration)
    }
 }

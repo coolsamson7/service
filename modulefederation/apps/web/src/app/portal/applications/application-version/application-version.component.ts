@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Injector, Input, OnInit, Output } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { Application, ApplicationVersion, Microfrontend } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
@@ -23,7 +23,7 @@ import { ApplicationView } from "../application-view";
         ConfigurationTreeComponent
     ]
 })
-export class ApplicationVersionComponent extends ApplicationView  implements OnInit {
+export class ApplicationVersionComponent extends ApplicationView implements OnInit {
   // inputs
 
   @Input() application! : Application
@@ -44,8 +44,8 @@ export class ApplicationVersionComponent extends ApplicationView  implements OnI
 
   // constructor
 
-  constructor(feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
-    super();
+  constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
+    super(injector);
 
     feature.currentView = this
    }
@@ -70,7 +70,9 @@ export class ApplicationVersionComponent extends ApplicationView  implements OnI
 
   // implement OnInit
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit()
+
     this.inheritedConfigurationData = [ JSON.parse(this.application.configuration) ]
 
     this.configurationData =  JSON.parse(this.applicationVersion!.configuration)

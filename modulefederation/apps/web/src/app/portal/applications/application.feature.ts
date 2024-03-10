@@ -27,6 +27,8 @@ import { Microfrontend } from "../model/microfrontend";
 import { ApplicationVersion } from "../model/application-version";
 import { MicrofrontendVersion } from "../model/microfrontend-version";
 import { MicrofrontendInstance } from "../model/microfrontend-instance";
+import { CommandToolbarComponent } from "./toolbar/command-toolbar.component";
+import { WithCommandToolbar } from "./toolbar/with-command-toolbar.mixin";
 
 
 @Component({
@@ -50,6 +52,8 @@ import { MicrofrontendInstance } from "../model/microfrontend-instance";
         MatCheckboxModule,
 
         // components
+
+        CommandToolbarComponent,
 
         ApplicationComponent,
         ApplicationVersionComponent,
@@ -77,7 +81,7 @@ import { MicrofrontendInstance } from "../model/microfrontend-instance";
     permissions: [],
     folder: "portals"
 })
-export class ApplicationFeatureComponent extends WithCommands(WithDialogs(AbstractFeature)) {
+export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands(WithDialogs(AbstractFeature))) {
    // instance data
 
    applications: Application[] = []
@@ -100,6 +104,8 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
    stages: string[] = []
 
    @ViewChild(ApplicationTreeComponent) tree!: ApplicationTreeComponent
+   @ViewChild("toolbar", { read: CommandToolbarComponent, static: true }) 
+   override commandToolbar?: CommandToolbarComponent
 
    // constructor
 
@@ -239,7 +245,7 @@ export class ApplicationFeatureComponent extends WithCommands(WithDialogs(Abstra
                     newVersion = <ApplicationVersion>returnApplication.versions?.find(version => version.version === name)
 
                     const index = application.versions?.indexOf(<ApplicationVersion>application.versions?.find(version => version.version === name))
-                    
+
                     application.versions![index!] = newVersion // we have a key now
 
                     this.selectNode(this.tree.addVersion(newVersion, applicationNode))

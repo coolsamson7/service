@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Injector, Input, OnInit, Output } from "@angular/core";
 import { Application } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
@@ -39,8 +39,8 @@ export class ApplicationComponent extends ApplicationView implements OnInit {
 
    // constructor
 
-   constructor(feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
-    super();
+   constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
+    super(injector);
 
     feature.currentView = this
    }
@@ -61,12 +61,14 @@ export class ApplicationComponent extends ApplicationView implements OnInit {
 
    // implement OnInit
 
-   ngOnInit(): void {
-      this.configurationData = JSON.parse(this.application.configuration)
-      if (!this.configurationData.type)
-         this.configurationData = {
-            type: "object",
-            value: []
-         }
-   }
+    override ngOnInit(): void {
+        super.ngOnInit()
+
+        this.configurationData = JSON.parse(this.application.configuration)
+        if (!this.configurationData.type)
+            this.configurationData = {
+                type: "object",
+                value: []
+            }
+    }
 }

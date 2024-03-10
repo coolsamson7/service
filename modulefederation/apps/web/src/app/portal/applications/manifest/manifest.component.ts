@@ -1,6 +1,7 @@
+/* eslint-disable @angular-eslint/no-output-on-prefix */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @angular-eslint/use-lifecycle-interface */
-import { AfterViewInit, Component, ElementRef, Injector, Input, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Input, Output, ViewChild } from "@angular/core";
 import { Observable, of, switchMap } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid'
 import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, FormsModule, NgControl, NgForm, ReactiveFormsModule, ValidationErrors } from "@angular/forms";
@@ -14,13 +15,12 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { MonacoEditorComponent } from "../../../widgets/monaco-editor/monaco-editor.component";
 import { MonacoEditorModule } from "../../../widgets/monaco-editor/monaco-editor.module";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatChipsModule } from "@angular/material/chips";
 import { ChipsComponent } from "../../chips.component";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatListModule } from "@angular/material/list";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @Component({
     standalone: true,
@@ -113,7 +113,6 @@ export class I18NValidator {
     if ( path.length == 0)
         return false
 
-
     return true
    }
 
@@ -164,6 +163,7 @@ export class I18NValidator {
         MatTabsModule,
         MatDividerModule,
         MatListModule,
+        MatSlideToggleModule,
 
         // components
 
@@ -178,6 +178,11 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
     // input
 
     @Input() manifest!: Manifest
+
+    // output
+
+    @Output() dirty = new EventEmitter<boolean>();
+    @Output() onSave = new EventEmitter<void>();
 
     // instance data
 
@@ -211,7 +216,7 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
     formGroup : FormGroup
     labelTranslation = ""
 
-    dirty : any = {}
+    dirtyProperties : any = {}
     isDirty = false
     enabled : boolean[] = []
 
@@ -252,6 +257,11 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
         setTimeout(() => this.input.nativeElement.focus(), 0)
     }
 
+    setDirty(dirty = true) {
+        this.isDirty = dirty
+        this.dirty.emit(dirty)
+    }
+
     save() {
         if (!this.formGroup.valid) {
             this.confirmationDialog()
@@ -268,12 +278,14 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
 
         this.selectedFeature!.enabled = this.enabled[index]
 
-        for (const propertyName in this.dirty)
+        for (const propertyName in this.dirtyProperties)
           if (propertyName !== "labelTranslation") {
-            (<any>this.selectedFeature)[propertyName] = this.dirty[propertyName] || false
+            (<any>this.selectedFeature)[propertyName] = this.dirtyProperties[propertyName] || false
         }
 
         // save
+
+        this.onSave.emit()
 
         // TODO this.microfrontendsComponent.saveManifest(this.manifest)
 
@@ -282,10 +294,18 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
         this.selectFeature(this.selectedFeature!)
     }
 
+    saved() {
+        if ( this.isDirty && this.selectedFeature) {
+            this.selectFeature(this.selectedFeature!)
+        }
+    }
+
     revert() {
-        this.enabled = this.manifest.features.map(feature => feature.enabled!)
-        // will trigger isDirty calculation
-        this.selectFeature(this.selectedFeature!)
+        if ( this.isDirty) {
+            this.enabled = this.manifest.features.map(feature => feature.enabled!)
+            // will trigger isDirty calculation
+            this.selectFeature(this.selectedFeature!)
+        }
     }
 
     setManifest(manifest : Manifest) {
@@ -320,7 +340,7 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
                 .subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
                 if (result == true) {
                     this.save()
-                    this.isDirty = false
+                    this.setDirty(false)
                     this.selectFeature(feature)
                 }
             })
@@ -411,7 +431,9 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
             dirty["enabled"] = this.enabled[index]
         }
 
-        this.dirty = dirty
+        this.dirtyProperties = dirty
+
+        this.setDirty(this.isDirty)
     }
 
     // implement OnInit
