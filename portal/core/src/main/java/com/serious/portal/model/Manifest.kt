@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Manifest(
     var name: String,
+    var type: String,
     var version: String,
     var commitHash: String,
     var remoteEntry: String?,

@@ -12,5 +12,6 @@ data class MicrofrontendVersion(
     var manifest : Manifest,
     var configuration : String,
     var enabled : Boolean,
-    var instances : List<MicrofrontendInstance>
+    var instances : List<MicrofrontendInstance>,
+    var applicationVersion: Long?
 )

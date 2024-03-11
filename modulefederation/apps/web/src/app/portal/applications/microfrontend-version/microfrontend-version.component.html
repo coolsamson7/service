@@ -18,6 +18,14 @@
     <manifest [manifest]="microfrontendVersion.manifest"  (onSave)="save()" (dirty)="onDirty($event)"></manifest>
   </div>
 
+  <div class="application">
+    <mat-label>Application</mat-label>
+    <mat-form-field>
+      <mat-label>Application</mat-label>
+      <input type="text" matInput [suggestionProvider]="suggestionProvider" (ngModelChange)="applicationChanged($event)" [(ngModel)]="applicationVersion">
+    </mat-form-field>
+  </div>
+
   <div class="instances">
     <mat-label>Instances</mat-label>
     <mat-nav-list>

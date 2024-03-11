@@ -5,6 +5,7 @@ package com.serious.portal
  * All rights reserved
  */
 
+import com.serious.portal.persistence.entity.ApplicationVersionEntity
 import jakarta.persistence.*
 
 @Entity
@@ -25,5 +26,8 @@ class MicrofrontendVersionEntity(
     @JoinColumn(name="OR_MICROFRONTEND")
     var microfrontend : MicrofrontendEntity,
     @OneToMany(mappedBy="microfrontendVersion", cascade=[CascadeType.ALL])
-    var instances : MutableList<MicrofrontendInstanceEntity>
+    var instances : MutableList<MicrofrontendInstanceEntity>,
+    @OneToOne(optional = true, cascade=[])
+    @JoinColumn(name = "OR_APPLICATION_VERSION")
+    var applicationVersion : ApplicationVersionEntity?
 )

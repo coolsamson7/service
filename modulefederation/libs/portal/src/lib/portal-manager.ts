@@ -88,7 +88,7 @@ export class PortalManager {
        throw new Error("you need to specify either a server  or local loader")
 
     return loader
-      .load()
+      .load(this.portalConfig.localManifest.name, this.portalConfig.localManifest.version)
       .then((deployment) => this.setupDeployment(deployment, merge));
   }
 

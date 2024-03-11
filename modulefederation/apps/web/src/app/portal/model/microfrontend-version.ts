@@ -8,5 +8,6 @@ export interface MicrofrontendVersion {
     manifest : Manifest,
     enabled : boolean,
     configuration : string,
-    instances : MicrofrontendInstance[]
+    instances : MicrofrontendInstance[],
+    applicationVersion: number | null
 }

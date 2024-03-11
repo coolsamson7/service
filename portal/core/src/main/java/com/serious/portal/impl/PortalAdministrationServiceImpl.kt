@@ -451,7 +451,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
                 entity.enabled,
-                entity.instances.map { entity -> mapInstance(entity) }
+                entity.instances.map { entity -> mapInstance(entity) },
+                entity.applicationVersion?.id
             )
         }
 
@@ -501,7 +502,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
                 entity.enabled,
-                entity.instances.map { instanceEntity -> mapInstance(instanceEntity) }
+                entity.instances.map { instanceEntity -> mapInstance(instanceEntity) },
+                entity.applicationVersion?.id,
             )
         }
     }
@@ -512,6 +514,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         entity.configuration = version.configuration
         entity.manifest = objectMapper.writeValueAsString(version.manifest)
+        if  ( version.applicationVersion != null)
+            entity.applicationVersion = applicationVersionRepository.findById(version.applicationVersion!!).get()
+        else
+            entity.applicationVersion = null
 
         // TODO!!! hmmmm
 
@@ -554,7 +560,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
                 entity.enabled,
-                ArrayList() // leave it empty
+                ArrayList(), // leave it empty
+                entity.applicationVersion?.id
             )
         }
 

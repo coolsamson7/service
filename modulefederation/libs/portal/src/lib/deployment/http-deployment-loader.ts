@@ -16,14 +16,13 @@ export class PortalDeploymentService extends AbstractHTTPService {
 
     // public
 
-    public getDeployment(session : boolean) : Observable<Deployment> {
-        // TODO
-        return this.computeDeployment("APP", "LATEST", session)
+    public getDeployment(name: string, version: string, session : boolean) : Observable<Deployment> {
+        return this.computeDeployment(name, version, session)
         //return this.get<Deployment>(`/deployment/${session}`);
     }
 
     public computeDeployment(application: string, version: string, session : boolean) : Observable<Deployment> {
-        return this.get<Deployment>(`/compute-deployment/${application}/${version}/${session}`);
+        return this.get<Deployment>(`/compute-deployment/${application}/${version}/${session}`)
     }
 }
 
@@ -36,9 +35,9 @@ export class HTTPDeploymentLoader extends DeploymentLoader {
     }
 
     // implement DeploymentLoader
-    
-    load() : Promise<Deployment> {
+
+    load(name: string, version: string) : Promise<Deployment> {
         // @ts-ignore
-        return this.deploymentService.getDeployment(this.sessionManager.hasSession()).toPromise()
+        return this.deploymentService.getDeployment(name, version, this.sessionManager.hasSession()).toPromise()
     }
 }

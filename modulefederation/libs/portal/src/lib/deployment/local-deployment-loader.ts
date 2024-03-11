@@ -15,7 +15,8 @@ export class LocalDeploymentLoader extends DeploymentLoader {
     }
 
     // implement DeploymentLoader
-    async load() : Promise<Deployment> {
+    
+    async load(name: string, version: string) : Promise<Deployment> {
         const promises = this.urls.map(url => {
             return fetch(url + "/assets/manifest.json")
         })

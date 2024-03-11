@@ -114,6 +114,7 @@
             <column name="ENABLED" type="BOOLEAN"/>
             <column name="CONFIGURATION" type="VARCHAR(4000)"/>
             <column name="MANIFEST" type="VARCHAR(5000)"/>
+            <column name="OR_APPLICATION_VERSION" type="BIGINT"/>
         </createTable>
 
         <createTable tableName="MICROFRONTEND_INSTANCE">

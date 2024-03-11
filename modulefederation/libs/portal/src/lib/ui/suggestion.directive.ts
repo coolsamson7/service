@@ -70,7 +70,7 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   }
 
   private getFirstMatchingSuggestion( prefix: string ) : string | null {
-    prefix = prefix.toLowerCase();
+    //prefix = prefix.toLowerCase();
 
     this.currentSuggestions = this.suggestionProvider!
       .provide(prefix)

@@ -78,7 +78,8 @@ class MicrofrontendEntityManager {
             "{\"type\":\"object\",\"value\": []}",
             json,
             microfrontendEntity,
-            instances
+            instances,
+            null
         )))
 
         microfrontendEntity.versions.add(versionEntity)

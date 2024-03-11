@@ -10,6 +10,7 @@ import com.serious.portal.configuration.ConfigurationMerger
 import com.serious.portal.model.Deployment
 import com.serious.portal.model.Feature
 import com.serious.portal.model.Manifest
+import com.serious.portal.persistence.ApplicationVersionRepository
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
 import com.serious.portal.persistence.entity.MessageEntity
 import com.serious.portal.version.VersionRange
@@ -103,19 +104,28 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
     private lateinit var merger : ConfigurationMerger
 
     @Autowired
+    private lateinit var applicationVersionRepository : ApplicationVersionRepository
+
+    @Autowired
     private lateinit var objectMapper : ObjectMapper
 
-    fun findApplicationVersion(application: String, version: String) : ApplicationVersionEntity {
-        return this.entityManager.createQuery("select m from ApplicationVersionEntity m where m.version = :version and m.application.name =:application", ApplicationVersionEntity::class.java)
+    fun findApplicationVersion(application: String, version: String) : ApplicationVersionEntity? {
+        val shellVersion =  this.entityManager.createQuery("select m from MicrofrontendVersionEntity m where m.microfrontend.name = :application and m.version =:version", MicrofrontendVersionEntity::class.java)
             .setParameter("version", version)
             .setParameter("application", application)
             .singleResult
+
+        if ( shellVersion !== null)
+            return shellVersion.applicationVersion
+        else
+            return null
     }
+
     // TODO: cache Long -> ... ( Deployment )
     fun create(application: String, version: String, session: Boolean) : Deployment {
         // read version
 
-        val applicationVersion : ApplicationVersionEntity = this.findApplicationVersion(application, version)
+        val applicationVersion : ApplicationVersionEntity = this.findApplicationVersion(application, version)!!
 
         val configurations = ArrayList<String>()
 

@@ -90,7 +90,8 @@ class ManifestEntityManager {
             "{\"type\":\"object\",\"value\": []}",
             manifestEntity.json,
             microfrontendEntity,
-            instances
+            instances,
+            null
         )))
 
         // instance
