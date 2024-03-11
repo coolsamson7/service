@@ -16,6 +16,7 @@ export interface Manifest extends ModuleMetadata {
 }
 
 export interface Deployment {
+    configuration: string,
     modules : { [name : string] : Manifest }
 }
 

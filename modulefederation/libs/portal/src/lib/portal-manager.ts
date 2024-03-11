@@ -16,6 +16,8 @@ import {
 import { TraceLevel, Tracer } from './tracer';
 import { ReplaySubject } from 'rxjs';
 import { LocaleManager } from './locale';
+import { DeploymentConfigurationSource } from './deployment/deployment-configuration-source';
+import { ConfigurationManager } from './common';
 
 /**
  * the runtime data of feature
@@ -49,6 +51,7 @@ export class PortalManager {
   // instance data
 
   deployment: Deployment = {
+    configuration: "{\"type\":\"object\",\"value\":[]}",
     modules: {},
   };
 
@@ -62,6 +65,7 @@ export class PortalManager {
     private moduleRegistry: ModuleRegistry,
     private router: Router,
     private localeManager: LocaleManager,
+    private configurationManager: ConfigurationManager,
     private injector: Injector
   ) {}
 
@@ -339,6 +343,8 @@ export class PortalManager {
     (window as any)['deployment'] = () => {
       console.log(deployment);
     };
+
+    this.configurationManager.addSource(new DeploymentConfigurationSource(deployment.configuration))
 
     if (!merge) {
       // add local manifest

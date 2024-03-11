@@ -21,6 +21,7 @@ export class LocalDeploymentLoader extends DeploymentLoader {
         })
 
         const deployment : Deployment = {
+            configuration: "{\"type\":\"object\",\"value\":[]}",
             modules: {}
         }
 
