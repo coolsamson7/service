@@ -11,6 +11,7 @@ import com.serious.portal.model.Deployment
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import java.net.URL
 
@@ -26,5 +27,9 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
 
     override fun getDeployment(session: Boolean) : Deployment {
         return deploymentManager.create(session)
+    }
+
+    override fun computeDeployment(application: String, version : String, session: Boolean) : Deployment {
+        return deploymentManager.create(application, version, session)
     }
 }

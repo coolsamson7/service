@@ -29,7 +29,7 @@ class ManifestManager {
     @PostConstruct
     fun loadDatabase() {
         for ( manifest in entityManager.readAll()) {
-            println("loaded " + manifest.remoteEntry + ", healthCheck: " + manifest.healthCheck)
+            //println("loaded " + manifest.remoteEntry + ", healthCheck: " + manifest.healthCheck)
             // add to list anyway
 
             this.manifests.add(manifest)

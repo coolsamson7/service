@@ -17,7 +17,13 @@ export class PortalDeploymentService extends AbstractHTTPService {
     // public
 
     public getDeployment(session : boolean) : Observable<Deployment> {
-        return this.get<Deployment>(`/deployment/${session}`);
+        // TODO
+        return this.computeDeployment("APP", "LATEST", session)
+        //return this.get<Deployment>(`/deployment/${session}`);
+    }
+
+    public computeDeployment(application: string, version: string, session : boolean) : Observable<Deployment> {
+        return this.get<Deployment>(`/compute-deployment/${application}/${version}/${session}`);
     }
 }
 

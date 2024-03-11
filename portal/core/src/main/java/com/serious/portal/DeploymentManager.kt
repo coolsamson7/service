@@ -5,9 +5,16 @@ package com.serious.portal
  * All rights reserved
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.serious.portal.configuration.ConfigurationMerger
 import com.serious.portal.model.Deployment
 import com.serious.portal.model.Feature
 import com.serious.portal.model.Manifest
+import com.serious.portal.persistence.entity.ApplicationVersionEntity
+import com.serious.portal.persistence.entity.MessageEntity
+import com.serious.portal.version.VersionRange
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.*
@@ -35,7 +42,7 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
     init {
         // enabled
 
-        filterManifest { context, manifest -> manifest.enabled }
+        filterManifest { context, manifest -> true /*manifest.enabled*/ }
         filterManifest { context, manifest -> manifest.health == "alive" }
         filterFeature { context, feature -> feature.enabled }
 
@@ -89,7 +96,67 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
 
     // public
 
-    fun create(session: Boolean) : Deployment {
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
+    @Autowired
+    private lateinit var merger : ConfigurationMerger
+
+    @Autowired
+    private lateinit var objectMapper : ObjectMapper
+
+    fun findApplicationVersion(application: String, version: String) : ApplicationVersionEntity {
+        return this.entityManager.createQuery("select m from ApplicationVersionEntity m where m.version = :version and m.application.name =:application", ApplicationVersionEntity::class.java)
+            .setParameter("version", version)
+            .setParameter("application", application)
+            .singleResult
+    }
+    // TODO: cache Long -> ... ( Deployment )
+    fun create(application: String, version: String, session: Boolean) : Deployment {
+        // read version
+
+        val applicationVersion : ApplicationVersionEntity = this.findApplicationVersion(application, version)
+
+        val configurations = ArrayList<String>()
+
+        configurations.add(applicationVersion.application.configuration)
+        configurations.add(applicationVersion.configuration)
+
+        // local function
+
+        fun matchingVersion(microfrontend: MicrofrontendEntity, range: VersionRange) :MicrofrontendVersionEntity? {
+            val versions = ArrayList(microfrontend.versions)
+            versions.sortByDescending { version -> version.version }
+
+            for ( version in versions)
+                if ( range.matches(com.serious.portal.version.Version(version.version)))
+                    return version
+
+            return null
+        }
+
+        val versions = ArrayList<MicrofrontendVersionEntity>()
+
+        for ( assigned in applicationVersion.assignedMicrofrontends) {
+            val match = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
+            if ( match != null) {
+                versions.add(match)
+                configurations.add(match.configuration)
+
+                println(match.microfrontend.name + "." + match.version)
+            }
+        }
+
+        // manifests
+
+        val manifests = versions.map { version ->  objectMapper.readValue(version.manifest, Manifest::class.java)}
+
+        val configuration = merger.mergeConfigurationValues(configurations)
+
+        return createDeployment(manifests, configuration, session)
+    }
+
+    fun createDeployment(manifests: List<Manifest>, configuration: String, session: Boolean) : Deployment {
         val context = FilterContext(session)
 
         // local function
@@ -112,11 +179,11 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
             return result
         }
 
-        val deployment = Deployment(HashMap())
+        val deployment = Deployment(configuration, HashMap())
 
         // add matching manifests
 
-        for ( manifest in manager.manifests)
+        for ( manifest in manifests)
             if (accept(context, manifest)) {
                 val result = manifest.copy()
 
@@ -140,12 +207,16 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
                     // only add, if there is at least one enabled feature
 
                     if (enabledFeatures > 0)
-                        deployment.modules.put(manifest.name, result);
+                        deployment.modules.put(manifest.name, result)
                 } // for
             }
 
         // done
 
         return deployment
+    }
+
+    fun create(session: Boolean) : Deployment {
+        return this.createDeployment(manager.manifests, "{\"type\":\"object\",\"value\": [] }", session)
     }
 }
