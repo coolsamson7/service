@@ -100,7 +100,7 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
 
                 this.portalAdministrationService.registerManifest(manifest).subscribe(result => {
                     if (result.manifest)
-                    this.manifests.push(ManifestDecorator.decorate(result.manifest))
+                      this.manifests.push(ManifestDecorator.decorate(result.manifest))
 
                     else {
                         const builder = this.confirmationDialog() .title("Add Microfrontend")
@@ -190,7 +190,7 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
                         .show()
                 }
             })
-        } 
+        }
         catch(e) {
             this.confirmationDialog()
                 .title("Add Remote")
@@ -227,14 +227,6 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
         this.portalAdministrationService.saveManifest(manifest).subscribe(result => result)
     }
 
-    override ngOnInit() {
-        super.ngOnInit()
-
-        this.introspectionService.getManifests().subscribe((manifests) =>
-            this.$manifests.next(this.manifests = this.decorateManifests(manifests))
-        )
-    }
-
     private decorateManifests(manifests : Manifest[]) : Manifest[] {
         for (const manifest of manifests)
             ManifestDecorator.decorate(manifest)
@@ -242,11 +234,15 @@ export class MirofrontendsComponent extends WithDialogs(NavigationComponent) {
         return manifests
     }
 
+    private loadManifests() {
+      this.introspectionService.getManifests().subscribe((manifests) => this.$manifests.next(this.manifests = this.decorateManifests(manifests)))
+    }
+
     // implement OnInit
 
-    private loadManifests() {
-        this.introspectionService.getManifests().subscribe((manifests) =>
-            this.$manifests.next(this.manifests = this.decorateManifests(manifests))
-        )
+    override ngOnInit() {
+      super.ngOnInit()
+
+      this.introspectionService.getManifests().subscribe((manifests) => this.$manifests.next(this.manifests = this.decorateManifests(manifests)))
     }
 }

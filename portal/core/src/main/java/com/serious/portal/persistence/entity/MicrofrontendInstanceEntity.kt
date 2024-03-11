@@ -15,6 +15,8 @@ class MicrofrontendInstanceEntity(
     var uri: String,
     @Column(name = "ENABLED")
     var enabled : Boolean,
+    @Column(name = "HEALTH")
+    var health : String,
     @Column(name = "STAGE", length = 255)
     var stage : String,
     @Column(name = "CONFIGURATION", length = 4000)

@@ -1,12 +1,12 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent } from "@modulefederation/portal";
+import { Feature, WithCommands, WithDialogs, AbstractFeature, Command, CommandButtonComponent, ManifestDecorator, Manifest } from "@modulefederation/portal";
 
 import { CommonModule } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
 
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { forkJoin } from "rxjs";
+import { catchError, forkJoin, of, switchMap } from "rxjs";
 import { MatTableModule } from "@angular/material/table";
 import { MatCheckboxModule} from '@angular/material/checkbox';
 import { FormsModule } from "@angular/forms";
@@ -29,6 +29,7 @@ import { MicrofrontendVersion } from "../model/microfrontend-version";
 import { MicrofrontendInstance } from "../model/microfrontend-instance";
 import { CommandToolbarComponent } from "./toolbar/command-toolbar.component";
 import { WithCommandToolbar } from "./toolbar/with-command-toolbar.mixin";
+import { fromFetch } from "rxjs/fetch";
 
 
 @Component({
@@ -104,7 +105,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
    stages: string[] = []
 
    @ViewChild(ApplicationTreeComponent) tree!: ApplicationTreeComponent
-   @ViewChild("toolbar", { read: CommandToolbarComponent, static: true }) 
+   @ViewChild("toolbar", { read: CommandToolbarComponent, static: true })
    override commandToolbar?: CommandToolbarComponent
 
    // constructor
@@ -128,7 +129,6 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
         this.applications = data.applications;
         })
    }
-
 
    // private
 
@@ -312,5 +312,93 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
             this.currentView.save()
 
         this.setDirty(false)
+   }
+
+   @Command({
+           label: "Add Microfrontend",
+           icon: "add"
+   })
+    async addMicrofrontend() {
+        this.inputDialog()
+            .title("Add Microfrontend")
+            .placeholder("manifest url")
+            .inputType("text")
+            .okCancel()
+            .show()
+            .subscribe(async remote => {
+            if (remote == "" || remote == undefined)
+            return
+
+            let url : URL | undefined = undefined
+
+            try {
+            url = new URL(remote)
+            }
+            catch(error) {
+            this.confirmationDialog()
+                .title("Add Microfrontend")
+                .message("malformed url")
+                .ok()
+                .show()
+                remote == ""
+            return
+            }
+
+
+            fromFetch(remote + "/assets/manifest.json").pipe(
+            switchMap(response => response.json()),
+
+            catchError(err => {
+                console.error(err);
+                    return of({ error: true, message: err });
+                }),
+            )
+            .subscribe(m => {
+                let manifest = m as Manifest
+                manifest.enabled = true // actuall not needed
+                if ( ! manifest.remoteEntry)
+                    manifest.remoteEntry = remote
+
+                manifest.health = "alive"
+
+                manifest = ManifestDecorator.decorate(manifest)
+
+                this.portalAdministrationService.registerMicrofrontendInstance(manifest).subscribe(result => {
+                    if (result.instance) {
+                        const microfrontend = this.microfrontends.find(mfe => mfe.name == manifest.name)
+                        const version = microfrontend?.versions.find(version => version.id == m.version) // TODO
+
+                        version?.instances.push(result.instance)
+                        //console.log(result.instance)//this.manifests.push(ManifestDecorator.decorate(result.manifest))
+                    }
+
+                    else {
+                        const builder = this.confirmationDialog() .title("Add Microfrontend")
+
+                        switch (result.error) {
+                            case "duplicate":
+                                builder.message("already registered")
+                                break;
+                            case "malformed_url":
+                                builder.message("malformed url")
+                                break;
+                            case "unreachable":
+                                builder.message("could not fetch manifest metadata")
+                                break;
+                        } // switch
+
+                        builder.ok().show()
+                    } // else
+                })
+                })
+            })
+    }
+
+   // override WithCommandToolbar
+
+   override buildToolbar(): void {
+       this.addCommand2Toolbar("save")
+       this.addCommand2Toolbar("addApplication")
+       this.addCommand2Toolbar("addMicrofrontend")
    }
 }

@@ -17,4 +17,29 @@
     <mat-label>Manifest</mat-label>
     <manifest [manifest]="microfrontendVersion.manifest"  (onSave)="save()" (dirty)="onDirty($event)"></manifest>
   </div>
+
+  <div class="instances">
+    <mat-label>Instances</mat-label>
+    <mat-nav-list>
+      <ng-container *ngFor="let instance of microfrontendVersion.instances">
+        <mat-list-item class="manifest">
+          <a [routerLinkActive]="['is-active']" class="content" role="listitem">
+            <mat-icon>language</mat-icon>
+          
+            <span class="bold">URI</span>
+            <span>{{instance.uri}}</span>
+            <span class="bold">Health</span>
+            <mat-icon [ngStyle]="{'color':instance.health === 'alive' ? 'green' : 'red' }">
+              {{instance.health === "alive" ? "wifi" : "sentiment_very_dissatisfied"}}
+            </mat-icon>
+          </a>
+
+          <!--mat-icon (click)="removeManifest(manifest)" class="icon">remove_circle</mat-icon-->
+          <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+      </ng-container>
+    </mat-nav-list>
+  </div>
 </div>

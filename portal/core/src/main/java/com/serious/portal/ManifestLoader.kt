@@ -44,7 +44,7 @@ class ManifestLoader {
     // public
 
     fun load(url: URL) : Manifest {
-        println("load ulr " + url.toString())
+        //println("load ulr " + url.toString())
 
         return this.client.get().uri(url.toString() + "/assets/manifest.json")
             .retrieve()

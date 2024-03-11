@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { Microfrontend, MicrofrontendVersion } from "../../model";
+import { Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
 import { MatDividerModule } from "@angular/material/divider";
@@ -8,7 +8,13 @@ import { ApplicationFeatureComponent } from "../application.feature";
 import { ApplicationView } from "../application-view";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ManifestComponent } from "../manifest/manifest.component";
-import { Command } from "@modulefederation/portal";
+import { MatListModule } from "@angular/material/list";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { WithSnackbar } from "@modulefederation/portal";
+import { MatIconModule } from "@angular/material/icon";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 
 
 @Component({
@@ -17,10 +23,20 @@ import { Command } from "@modulefederation/portal";
     templateUrl: "./microfrontend-version.component.html",
     styleUrls: ["./microfrontend-version.component.scss"],
     imports: [
+        // angular
+
+        CommonModule,
+        FormsModule,
+        RouterModule,
+
         // material
 
         MatDividerModule,
         MatFormFieldModule,
+        MatListModule,
+        MatSlideToggleModule,
+        MatIconModule,
+        MatSlideToggleModule,
 
         // components
 
@@ -28,7 +44,7 @@ import { Command } from "@modulefederation/portal";
         ConfigurationTreeComponent
     ]
 })
-export class MicrofrontendVersionComponent extends ApplicationView implements OnInit {
+export class MicrofrontendVersionComponent extends ApplicationView {//TODO WithSnackbar(ApplicationView) {
     // inputs
 
     @Input() microfrontend! : Microfrontend
@@ -36,31 +52,37 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
 
     // outputs
 
-     @Output() dirty = new EventEmitter<boolean>();
+    @Output() dirty = new EventEmitter<boolean>();
 
-     @ViewChild(ManifestComponent) manifestComponent!: ManifestComponent
+    @ViewChild(ManifestComponent) manifestComponent!: ManifestComponent
 
     // instance data
 
-   configurationData: ConfigurationProperty = {
+    configurationData: ConfigurationProperty = {
        type: "object",
        value: []
-   }
-   inheritedConfigurationData: ConfigurationProperty[] = []
+    }
+    inheritedConfigurationData: ConfigurationProperty[] = []
 
-   // constructor
+    // constructor
 
-   constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
-    super(injector);
+    constructor(injector: Injector, feature: ApplicationFeatureComponent, private portalAdministrationService : PortalAdministrationService) {
+        super(injector);
 
-    feature.currentView = this
-   }
+        feature.currentView = this
+    }
 
-   save() {
+    save() {
         this.microfrontendVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
         this.portalAdministrationService.updateMicrofrontendVersion(this.microfrontendVersion).subscribe()
-   }
+    }
+
+    onChangedEnabled(instance: MicrofrontendInstance) {
+      //this.showSnackbar(instance.uri, instance.enabled ? "disabled" : "enabled")
+
+      //TODO this.portalAdministrationService.enableMicrofrontend(manifest.name, !manifest.enabled).subscribe(result => console.log(result))
+    }
 
    // public
 
@@ -73,14 +95,6 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
         const colon = id.indexOf(":")
         return id.substring(colon + 1)
     }
-
-    // TEST
-
-    @Command({
-            label: "test",
-            icon: "add"
-    })
-    test() {}
 
    // callbacks
 

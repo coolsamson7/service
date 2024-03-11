@@ -6,8 +6,11 @@ package com.serious.portal.model
  */
 
 data class MicrofrontendInstance(
+    var microfrontend: String,
+    var version: String,
     var uri: String,
     var enabled : Boolean,
+    var health: String,
     var configuration : String,
     var manifest : Manifest,
     var stage : String,

@@ -11,6 +11,7 @@ import com.serious.portal.MicrofrontendEntity
 import com.serious.portal.MicrofrontendInstanceEntity
 import com.serious.portal.MicrofrontendVersionEntity
 import com.serious.portal.model.Manifest
+import com.serious.portal.model.MicrofrontendInstance
 import org.springframework.transaction.annotation.Transactional
 
 import jakarta.persistence.*
@@ -20,16 +21,13 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Component
-class ManifestEntityManager {
+class MicrofrontendEntityManager {
     // instance data
 
     @PersistenceContext
     private lateinit var entityManager: EntityManager
     @Autowired
     private lateinit var objectMapper : ObjectMapper
-    @Autowired
-    private lateinit var  repository : ManifestRepository
-    // NEW
     @Autowired
     private lateinit var  microfrontendRepository: MicrofrontedRepository
     @Autowired
@@ -39,35 +37,26 @@ class ManifestEntityManager {
 
     // private
 
-    private fun toEntity(manifest: Manifest) : ManifestEntity {
-        return ManifestEntity(
-            manifest.remoteEntry!!,
-            objectMapper.writeValueAsString(manifest),
-            manifest.enabled,
-            manifest.health!!
+    fun toTransportObject(entity: MicrofrontendInstanceEntity) : MicrofrontendInstance {
+        val manifest = objectMapper.readValue(entity.manifest, Manifest::class.java)
+
+        return MicrofrontendInstance(
+            entity.microfrontendVersion.microfrontend.name,
+            entity.microfrontendVersion.version,
+            entity.uri,
+            entity.enabled,
+            entity.health,
+            entity.configuration,
+            manifest,
+            entity.stage
         )
-    }
-
-    fun toManifest(entity: ManifestEntity) : Manifest {
-        val manifest = objectMapper.readValue(entity.json, Manifest::class.java)
-
-        manifest.enabled = entity.enabled
-        manifest.health = entity.health
-
-        return manifest
     }
 
     // public
 
     @Transactional
-    fun createManifest(manifest: Manifest) {
-        val manifestEntity = toEntity(manifest)
-
-        this.entityManager.persist(manifestEntity)
-
-        // check instance, microfrontend-version and microfrontend and create on the fly...
-
-        // NEW TODO
+    fun createMicrofrontendInstance(manifest: Manifest) : MicrofrontendInstance{
+        val json = objectMapper.writeValueAsString(manifest)
 
         // microfrontend
 
@@ -88,7 +77,7 @@ class ManifestEntityManager {
             manifest.version,
             true,
             "{\"type\":\"object\",\"value\": []}",
-            manifestEntity.json,
+            json,
             microfrontendEntity,
             instances
         )))
@@ -96,32 +85,36 @@ class ManifestEntityManager {
         // instance
 
         val instanceEntity = MicrofrontendInstanceEntity(
-            manifestEntity.uri,
+            manifest.remoteEntry!!,
             true,
             "alive",
             "PROD",
             "{\"type\":\"object\",\"value\": []}",
-            manifestEntity.json,
+            json,
             versionEntity
         )
 
         microfrontendInstanceRepository.save(instanceEntity)
+
+        return toTransportObject(instanceEntity)
     }
 
     @Transactional
-    fun saveManifest(manifest: Manifest) {
-        this.repository.findById(manifest.remoteEntry!!).ifPresent { entity ->
-            entity.json = objectMapper.writeValueAsString(manifest)
-            entity.health = manifest.health!!
-            entity.enabled = manifest.enabled
+    fun saveMicrofrontendInstance(microfrontendInstance: MicrofrontendInstance) {
+        this.microfrontendInstanceRepository.findById(microfrontendInstance.uri).ifPresent { entity ->
+            entity.manifest = objectMapper.writeValueAsString(microfrontendInstance.manifest)
+            entity.health = microfrontendInstance.health
+            entity.stage = microfrontendInstance.stage
+            entity.configuration = microfrontendInstance.configuration
+            entity.enabled = microfrontendInstance.enabled
 
-            this.repository.save(entity)
+            this.microfrontendInstanceRepository.save(entity)
         }
     }
 
     @Transactional
     fun updateEnabled(uri: String, enabled: Boolean) {
-        this.entityManager.createQuery("update ManifestEntity m set m.enabled = :enabled where m.uri=:id")
+        this.entityManager.createQuery("update MicrofrontendInstanceEntity m set m.enabled = :enabled where m.uri=:id")
             .setParameter("enabled", enabled)
             .setParameter("id", uri)
             .executeUpdate()
@@ -129,29 +122,24 @@ class ManifestEntityManager {
 
     @Transactional
     fun updateHealth(uri: String, health: String) {
-        this.entityManager.createQuery("update ManifestEntity m set m.health = :health where m.uri=:id")
+        this.entityManager.createQuery("update MicrofrontendInstanceEntity m set m.health = :health where m.uri=:id")
             .setParameter("health", health)
             .setParameter("id", uri)
             .executeUpdate()
     }
 
     @Transactional
-    fun readAll() : List<Manifest> {
-        return this.repository.findAll().map { entity -> toManifest(entity) }
+    fun readAll() : List<MicrofrontendInstance> {
+        return this.microfrontendInstanceRepository.findAll().map { entity -> toTransportObject(entity) }
     }
 
     @Transactional
-    fun deleteManifestById(uri: String) {
-        this.repository.deleteById(uri)
+    fun deleteMicrofrontendInstanceById(uri: String) {
+        this.microfrontendInstanceRepository.deleteById(uri)
     }
 
     @Transactional
-    fun deleteManifest(manifest: Manifest) {
-        this.repository.deleteById(manifest.remoteEntry!!)
-    }
-
-    @Transactional
-    fun readManifestById(id: String) : Manifest {
-        return this.toManifest(this.repository.findById(id).get())
+    fun readMicrofrontendInstanceById(id: String) : MicrofrontendInstance {
+        return this.toTransportObject(this.microfrontendInstanceRepository.findById(id).get())
     }
 }

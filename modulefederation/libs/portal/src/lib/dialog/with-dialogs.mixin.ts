@@ -16,16 +16,16 @@ export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :G
         private dialogs : DialogService
 
       // constructor
-      
+
       constructor(...args: any[]) {
         super(...args);
 
         this.dialogs = inject(DialogService)
         }
-  
-    
-        // implement OnLocalDialogseChange
-     
+
+
+        // implement OnLocalChange
+
         openDialog<T>(component: ComponentType<T>, configuration: any) : Observable<any> {
             return this.dialogs.openDialog(component, configuration)
         }
@@ -33,10 +33,10 @@ export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :G
         confirmationDialog() : ConfirmationDialogBuilder {
             return this.dialogs.confirmationDialog()
         }
-      
+
         inputDialog() : InputDialogBuilder {
             return this.dialogs.inputDialog()
         }
-      
+
     }, WithDialogs)
   }

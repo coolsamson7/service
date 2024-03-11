@@ -8,7 +8,7 @@ import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
 import { AbstractHTTPService, Manifest, Service } from "@modulefederation/portal";
 import { Address, Application, ApplicationVersion, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "../model";
-import { RegistryResult } from "../model/registry-result.interface";
+import { MicrofrontendRegistryResult, RegistryResult } from "../model/registry-result.interface";
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration/"})
@@ -137,6 +137,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
   updateMicrofrontendInstance(instance: MicrofrontendInstance) : Observable<MicrofrontendInstance>  {
     return this.post<MicrofrontendInstance>(`update-microfrontend-instance`, instance)
+  }
+
+  registerMicrofrontendInstance(manifest: Manifest) : Observable<MicrofrontendRegistryResult>  {
+    return this.post<MicrofrontendRegistryResult>(`register-microfrontend-instance`, manifest)
   }
 
   // TEST

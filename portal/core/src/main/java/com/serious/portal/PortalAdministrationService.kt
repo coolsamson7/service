@@ -127,4 +127,8 @@ interface PortalAdministrationService : Service {
     @PostMapping("update-microfrontend-instance")
     @ResponseBody
     fun updateMicrofrontendInstance(@RequestBody instance: MicrofrontendInstance) : MicrofrontendInstance
+
+    @PostMapping("register-microfrontend-instance")
+    @ResponseBody
+    fun registerMicrofrontendInstance(@RequestBody manifest: Manifest) : MicrofrontendRegistryResult
 }

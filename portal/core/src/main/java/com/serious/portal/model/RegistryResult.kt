@@ -16,3 +16,9 @@ data class RegistryResult(
     val manifest: Manifest?,
     val message: String
 )
+
+data class MicrofrontendRegistryResult(
+    val error: RegistryError?,
+    val instance: MicrofrontendInstance?,
+    val message: String
+)

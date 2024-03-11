@@ -99,6 +99,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Autowired
     lateinit var manifestManager: ManifestManager
+
+    @Autowired
+    lateinit var microfrontendManager: MicrofrontendManager
+
     @Autowired
     lateinit var manifestLoader: ManifestLoader
 
@@ -428,8 +432,11 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     override fun readMicrofrontends() : List<Microfrontend> {
         fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
             return MicrofrontendInstance(
+                entity.microfrontendVersion.microfrontend.name,
+                entity.microfrontendVersion.version,
                 entity.uri,
                 entity.enabled,
+                entity.health,
                 entity.configuration,
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.stage,
@@ -439,6 +446,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         fun mapVersion(entity: MicrofrontendVersionEntity): MicrofrontendVersion {
             return MicrofrontendVersion(
                 entity.id,
+                entity.microfrontend.name,
                 entity.version,
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
@@ -474,8 +482,11 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     override fun readMicrofrontendVersions() : List<MicrofrontendVersion> {
         fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
             return MicrofrontendInstance(
+                entity.microfrontendVersion.microfrontend.name,
+                entity.microfrontendVersion.version,
                 entity.uri,
                 entity.enabled,
+                entity.health,
                 entity.configuration,
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.stage,
@@ -485,6 +496,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return this.microfrontendVersionRepository.findAll().map { entity ->
             MicrofrontendVersion(
                 entity.id,
+                entity.microfrontend.name,
                 entity.version,
                 objectMapper.readValue(entity.manifest, Manifest::class.java),
                 entity.configuration,
@@ -519,6 +531,25 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         // TODO!!! hmmmm
 
         return instance
+    }
+
+    override fun registerMicrofrontendInstance(manifest: Manifest) : MicrofrontendRegistryResult {
+        val url = manifest.remoteEntry
+
+        if ( manifest.healthCheck == null)
+            manifest.healthCheck = manifest.remoteEntry
+
+        // check for duplicates
+
+        val result: MicrofrontendInstance? = microfrontendManager.instances.find { instance -> instance.uri == url }
+
+        if (result != null)
+            return MicrofrontendRegistryResult(RegistryError.duplicate, null, "microfrontend already registered")
+        else {
+            val instance = microfrontendManager.register(manifest)
+
+            return MicrofrontendRegistryResult(null, instance, "registered")
+        }
     }
 
     // TEST

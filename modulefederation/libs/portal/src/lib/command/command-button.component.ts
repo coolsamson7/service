@@ -20,14 +20,14 @@ import { WithCommands } from "./with-commands.mixin";
 })
 export class CommandButtonComponent implements OnInit, CommandListener {
     // view child
-    
+
     @ViewChild("button") button!: MatIconButton;
 
     // input
 
-    @Input() command!:  string
+    @Input() command!:  string | CommandDescriptor
 
-    tooltip = "" 
+    tooltip = ""
     descriptor!: CommandDescriptor
 
     // constructor
@@ -60,11 +60,14 @@ export class CommandButtonComponent implements OnInit, CommandListener {
     // implement OnInit
 
     ngOnInit(): void {
+    if ( this.command instanceof CommandDescriptor)
+       this.descriptor =  <CommandDescriptor>this.command
+    else {
         if ( hasMixin(this, WithCommands))
             this.descriptor  = (<CommandManager><unknown>this.feature).getCommand(this.command)
-        else 
+        else
             throw new Error("WithCommands is missing")
-
+      }
 
         this.descriptor.addListener(this)
 

@@ -138,8 +138,11 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
                 for (const commandName in controller.commands) {
                     const command = controller.commands[commandName];
 
-                    if (filter.group && command.group == filter.group)
+                    if (filter.group) {
+                      if (command.group == filter.group)
                         commands[commandName] = command; // will overwrite in cases of overridden commands
+                    }
+                    else  commands[commandName] = command;
                 }
             };
 

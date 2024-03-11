@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import { inject } from "@angular/core";
-import { GConstructor, CommandManager, AbstractFeature, registerMixins, CommandAdministration } from "@modulefederation/portal";
+import { GConstructor, CommandManager, AbstractFeature, registerMixins, CommandAdministration, hasMixin } from "@modulefederation/portal";
 import { CommandToolbarComponent } from "./command-toolbar.component";
 
 
 export interface WithCommandToolbar {
     commandToolbar?: CommandToolbarComponent
+
+    buildToolbar() :void
+
+    addCommand2Toolbar(command: string) :void
 }
 
 export function WithCommandToolbar<T extends GConstructor<CommandManager & AbstractFeature>>(base: T) :GConstructor<WithCommandToolbar> &  T  {
@@ -21,11 +24,28 @@ export function WithCommandToolbar<T extends GConstructor<CommandManager & Abstr
             super(...args);
         }
 
-      // override OnInit
+        // private
 
-      override ngOnInit() {
+        private findToolbar() {
+          if (!this.commandToolbar) {
+            for ( let parent = this.parent; parent != undefined; parent = parent?.parent) {
+              if ( hasMixin(parent, WithCommandToolbar)) {
+                this.commandToolbar = (<WithCommandToolbar><unknown>parent).commandToolbar
+                break
+              }
+           }
+          }
+        }
+
+        // override OnInit
+
+        override ngOnInit() {
          super.ngOnInit();
 
+         this.findToolbar()
+
+         this.buildToolbar()
+/*
          if ( this.commandToolbar ) {
            const administration : CommandAdministration = (<CommandAdministration><unknown>this as any)
 
@@ -34,10 +54,21 @@ export function WithCommandToolbar<T extends GConstructor<CommandManager & Abstr
 
             this.onDestroy(revert)
            })
-         }
+         }*/
       }
 
       // implement WithCommandToolbar
+
+      buildToolbar() :void {
+      }
+
+      addCommand2Toolbar(command: string) :void {
+        const administration : CommandAdministration = (<CommandAdministration><unknown>this as any)
+
+        const revert = this.commandToolbar!.addCommand(this.getCommand(command))
+
+         this.onDestroy(revert)
+      }
 
     }, WithCommandToolbar)
   }

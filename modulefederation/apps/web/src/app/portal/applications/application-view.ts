@@ -13,13 +13,6 @@ export abstract class ApplicationView extends WithCommandToolbar(WithCommands(Ab
 
    constructor(injector: Injector) {
       super(injector)
-
-      for ( let parent = this.parent; parent != undefined; parent = parent?.parent) {
-         if ( hasMixin(parent, WithCommandToolbar)) {
-           this.commandToolbar = (<WithCommandToolbar>parent).commandToolbar
-           break
-         }
-      }
    }
 
    // abstract

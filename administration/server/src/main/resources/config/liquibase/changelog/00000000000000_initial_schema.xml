@@ -106,6 +106,7 @@
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_version_pkey"/>
             </column>
+            <column name="MICROFRONTEND" type="VARCHAR(255)"/>
             <column name="OR_MICROFRONTEND" type="VARCHAR(255)">
                 <constraints nullable="false" foreignKeyName="mirofrontebd_version_or_microfrontend_fk" references="MICROFRONTEND(NAME)"/>
             </column>
@@ -119,10 +120,13 @@
             <column name="URI" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="microfrontend_instance_pkey"/>
             </column>
+            <column name="MICROFRONTEND" type="VARCHAR(255)"/>
+            <column name="VERSION" type="VARCHAR(255)"/>
             <column name="OR_MICROFRONTEND_VERSION" type="VARCHAR(255)">
                 <constraints nullable="false" foreignKeyName="mirofrontebd_instance_or_microfrontend_version_fk" references="MICROFRONTEND_VERSION(id)"/>
             </column>
             <column name="ENABLED" type="BOOLEAN"/>
+            <column name="HEALTH" type="VARCHAR(255)"/>
             <column name="CONFIGURATION" type="VARCHAR(4000)"/>
             <column name="MANIFEST" type="VARCHAR(5000)"/>
             <column name="STAGE" type="VARCHAR(255)"/>
