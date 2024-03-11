@@ -533,7 +533,33 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return instance
     }
 
+    @Transactional
     override fun registerMicrofrontendInstance(manifest: Manifest) : MicrofrontendRegistryResult {
+        // local functions
+
+        fun mapMicrofrontend(entity: MicrofrontendEntity): Microfrontend {
+            return Microfrontend(
+                entity.name,
+                entity.enabled,
+                entity.configuration,
+                ArrayList() // leave it empty
+            )
+        }
+
+        fun mapVersion(entity: MicrofrontendVersionEntity): MicrofrontendVersion {
+            return MicrofrontendVersion(
+                entity.id,
+                entity.microfrontend.name,
+                entity.version,
+                objectMapper.readValue(entity.manifest, Manifest::class.java),
+                entity.configuration,
+                entity.enabled,
+                ArrayList() // leave it empty
+            )
+        }
+
+        //go
+
         val url = manifest.remoteEntry
 
         if ( manifest.healthCheck == null)
@@ -544,11 +570,20 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         val result: MicrofrontendInstance? = microfrontendManager.instances.find { instance -> instance.uri == url }
 
         if (result != null)
-            return MicrofrontendRegistryResult(RegistryError.duplicate, null, "microfrontend already registered")
+            return MicrofrontendRegistryResult(RegistryError.duplicate, null, null, null, "microfrontend already registered")
         else {
             val instance = microfrontendManager.register(manifest)
 
-            return MicrofrontendRegistryResult(null, instance, "registered")
+            val microfrontendEntity = this.microfrontendRepository.findById(manifest.name).get()
+            val microfrontendVersion = microfrontendEntity.versions.find { version -> version.version == manifest.version }
+
+            return MicrofrontendRegistryResult(
+                null,
+                mapMicrofrontend(microfrontendEntity),
+                mapVersion(microfrontendVersion!!),
+                instance,
+                "registered"
+            )
         }
     }
 

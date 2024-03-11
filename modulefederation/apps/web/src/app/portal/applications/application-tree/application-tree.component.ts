@@ -55,6 +55,40 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     // public
 
+    addInstance(treeConfig: any) {
+        let node : Node
+        if ( treeConfig.microfronted) { 
+            const microfronted : Microfrontend = treeConfig.microfronted as Microfrontend
+
+             node =  {
+                type: "microfrontend",
+                data: microfronted
+            }
+
+            this.dataSource.data.push(node)
+        }
+        
+        if (treeConfig.version) {
+            const version : MicrofrontendVersion = treeConfig.version as MicrofrontendVersion
+
+            node!.children?.push(node =  {
+                type: "microfrontend-version",
+                data: version
+            })
+        }
+
+        if (treeConfig.instance) {
+            const instance : MicrofrontendInstance = treeConfig.instance as MicrofrontendInstance
+
+            node!.children?.push(node =  {
+                type: "microfrontend-instance",
+                data: instance
+            })
+        }
+
+        this.refreshData()
+    }
+
     addVersion(applicationVersion: ApplicationVersion, applicationNode: Node) : Node {
         const node : Node =  {
             type: "application-version",

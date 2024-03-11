@@ -54,7 +54,6 @@ class MicrofrontendEntityManager {
 
     // public
 
-    @Transactional
     fun createMicrofrontendInstance(manifest: Manifest) : MicrofrontendInstance{
         val json = objectMapper.writeValueAsString(manifest)
 
@@ -82,6 +81,10 @@ class MicrofrontendEntityManager {
             instances
         )))
 
+        microfrontendEntity.versions.add(versionEntity)
+
+        this.microfrontendRepository.save(microfrontendEntity)
+
         // instance
 
         val instanceEntity = MicrofrontendInstanceEntity(
@@ -93,6 +96,10 @@ class MicrofrontendEntityManager {
             json,
             versionEntity
         )
+
+        versionEntity.instances.add(instanceEntity)
+
+        this.microfrontendVersionRepository.save(versionEntity)
 
         microfrontendInstanceRepository.save(instanceEntity)
 

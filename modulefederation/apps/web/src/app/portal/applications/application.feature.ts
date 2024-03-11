@@ -355,21 +355,53 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
             )
             .subscribe(m => {
                 let manifest = m as Manifest
-                manifest.enabled = true // actuall not needed
+
                 if ( ! manifest.remoteEntry)
                     manifest.remoteEntry = remote
 
                 manifest.health = "alive"
 
+                // add defaults
+
                 manifest = ManifestDecorator.decorate(manifest)
 
                 this.portalAdministrationService.registerMicrofrontendInstance(manifest).subscribe(result => {
                     if (result.instance) {
-                        const microfrontend = this.microfrontends.find(mfe => mfe.name == manifest.name)
-                        const version = microfrontend?.versions.find(version => version.id == m.version) // TODO
+                        let microfrontend = this.microfrontends.find(mfe => mfe.name == manifest.name)
+
+                        const treeConfig : any  = {
+                        }
+
+                        let addedMicrofontend = false
+                        let addedVersion = false
+
+                        if ( !microfrontend ) {
+                            addedMicrofontend = true
+
+                            // microfronted was cerated as well
+
+                            microfrontend = result.microfrontend
+
+                            treeConfig.microfrontend = microfrontend
+                        }
+
+                        let version = microfrontend?.versions.find(version => version.version == manifest.version) 
+
+                        if ( !version ) {
+                            addedVersion = true
+                            // microfronted was cerated as well
+
+                            version = result.version!
+                            microfrontend?.versions.push(version)
+
+                            treeConfig.versions= version
+                        }
 
                         version?.instances.push(result.instance)
-                        //console.log(result.instance)//this.manifests.push(ManifestDecorator.decorate(result.manifest))
+
+                        treeConfig.instance = result.instance
+
+                        this.tree.addInstance(treeConfig)
                     }
 
                     else {
