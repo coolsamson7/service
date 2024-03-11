@@ -394,7 +394,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                             version = result.version!
                             microfrontend?.versions.push(version)
 
-                            treeConfig.versions= version
+                            treeConfig.version = version
                         }
 
                         version?.instances.push(result.instance)
