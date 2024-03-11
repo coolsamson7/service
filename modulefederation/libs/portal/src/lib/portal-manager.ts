@@ -353,7 +353,7 @@ export class PortalManager {
         this.portalConfig.localManifest
       );
 
-      localManifest.type = 'shell';
+      //localManifest.type = 'shell';
       localManifest.isLoaded = true;
 
       deployment.modules[localManifest.name] = localManifest;

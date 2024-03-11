@@ -4,6 +4,7 @@ import { FolderData } from "../folder.decorator";
 
 export interface Manifest extends ModuleMetadata {
     name : string,
+    type: "shell" | "microfrontend",
     version : string,
     enabled? : boolean,
     health? : string,

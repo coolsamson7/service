@@ -1,5 +1,6 @@
 {
   "name": "portal-shell",
+  "type": "shell",
   "version": "0.0.0",
   "commitHash": "7e9a2e916fd1da6786caac41b0fe6b838fbbb12d",
   "module": "ShellModule",

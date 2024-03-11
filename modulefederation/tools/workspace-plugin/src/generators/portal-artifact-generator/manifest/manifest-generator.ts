@@ -109,6 +109,7 @@ export class ManifestGenerator {
 
     const manifest: unknown = {
       name: this.project,
+      type: this.shell ? "shell" : "microfrontend",
       version,
       commitHash,
       module,

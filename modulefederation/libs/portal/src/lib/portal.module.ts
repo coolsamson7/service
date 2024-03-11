@@ -59,6 +59,7 @@ function loadDeployment(portalManager : PortalManager) : () => Promise<void> {
 })
 export class PortalModule extends AbstractModule() {
     // constructor
+    
     constructor(injector: Injector) {
         super(injector);
     }

@@ -163,6 +163,7 @@ export class MicrofrontendDetailsComponent extends WithCommands(WithDialogs(Abst
         folders: [],
         module: "",
         name: "",
+        type: "microfrontend",
         remoteEntry: "",
         version: ""
     }

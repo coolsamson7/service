@@ -1,13 +1,21 @@
 {
   "name": "shell",
+  "type": "shell",
   "version": "0.1",
-  "commitHash": "253c108b3fc289605e96fd654b99c7ab34c348fb",
+  "commitHash": "cc17a8e9b13c28b5b32414617beeea3ffbddc83a",
   "module": "ShellModule",
   "features": [
     {
       "id": "home",
       "label": "home",
       "component": "HomeComponent"
+    },
+    {
+      "id": "**",
+      "label": "Page not found",
+      "icon": "language",
+      "component": "PageNotFoundComponent",
+      "isPageNotFound": true
     }
   ],
   "folders": []

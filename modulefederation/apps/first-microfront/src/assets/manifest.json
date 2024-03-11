@@ -1,5 +1,6 @@
 {
   "name": "first-microfront",
+  "type": "microfrontend",
   "version": "0.1",
   "commitHash": "204f5ae1f41b27510d3f820e182135b8efcaf1ed",
   "module": "RemoteEntryModule",

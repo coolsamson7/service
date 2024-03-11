@@ -13,7 +13,7 @@ import {
     ConfigurationModule,
     ConsoleTrace,
     EndpointLocator,
-    I18nModule, I18nResolver, LocaleModule, PortalComponentsModule,
+    I18nModule, I18nResolver, LocaleModule, Manifest, PortalComponentsModule,
     PortalModule,
     SecurityModule, ServerTranslationLoader,
     Shell,
@@ -89,7 +89,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
                 //remotes: []//"http://localhost:4201", "http://localhost:4202"]
             },
             localRoutes: localRoutes,
-            localManifest: localManifest,
+            localManifest: localManifest as Manifest,
             decorateRoutes: (route : Route) => {
                 route.resolve = {i18n: I18nResolver}
                 route.canActivate = [CanActivateGuard]

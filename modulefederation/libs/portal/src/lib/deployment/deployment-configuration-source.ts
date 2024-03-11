@@ -27,12 +27,13 @@ export class DeploymentConfigurationSource implements ConfigurationSource {
             for ( const property of properties) {
                 if ( property.type == "object")
                     traverse(property.value as ConfigurationProperty[],  result[property.name] = {})
-                
+
                 else
                     result[property.name] = property.value
             }
         }
 
+      if (property.value)
         traverse(property.value as ConfigurationProperty[], this.value)
     }
 
