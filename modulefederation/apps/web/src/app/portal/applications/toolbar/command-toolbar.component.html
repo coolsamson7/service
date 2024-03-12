@@ -1,5 +1,12 @@
 <mat-toolbar class="toolbar">
   <mat-toolbar-row>
-    <command-button *ngFor="let command of commands" [command]="command"></command-button>
+    <!--command-button *ngFor="let command of commands" [command]="command"></command-button-->
+    <command-menu-button *ngFor="let command of commands" [commands]="[command]"></command-menu-button>
+
+    <ng-container  *ngFor="let element of elements">
+      <command-button *ngIf="element.type === 'command'" [command]="element.command!"></command-button>
+
+      <command-menu-button *ngIf="element.type === 'menu'" [commands]="element.items!"></command-menu-button>
+    </ng-container>
   </mat-toolbar-row>
 </mat-toolbar>

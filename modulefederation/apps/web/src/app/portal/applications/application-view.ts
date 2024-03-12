@@ -19,6 +19,8 @@ export abstract class ApplicationView extends WithCommandToolbar(WithCommands(Ab
 
    abstract save() : void
 
+   abstract revert() : void
+
    // strip inherited
 
    protected stripInherited(configuration: ConfigurationProperty) : ConfigurationProperty {

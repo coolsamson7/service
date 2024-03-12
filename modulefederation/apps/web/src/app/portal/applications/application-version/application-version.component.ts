@@ -61,6 +61,10 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
     })
    }
 
+   revert() {
+    // TODO
+    }
+
   // callbacks
 
   onDirty(dirty: boolean) {

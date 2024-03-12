@@ -57,12 +57,18 @@ export class MicrofrontendComponent extends ApplicationView implements OnInit {
         feature.currentView = this
    }
 
+   // override 
+
    save() {
     this.microfrontend!.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
     this.portalAdministrationService.updateMicrofrontend(this.microfrontend).subscribe()
 
    }
+
+   revert() {
+    // TODO
+    }
 
    onDirty(dirty: boolean) {
     this.dirty.emit(dirty)

@@ -10,7 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ManifestComponent } from "../manifest/manifest.component";
 import { MatListModule } from "@angular/material/list";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { NgModelSuggestionsDirective, SuggestionProvider, WithSnackbar } from "@modulefederation/portal";
+import { NgModelSuggestionsDirective, SuggestionProvider, WithDialogs, WithSnackbar } from "@modulefederation/portal";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -112,6 +112,8 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
         this.suggestionProvider = new ApplicationVersionSuggestionProvider(feature.applications)
     }
 
+    // override ApplicationView
+
     save() {
        if ( this.manifestComponent.save()) {
             this.microfrontendVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
@@ -120,6 +122,10 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
 
             this.manifestComponent.saved()
         }
+    }
+
+    revert() {
+        this.manifestComponent.revert()
     }
 
     onChangedEnabled(instance: MicrofrontendInstance) {

@@ -316,6 +316,17 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
    }
 
    @Command({
+    i18n: "portal.commands:revert",
+    icon: "undo"
+    })
+    revert() {
+        if ( this.currentView )
+            this.currentView.revert()
+
+        this.setDirty(false)
+    }
+
+   @Command({
            label: "Add Microfrontend",
            icon: "add"
    })

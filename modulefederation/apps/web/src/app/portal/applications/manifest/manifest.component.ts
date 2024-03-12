@@ -287,20 +287,10 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
             (<any>this.selectedFeature)[propertyName] = this.dirtyProperties[propertyName] || false
         }
 
-        // save
-
-       // this.onSave.emit()
-
-        // TODO this.microfrontendsComponent.saveManifest(this.manifest)
-
-        // new state
-
-        this.selectFeature(this.selectedFeature!)
-
         return true
     }
 
-    saved() { // TODO CALLER?
+    saved() {
         if ( this.isDirty && this.selectedFeature) {
             this.selectFeature(this.selectedFeature!)
         }
@@ -343,7 +333,7 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
                 .message("Please save first")
                 .okCancel()
                 .show()
-                .subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
+                .subscribe(result => {
                 if (result == true) {
                     this.triggerSave()
                     //this.setDirty(false)

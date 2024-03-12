@@ -45,7 +45,7 @@ export class ApplicationComponent extends ApplicationView implements OnInit {
     feature.currentView = this
    }
 
-    // overrude
+    // override
 
     save() {
         this.application.configuration = JSON.stringify(this.stripInherited(this.configurationData))
@@ -53,6 +53,11 @@ export class ApplicationComponent extends ApplicationView implements OnInit {
         this.portalAdministrationService.updateApplication(this.application).subscribe()
 
     }
+
+    revert() {
+        // TODO
+    }
+    
    // callbacks
 
    onDirty(dirty: boolean) {
