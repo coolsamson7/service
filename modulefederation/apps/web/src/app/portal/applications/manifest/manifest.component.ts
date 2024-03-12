@@ -262,14 +262,18 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
         this.dirty.emit(dirty)
     }
 
-    save() {
+    triggerSave() {
+        this.onSave.emit()
+    }
+
+    save() : boolean {
         if (!this.formGroup.valid) {
             this.confirmationDialog()
                 .title("Invalid Data")
                 .message("Correct input first")
                 .ok()
                 .show()
-            return
+            return false
         }
 
         // copy values from
@@ -285,16 +289,18 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
 
         // save
 
-        this.onSave.emit()
+       // this.onSave.emit()
 
         // TODO this.microfrontendsComponent.saveManifest(this.manifest)
 
         // new state
 
         this.selectFeature(this.selectedFeature!)
+
+        return true
     }
 
-    saved() {
+    saved() { // TODO CALLER?
         if ( this.isDirty && this.selectedFeature) {
             this.selectFeature(this.selectedFeature!)
         }
@@ -339,9 +345,9 @@ export class ManifestComponent extends WithCommands(WithDialogs(AbstractFeature)
                 .show()
                 .subscribe(result => {//okCancel("Switch feature", "Please save first").subscribe(result => {
                 if (result == true) {
-                    this.save()
-                    this.setDirty(false)
-                    this.selectFeature(feature)
+                    this.triggerSave()
+                    //this.setDirty(false)
+                    //this.selectFeature(feature)
                 }
             })
             return

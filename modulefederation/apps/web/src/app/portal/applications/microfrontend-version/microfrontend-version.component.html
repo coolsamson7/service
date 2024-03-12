@@ -2,11 +2,23 @@
   <div class="general">
     <mat-label>Name</mat-label>
     <div>{{name(microfrontendVersion.id)}}</div>
+
+    <mat-label>Type</mat-label>
+    <div>{{version(microfrontendVersion.manifest.type)}}</div>
+
     <mat-label>Version</mat-label>
     <div>{{version(microfrontendVersion.id)}}</div>
   </div>
 
   <mat-divider></mat-divider>
+
+  <div *ngIf="microfrontendVersion.manifest.type === 'shell'" class="application">
+    <mat-label>Application</mat-label>
+    <mat-form-field>
+      <mat-label>Application</mat-label>
+      <input type="text" matInput [suggestionProvider]="suggestionProvider" (ngModelChange)="applicationChanged($event)" [(ngModel)]="applicationVersion">
+    </mat-form-field>
+  </div>
 
   <div class="configuration">
     <mat-label>Configuration</mat-label>
@@ -16,14 +28,6 @@
   <div class="manifest">
     <mat-label>Manifest</mat-label>
     <manifest [manifest]="microfrontendVersion.manifest"  (onSave)="save()" (dirty)="onDirty($event)"></manifest>
-  </div>
-
-  <div class="application">
-    <mat-label>Application</mat-label>
-    <mat-form-field>
-      <mat-label>Application</mat-label>
-      <input type="text" matInput [suggestionProvider]="suggestionProvider" (ngModelChange)="applicationChanged($event)" [(ngModel)]="applicationVersion">
-    </mat-form-field>
   </div>
 
   <div class="instances">

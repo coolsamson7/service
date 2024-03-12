@@ -113,6 +113,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
    constructor(injector: Injector, private portalAdministrationService : PortalAdministrationService) {
       super(injector)
 
+
       // read some masterdata
 
       portalAdministrationService.readStages().subscribe(stages =>
@@ -432,5 +433,13 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
        this.addCommand2Toolbar("save")
        this.addCommand2Toolbar("addApplication")
        this.addCommand2Toolbar("addMicrofrontend")
+   }
+
+   // override
+
+   override ngOnInit(): void {
+       super.ngOnInit()
+
+       this.updateCommandState()
    }
 }

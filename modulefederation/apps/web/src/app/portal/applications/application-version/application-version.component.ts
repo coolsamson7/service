@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Injector, Input, OnInit, Output } from "@angular/core";
-import { MatTableDataSource } from "@angular/material/table";
+import { Component, EventEmitter, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
 import { Application, ApplicationVersion, Microfrontend } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
 import { MatDividerModule } from "@angular/material/divider";
-import { AssignedMicrofrontendRow, AssignedMicrofrontendsComponent } from "../assigned-microfrontends/assigned-microfrontends.component";
+import { AssignedMicrofrontendsComponent } from "../assigned-microfrontends/assigned-microfrontends.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ApplicationFeatureComponent } from "../application.feature";
 import { PortalAdministrationService } from "../../service";
@@ -23,7 +22,7 @@ import { ApplicationView } from "../application-view";
         ConfigurationTreeComponent
     ]
 })
-export class ApplicationVersionComponent extends ApplicationView implements OnInit {
+export class ApplicationVersionComponent extends ApplicationView implements OnInit, OnChanges {
   // inputs
 
   @Input() application! : Application
@@ -68,10 +67,8 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
     this.dirty.emit(dirty)
   }
 
-  // implement OnInit
-
-  override ngOnInit(): void {
-    super.ngOnInit()
+  private setApplicationVersion(applicationVersion: ApplicationVersion) {
+    this.applicationVersion = applicationVersion
 
     this.inheritedConfigurationData = [ JSON.parse(this.application.configuration) ]
 
@@ -85,5 +82,21 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
 
      if (this.applicationVersion!.assignedMicrofrontends == undefined)
       this.applicationVersion!.assignedMicrofrontends = []
-   }
+  }
+
+  // implement OnInit
+
+  override ngOnInit(): void {
+    super.ngOnInit()
+
+    this.setApplicationVersion(this.applicationVersion)
+  }
+
+   // implement OnChanges
+
+   ngOnChanges(changes : SimpleChanges) : void {
+    const change = changes['applicationVersion']
+    if (change && !change.isFirstChange())
+        this.setApplicationVersion(change.currentValue)
+    }
 }

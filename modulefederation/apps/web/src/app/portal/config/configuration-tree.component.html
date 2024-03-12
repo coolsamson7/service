@@ -2,23 +2,27 @@
   <!-- table -->
 
   <table class="table mat-elevation-z0" mat-table [dataSource]="dataSource">
+    <!-- property column -->
+
     <ng-container matColumnDef="name">
+      <!-- header -->
       <th mat-header-cell *matHeaderCellDef>
         <span [style.paddingLeft.px]="40">Property</span>
       </th>
 
+      <!-- cell -->
       <td mat-cell *matCellDef="let data">
-          <button  (click)="treeControl.toggle(data)" mat-icon-button>
-              <mat-icon class="mat-icon-rtl-mirror"  [style.visibility]="!data.expandable ? 'hidden' : ''"
-              [style.marginLeft.px]="data.level * 32"
-            >
-              {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}
+          <button  [style.visibility]="!data.expandable ? 'hidden' : ''" [style.marginLeft.px]="data.level * 32" (click)="treeControl.toggle(data)" mat-icon-button>
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(data) ? 'expand_more' : 'chevron_right'}}
               </mat-icon>
           </button>
 
           <mat-label class="property">{{data.name}}</mat-label>
       </td>
     </ng-container>
+
+    <!-- value column -->
 
     <ng-container matColumnDef="value">
       <th mat-header-cell *matHeaderCellDef>Value</th>

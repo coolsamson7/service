@@ -17,6 +17,6 @@
   
   <div class="microfrontends">
     <mat-label>Microfrontends</mat-label>
-    <assigned-microfrontends [applicationVersion]="applicationVersion" [microfrontends]="microfrontends"></assigned-microfrontends>
+    <assigned-microfrontends [applicationVersion]="applicationVersion" [microfrontends]="microfrontends" (dirty)="onDirty($event)"></assigned-microfrontends>
 </div>
 </div>

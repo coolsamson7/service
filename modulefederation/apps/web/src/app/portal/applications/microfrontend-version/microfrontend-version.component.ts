@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Injector, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { Application, ApplicationVersion, Microfrontend, MicrofrontendInstance, MicrofrontendVersion } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
@@ -78,7 +78,7 @@ export class ApplicationVersionSuggestionProvider implements SuggestionProvider 
         ConfigurationTreeComponent
     ]
 })
-export class MicrofrontendVersionComponent extends ApplicationView {//TODO WithSnackbar(ApplicationView) {
+export class MicrofrontendVersionComponent extends ApplicationView implements OnChanges {//TODO WithSnackbar(ApplicationView) {
     // inputs
 
     @Input() microfrontend! : Microfrontend
@@ -113,9 +113,13 @@ export class MicrofrontendVersionComponent extends ApplicationView {//TODO WithS
     }
 
     save() {
-        this.microfrontendVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
+       if ( this.manifestComponent.save()) {
+            this.microfrontendVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
-        this.portalAdministrationService.updateMicrofrontendVersion(this.microfrontendVersion).subscribe()
+            this.portalAdministrationService.updateMicrofrontendVersion(this.microfrontendVersion).subscribe()
+
+            this.manifestComponent.saved()
+        }
     }
 
     onChangedEnabled(instance: MicrofrontendInstance) {
@@ -182,18 +186,30 @@ export class MicrofrontendVersionComponent extends ApplicationView {//TODO WithS
         return ""
    }
 
+   private setMicrofrontendVersion(microfrontendVersion: MicrofrontendVersion) {
+    this.microfrontendVersion = microfrontendVersion
+
+    this.inheritedConfigurationData = [ JSON.parse(this.microfrontendVersion.configuration)]
+    this.configurationData = JSON.parse(this.microfrontendVersion.configuration)
+
+
+    if ( this.microfrontendVersion.applicationVersion)
+        this.applicationVersion = this.findApplicationVersionName(this.microfrontendVersion.applicationVersion)
+   }
+
    // implement OnInit
 
     override ngOnInit(): void {
         super.ngOnInit()
 
-        this.inheritedConfigurationData = [ JSON.parse(this.microfrontendVersion.configuration)]
-        this.configurationData = JSON.parse(this.microfrontendVersion.configuration)
-
-    
-        if ( this.microfrontendVersion.applicationVersion) {
-            this.applicationVersion = this.findApplicationVersionName(this.microfrontendVersion.applicationVersion)
-        }
-
+        this.setMicrofrontendVersion( this.microfrontendVersion)
    }
+
+    // implement OnChanges
+
+    ngOnChanges(changes : SimpleChanges) : void {
+        const change = changes['microfrontendVersion']
+        if (change && !change.isFirstChange())
+            this.setMicrofrontendVersion(change.currentValue)
+        }
 }
