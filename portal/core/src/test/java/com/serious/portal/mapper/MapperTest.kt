@@ -36,13 +36,12 @@ class MapperTest {
 
     @Test
     fun test() {
-
         val mapper = Mapper(
             Mapping.build(Money::class, Money::class) {
                 map { properties() }
             },
             Mapping.build(Product::class, Product::class) {
-                map { "id" to "id"}
+                map { properties("id") }
                 map { Product::isNull to Product::isNull}
 
                 map { path("innerComposite", "price", "value") to  path("innerComposite", "price", "value")}

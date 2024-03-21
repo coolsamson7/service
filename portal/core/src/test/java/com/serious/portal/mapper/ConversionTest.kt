@@ -25,14 +25,13 @@ class ConversionTest {
     fun testVersion() {
         val mapper = Mapper(
             Mapping.build(Foo::class, Foo::class) {
-
-            map { "short" to "short" }
+                map { "short" to "short" }
                 map { "short" to "float" }
                 map { "int" to "double" }
-                map { "long" to "long" }
+                map { "long" to "long" convert {obj: Long-> obj}}
                 map { "double" to "int" }
                 map { "float" to "short" }
-            })
+                })
 
         val foo = Foo()
         val result = mapper.map<Foo>(foo)

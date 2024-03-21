@@ -10,11 +10,42 @@ import kotlin.test.assertEquals
 
 
 class InheritanceTest {
+    // local classes
+
+    open class Base {
+        var id = "id"
+    }
+
+    open class Derived : Base() {
+        var name = "name"
+    }
+
+    // test
+
     @Test
     fun testVersion() {
-        // eq
+        val baseMapping = Mapping.build(Base::class,Base::class) {
+            map { properties() }
+        }
 
-        //assertEquals(true, Version("1.0").eq(Version("1.0")), "expected eq")
-        //assertEquals(false, Version("1.0").eq(Version("1.1.1.1")), "expected !eq")
+        val mapper = Mapper(
+            baseMapping,
+
+            Mapping.build(Derived::class, Derived::class) {
+                derives(baseMapping)
+
+                map { properties("name") }
+            }
+        )
+
+        val source = Derived()
+
+        source.id = "base"
+        source.name = "source"
+
+        val result = mapper.map<Derived>(source)
+
+        assertEquals(result?.id, "base")
+        assertEquals(result?.name, "source")
     }
 }
