@@ -38,19 +38,18 @@ class MapperTest {
     fun test() {
 
         val mapper = Mapper(
-            Mapping.build(MutableInnerComposite::class, MutableInnerComposite::class) {
-                map { properties() }
-            },
-
-            Mapping.build(InnerComposite::class, InnerComposite::class) {
-                map { properties() }
-            },
-
             Mapping.build(Money::class, Money::class) {
                 map { properties() }
             },
             Mapping.build(Product::class, Product::class) {
-                map { properties() }
+                map { "id" to "id"}
+                map { Product::isNull to Product::isNull}
+
+                map { path("innerComposite", "price", "value") to  path("innerComposite", "price", "value")}
+                map { path("innerComposite", "price", "currency") to  path("innerComposite", "price", "currency")}
+
+                map { path("mutableInnerComposite", "price", "value") to  path("mutableInnerComposite", "price", "value")}
+                map { path("mutableInnerComposite", "price", "currency") to  path("mutableInnerComposite", "price", "currency")}
             }
         )
 
@@ -60,9 +59,9 @@ class MapperTest {
 
         product.mutableInnerComposite?.price = Money("EU",1)
 
-
         val result = mapper.map<Product>(product)
 
-        println()
+        assertEquals(1, result?.mutableInnerComposite?.price?.value)
+        assertEquals(1, result?.innerComposite?.price?.value)
     }
 }
