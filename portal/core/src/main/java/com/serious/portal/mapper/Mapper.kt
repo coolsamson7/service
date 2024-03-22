@@ -331,7 +331,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     if (deep)
                         Transformer.Operation(sourceProperty, mapDeep(sourceNode.accessor, accessor, writeProperty))
                     else {
-                        if (readOnly) {
+                        if (tree.composite != null/*readOnly || immutable*/) {
                             if (tree.composite != null)
                                 Transformer.Operation(sourceProperty, maybeConvert(Mapping.SetCompositeArgument(tree.composite!!, accessor), conversion))
                             else
@@ -556,7 +556,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             var deep = false
             var conversion: Conversion<Any,Any>? = null
-            var synchronizer: MapperRelationSynchronizer<Any,Any,Any>? = null
+            var synchronizer: MapperRelationSynchronizer<Any,Any,Any?>? = null
             var sourceAccessor : Array<Accessor>? = null
             var targetAccessor : Array<Accessor>? = null
             var properties : Properties? = null
@@ -606,7 +606,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // property
 
-            infix fun KProperty1<*,*>.to(target: KProperty1<*,*>):MapBuilder<S,T> {
+            infix fun KProperty1<S,*>.to(target: KProperty1<T,*>):MapBuilder<S,T> {
                 val sourceProperty = PropertyAccessor(this.name)
                 sourceProperty.readProperty = this as KProperty1<Any, Any?>
 
@@ -621,8 +621,8 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // synchronize
 
-            infix fun<TO: Any,ENTITY:Any, PK:Any> synchronize(synchronizer: MapperRelationSynchronizer<TO,ENTITY, PK>) : MapBuilder<S,T> {
-                this.synchronizer = synchronizer as MapperRelationSynchronizer<Any,Any,Any>
+            infix fun<TO: Any,ENTITY:Any, PK:Any?> synchronize(synchronizer: MapperRelationSynchronizer<TO,ENTITY, PK>) : MapBuilder<S,T> {
+                this.synchronizer = synchronizer as MapperRelationSynchronizer<Any,Any,Any?>
                 this.deep = true
 
                 return this
@@ -674,6 +674,9 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                         definition.map(properties!!)
                 }
                 else {
+                    if ( sourceAccessor == null || targetAccessor == null)
+                        throw MapperDefinitionException("missing map source / target")
+
                     if ( deep ) {
                         if ( synchronizer != null)
                             definition.synchronize(sourceAccessor!![0].name, targetAccessor!![0].name, synchronizer!!)
@@ -716,7 +719,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         }
     }
 
-    class Match(private val mapOperation: MappingDefinition.MapOperation, source: Array<Accessor>, target: Array<Accessor>) {
+    class Match(private val mapOperation: MapOperation, source: Array<Accessor>, target: Array<Accessor>) {
         val paths: Array<Array<Accessor>> = arrayOf(source, target)
 
         val deep: Boolean
@@ -849,7 +852,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return Mapping.ConstantValue(constant)
         }
 
-        override fun getValue(instance: Any): Any? {
+        override fun getValue(instance: Any): Any {
             return constant
         }
 
@@ -956,7 +959,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
         @Override
         override fun describe(builder: StringBuilder) {
-            builder.append("map { ");
+            builder.append("map { ")
 
             // source
 
@@ -969,7 +972,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                     .append(")")
             }
 
-            builder.append(" to ");
+            builder.append(" to ")
 
             // target
 
@@ -983,14 +986,14 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
             }
 
             if (deep)
-                builder.append(" deep true");
+                builder.append(" deep true")
 
             if (conversion != null) {
                 builder
                     .append(" convert ")
                     .append( from[from.size-1].type.simpleName)
                     .append(" to ")
-                    .append( to[0].type.simpleName);
+                    .append( to[0].type.simpleName)
             }
 
             builder.append(" }")
@@ -1144,7 +1147,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         return this
     }
 
-    fun <TO: Any, ENTITY: Any, PK: Any> synchronize(from: String, to: String, synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>): MappingDefinition<S, T> {
+    fun <TO: Any, ENTITY: Any, PK: Any?> synchronize(from: String, to: String, synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>): MappingDefinition<S, T> {
         operations.add(MapAccessor(
             arrayOf(PropertyAccessor(from)),
             arrayOf(Mapping.RelationshipAccessor(to, synchronizer)),
@@ -1345,7 +1348,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class MappingResultValueReceiver() : ValueReceiver {
+    class MappingResultValueReceiver : ValueReceiver {
         // implement ValueReceiver
 
         override fun receive(context: Context, instance: Any, value: Any) {
@@ -1429,7 +1432,7 @@ class Mapping<S : Any, T : Any>(
         // override Any
 
         override fun toString() : String {
-            return "peek[${index}].${property.toString()}"
+            return "peek[${index}].$property"
         }
 
         companion object {
@@ -1487,7 +1490,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class SynchronizeMultiValuedRelationship<TO:Any, ENTITY:Any, PK:Any>(val property: KProperty1<Any, Any?>, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>)
+    class SynchronizeMultiValuedRelationship<TO:Any, ENTITY:Any, PK:Any?>(val property: KProperty1<Any, Any?>, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>)
         :Property<Context> {
         // override
 
@@ -1508,7 +1511,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class RelationshipAccessor<TO: Any, ENTITY: Any, PK: Any>(accessor: String, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>) : MappingDefinition.PropertyAccessor(accessor) {
+    class RelationshipAccessor<TO: Any, ENTITY: Any, PK: Any?>(accessor: String, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>) : MappingDefinition.PropertyAccessor(accessor) {
         override fun makeTransformerProperty(write: Boolean): Property<Context> {
             return if (!write)
                 throw MapperDefinitionException("error")
@@ -1640,7 +1643,7 @@ class Mapping<S : Any, T : Any>(
         private fun analyzeContainer(sourceClass: KClass<*>, targetClass: KClass<*>) {
             // source
 
-            if (sourceClass.java.isArray())
+            if (sourceClass.java.isArray)
                 source = ArrayContainer(sourceClass.java.componentType.kotlin)
 
             else if (MutableCollection::class.isSuperclassOf(sourceClass))
