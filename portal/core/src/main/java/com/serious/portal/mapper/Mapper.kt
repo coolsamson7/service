@@ -6,10 +6,7 @@ package com.serious.portal.mapper
  */
 
 import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
+import kotlin.reflect.*
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 import kotlin.reflect.jvm.jvmErasure
@@ -868,6 +865,9 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
     // composite stuff
 
     abstract class CompositeDefinition(val clazz: KClass<*>, val index: Int, val nArgs: Int, val valueReceiver: Mapping.ValueReceiver) {
+        @JvmField
+        val constructor = clazz.constructors.first()
+
         open fun immutable() : Boolean {return false}
         abstract fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer
     }
@@ -880,7 +880,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         override fun immutable() : Boolean {return true}
 
         override fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer {
-            return Mapping.ImmutableCompositeBuffer(this, mapper, clazz, nArgs)
+            return Mapping.ImmutableCompositeBuffer(this, nArgs)
         }
     }
 
@@ -890,7 +890,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         // override
 
         override fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer {
-            return Mapping.MutableCompositeBuffer(this, mapper, clazz, nArgs)
+            return Mapping.MutableCompositeBuffer(this, clazz, nArgs)
         }
     }
 
@@ -1245,6 +1245,10 @@ class Mapping<S : Any, T : Any>(
         fun setup(compositeDefinitions: Array<MappingDefinition.CompositeDefinition>, stackSize: Int): Array<CompositeBuffer> {
             val buffers = compositeDefinitions.map { definition -> definition.createBuffer(mapper) }.toTypedArray()
 
+            /*val buffers = arrayOfNulls<CompositeBuffer>(compositeDefinitions.size)
+            for ( i in 0..<compositeDefinitions.size)
+                buffers[i] = compositeDefinitions[i].createBuffer(mapper)*/
+
             stack = if (stackSize == 0) NO_STACK else arrayOfNulls(stackSize)
 
             increment()
@@ -1270,7 +1274,8 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    abstract class CompositeBuffer(protected val definition: MappingDefinition.CompositeDefinition, protected var mapper: Mapper, val nargs: Int) {
+    abstract class CompositeBuffer(protected @JvmField val definition: MappingDefinition.CompositeDefinition, @JvmField val nArgs: Int) {
+        @JvmField
         protected var nSuppliedArgs = 0
 
         // abstract
@@ -1278,10 +1283,10 @@ class Mapping<S : Any, T : Any>(
         abstract fun set(instance: Any, value: Any?, accessor: MappingDefinition.Accessor?, index: Int, mappingContext: Context)
     }
 
-    class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, mapper: Mapper, val clazz: KClass<*>, nargs: Int) : CompositeBuffer(definition, mapper, nargs) {
+    class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, nargs: Int) : CompositeBuffer(definition, nargs) {
         // instance data
 
-        protected var arguments: Array<Any?> = arrayOfNulls(nargs)
+        private var arguments: Array<Any?> = arrayOfNulls(nargs)
 
         // override
 
@@ -1290,20 +1295,20 @@ class Mapping<S : Any, T : Any>(
 
             // are we done?
 
-            if (++nSuppliedArgs == arguments.size) {
+            if (++nSuppliedArgs == nArgs) {
                 // create composite
 
-                val composite = mapper.createComposite(clazz, *arguments)
+                val composite = definition.constructor.call(*arguments)
 
                 definition.valueReceiver.receive(mappingContext, instance, composite)
             } // if
         }
     }
 
-    class MutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, mapper: Mapper, clazz: KClass<*>, nargs: Int) : CompositeBuffer(definition, mapper, nargs) {
+    class MutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, clazz: KClass<*>, nargs: Int) : CompositeBuffer(definition, nargs) {
         // instance data
 
-        private val newInstance = mapper.createInstance(null, clazz)
+        private val newInstance = clazz.createInstance() // TODO cache
 
         // public
 
@@ -1312,13 +1317,12 @@ class Mapping<S : Any, T : Any>(
 
             // are we done?
 
-            if (++nSuppliedArgs == nargs)
+            if (++nSuppliedArgs == nArgs)
                 definition.valueReceiver.receive(mappingContext, instance, newInstance)
         }
     }
 
     // value receiver
-
 
     interface ValueReceiver {
         fun receive(context: Context, instance: Any, value: Any)
@@ -1746,6 +1750,13 @@ class Mapping<S : Any, T : Any>(
 
     val sourceClass: KClass<*> = definition.sourceClass
     val targetClass: KClass<*> = definition.targetClass
+    val isData = targetClass.isData
+
+    //val constructor = targetClass.constructors.find { ctr -> ctr.parameters.size == 0}!!
+
+    //fun createInstance() : Any {
+    //    return constructor.callBy(NO_PARAMETERS)
+    //}
 
     // override
 
@@ -1788,6 +1799,8 @@ class Mapping<S : Any, T : Any>(
 
             return definition
         }
+
+        val NO_PARAMETERS = emptyMap<KParameter, Any?>()
     }
 }
 
@@ -1797,7 +1810,7 @@ fun <S : Any, T : Any> mapping(sourceClass: KClass<S>, targetClass: KClass<T>): 
 
 // one mapper has n mappings
 
-class Mapper(vararg definitions: MappingDefinition<*, *>) : ObjectFactory, CompositeFactory {
+class Mapper(vararg definitions: MappingDefinition<*, *>) {
     // instance data
 
     private var mappings = HashMap<KClass<*>, Mapping<out Any, out Any>>()
@@ -1898,10 +1911,10 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) : ObjectFactory, Compo
         val mapping = getMapping(source::class)
 
         if ( target == null) {
-            if ( mapping.targetClass.isData )
+            if ( mapping.isData )
                 target = context // hmm....
             else
-                target = mapping.targetClass.createInstance()
+                target = mapping.targetClass.createInstance() // TODO
 
             context.remember(source, target)
         }
@@ -1910,7 +1923,7 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) : ObjectFactory, Compo
         try {
             mapping.transform(source, target, context)
 
-            if ( mapping.targetClass.isData ) {
+            if ( mapping.isData ) {
                 target =  context.currentState!!.result
                 context.remember(source, target!!)
             }
@@ -1920,18 +1933,6 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) : ObjectFactory, Compo
         }
 
         return target as T
-    }
-
-    // override ObjectFactory
-
-    override fun createInstance(source: Any?, clazz: KClass<*>): Any {
-        return clazz.createInstance()
-    }
-
-    // override CompositeFactory
-
-    override fun createComposite(clazz: KClass<*>, vararg arguments: Any?): Any {
-        return clazz.constructors.first().call(*arguments)
     }
 
     // override Any
