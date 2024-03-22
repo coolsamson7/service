@@ -34,6 +34,60 @@ class MapperTest {
 
     // test
 
+    class From (var name: String = "")
+
+    data class To(var name: String)
+
+    class ReadOnly(val name: String)
+
+    @Test()
+    fun testReadOnlyException() {
+        try {
+            Mapper(
+                Mapping.build(From::class, ReadOnly::class) {
+                    map { "name" to "name"}
+                })
+
+            throw Exception("ouch")
+        }
+        catch(exception: MapperDefinitionException) {
+            println()
+        }
+    }
+
+    @Test()
+    fun testExceptionMissingSpec() {
+        try {
+            Mapper(
+                Mapping.build(From::class, To::class) {
+                    map { }
+                })
+
+            throw Exception("ouch")
+        }
+        catch(exception: MapperDefinitionException) {
+
+        }
+    }
+
+    @Test
+    fun test1() {
+        val from = From()
+        from.name = "from"
+
+        val mapper = Mapper(
+            Mapping.build(From::class, To::class) {
+                map { properties() }
+            })
+
+        println(mapper.describe())
+
+        val result = mapper.map<To>(from)
+
+        assertEquals("from", result?.name)
+    }
+
+
     @Test
     fun test() {
         val mapper = Mapper(
