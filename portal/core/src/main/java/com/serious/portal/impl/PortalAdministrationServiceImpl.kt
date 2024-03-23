@@ -171,17 +171,17 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
 
     val readApplicationMapper = Mapper(
-        Mapping.build(ApplicationEntity::class, Application::class) {
+        mapping(ApplicationEntity::class, Application::class) {
             map { properties("name", "configuration") }
             map { "versions" to "versions" deep true }
         },
 
-        Mapping.build(AssignedMicrofrontendEntity::class, AssignedMicrofrontend::class) {
+        mapping(AssignedMicrofrontendEntity::class, AssignedMicrofrontend::class) {
             map { properties("id", "version") }
             map { path("microfrontend", "name") to "microfrontend" }
         },
 
-        Mapping.build(ApplicationVersionEntity::class, ApplicationVersion::class) {
+        mapping(ApplicationVersionEntity::class, ApplicationVersion::class) {
             map { properties("id", "version", "configuration") }
             map { "assignedMicrofrontends" to "assignedMicrofrontends" deep true}
         })
@@ -234,7 +234,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         }
 
         val mapper = Mapper(
-            Mapping.build(Application::class, ApplicationEntity::class) {
+            mapping(Application::class, ApplicationEntity::class) {
                 map { properties("name", "configuration") }
                 map { "versions" to "versions" synchronize synch }
             })
@@ -318,9 +318,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         }
 
         val mapper = Mapper(
-            Mapping.build(ApplicationVersion::class, ApplicationVersionEntity::class) {
-                //map { properties("version", "configuration") }
-                map { "versions" to "versions" synchronize synchronizer }
+            mapping(ApplicationVersion::class, ApplicationVersionEntity::class) {
+                map { properties("version", "configuration") }
+                map { "assignedMicrofrontends" to "assignedMicrofrontends" synchronize synchronizer }
             })
 
         mapper.map(application, entity)
@@ -344,12 +344,12 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     // microfrontend
 
     val readMicrofrontendMapper = Mapper(
-        Mapping.build(MicrofrontendEntity::class, Microfrontend::class) {
+        mapping(MicrofrontendEntity::class, Microfrontend::class) {
             map { properties("name", "enabled", "configuration") }
             map { "versions" to "versions" deep true }
         },
 
-        Mapping.build(MicrofrontendVersionEntity::class, MicrofrontendVersion::class) {
+        mapping(MicrofrontendVersionEntity::class, MicrofrontendVersion::class) {
             map { properties("id", "version", "configuration", "enabled") }
             map { path("microfrontend", "name") to "microfrontend" }
             map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
@@ -357,7 +357,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             map { path("applicationVersion", "id") to "applicationVersion" }
         },
 
-        Mapping.build(MicrofrontendInstanceEntity::class, MicrofrontendInstance::class) {
+        mapping(MicrofrontendInstanceEntity::class, MicrofrontendInstance::class) {
             map { path("microfrontendVersion", "microfrontend", "name") to "microfrontend" }
             map { path("microfrontendVersion", "version") to "version" }
             map { properties("uri", "enabled", "health", "configuration", "stage") }

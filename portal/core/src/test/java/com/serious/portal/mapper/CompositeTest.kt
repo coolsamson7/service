@@ -27,11 +27,12 @@ class CompositeTest {
     @Test
     fun test() {
         val prodMapper = Mapper(
-            mapping(Product::class, Product::class)
-                .map("id", "id") // ?
-                .map("name", "name")
-                .map(path("price", "currency"), path("price", "currency"))
-                .map(path("price", "value"), path("price", "value"))
+            mapping(Product::class, Product::class) {
+                map {"id" to "id"}
+                map {"name" to "name" }
+                map {path("price", "currency") to path("price", "currency") }
+                map {path("price", "value") to path("price", "value") }
+            }
         )
 
 

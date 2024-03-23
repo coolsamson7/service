@@ -19,7 +19,7 @@ class TopLevelCompositeTest {
     @Test
     fun test() {
         val moneyMapper = Mapper(
-            Mapping.build(Money::class, Money::class) {
+            mapping(Money::class, Money::class) {
                 map { properties() }
             }
         )

@@ -32,18 +32,17 @@ class CollectionTest {
     @Test
     fun testCollection() {
         val mapper = Mapper(
-            Mapping.build(Foo::class, Foo::class) {
+            mapping(Foo::class, Foo::class) {
                 map { "barArray" to "barList" deep true}
                 map { "barList" to "barArray" deep true}
             },
 
-
-            Mapping.build(Bar::class, Bar::class) {
+            mapping(Bar::class, Bar::class) {
                 map { "name" to "name" }
                 map { "baz" to "baz" deep true}
             },
 
-            Mapping.build(Baz::class, Baz::class) {
+            mapping(Baz::class, Baz::class) {
                 map { "name" to "name" }
             }
         )

@@ -64,7 +64,7 @@ class MapperTest {
         // mapper
 
         val mapper = Mapper(
-            Mapping.build(Product::class, Target::class) {
+            mapping(Product::class, Target::class) {
                 map { properties("name")}
                 map { path("price1", "value") to "price1"}
                 map { path("price2", "value") to "price2"}
@@ -75,7 +75,7 @@ class MapperTest {
         val source = Product("product", null/*Price("EU", 1)*/, Price("EU", 2))
         val target = mapper.map<Target>(source)!!
 
-        assertEquals(1, target.price1)
+        assertEquals(null, target.price1)
         assertEquals(2, target.price2)
     }
 
@@ -99,11 +99,11 @@ class MapperTest {
         // mapper
 
         val mapper = Mapper(
-            Mapping.build(Source::class, Target::class) {
+            mapping(Source::class, Target::class) {
                 map { properties("name")}
                 map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
             },
-            Mapping.build(BarSource::class, BarTarget::class) {
+            mapping(BarSource::class, BarTarget::class) {
                 map { properties("name")}
             })
 
@@ -134,11 +134,11 @@ class MapperTest {
         // mapper
 
         val mapper = Mapper(
-            Mapping.build(Source::class, Target::class) {
+            mapping(Source::class, Target::class) {
                 map { properties("name")}
                 map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
             },
-            Mapping.build(BarSource::class, BarTarget::class) {
+            mapping(BarSource::class, BarTarget::class) {
                 map { properties("name")}
             })
 
@@ -153,11 +153,11 @@ class MapperTest {
     @Test()
     fun testTopLevelDeepCollection() {
         val mapper = Mapper(
-            Mapping.build(FooSource::class, FooTarget::class) {
+            mapping(FooSource::class, FooTarget::class) {
                 map { properties("name")}
                 map { "bars" to "bars" deep true}
             },
-            Mapping.build(BarSource::class, BarTarget::class) {
+            mapping(BarSource::class, BarTarget::class) {
                 map { properties("name")}
             })
 
@@ -170,11 +170,11 @@ class MapperTest {
     @Test()
     fun testTopLevelDataDeepCollection() {
         val mapper = Mapper(
-            Mapping.build(FooDataSource::class, FooTarget::class) {
+            mapping(FooDataSource::class, FooTarget::class) {
                 map { properties("name")}
                 map { "bars" to "bars" deep true}
             },
-            Mapping.build(BarSource::class, BarTarget::class) {
+            mapping(BarSource::class, BarTarget::class) {
                 map { properties("name")}
             })
 
@@ -190,7 +190,7 @@ class MapperTest {
     fun testReadOnlyException() {
         try {
             Mapper(
-                Mapping.build(From::class, ReadOnly::class) {
+                mapping(From::class, ReadOnly::class) {
                     map { "name" to "name"}
                 })
 
@@ -204,7 +204,7 @@ class MapperTest {
     @Test()
     fun testConstant() {
         val mapper = Mapper(
-                Mapping.build(From::class, To::class) {
+            mapping(From::class, To::class) {
                     map { constant("name") to "name"}
                 })
 
@@ -217,7 +217,7 @@ class MapperTest {
     fun testExceptionMissingSpec() {
         try {
             Mapper(
-                Mapping.build(From::class, To::class) {
+                mapping(From::class, To::class) {
                     map { }
                 })
 
@@ -233,7 +233,7 @@ class MapperTest {
         val from = From("from")
 
         val mapper = Mapper(
-            Mapping.build(From::class, To::class) {
+            mapping(From::class, To::class) {
                 map { properties() }
             })
 
@@ -248,10 +248,10 @@ class MapperTest {
     @Test
     fun test() {
         val mapper = Mapper(
-            Mapping.build(Money::class, Money::class) {
+            mapping(Money::class, Money::class) {
                 map { properties() }
             },
-            Mapping.build(Product::class, Product::class) {
+            mapping(Product::class, Product::class) {
                 map { properties("id") }
                 map { Product::isNull to Product::isNull}
 
@@ -273,5 +273,19 @@ class MapperTest {
 
         assertEquals(1, result?.mutableInnerComposite?.price?.value)
         assertEquals(1, result?.innerComposite?.price?.value)
+
+
+        //
+
+
+        val loops = 100000
+        val start = System.currentTimeMillis()
+        for (i in 0 until loops)
+            mapper.map<Product>(product)
+
+        val ms = System.currentTimeMillis() - start
+        println("" + loops + " loops in " + ms + "ms, avg " + ms.toDouble() / loops)
+
+
     }
 }

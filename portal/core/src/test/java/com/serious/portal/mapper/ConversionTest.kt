@@ -24,7 +24,7 @@ class ConversionTest {
     @Test
     fun testConversion() {
         val mapper = Mapper(
-            Mapping.build(Foo::class, Foo::class) {
+            mapping(Foo::class, Foo::class) {
                 map { "short" to "short" }
                 map { "short" to "float" }
                 map { "int" to "double" }

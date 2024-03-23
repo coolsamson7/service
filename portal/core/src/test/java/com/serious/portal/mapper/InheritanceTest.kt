@@ -24,14 +24,14 @@ class InheritanceTest {
 
     @Test
     fun testInheritance() {
-        val baseMapping = Mapping.build(Base::class,Base::class) {
+        val baseMapping = mapping(Base::class,Base::class) {
             map { properties() }
         }
 
         val mapper = Mapper(
             baseMapping,
 
-            Mapping.build(Derived::class, Derived::class) {
+            mapping(Derived::class, Derived::class) {
                 derives(baseMapping)
 
                 map { properties("name") }

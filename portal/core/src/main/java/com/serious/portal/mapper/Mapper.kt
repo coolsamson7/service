@@ -1252,7 +1252,7 @@ class Mapping<S : Any, T : Any>(
         fun setup(compositeDefinitions: Array<MappingDefinition.CompositeDefinition>, stackSize: Int): Array<CompositeBuffer> {
             val buffers = compositeDefinitions.map { definition -> definition.createBuffer(mapper) }.toTypedArray()
 
-            /*val buffers = arrayOfNulls<CompositeBuffer>(compositeDefinitions.size)
+            /*TODOval buffers = arrayOfNulls<CompositeBuffer>(compositeDefinitions.size)
             for ( i in 0..<compositeDefinitions.size)
                 buffers[i] = compositeDefinitions[i].createBuffer(mapper)*/
 
@@ -1801,9 +1801,18 @@ class Mapping<S : Any, T : Any>(
     }
 }
 
-fun <S : Any, T : Any> mapping(sourceClass: KClass<S>, targetClass: KClass<T>): MappingDefinition<S, T> {
-    return MappingDefinition(sourceClass, targetClass)
+fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda: MappingDefinition.Builder<S,T>.() -> Unit) : MappingDefinition<S,T> {
+    val definition = MappingDefinition(sourceClass, targetClass)
+
+    MappingDefinition.Builder(definition)
+        .apply(lambda)
+
+    return definition
 }
+
+//fun <S : Any, T : Any> mapping(sourceClass: KClass<S>, targetClass: KClass<T>): MappingDefinition<S, T> {
+//    return MappingDefinition(sourceClass, targetClass)
+//}
 
 // one mapper has n mappings
 

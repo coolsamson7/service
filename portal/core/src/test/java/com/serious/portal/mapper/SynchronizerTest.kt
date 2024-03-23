@@ -52,12 +52,14 @@ class SynchronizerTest {
         root.bars.add(bar)
 
         val rootMapper = Mapper(
-            mapping(Root::class, RootEntity::class)
-                .synchronize("bars", "bars", BarSynchronizer()),
+            mapping(Root::class, RootEntity::class) {
+                map { "bars" to "bars" synchronize BarSynchronizer()}
+            },
 
-            mapping(Bar::class, BarEntity::class)
-                .map("id", "id") // ?
-                .map("name", "name")
+            mapping(Bar::class, BarEntity::class) {
+             map {"id" to "id" } // ?
+             map {"name" to "name" }
+        }
         )
 
         val rootResult = rootMapper.map<RootEntity>(root)!!
