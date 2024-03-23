@@ -37,7 +37,6 @@ fun property(name: String) : MappingDefinition.PropertyAccessor {
     return MappingDefinition.PropertyAccessor(name)
 }
 
-
 // local classes
 
 class OperationBuilder(private val matches: MutableCollection<MappingDefinition.Match>) {
@@ -236,7 +235,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 return if (readOnly) child.accessor.overallIndex else children.indexOf(child)
             }
 
-            fun computeValueReceiver() : Mapping.ValueReceiver {
+            fun computeValueReceiver(targetTree: TargetTree) : Mapping.ValueReceiver {
                 return if ( parent != null)
                     if (parent.composite != null) {
                         if ( parent.immutable)
@@ -245,13 +244,21 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                             if ( accessor.readOnly)
                                 throw MapperDefinitionException("${parent.accessor.type.simpleName}.${accessor.name} is read only")
 
-                            Mapping.SetMutableCompositePropertyValueReceiver(parent.composite!!, accessor)
+                            Mapping.SetMutableCompositePropertyValueReceiver(parent.composite!!, accessor.makeTransformerProperty(true))
                         }
                     }
                     else
-                        Mapping.SetPropertyValueReceiver(parent.accessor)
-                else
-                    Mapping.SetPropertyValueReceiver(accessor)
+                        Mapping.SetPropertyValueReceiver(parent.accessor.makeTransformerProperty(true))
+                else {
+                    if (targetTree.composite != null) {
+                        if ( targetTree.composite!!.immutable())
+                            Mapping.SetImmutableCompositePropertyValueReceiver(targetTree.composite!!, accessor.index)
+                        else
+                            Mapping.SetMutableCompositePropertyValueReceiver(targetTree.composite!!, accessor.makeTransformerProperty(true))
+                    }
+                    else
+                        Mapping.SetPropertyValueReceiver(accessor.makeTransformerProperty(true))
+                }
             }
 
             // public
@@ -260,7 +267,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 val type: KClass<*> = accessor.type
 
                 if (isInnerNode) {
-                    val valueReceiver = computeValueReceiver()
+                    val valueReceiver = computeValueReceiver(targetTree)
 
                     // done
 
@@ -292,11 +299,9 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
             }
 
             @OptIn(ExperimentalReflectionOnLambdas::class)
-            private fun makeOperation(tree: TargetTree, sourceNode: SourceTree.Node): Transformer.Operation<Mapping.Context> {
-                val sourceProperty: Transformer.Property<Mapping.Context> = sourceNode.fetchProperty!!
-
-                val deep = match!!.deep
-                var conversion = match.conversion
+            private fun calculateConversion(sourceNode: SourceTree.Node) : Conversion<Any?,Any?>? {
+                var conversion = match!!.conversion
+                val deep = match.deep
 
                 // check conversion
 
@@ -318,33 +323,34 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 else if (sourceType != targetType && !deep )
                     conversion = tryConvert(sourceType, targetType) // try automatic conversion for low-level types
 
+                return conversion as Conversion<Any?,Any?>?
+            }
+
+            private fun makeOperation(tree: TargetTree, sourceNode: SourceTree.Node): Transformer.Operation<Mapping.Context> {
+                val sourceProperty: Transformer.Property<Mapping.Context> = sourceNode.fetchProperty!!
+
+                val deep = match!!.deep
+                val conversion = calculateConversion(sourceNode)
+
                 // compute operation
 
-                return if (isRoot) {
-                    // root node
+                var writeProperty = accessor.makeTransformerProperty( (isRoot && tree.composite == null) || (!isRoot && !parent!!.immutable)) // property, constant or synchronizer
 
-                    val writeProperty = accessor.makeTransformerProperty( tree.composite == null)
+                if (isRoot) {
+                    // chain, if composite?
 
-                    if (deep)
-                        Transformer.Operation(sourceProperty, mapDeep(sourceNode.accessor, accessor, writeProperty))
-                    else {
-                        if (tree.composite != null/*readOnly || immutable*/) {
-                            if (tree.composite != null)
-                                Transformer.Operation(sourceProperty, maybeConvert(Mapping.SetCompositeArgument(tree.composite!!, accessor), conversion))
-                            else
-                                throw MapperDefinitionException("${accessor.name} is read only")
-                        }
-                        else {
-                            Transformer.Operation(sourceProperty, maybeConvert(accessor.makeTransformerProperty(true/* write */), conversion))
-                        }
-                    }
+                    if (tree.composite != null)
+                        writeProperty = Mapping.SetCompositeArgument(tree.composite!!, accessor.index, writeProperty)
                 }
-                else  {
-                    Transformer.Operation(
-                        sourceProperty,
-                        maybeConvert(Mapping.SetCompositeArgument(parent!!.composite!!, accessor), conversion)
-                    )
-                }
+                else
+                    writeProperty = Mapping.SetCompositeArgument(parent!!.composite!!, accessor.index, writeProperty)
+
+                if ( deep )
+                    writeProperty = mapDeep(sourceNode.accessor, accessor, writeProperty)
+                else
+                    writeProperty = maybeConvert(writeProperty, conversion)
+
+                return Transformer.Operation(sourceProperty, writeProperty)
             }
 
             private fun <S : Any,T: Any> tryConvert(sourceType: KClass<S>, targetType: KClass<T>): Conversion<Any?,Any?> {
@@ -439,9 +445,9 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     return targetProperty // ugly
 
                 return if (isSourceMultiValued)
-                    Mapping.MapCollection2Collection(sourceType, targetType, target)
+                    Mapping.MapCollection2Collection(sourceType, targetType, targetProperty)
                 else
-                    Mapping.MapDeep(target)
+                    Mapping.MapDeep(targetProperty)
             }
         }
 
@@ -746,10 +752,6 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
         fun makeTransformerProperty(write: Boolean): Transformer.Property<Mapping.Context>
 
-        fun getValue(instance: Any): Any?
-
-        fun setValue(instance: Any, value: Any?, mappingContext: Mapping.Context)
-
         fun description() : String
     }
 
@@ -783,7 +785,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 if (write && readOnly && !clazz.isData)
                     throw MapperDefinitionException("property ${clazz.simpleName}.${readProperty.name} is read only")
 
-                if ( write && !clazz.isData )
+                if ( this.readProperty is KMutableProperty1<*, *> )
                     this.writeProperty = this.readProperty as KMutableProperty1<Any, Any>
             }
             catch (e: MapperDefinitionException) {
@@ -793,17 +795,15 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 throw MapperDefinitionException("unknown property ${clazz.simpleName}.${name}")
             }
 
-            this.index = clazz.declaredMemberProperties.indexOf(this.readProperty)
-            this.overallIndex = clazz.memberProperties.indexOf(this.readProperty)
-        }
-
-        override fun getValue(instance: Any): Any? {
-            return this.readProperty.get(instance)
-        }
-
-        override fun setValue(instance: Any, value: Any?, mappingContext: Mapping.Context) {
-            if ( value != null )
-                this.writeProperty?.set(instance, value)
+            if ( clazz.isData) {
+                val param = clazz.constructors.first().parameters.find { parameter-> parameter.name == this.name }
+                this.index = clazz.constructors.first().parameters.indexOf(param)
+                this.overallIndex = index
+            }
+            else {
+                this.index = clazz.declaredMemberProperties.indexOf(this.readProperty)
+                this.overallIndex = clazz.memberProperties.indexOf(this.readProperty)
+            }
         }
 
         // override Any
@@ -849,13 +849,9 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return Mapping.ConstantValue(constant)
         }
 
-        override fun getValue(instance: Any): Any {
+        /*TODO override fun getValue(instance: Any): Any {
             return constant
-        }
-
-        override fun setValue(instance: Any, value: Any?, mappingContext: Mapping.Context) {
-            // no
-        }
+        }*/
 
         override fun description() :String{
             return "constant ${constant}"
@@ -1280,7 +1276,7 @@ class Mapping<S : Any, T : Any>(
 
         // abstract
 
-        abstract fun set(instance: Any, value: Any?, accessor: MappingDefinition.Accessor?, index: Int, mappingContext: Context)
+        abstract fun set(instance: Any, value: Any?, property: Property<Context>?, index: Int, mappingContext: Context)
     }
 
     class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, nargs: Int) : CompositeBuffer(definition, nargs) {
@@ -1290,7 +1286,7 @@ class Mapping<S : Any, T : Any>(
 
         // override
 
-        override fun set(instance: Any, value: Any?, accessor: MappingDefinition.Accessor?, index: Int, mappingContext: Context) {
+        override fun set(instance: Any, value: Any?, property:  Property<Context>?, index: Int, mappingContext: Context) {
             arguments[index] = value
 
             // are we done?
@@ -1312,8 +1308,8 @@ class Mapping<S : Any, T : Any>(
 
         // public
 
-        override fun set(instance: Any, value: Any?, accessor: MappingDefinition.Accessor?, index: Int, mappingContext: Context) {
-            accessor!!.setValue(newInstance, value, mappingContext)
+        override fun set(instance: Any, value: Any?, property: Property<Context>?, index: Int, mappingContext: Context) {
+            property!!.set(newInstance, value, mappingContext)
 
             // are we done?
 
@@ -1328,19 +1324,19 @@ class Mapping<S : Any, T : Any>(
         fun receive(context: Context, instance: Any, value: Any)
     }
 
-    class SetPropertyValueReceiver(val accessor: MappingDefinition.Accessor) : ValueReceiver {
+    class SetPropertyValueReceiver(val property:  Property<Context>) : ValueReceiver {
         // implement ValueReceiver
 
         override fun receive(context: Context, instance: Any, value: Any) {
-            accessor.setValue(instance, value, context)
+            property.set(instance, value, context)
         }
     }
 
-    class SetMutableCompositePropertyValueReceiver(val composite: MappingDefinition.CompositeDefinition, val accessor: MappingDefinition.Accessor) : ValueReceiver {
+    class SetMutableCompositePropertyValueReceiver(val composite: MappingDefinition.CompositeDefinition, val property: Property<Context>) : ValueReceiver {
         // implement ValueReceiver
 
         override fun receive(context: Context, instance: Any, value: Any) {
-            context.getCompositeBuffer(composite.index).set(instance, value, accessor, 0, context)
+            context.getCompositeBuffer(composite.index).set(instance, value, property, 0, context)
         }
     }
 
@@ -1361,24 +1357,6 @@ class Mapping<S : Any, T : Any>(
     }
 
     // properties
-
-    open class AccessorValue(val accessor: MappingDefinition.Accessor) : Property<Context> {
-        // implement
-
-        override fun get(instance: Any, context: Context): Any? {
-            return accessor.getValue(instance)
-        }
-
-        override fun set(instance: Any, value: Any?, context: Context) {
-            accessor.setValue(instance, value, context)
-        }
-
-        // override
-
-        override fun toString(): String {
-            return accessor.toString()
-        }
-    }
 
     class ConstantValue(val value: Any?) : Property<Context> {
         // implement
@@ -1528,8 +1506,8 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class MapCollection2Collection(sourceClass: KClass<*>, targetClass: KClass<*>, property: MappingDefinition.Accessor)
-        : AccessorValue(property) {
+    class MapCollection2Collection(sourceClass: KClass<*>, targetClass: KClass<*>,  val property: Property<Context>)
+        : Property<Context> {
         // local classes
 
         interface Container<T> {
@@ -1691,19 +1669,27 @@ class Mapping<S : Any, T : Any>(
                 while ( reader.hasMore())
                     writer.set(reader.get())
 
-                super.set(instance, result, context)
+                property.set(instance, result, context)
             } // if
+        }
+
+        override fun get(instance: Any, context: Context): Any? {
+            return null
         }
 
         // override Any
 
         override fun toString() : String {
-            return "map deep collection ${this.accessor.name}"
+            return "map deep collection ${this.property}"
         }
     }
 
-    class MapDeep(property: MappingDefinition.Accessor) : AccessorValue(property) {
+    class MapDeep(val targetProperty: Property<Context>) : Property<Context> {
         // override AccessorValue
+
+        override fun get(insatnce: Any, context: Context): Any? {
+            return null
+        }
 
         override fun set(instance: Any, value: Any?, context: Context) {
             //context.setOrigin(origin)
@@ -1715,17 +1701,17 @@ class Mapping<S : Any, T : Any>(
                 //context.setOrigin(null)
             }
 
-            super.set(instance, transformed, context)
+            targetProperty.set(instance, transformed, context)
         }
 
         // override Any
 
         override fun toString() : String {
-            return "map deep " + accessor.description()
+            return "map deep " + targetProperty
         }
     }
 
-    class SetCompositeArgument(private val composite: MappingDefinition.CompositeDefinition, private val accessor: MappingDefinition.Accessor) : Property<Context> {
+    class SetCompositeArgument(private val composite: MappingDefinition.CompositeDefinition, private val index: Int, private val property: Property<Context>) : Property<Context> {
         // implement Property
 
         override operator fun get(instance: Any, context: Context): Any? {
@@ -1733,16 +1719,16 @@ class Mapping<S : Any, T : Any>(
         }
 
         override operator fun set(instance: Any, value: Any?, context: Context) {
-            context.getCompositeBuffer(composite.index).set(instance, value, accessor, accessor.overallIndex, context)
+            context.getCompositeBuffer(composite.index).set(instance, value, property, index, context)
         }
 
         // override Any
 
         override fun toString() : String {
             if ( composite.immutable())
-                return "${composite.clazz.simpleName}[${accessor.overallIndex}]"
+                return "${composite.clazz.simpleName}[${index}]"
             else
-                return "${composite.clazz.simpleName}.${accessor.description()}"
+                return "${composite.clazz.simpleName}.${property}" // TODO
         }
     }
 
@@ -1752,7 +1738,7 @@ class Mapping<S : Any, T : Any>(
     val targetClass: KClass<*> = definition.targetClass
     val isData = targetClass.isData
 
-    //val constructor = targetClass.constructors.find { ctr -> ctr.parameters.size == 0}!!
+    //TODO val constructor = targetClass.constructors.find { ctr -> ctr.parameters.size == 0}!!
 
     //fun createInstance() : Any {
     //    return constructor.callBy(NO_PARAMETERS)
