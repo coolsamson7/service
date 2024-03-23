@@ -34,11 +34,128 @@ class MapperTest {
 
     // test
 
-    class From (var name: String = "")
+    data class From(var name: String)
 
     data class To(var name: String)
 
+    class FooSource (var name: String, var bars: List<BarSource> = ArrayList() )
+
+    class FooDataSource (var name: String, var bars: List<BarSource> = ArrayList() )
+
+    data class FooTarget(var name: String, var bars: List<BarTarget> = ArrayList())
+
+    class BarSource (var name: String = "")
+
+    data class BarTarget(var name: String)
+
     class ReadOnly(val name: String)
+
+    @Test()
+    fun testDeepCollectionLevel1Data() {
+        // classes
+
+        class BarSource (var name: String = "")
+
+        data class BarTarget(var name: String)
+
+        data class InnerClassSource (var bars: List<BarSource> = ArrayList() )
+
+        data class InnerClassTarget (var bars: List<BarTarget> = ArrayList() )
+
+        class Source (var name: String, var innerClass: InnerClassSource)
+
+        data class Target(var name: String, var innerClass: InnerClassTarget)
+
+
+        // mapper
+
+        val mapper = Mapper(
+            Mapping.build(Source::class, Target::class) {
+                map { properties("name")}
+                map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
+            },
+            Mapping.build(BarSource::class, BarTarget::class) {
+                map { properties("name")}
+            })
+
+        val source = Source("source", InnerClassSource(arrayListOf(BarSource("bar"))))
+        val target = mapper.map<Target>(source)!!
+
+        assertEquals("source", target.name)
+        assertEquals(1, target.innerClass.bars.size)
+    }
+
+    @Test()
+    fun testDeepCollectionLevel1() {
+        // classes
+
+        class BarSource (var name: String = "")
+
+        data class BarTarget(var name: String)
+
+        class InnerClassSource (var bars: List<BarSource> = ArrayList() )
+
+        class InnerClassTarget (var bars: List<BarTarget> = ArrayList() )
+
+        class Source (var name: String, var innerClass: InnerClassSource)
+
+        data class Target(var name: String, var innerClass: InnerClassTarget)
+
+
+        // mapper
+
+        val mapper = Mapper(
+            Mapping.build(Source::class, Target::class) {
+                map { properties("name")}
+                map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
+            },
+            Mapping.build(BarSource::class, BarTarget::class) {
+                map { properties("name")}
+            })
+
+        val foo = Source("source", InnerClassSource(arrayListOf(BarSource("bar"))))
+
+        val result = mapper.map<Target>(foo)!!
+
+        assertEquals("source", result.name)
+        assertEquals(1, result.innerClass.bars.size)
+    }
+
+    @Test()
+    fun testTopLevelDeepCollection() {
+        val mapper = Mapper(
+            Mapping.build(FooSource::class, FooTarget::class) {
+                map { properties("name")}
+                map { "bars" to "bars" deep true}
+            },
+            Mapping.build(BarSource::class, BarTarget::class) {
+                map { properties("name")}
+            })
+
+        val source = FooSource("source", arrayListOf(BarSource("bar")))
+        val target = mapper.map<FooTarget>(source)!!
+
+        assertEquals("source", target.name)
+        assertEquals(1, target.bars.size)
+    }
+    @Test()
+    fun testTopLevelDataDeepCollection() {
+        val mapper = Mapper(
+            Mapping.build(FooDataSource::class, FooTarget::class) {
+                map { properties("name")}
+                map { "bars" to "bars" deep true}
+            },
+            Mapping.build(BarSource::class, BarTarget::class) {
+                map { properties("name")}
+            })
+
+        val source = FooDataSource("source", arrayListOf(BarSource("bar")))
+        val target = mapper.map<FooTarget>(source)!!
+
+        assertEquals("source", target.name)
+        assertEquals(1, target.bars.size)
+    }
+
 
     @Test()
     fun testReadOnlyException() {
@@ -72,8 +189,7 @@ class MapperTest {
 
     @Test
     fun test1() {
-        val from = From()
-        from.name = "from"
+        val from = From("from")
 
         val mapper = Mapper(
             Mapping.build(From::class, To::class) {

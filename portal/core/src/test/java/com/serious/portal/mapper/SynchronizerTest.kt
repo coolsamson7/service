@@ -62,10 +62,14 @@ class SynchronizerTest {
 
         val rootResult = rootMapper.map<RootEntity>(root)!!
 
+        assertEquals(1, rootResult.bars.size)
+
         // add another bar and remap
 
         root.bars.add(Bar(2))
 
         rootMapper.map(root, rootResult)
+
+        assertEquals(2, rootResult.bars.size)
     }
 }
