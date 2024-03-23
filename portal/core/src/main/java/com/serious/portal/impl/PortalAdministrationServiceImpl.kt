@@ -6,15 +6,14 @@ package com.serious.service.administration.portal.impl
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.serious.portal.*
-import com.serious.portal.configuration.ConfigurationMerger
+import com.serious.portal.mapper.*
+import com.serious.portal.mapper.Mapping
 import com.serious.portal.model.*
 import com.serious.portal.persistence.*
 import com.serious.portal.persistence.entity.ApplicationEntity
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
 import com.serious.portal.persistence.entity.StageEntity
-import com.serious.portal.version.VersionRange
 import jakarta.persistence.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -24,72 +23,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
-
-typealias PKGetter<T,PK> = (any: T) -> PK
-abstract class RelationSynchronizer<TO, ENTITY, PK> protected constructor(private val toPK: PKGetter<TO,PK>, private val entityPK: PKGetter<ENTITY,PK>) {
-    // protected
-
-    protected open fun missingPK(pk: PK) : Boolean {
-        return false
-    }
-    protected abstract fun provideEntity(referencedTransportObject: TO): ENTITY
-    protected open fun deleteEntity(entity: ENTITY) {}
-    protected open fun updateEntity(entity: ENTITY, transportObject: TO) {}
-
-    protected fun addEntityToRelation(relation: MutableCollection<ENTITY>, referencedEntity: ENTITY) {
-        relation.add(referencedEntity)
-    }
-
-    protected fun removeEntityFromRelation(relation: MutableCollection<ENTITY>, referencedEntity: ENTITY) {
-        relation.remove(referencedEntity)
-    }
-
-    // main function
-    fun synchronize(toRelation: Collection<TO>, entityRelation: MutableCollection<ENTITY>) {
-        val entityMap: MutableMap<PK, ENTITY> = HashMap()
-
-        // collect all entities in a map
-
-        for (entity in entityRelation)
-            entityMap[this.entityPK(entity)] = entity
-
-        // iterate over transport objects
-
-        for (to in toRelation) {
-            val key = this.toPK(to)
-
-            if (!missingPK(key)) {
-                val entity = entityMap[key]
-
-                if (entity == null)
-                    addEntityToRelation(entityRelation, provideEntity(to))
-
-                else {
-                    // possibly update entity
-
-                    updateEntity(entity, to)
-
-                    entityMap.remove(key)
-                } // else
-            } // if
-            else addEntityToRelation(entityRelation, provideEntity(to))
-        } // for
-
-        // deleted entities
-
-        for (deletedPersistent in entityMap.values)
-            if (isEntityToRemove(deletedPersistent)) {
-                removeEntityFromRelation(entityRelation, deletedPersistent)
-
-                deleteEntity(deletedPersistent)
-            } // if
-    }
-
-    protected fun isEntityToRemove(entity: ENTITY): Boolean {
-        return true
-    }
-}
-
 
 @Component
 @RestController
@@ -213,8 +146,6 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         throw NullPointerException("ouch")
     }
 
-    // NEW
-
     // stage
 
     @Transactional
@@ -231,56 +162,52 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
 
     // application
+
     @Transactional
     override fun createApplication(application: Application) : Application {
        this.applicationRepository.save(ApplicationEntity(application.name, application.configuration, ArrayList()))
 
         return application
     }
+
+    val readApplicationMapper = Mapper(
+        Mapping.build(ApplicationEntity::class, Application::class) {
+            map { properties("name", "configuration") }
+            map { "versions" to "versions" deep true }
+        },
+
+        Mapping.build(AssignedMicrofrontendEntity::class, AssignedMicrofrontend::class) {
+            map { properties("id", "version") }
+            map { path("microfrontend", "name") to "microfrontend" }
+        },
+
+        Mapping.build(ApplicationVersionEntity::class, ApplicationVersion::class) {
+            map { properties("id", "version", "configuration") }
+            map { "assignedMicrofrontends" to "assignedMicrofrontends" deep true}
+        })
+
     @Transactional
     override fun readApplication(application: String) : Optional<Application> {
-        fun mapAssignedMicrofrontend(entity: AssignedMicrofrontendEntity): AssignedMicrofrontend {
-            return AssignedMicrofrontend(
-                entity.id,
-                entity.microfrontend.name,
-                entity.version
-            )
-        }
+        val application :  Optional<Application> = this.applicationRepository.findById(application).map { entity -> readApplicationMapper.map<Application>(entity) }
 
-        fun mapVersion(entity: ApplicationVersionEntity): ApplicationVersion {
-            return ApplicationVersion(
-                entity.id,
-                entity.version,
-                entity.configuration,
-                entity.assignedMicrofrontends.map { entity -> mapAssignedMicrofrontend(entity)}
-            )
-        }
-
-        return this.applicationRepository.findById(application).map { entity ->
-            Application(
-                entity.name,
-                entity.configuration,
-                entity.versions.map { versionEntity -> mapVersion(versionEntity) }
-            )
-        }
+        println(readApplicationMapper.describe())
+        return application
     }
+
     @Transactional
     override fun updateApplication(application: Application) :Application {
-        var entity : ApplicationEntity = applicationRepository.findById(application.name).get()
-
-        entity.configuration = application.configuration
+        val entity : ApplicationEntity = applicationRepository.findById(application.name).get()
 
         // local class
 
-        val synchronizer = object : RelationSynchronizer<ApplicationVersion, ApplicationVersionEntity, Long?>(
-            fun (to: ApplicationVersion) : Long? { return to.id },
-            fun (entity: ApplicationVersionEntity) : Long { return entity.id }) {
+        val synch = object : RelationSynchronizer<ApplicationVersion, ApplicationVersionEntity, Long?>({ to: ApplicationVersion -> to.id }, { entity: ApplicationVersionEntity -> entity.id }) {
+            // override
 
             override fun missingPK(pk: Long?) : Boolean {
                 return pk == null || pk == 0L
             }
 
-            override fun provideEntity(referencedTransportObject: ApplicationVersion): ApplicationVersionEntity {
+            override fun provide(referencedTransportObject: ApplicationVersion, context: Mapping.Context): ApplicationVersionEntity {
                 val entity = ApplicationVersionEntity(
                     0, // pk
                     entity, // applicationVersion
@@ -296,20 +223,23 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 return entity
             }
 
-            override fun deleteEntity(entity: ApplicationVersionEntity) {
+            override fun delete(entity: ApplicationVersionEntity) {
                 applicationVersionRepository.deleteById(entity.id)
             }
 
-            override fun updateEntity(entity: ApplicationVersionEntity, transportObject: ApplicationVersion) {
+            override fun update(entity: ApplicationVersionEntity, transportObject: ApplicationVersion, context: Mapping.Context) {
                 entity.version = transportObject.version
                 entity.configuration = transportObject.configuration
-                //entity.microfrontend = transportObject.microfrontend
             }
         }
 
-        // synchronize
+        val mapper = Mapper(
+            Mapping.build(Application::class, ApplicationEntity::class) {
+                map { properties("name", "configuration") }
+                map { "versions" to "versions" synchronize synch }
+            })
 
-        synchronizer.synchronize(application.versions, entity.versions)
+        mapper.map(application, entity)
 
         // done
 
@@ -322,30 +252,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
     @Transactional
     override fun readApplications() : List<Application> {
-        fun mapAssignedMicrofrontend(entity: AssignedMicrofrontendEntity): AssignedMicrofrontend {
-            return AssignedMicrofrontend(
-                entity.id,
-                entity.microfrontend.name,
-                entity.version
-            )
-        }
+        val applications =  this.applicationRepository.findAll().map { entity -> readApplicationMapper.map<Application>(entity)!! }
 
-        fun mapVersion(entity: ApplicationVersionEntity): ApplicationVersion {
-            return ApplicationVersion(
-                entity.id,
-                entity.version,
-                entity.configuration,
-                entity.assignedMicrofrontends.map { entity -> mapAssignedMicrofrontend(entity)}
-            )
-        }
-
-        return this.applicationRepository.findAll().map { entity ->
-            Application(
-                entity.name,
-                entity.configuration,
-                entity.versions.map { versionEntity -> mapVersion(versionEntity) }
-            )
-        }
+        return applications
     }
 
     // application version
@@ -365,6 +274,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         return applicationVersion
     }
+
     @Transactional
     override fun updateApplicationVersion(application: ApplicationVersion) : ApplicationVersion {
         val entity = this.applicationVersionRepository.findById(application.id!!).get()
@@ -382,7 +292,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 return pk == null || pk == 0L
             }
 
-            override fun provideEntity(referencedTransportObject: AssignedMicrofrontend): AssignedMicrofrontendEntity {
+            override fun provide(referencedTransportObject: AssignedMicrofrontend, context: Mapping.Context): AssignedMicrofrontendEntity {
                 val entity = AssignedMicrofrontendEntity(
                         0, // pk
                         entity, // applicationVersion
@@ -397,24 +307,29 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                 return entity
             }
 
-            override fun deleteEntity(entity: AssignedMicrofrontendEntity) {
+            override fun delete(entity: AssignedMicrofrontendEntity) {
                 assignedMicrofrontendRepository.deleteById(entity.id)
             }
 
-            override fun updateEntity(entity: AssignedMicrofrontendEntity, transportObject: AssignedMicrofrontend) {
+            override fun update(entity: AssignedMicrofrontendEntity, transportObject: AssignedMicrofrontend, context: Mapping.Context) {
                 entity.version = transportObject.version
                 //entity.microfrontend = transportObject.microfrontend
             }
         }
 
-        // synchronize
+        val mapper = Mapper(
+            Mapping.build(ApplicationVersion::class, ApplicationVersionEntity::class) {
+                //map { properties("version", "configuration") }
+                map { "versions" to "versions" synchronize synchronizer }
+            })
 
-        synchronizer.synchronize(application.assignedMicrofrontends, entity.assignedMicrofrontends)
+        mapper.map(application, entity)
 
         // done
 
         return application
     }
+
     @Transactional
     override fun deleteApplicationVersion(application: String, version: String) {
         val applicationEntity = this.applicationRepository.findById(application).get()
@@ -428,42 +343,30 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     // microfrontend
 
+    val readMicrofrontendMapper = Mapper(
+        Mapping.build(MicrofrontendEntity::class, Microfrontend::class) {
+            map { properties("name", "enabled", "configuration") }
+            map { "versions" to "versions" deep true }
+        },
+
+        Mapping.build(MicrofrontendVersionEntity::class, MicrofrontendVersion::class) {
+            map { properties("id", "version", "configuration", "enabled") }
+            map { path("microfrontend", "name") to "microfrontend" }
+            map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
+            map { "instances" to "instances" deep true }
+            map { path("applicationVersion", "id") to "applicationVersion" }
+        },
+
+        Mapping.build(MicrofrontendInstanceEntity::class, MicrofrontendInstance::class) {
+            map { path("microfrontendVersion", "microfrontend", "name") to "microfrontend" }
+            map { path("microfrontendVersion", "version") to "version" }
+            map { properties("uri", "enabled", "health", "configuration", "stage") }
+            map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
+        })
+
     @Transactional
     override fun readMicrofrontends() : List<Microfrontend> {
-        fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
-            return MicrofrontendInstance(
-                entity.microfrontendVersion.microfrontend.name,
-                entity.microfrontendVersion.version,
-                entity.uri,
-                entity.enabled,
-                entity.health,
-                entity.configuration,
-                objectMapper.readValue(entity.manifest, Manifest::class.java),
-                entity.stage,
-            )
-        }
-
-        fun mapVersion(entity: MicrofrontendVersionEntity): MicrofrontendVersion {
-            return MicrofrontendVersion(
-                entity.id,
-                entity.microfrontend.name,
-                entity.version,
-                objectMapper.readValue(entity.manifest, Manifest::class.java),
-                entity.configuration,
-                entity.enabled,
-                entity.instances.map { entity -> mapInstance(entity) },
-                entity.applicationVersion?.id
-            )
-        }
-
-        return this.microfrontendRepository.findAll().map { entity ->
-            Microfrontend(
-                entity.name,
-                entity.enabled,
-                entity.configuration,
-                entity.versions.map { entity -> mapVersion(entity) }
-            )
-        }
+        return this.microfrontendRepository.findAll().map { entity -> readMicrofrontendMapper.map(entity)!! }
     }
 
     @Transactional
@@ -481,31 +384,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Transactional
     override fun readMicrofrontendVersions() : List<MicrofrontendVersion> {
-        fun mapInstance(entity: MicrofrontendInstanceEntity): MicrofrontendInstance {
-            return MicrofrontendInstance(
-                entity.microfrontendVersion.microfrontend.name,
-                entity.microfrontendVersion.version,
-                entity.uri,
-                entity.enabled,
-                entity.health,
-                entity.configuration,
-                objectMapper.readValue(entity.manifest, Manifest::class.java),
-                entity.stage,
-            )
-        }
-
-        return this.microfrontendVersionRepository.findAll().map { entity ->
-            MicrofrontendVersion(
-                entity.id,
-                entity.microfrontend.name,
-                entity.version,
-                objectMapper.readValue(entity.manifest, Manifest::class.java),
-                entity.configuration,
-                entity.enabled,
-                entity.instances.map { instanceEntity -> mapInstance(instanceEntity) },
-                entity.applicationVersion?.id,
-            )
-        }
+        return this.microfrontendVersionRepository.findAll().map { entity -> readMicrofrontendMapper.map(entity)!! }
     }
 
     @Transactional
@@ -541,31 +420,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Transactional
     override fun registerMicrofrontendInstance(manifest: Manifest) : MicrofrontendRegistryResult {
-        // local functions
-
-        fun mapMicrofrontend(entity: MicrofrontendEntity): Microfrontend {
-            return Microfrontend(
-                entity.name,
-                entity.enabled,
-                entity.configuration,
-                ArrayList() // leave it empty
-            )
-        }
-
-        fun mapVersion(entity: MicrofrontendVersionEntity): MicrofrontendVersion {
-            return MicrofrontendVersion(
-                entity.id,
-                entity.microfrontend.name,
-                entity.version,
-                objectMapper.readValue(entity.manifest, Manifest::class.java),
-                entity.configuration,
-                entity.enabled,
-                ArrayList(), // leave it empty
-                entity.applicationVersion?.id
-            )
-        }
-
-        //go
+        // go
 
         val url = manifest.remoteEntry
 
@@ -584,65 +439,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             val microfrontendEntity = this.microfrontendRepository.findById(manifest.name).get()
             val microfrontendVersion = microfrontendEntity.versions.find { version -> version.version == manifest.version }
 
+            println(readMicrofrontendMapper.describe())
             return MicrofrontendRegistryResult(
                 null,
-                mapMicrofrontend(microfrontendEntity),
-                mapVersion(microfrontendVersion!!),
+                readMicrofrontendMapper.map(microfrontendEntity),
+                readMicrofrontendMapper.map(microfrontendVersion!!),
                 instance,
                 "registered"
             )
         }
-    }
-
-    // TEST
-
-    @Autowired
-    lateinit var merger : ConfigurationMerger
-
-    @Transactional
-    override fun computeApplicationVersionConfiguration(application: Long) {
-        // TODO: cache Long -> ... ( Deployment )
-        // read version
-
-        val applicationVersion : ApplicationVersionEntity = this.applicationVersionRepository.findById(application).get()
-
-        val configurations = ArrayList<String>()
-
-        configurations.add(applicationVersion.application.configuration)
-        configurations.add(applicationVersion.configuration)
-
-        // local function
-
-        fun matchingVersion(microfrontend: MicrofrontendEntity, range: VersionRange) :MicrofrontendVersionEntity? {
-            val versions = ArrayList(microfrontend.versions)
-            versions.sortByDescending { version -> version.version }
-
-            for ( version in versions)
-                if ( range.matches(com.serious.portal.version.Version(version.version)))
-                    return version
-
-            return null
-        }
-
-        val versions = ArrayList<MicrofrontendVersionEntity>()
-
-        for ( assigned in applicationVersion.assignedMicrofrontends) {
-            assigned.microfrontend.configuration
-
-            val match = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
-            if ( match != null) {
-                versions.add(match)
-                configurations.add(match.configuration)
-
-                println(match.microfrontend.name + "." + match.version)
-            }
-            else {
-                println("no match for " + assigned.version)
-            }
-        }
-
-        val configuration = merger.mergeConfigurationValues(configurations)
-
-        println("configuration: " + configuration)
     }
 }

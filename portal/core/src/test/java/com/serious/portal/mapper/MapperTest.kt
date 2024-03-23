@@ -51,6 +51,35 @@ class MapperTest {
     class ReadOnly(val name: String)
 
     @Test()
+    fun testPath() {
+        // classes
+
+        data class Price(val currency: String, val value: Long)
+
+        class Product (var name: String = "", val price1: Price?, val price2: Price)
+
+        data class Target(var name: String, val price1: Long?, val price2: Long)
+
+
+        // mapper
+
+        val mapper = Mapper(
+            Mapping.build(Product::class, Target::class) {
+                map { properties("name")}
+                map { path("price1", "value") to "price1"}
+                map { path("price2", "value") to "price2"}
+            })
+
+        println(mapper.describe())
+
+        val source = Product("product", null/*Price("EU", 1)*/, Price("EU", 2))
+        val target = mapper.map<Target>(source)!!
+
+        assertEquals(1, target.price1)
+        assertEquals(2, target.price2)
+    }
+
+    @Test()
     fun testDeepCollectionLevel1Data() {
         // classes
 
@@ -170,6 +199,18 @@ class MapperTest {
         catch(exception: MapperDefinitionException) {
             println()
         }
+    }
+
+    @Test()
+    fun testConstant() {
+        val mapper = Mapper(
+                Mapping.build(From::class, To::class) {
+                    map { constant("name") to "name"}
+                })
+
+        val result = mapper.map<To>(From(""))!!
+
+        assertEquals("name", result.name)
     }
 
     @Test()

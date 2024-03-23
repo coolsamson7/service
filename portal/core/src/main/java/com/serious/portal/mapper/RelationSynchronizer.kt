@@ -7,8 +7,9 @@ package com.serious.portal.mapper
 
 import java.util.HashMap
 
+typealias PKGetter<T,PK> = (any: T) -> PK
 
-abstract class MapperRelationSynchronizer<TO, ENTITY, PK> protected constructor(private val toPK: PKGetter<TO,PK>, private val entityPK: PKGetter<ENTITY,PK>) {
+abstract class RelationSynchronizer<TO, ENTITY, PK> protected constructor(private val toPK: PKGetter<TO,PK>, private val entityPK: PKGetter<ENTITY,PK>) {
     // protected
 
     protected open fun missingPK(pk: PK) : Boolean {

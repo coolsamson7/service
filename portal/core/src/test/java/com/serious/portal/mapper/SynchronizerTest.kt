@@ -32,7 +32,7 @@ class SynchronizerTest {
     }
 
 
-    class BarSynchronizer : MapperRelationSynchronizer<Bar, BarEntity, Int>({bar: Bar -> bar.id}, {bar: BarEntity -> bar.id}) {
+    class BarSynchronizer : RelationSynchronizer<Bar, BarEntity, Int>({ bar: Bar -> bar.id}, { bar: BarEntity -> bar.id}) {
         override fun provide(bar: Bar, context: Mapping.Context): BarEntity {
             return context.mapper.map(bar, context)!!
         }

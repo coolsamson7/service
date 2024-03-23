@@ -13,13 +13,10 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.reflect
 
 typealias Conversion<I, O> = (I) -> O
+
 typealias Finalizer<S, T> = (S,T) -> Unit
 
-typealias PKGetter<T,PK> = (any: T) -> PK
-
-
-// mapper
-
+// top level functions
 
 fun constant(value: Any) : MappingDefinition.Accessor {
     return MappingDefinition.ConstantAccessor(value)
@@ -116,7 +113,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                         // inner node or leaf
 
                         fetchProperty = Mapping.PeekValueProperty(
-                            parent!!.index,
+                            parent!!.stackIndex,
                             accessor.makeTransformerProperty(false /* read */)
                         )
                         type = accessor.type
@@ -127,7 +124,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     if (!isLeaf) {
                         // store the intermediate result
                         stackIndex = sourceTree.stackSize++ // that's my index
-                        operations.add(Transformer.Operation(fetchProperty!!, Mapping.PushValueProperty(index)))
+                        operations.add(Transformer.Operation(fetchProperty!!, Mapping.PushValueProperty(stackIndex)))
                     }
                 }
             }
@@ -320,7 +317,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     if ( to != targetType)
                         throw MapperDefinitionException("conversion target type ${to.simpleName} does not match ${targetType.simpleName}", null)
                 }
-                else if (sourceType != targetType && !deep )
+                else if (sourceType !== targetType && !sourceType.isSubclassOf(targetType) && !deep )
                     conversion = tryConvert(sourceType, targetType) // try automatic conversion for low-level types
 
                 return conversion as Conversion<Any?,Any?>?
@@ -559,7 +556,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             var deep = false
             var conversion: Conversion<Any,Any>? = null
-            var synchronizer: MapperRelationSynchronizer<Any,Any,Any?>? = null
+            var synchronizer: RelationSynchronizer<Any,Any,Any?>? = null
             var sourceAccessor : Array<Accessor>? = null
             var targetAccessor : Array<Accessor>? = null
             var properties : Properties? = null
@@ -607,6 +604,20 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return This
             }
 
+            infix fun Accessor.to(target: String) :MapBuilder<S,T> {
+                sourceAccessor = arrayOf(this)
+                targetAccessor = arrayOf(PropertyAccessor(target))
+
+                return This
+            }
+
+            infix fun Accessor.to(target: Array<String>) :MapBuilder<S,T> {
+                sourceAccessor = arrayOf(this)
+                targetAccessor = target.map { PropertyAccessor(it) }.toTypedArray()
+
+                return This
+            }
+
             // property
 
             infix fun KProperty1<S,*>.to(target: KProperty1<T,*>):MapBuilder<S,T> {
@@ -624,8 +635,8 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // synchronize
 
-            infix fun<TO: Any,ENTITY:Any, PK:Any?> synchronize(synchronizer: MapperRelationSynchronizer<TO,ENTITY, PK>) : MapBuilder<S,T> {
-                this.synchronizer = synchronizer as MapperRelationSynchronizer<Any,Any,Any?>
+            infix fun<TO: Any,ENTITY:Any, PK:Any?> synchronize(synchronizer: RelationSynchronizer<TO,ENTITY, PK>) : MapBuilder<S,T> {
+                this.synchronizer = synchronizer as RelationSynchronizer<Any,Any,Any?>
                 this.deep = true
 
                 return this
@@ -1143,7 +1154,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         return this
     }
 
-    fun <TO: Any, ENTITY: Any, PK: Any?> synchronize(from: String, to: String, synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>): MappingDefinition<S, T> {
+    fun <TO: Any, ENTITY: Any, PK: Any?> synchronize(from: String, to: String, synchronizer: RelationSynchronizer<TO, ENTITY, PK>): MappingDefinition<S, T> {
         operations.add(MapAccessor(
             arrayOf(PropertyAccessor(from)),
             arrayOf(Mapping.RelationshipAccessor(to, synchronizer)),
@@ -1404,7 +1415,7 @@ class Mapping<S : Any, T : Any>(
             return if (value != null)
                 property.get(value, context)
             else
-                UNDEFINED
+                null//UNDEFINED // TODO!!!!!!!!!
         }
 
         override fun set(instance: Any, value: Any?, context: Context) {
@@ -1472,7 +1483,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class SynchronizeMultiValuedRelationship<TO:Any, ENTITY:Any, PK:Any?>(val property: KProperty1<Any, Any?>, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>)
+    class SynchronizeMultiValuedRelationship<TO:Any, ENTITY:Any, PK:Any?>(val property: KProperty1<Any, Any?>, val synchronizer: RelationSynchronizer<TO, ENTITY, PK>)
         :Property<Context> {
         // override
 
@@ -1493,7 +1504,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class RelationshipAccessor<TO: Any, ENTITY: Any, PK: Any?>(accessor: String, val synchronizer: MapperRelationSynchronizer<TO, ENTITY, PK>) : MappingDefinition.PropertyAccessor(accessor) {
+    class RelationshipAccessor<TO: Any, ENTITY: Any, PK: Any?>(accessor: String, val synchronizer: RelationSynchronizer<TO, ENTITY, PK>) : MappingDefinition.PropertyAccessor(accessor) {
         override fun makeTransformerProperty(write: Boolean): Property<Context> {
             return if (!write)
                 throw MapperDefinitionException("error")
@@ -1667,7 +1678,7 @@ class Mapping<S : Any, T : Any>(
                 val result = writer.create(reader.size())
 
                 while ( reader.hasMore())
-                    writer.set(reader.get())
+                    writer.set(context.mapper.map(reader.get(), context)!!)
 
                 property.set(instance, result, context)
             } // if

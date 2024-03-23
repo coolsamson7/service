@@ -23,7 +23,7 @@ class InheritanceTest {
     // test
 
     @Test
-    fun testVersion() {
+    fun testInheritance() {
         val baseMapping = Mapping.build(Base::class,Base::class) {
             map { properties() }
         }

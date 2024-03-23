@@ -17,14 +17,20 @@ class CollectionTest {
     }
 
     class Bar {
-        var name: String = "line"
+        var name: String = "bar"
+
+        var baz : Array<Baz> = arrayOf(Baz())
+    }
+
+    class Baz {
+        var name: String = "baz"
     }
 
 
     // test
 
     @Test
-    fun testVersion() {
+    fun testCollection() {
         val mapper = Mapper(
             Mapping.build(Foo::class, Foo::class) {
                 map { "barArray" to "barList" deep true}
@@ -33,18 +39,23 @@ class CollectionTest {
 
 
             Mapping.build(Bar::class, Bar::class) {
-                map { properties() }
+                map { "name" to "name" }
+                map { "baz" to "baz" deep true}
+            },
+
+            Mapping.build(Baz::class, Baz::class) {
+                map { "name" to "name" }
             }
         )
 
         val foo = Foo()
 
-        val result = mapper.map<Foo>(foo)
+        val result = mapper.map<Foo>(foo)!!
 
-
-        // eq
-
-        //assertEquals(true, Version("1.0").eq(Version("1.0")), "expected eq")
+        assertEquals(1, result.barArray.size)
+        assertEquals(1, result.barList.size)
+        assertEquals(1, result.barArray[0].baz.size)
+        assertEquals("baz", result.barArray[0].baz[0].name)
         //assertEquals(false, Version("1.0").eq(Version("1.1.1.1")), "expected !eq")
     }
 }

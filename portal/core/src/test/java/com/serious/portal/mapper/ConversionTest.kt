@@ -22,7 +22,7 @@ class ConversionTest {
     // test
 
     @Test
-    fun testVersion() {
+    fun testConversion() {
         val mapper = Mapper(
             Mapping.build(Foo::class, Foo::class) {
                 map { "short" to "short" }
