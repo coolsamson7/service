@@ -16,26 +16,6 @@ typealias Conversion<I, O> = (I) -> O
 
 typealias Finalizer<S, T> = (S,T) -> Unit
 
-// top level functions
-
-fun constant(value: Any) : MappingDefinition.Accessor {
-    return MappingDefinition.ConstantAccessor(value)
-}
-
-fun properties(vararg properties: String): MappingDefinition.Properties {
-    return MappingDefinition.Properties(*properties)
-}
-
-fun path(vararg path: String): Array<String> {
-    return path as Array<String> // ha !
-}
-
-fun property(name: String) : MappingDefinition.PropertyAccessor {
-    return MappingDefinition.PropertyAccessor(name)
-}
-
-// local classes
-
 class OperationBuilder(private val matches: MutableCollection<MappingDefinition.Match>) {
     // local classes
 
@@ -658,6 +638,20 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return this
             }
 
+            // path
+
+            fun path(vararg path: String): Array<String> {
+                return path as Array<String> // ha !
+            }
+
+            fun property(name: String) : PropertyAccessor {
+                return PropertyAccessor(name)
+            }
+
+            fun constant(value: Any) : Accessor {
+                return ConstantAccessor(value)
+            }
+
             // properties
 
             fun properties(vararg property: String): MapBuilder<S,T>  {
@@ -859,10 +853,6 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
             else
                 return Mapping.ConstantValue(constant)
         }
-
-        /*TODO override fun getValue(instance: Any): Any {
-            return constant
-        }*/
 
         override fun description() :String{
             return "constant ${constant}"
@@ -1186,7 +1176,7 @@ class Mapping<S : Any, T : Any>(
         class State(context: Context) {
             // instance data
 
-            private val compositeBuffers: Array<CompositeBuffer>
+            private val compositeBuffers: Array<CompositeBuffer?>
             private val stack: Array<Any?>
             var result : Any? = null
             var nextState: State? = context.currentState
@@ -1214,7 +1204,7 @@ class Mapping<S : Any, T : Any>(
         private var level = 0
         private val sourceAndTarget = arrayOfNulls<Any>(2)
         private val mappedObjects: MutableMap<Any, Any> = IdentityHashMap()
-        private var compositeBuffers: Array<CompositeBuffer> = NO_BUFFERS
+        private var compositeBuffers: Array<CompositeBuffer?> = NO_BUFFERS
         private var stack: Array<Any?> = arrayOf()
 
         var currentState : State? = null
@@ -1242,19 +1232,19 @@ class Mapping<S : Any, T : Any>(
             return mappedObjects[source]
         }
 
-        private fun setupComposites(buffers: Array<CompositeBuffer>): Array<CompositeBuffer> {
+        private fun setupComposites(buffers: Array<CompositeBuffer?>): Array<CompositeBuffer?> {
             val saved = compositeBuffers
             compositeBuffers = buffers
 
             return saved
         }
 
-        fun setup(compositeDefinitions: Array<MappingDefinition.CompositeDefinition>, stackSize: Int): Array<CompositeBuffer> {
-            val buffers = compositeDefinitions.map { definition -> definition.createBuffer(mapper) }.toTypedArray()
+        fun setup(compositeDefinitions: Array<MappingDefinition.CompositeDefinition>, stackSize: Int): Array<CompositeBuffer?> {
+            //val buffers = compositeDefinitions.map { definition -> definition.createBuffer(mapper) }.toTypedArray()
 
-            /*TODOval buffers = arrayOfNulls<CompositeBuffer>(compositeDefinitions.size)
+            val buffers = arrayOfNulls<CompositeBuffer?>(compositeDefinitions.size)
             for ( i in 0..<compositeDefinitions.size)
-                buffers[i] = compositeDefinitions[i].createBuffer(mapper)*/
+                buffers[i] = compositeDefinitions[i].createBuffer(mapper)
 
             stack = if (stackSize == 0) NO_STACK else arrayOfNulls(stackSize)
 
@@ -1264,7 +1254,7 @@ class Mapping<S : Any, T : Any>(
         }
 
         fun getCompositeBuffer(compositeIndex: Int): CompositeBuffer {
-            return compositeBuffers[compositeIndex]
+            return compositeBuffers[compositeIndex]!!
         }
 
         fun push(value: Any?, index: Int) {
@@ -1276,7 +1266,7 @@ class Mapping<S : Any, T : Any>(
         }
 
         companion object {
-            private val NO_BUFFERS = arrayOf<CompositeBuffer>()
+            private val NO_BUFFERS = arrayOf<CompositeBuffer?>()
             private val NO_STACK = arrayOfNulls<Any>(0)
         }
     }
@@ -1415,7 +1405,7 @@ class Mapping<S : Any, T : Any>(
             return if (value != null)
                 property.get(value, context)
             else
-                null//UNDEFINED // TODO!!!!!!!!!
+                null
         }
 
         override fun set(instance: Any, value: Any?, context: Context) {
@@ -1739,7 +1729,7 @@ class Mapping<S : Any, T : Any>(
             if ( composite.immutable())
                 return "${composite.clazz.simpleName}[${index}]"
             else
-                return "${composite.clazz.simpleName}.${property}" // TODO
+                return "${composite.clazz.simpleName}.${property}"
         }
     }
 
@@ -1875,11 +1865,21 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) {
 
     // public
 
+    fun createContext() : Mapping.Context {
+        return Mapping.Context(this)
+    }
+
     fun <T:Any>map(source: Any?): T? {
         if ( source == null)
             return null
 
         return map(source, Mapping.Context(this))
+    }
+
+    fun <T:Any>map(source: List<Any?>): List<T?> {
+       val context = createContext()
+
+        return source.map { element -> map(element, context) }
     }
 
     fun <S:Any,T:Any>map(source: S?, target: T): T? {
@@ -1919,10 +1919,11 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) {
         if ( target == null) {
             if ( mapping.isData )
                 target = context // hmm....
-            else
-                target = mapping.targetClass.createInstance() // TODO
+            else {
+                target = mapping.targetClass.createInstance()
 
-            context.remember(source, target)
+                context.remember(source, target)
+            }
         }
 
         val state = mapping.setupContext(context)
@@ -1931,6 +1932,7 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) {
 
             if ( mapping.isData ) {
                 target =  context.currentState!!.result
+
                 context.remember(source, target!!)
             }
         }
