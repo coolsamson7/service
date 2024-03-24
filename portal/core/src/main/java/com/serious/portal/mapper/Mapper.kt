@@ -16,6 +16,63 @@ typealias Conversion<I, O> = (I) -> O
 
 typealias Finalizer<S, T> = (S,T) -> Unit
 
+class ConversionFactory {
+    // local classes
+    data class ConversionKey(val from : KClass<*>, val to: KClass<*>)
+
+    // instance data
+
+    val conversions = HashMap<ConversionKey,Conversion<*,*>>()
+
+    init {
+        // short
+
+        register {value: Short -> value.toInt() }
+        register {value: Short -> value.toLong() }
+        register {value: Short -> value.toDouble() }
+        register {value: Short -> value.toFloat() }
+
+        // int
+
+        register {value: Int -> value.toShort() }
+        register {value: Int -> value.toLong() }
+        register {value: Int -> value.toDouble() }
+        register {value: Int -> value.toFloat() }
+
+        // long
+
+        register {value: Long -> value.toShort() }
+        register {value: Long -> value.toInt() }
+        register {value: Long -> value.toDouble() }
+        register {value: Long -> value.toFloat() }
+
+        // double
+
+        register {value: Double -> value.toInt().toShort() }
+        register {value: Double -> value.toInt() }
+        register {value: Double -> value.toLong() }
+        register {value: Double -> value.toFloat() }
+
+        // float
+
+        register {value: Float -> value.toInt().toShort() }
+        register {value: Float -> value.toInt() }
+        register {value: Float -> value.toLong() }
+        register {value: Float -> value.toDouble() }
+    }
+
+    fun <I:Any,O:Any> register(conversion: Conversion<I,O>) {
+        val from = conversion.reflect()!!.parameters[0].type.jvmErasure
+        val to = conversion.reflect()!!.returnType.jvmErasure
+
+        conversions.put(ConversionKey(from,to), conversion)
+    }
+
+    fun <I:Any,O:Any> findConversion(from : KClass<I>, to: KClass<O>) :Conversion<I,O>? {
+        return conversions.get(ConversionKey(from,to)) as Conversion<I,O>?
+    }
+}
+
 class OperationBuilder(private val matches: MutableCollection<MappingDefinition.Match>) {
     // local classes
 
@@ -330,71 +387,13 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 return Transformer.Operation(sourceProperty, writeProperty)
             }
 
-            private fun <S : Any,T: Any> tryConvert(sourceType: KClass<S>, targetType: KClass<T>): Conversion<Any?,Any?> {
-                if ( sourceType == Short::class) {
-                    return when (targetType) {
-                        Int::class -> {value -> (value as Short).toInt() }
-                        Long::class -> {value -> (value as Short).toLong() }
-                        Double::class -> {value -> (value as Short).toDouble() }
-                        Float::class -> {value -> (value as Short).toFloat() }
+            private fun <S : Any,T: Any> tryConvert(sourceType: KClass<S>, targetType: KClass<T>): Conversion<S,T> {
+                val conversion = ConversionFactory().findConversion(sourceType, targetType) // TODO
 
-                        else -> {
-                            throw MapperDefinitionException("unknown conversion from ${sourceType.simpleName} to ${targetType.simpleName}", null)
-                        }
-                    }
-                }
-                else if ( sourceType == Int::class) {
-                    return when (targetType) {
-                        Short::class -> {value -> (value as Int).toShort() }
-                        Long::class -> {value -> (value as Int).toLong() }
-                        Double::class -> {value -> (value as Int).toDouble() }
-                        Float::class -> {value -> (value as Int).toFloat() }
-
-                        else -> {
-                            throw MapperDefinitionException("unknown conversion from ${sourceType.simpleName} to ${targetType.simpleName}", null)
-                        }
-                    }
-                }
-                else if ( sourceType == Long::class) {
-                    return when (targetType) {
-                        Short::class -> {value -> (value as Long).toShort() }
-                        Int::class -> {value -> (value as Long).toInt() }
-                        Double::class -> {value -> (value as Long).toDouble() }
-                        Float::class -> {value -> (value as Long).toFloat() }
-
-                        else -> {
-                            throw MapperDefinitionException("unknown conversion from ${sourceType.simpleName} to ${targetType.simpleName}", null)
-                        }
-                    }
-                }
-                else if ( sourceType == Float::class) {
-                    return when (targetType) {
-                        Short::class -> {value -> (value as Float).toInt().toShort() }
-                        Int::class -> {value -> (value as Float).toInt() }
-                        Long::class -> {value -> (value as Float).toLong() }
-                        Double::class -> {value -> (value as Float).toDouble() }
-
-                        else -> {
-                            throw MapperDefinitionException("unknown conversion from ${sourceType.simpleName} to ${targetType.simpleName}", null)
-                        }
-                    }
-                }
-
-                else if ( sourceType == Double::class) {
-                    return when (targetType) {
-                        Short::class -> {value -> (value as Double).toInt().toShort() }
-                        Int::class -> {value -> (value as Double).toInt() }
-                        Long::class -> {value -> (value as Double).toLong() }
-                        Double::class -> {value -> (value as Double).toDouble() }
-                        Float::class -> {value -> (value as Double).toFloat() }
-
-                        else -> {
-                            throw MapperException("unknown conversion")
-                        }
-                    }
-                }
-
-                throw MapperDefinitionException("cannot convert ${sourceType.simpleName} to ${targetType.simpleName}", null)
+               if ( conversion != null)
+                   return conversion
+                else
+                    throw MapperDefinitionException("cannot convert ${sourceType.simpleName} to ${targetType.simpleName}", null)
             }
 
             private fun maybeConvert(property: Transformer.Property<Mapping.Context>, conversion: Conversion<*,*>?): Transformer.Property<Mapping.Context> {
@@ -1800,16 +1799,14 @@ fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda:
     return definition
 }
 
-//fun <S : Any, T : Any> mapping(sourceClass: KClass<S>, targetClass: KClass<T>): MappingDefinition<S, T> {
-//    return MappingDefinition(sourceClass, targetClass)
-//}
-
 // one mapper has n mappings
 
 class Mapper(vararg definitions: MappingDefinition<*, *>) {
     // instance data
 
     private var mappings = HashMap<KClass<*>, Mapping<out Any, out Any>>()
+
+    var conversionFactory = ConversionFactory()
 
     // constructor
 
