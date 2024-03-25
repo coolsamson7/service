@@ -12,15 +12,10 @@ import kotlin.test.assertEquals
 class SynchronizerTest {
     // local classes
 
-    class Bar(var id: Int) {
-        var name : String = ""
+    class Bar(var id: Int, var name: String) {
     }
 
-    class BarEntity(var id: Int) {
-        constructor() : this(0) {
-        }
-
-        var name : String = ""
+    class BarEntity(var id: Int, var name: String) {
     }
 
     class Root {
@@ -44,11 +39,11 @@ class SynchronizerTest {
 
     // test
 
+    // TODO. set 1 on mapping context???
     @Test
     fun test() {
         val root = Root()
-        val bar = Bar(1)
-        bar.name = "bar"
+        val bar = Bar(1, "bar")
         root.bars.add(bar)
 
         val rootMapper = Mapper(
@@ -59,8 +54,9 @@ class SynchronizerTest {
             mapping(Bar::class, BarEntity::class) {
              map {"id" to "id" } // ?
              map {"name" to "name" }
-        }
-        )
+        })
+
+        println(rootMapper.describe())
 
         val rootResult = rootMapper.map<RootEntity>(root)!!
 
@@ -68,7 +64,7 @@ class SynchronizerTest {
 
         // add another bar and remap
 
-        root.bars.add(Bar(2))
+        root.bars.add(Bar(2, "name"))
 
         rootMapper.map(root, rootResult)
 

@@ -6,6 +6,8 @@ package com.serious.portal.mapper
  */
 
 import org.junit.jupiter.api.Test
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.valueParameters
 import kotlin.test.assertEquals
 
 class MapperTest {
@@ -13,7 +15,7 @@ class MapperTest {
 
     data class Money(
         val currency: String,
-        val value: Long
+        var value: Long
     )
 
     open class Base {
@@ -48,7 +50,9 @@ class MapperTest {
 
     data class BarTarget(var name: String)
 
-    class ReadOnly(val name: String)
+    class ReadOnly {
+        val name = "read-only"
+    }
 
     @Test()
     fun testPath() {
@@ -60,6 +64,11 @@ class MapperTest {
 
         data class Target(var name: String, val price1: Long?, val price2: Long)
 
+        // unnu????
+        class Target1(val price1: Long?, val price2: Long) {
+            var name: String = ""
+            val b = 1
+        }
 
         // mapper
 
@@ -286,6 +295,65 @@ class MapperTest {
         val ms = System.currentTimeMillis() - start
         println("" + loops + " loops in " + ms + "ms, avg " + ms.toDouble() / loops)
 
+
+    }
+
+    class A(val id: Long, foo: Long = 0) {
+        val id1 : Long
+        var b : Int = 1
+
+        init {
+            id1 = foo
+        }
+    }
+
+    class B(var id: Long, foo: Long = 0) {
+        val id1 : Long
+        var b : Int = 1
+
+        init {
+            id1 = foo
+        }
+    }
+
+    class C(val a: Int, foo: Long = 0) {
+        val b = 1
+        var c = 1
+    }
+
+    class D(val c: Int, var a: Int) {
+        var b = 1
+        val d = 1
+    }
+
+    // map "a" to "a", "b" to "b","c" to "c"
+    // a=1, c=0, b = b
+
+    @Test
+    fun foo() {
+        val members = D::class.memberProperties
+        val ctrs = D::class.constructors
+
+        val map = arrayOf("c", "a")
+
+        // find constructors that declare exactly least a,c and remebers indexes
+
+        val ctr = ctrs.filter { ctr-> ctr.valueParameters.find { parameter -> map.contains(parameter.name) } != null}
+
+        if ( ctr.size == 1) {
+            val c = ctr[0]
+
+            if ( c.parameters.size != map.size)
+                println("expeected size" +  map.size)
+            else {
+                for ( prop in map)
+                    println(prop + " as arg " + c.valueParameters.find { p -> p.name == prop })
+            }
+        }
+        else {
+            println("?")
+        }
+        println()
 
     }
 }
