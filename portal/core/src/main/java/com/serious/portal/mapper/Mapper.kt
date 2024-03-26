@@ -217,7 +217,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         }
     }
 
-    private class TargetTree(private val bean: KClass<*>, matches: MutableCollection<MappingDefinition.Match>) {
+    private class TargetTree(private val clazz: KClass<*>, matches: MutableCollection<MappingDefinition.Match>) {
         // local classes
 
         class Node(private val parent: Node?, val accessor: MappingDefinition.Accessor, val match: MappingDefinition.Match?) {
@@ -243,23 +243,35 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 return accessor.type.constructors.find { ctr -> ctr.parameters.size == 0 } == null
             }
             protected fun findImmutableConstructor() :KFunction<Any> {
-                val properties = this.children.map { node -> node.accessor.name }
+                // compute the read only children
 
-                // find constructors that declare exactly least a,c and remember indexes
+                val readOnlyProperties = this.children
+                    //.filter { node -> node.accessor.readOnly}
+                    .map { node -> node.accessor.name }
 
-                val ctr = accessor.type.constructors.filter { ctr-> ctr.valueParameters.find { parameter -> properties.contains(parameter.name) } != null}
+                // find constructors that declare at least the read-only children
+
+                val ctr = accessor.type.constructors.filter { ctr-> ctr.valueParameters.find { parameter -> readOnlyProperties.contains(parameter.name) } != null}
 
                 if ( ctr.size == 1) {
                     val result = ctr[0]
 
-                    if ( result.parameters.size != properties.size)
-                        throw MapperDefinitionException("expected constructor to have exactly ${properties.size} parameters")
-                    else {
-                        // fix indexes to match constructor position
+                    // fix indexes to match constructor position
 
-                        for ( child in children)
-                            child.accessor.index = result.valueParameters.find { p -> p.name == child.accessor.name }!!.index
+                    var nextIndex = result.parameters.size
+                    for ( child in children) {
+                        val constructorArg =  result.valueParameters.find { p -> p.name == child.accessor.name }
+                        if ( constructorArg != null)
+                            child.accessor.index = constructorArg.index
+                        else
+                            child.accessor.index = nextIndex++
                     }
+
+                    // sort
+
+                    children.sortBy { child -> child.accessor.index}
+
+                    // done
 
                     return result
                 }
@@ -267,6 +279,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     throw MapperDefinitionException("expected constructor matching properties")
                 }
             }
+
             // public
 
             fun insertMatch(tree: TargetTree, match: MappingDefinition.Match, index: Int) {
@@ -372,9 +385,9 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                 // compute operation
 
-                var writeProperty = accessor.makeTransformerProperty(parent!!.composite == null || !parent!!.composite!!.immutable()) // property, constant or synchronizer
+                var writeProperty = accessor.makeTransformerProperty(!accessor.readOnly)//!parent!!.isImmutable()) // property, constant or synchronizer
 
-                if (parent.composite != null)
+                if (parent!!.composite != null)
                     writeProperty = Mapping.SetCompositeArgument(parent.composite!!, accessor.index, writeProperty)
 
                 if ( deep )
@@ -445,7 +458,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
             }
         }
 
-        var root = Node(null, RootAccessor(this.bean), null)
+        var root = Node(null, RootAccessor(this.clazz), null)
 
         // constructor
 
@@ -477,7 +490,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
         fun makeNode(parent: Node?, step: MappingDefinition.Accessor, match: MappingDefinition.Match?): Node {
             return try {
-                step.resolve(parent?.accessor?.type ?: bean, true)
+                step.resolve(parent?.accessor?.type ?: clazz, true)
 
                 Node(parent, step, match)
             }
@@ -856,7 +869,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         override fun immutable() : Boolean {return true}
 
         override fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer {
-            return Mapping.ImmutableCompositeBuffer(this, nArgs)
+            return Mapping.ImmutableCompositeBuffer(this, nArgs, this.constructor.parameters.size)
         }
     }
 
@@ -1274,25 +1287,29 @@ class Mapping<S : Any, T : Any>(
         abstract fun set(instance: Any, value: Any?, property: Property<Context>?, index: Int, mappingContext: Context)
     }
 
-    class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, nargs: Int) : CompositeBuffer(definition, nargs) {
+    class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, nargs: Int, val constructorArgs: Int) : CompositeBuffer(definition, nargs) {
         // instance data
 
-        private var arguments: Array<Any?> = arrayOfNulls(nargs)
+        private var arguments: Array<Any?> = arrayOfNulls(constructorArgs)
+        var composite : Any? = null
 
         // override
 
         override fun set(instance: Any, value: Any?, property:  Property<Context>?, index: Int, mappingContext: Context) {
-            arguments[index] = value
-
             // are we done?
 
-            if (++nSuppliedArgs == nArgs) {
+            if (nSuppliedArgs < constructorArgs) {
                 // create composite
 
-                val composite = definition.constructor.call(*arguments) // TODO copy....defintion should be gone!
-
-                definition.valueReceiver.receive(mappingContext, instance, composite)
+                arguments[index] = value
+                if ( nSuppliedArgs == constructorArgs - 1)
+                    composite = definition.constructor.call(*arguments)
             } // if
+            else
+                property!!.set(composite!!, value, mappingContext) // TODO?
+
+            if ( ++nSuppliedArgs == nArgs)
+                definition.valueReceiver.receive(mappingContext, instance, composite!!)
         }
     }
 

@@ -55,6 +55,33 @@ class MapperTest {
     }
 
     @Test()
+    fun testStrangeConstructor() {
+        // classes
+
+        class StrangeConstructor(val a: Int, val b: String) {
+            var c = ""
+            var d = ""
+        }
+
+        // mapper
+
+        val mapper = Mapper(
+            mapping(StrangeConstructor::class, StrangeConstructor::class) {
+                map { properties()}
+            })
+
+        println(mapper.describe())
+
+        val source = StrangeConstructor(1, "b")
+        source.c = "c"
+        source.d = "d"
+        val target = mapper.map<StrangeConstructor>(source)!!
+
+        assertEquals(1, target.a)
+        assertEquals("c", target.c)
+    }
+
+    @Test()
     fun testPath() {
         // classes
 
