@@ -56,8 +56,6 @@ class SynchronizerTest {
              map {"name" to "name" }
         })
 
-        println(rootMapper.describe())
-
         val rootResult = rootMapper.map<RootEntity>(root)!!
 
         assertEquals(1, rootResult.bars.size)

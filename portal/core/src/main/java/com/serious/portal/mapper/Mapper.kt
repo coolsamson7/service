@@ -224,7 +224,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
             // instance data
 
             internal val children: MutableList<Node> = LinkedList()
-            internal var composite: MappingDefinition.CompositeDefinition? = null
+            internal var resultDefinition: MappingDefinition.IntermediateResultDefinition? = null
 
             // protected
 
@@ -240,7 +240,11 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
             // protected
 
             fun isImmutable() : Boolean {
-                return accessor.type.constructors.find { ctr -> ctr.parameters.size == 0 } == null
+                return findDefaultConstructor() == null
+            }
+
+            protected fun findDefaultConstructor() :KFunction<Any>? {
+                return accessor.type.constructors.find { ctr -> ctr.parameters.size == 0 }
             }
             protected fun findImmutableConstructor() :KFunction<Any> {
                 // compute the read only children
@@ -299,13 +303,14 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
             // protected
 
             // is only called for children
+
             fun computeValueReceiver() : Mapping.ValueReceiver {
-                return if (parent!!.composite != null) {
-                    if ( parent.composite!!.immutable())
-                        Mapping.SetImmutableCompositePropertyValueReceiver(parent.composite!!, accessor.index)
-                    else
-                        Mapping.SetMutableCompositePropertyValueReceiver(parent.composite!!, accessor.makeTransformerProperty(true))
-                }
+                return if (parent!!.resultDefinition != null)
+                    Mapping.SetResultPropertyValueReceiver(
+                        parent.resultDefinition!!.index,
+                        accessor.index,
+                        if ( accessor.index >= parent.resultDefinition!!.constructorArgs ) accessor.makeTransformerProperty(true) else null
+                    )
                 else
                     Mapping.SetPropertyValueReceiver(accessor.makeTransformerProperty(true))
             }
@@ -317,7 +322,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                 if ( isRoot ) {
                     if (isImmutable())
-                        composite = definition.addImmutableCompositeDefinition(type, findImmutableConstructor(), Mapping.MappingResultValueReceiver())
+                        resultDefinition = definition.addIntermediateResultDefinition(type, findImmutableConstructor(), children.size, Mapping.MappingResultValueReceiver())
 
                     // recursion
 
@@ -327,12 +332,13 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 else if (isInnerNode) {
                     val valueReceiver = computeValueReceiver()
 
+                    // which constructor
+
+                    val constructor = findDefaultConstructor() ?: findImmutableConstructor()
+
                     // done
 
-                    composite = if (MappingDefinition.findDefaultConstructor(type) == null)
-                        definition.addImmutableCompositeDefinition(type, findImmutableConstructor(), valueReceiver) // TDOO wo kommt der Index her?
-                    else
-                        definition.addMutableCompositeDefinition(type, MappingDefinition.findDefaultConstructor(type)!!, children.size, valueReceiver)
+                    resultDefinition = definition.addIntermediateResultDefinition(type, constructor, children.size, valueReceiver)
 
                     // recursion
 
@@ -385,12 +391,12 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                 // compute operation
 
-                val requiresWrite = parent!!.composite == null || parent.composite!!.constructor.parameters.find { param ->param.name == accessor.name  } == null
+                val requiresWrite = parent!!.resultDefinition == null || parent.resultDefinition!!.constructor.parameters.find { param ->param.name == accessor.name  } == null
 
                 var writeProperty = accessor.makeTransformerProperty(requiresWrite) // property, constant or synchronizer
 
-                if (parent.composite != null)
-                    writeProperty = Mapping.SetCompositeArgument(parent.composite!!, accessor.index, writeProperty)
+                if (parent.resultDefinition != null)
+                    writeProperty = Mapping.SetResultArgument(parent.resultDefinition!!, accessor.index, writeProperty)
 
                 if ( deep )
                     writeProperty = mapDeep(sourceNode.accessor, accessor, writeProperty)
@@ -510,7 +516,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         val sourceTree = SourceTree(definition.sourceClass, matches)
         val targetTree = TargetTree(definition.targetClass, matches)
         val operations = targetTree.makeOperations(sourceTree, mapper, definition)
-        val constructor = if ( targetTree.root.composite != null ) targetTree.root.composite?.constructor!! else definition.targetClass.primaryConstructor!!
+        val constructor = if ( targetTree.root.resultDefinition != null ) targetTree.root.resultDefinition?.constructor!! else definition.targetClass.primaryConstructor!!
 
         return OperationResult(operations, constructor, sourceTree.stackSize)
     }
@@ -786,7 +792,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 if ( writeProperty != null)
                     return Mapping.MutablePropertyProperty(writeProperty!!)
                 else
-                    throw MapperDefinitionException("${name} is read-only")
+                    throw MapperDefinitionException("${type.simpleName}.${name} is read-only")
             }
             else
                 return Mapping.PropertyProperty(readProperty)
@@ -856,32 +862,48 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         }
     }
 
-    // composite stuff
+    // result stuff
 
-    abstract class CompositeDefinition(val clazz: KClass<*>, @JvmField val constructor: KFunction<Any>, val index: Int, val nArgs: Int, val valueReceiver: Mapping.ValueReceiver) {
-        open fun immutable() : Boolean {return false}
-        abstract fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer
-    }
+    class IntermediateResultDefinition(@JvmField val clazz: KClass<*>, @JvmField val constructor: KFunction<Any>, @JvmField val index: Int, private val nArgs: Int, public @JvmField val valueReceiver: Mapping.ValueReceiver) {
+        val constructorArgs = constructor.parameters.size
 
-    class ImmutableCompositeDefinition(index: Int, clazz: KClass<*>, ctr: KFunction<Any>, nargs: Int, valueReceiver: Mapping.ValueReceiver)
-        : CompositeDefinition(clazz, ctr, index, nargs, valueReceiver) {
+        // local classes
+        class Buffer(protected @JvmField val definition: IntermediateResultDefinition, @JvmField val nArgs: Int, @JvmField val constructorArgs: Int) {
+            // instance data
 
-        // override CompositeDefinition
+            private var nSuppliedArgs = 0
+            private val arguments: Array<Any?> = arrayOfNulls(constructorArgs)
+            private var result : Any? = null
 
-        override fun immutable() : Boolean {return true}
+            init {
+                if ( constructorArgs == 0)
+                    result = definition.constructor.call()
+            }
 
-        override fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer {
-            return Mapping.ImmutableCompositeBuffer(this, nArgs, this.constructor.parameters.size)
+            // public
+
+            fun set(instance: Any, value: Any?, property:  Transformer.Property<Mapping.Context>?, index: Int, mappingContext: Mapping.Context) {
+                // are we done?
+
+                if (nSuppliedArgs < constructorArgs) {
+                    // create instance
+
+                    arguments[index] = value
+                    if ( nSuppliedArgs == constructorArgs - 1)
+                        result = definition.constructor.call(*arguments)
+                } // if
+                else
+                    property!!.set(result!!, value, mappingContext)
+
+                if ( ++nSuppliedArgs == nArgs)
+                    definition.valueReceiver.receive(mappingContext, instance, result!!)
+            }
         }
-    }
 
-    class MutableCompositeDefinition(index: Int, clazz: KClass<*>,  ctr: KFunction<Any>, /*TODO */nargs: Int, valueReceiver: Mapping.ValueReceiver)
-        : CompositeDefinition(clazz, ctr, index, nargs, valueReceiver) {
+        // public
 
-        // override
-
-        override fun createBuffer(mapper: Mapper): Mapping.CompositeBuffer {
-            return Mapping.MutableCompositeBuffer(this, constructor, nArgs)
+        fun createBuffer(): Buffer {
+            return Buffer(this, nArgs, this.constructorArgs)
         }
     }
 
@@ -995,27 +1017,21 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
     private var finalizer : Finalizer<S,T>? = null
     private var baseMapping: MappingDefinition<*,*>? = null
-    private val composites = LinkedList<CompositeDefinition>()
+    private val intermediateResultDefinitions = LinkedList<IntermediateResultDefinition>()
     private val operations = ArrayList<MapOperation>()
 
     // public
 
-    fun addImmutableCompositeDefinition(clazz: KClass<*>, ctr: KFunction<Any>, valueReceiver: Mapping.ValueReceiver): CompositeDefinition {
-        composites.add(ImmutableCompositeDefinition(composites.size, clazz, ctr, clazz.memberProperties.size, valueReceiver))
+    fun addIntermediateResultDefinition(clazz: KClass<*>, ctr: KFunction<Any>, nargs: Int, valueReceiver: Mapping.ValueReceiver): IntermediateResultDefinition {
+        intermediateResultDefinitions.add(IntermediateResultDefinition( clazz, ctr, intermediateResultDefinitions.size, nargs, valueReceiver))
 
-        return composites.last
-    }
-
-    fun addMutableCompositeDefinition(clazz: KClass<*>,  ctr: KFunction<Any>, nargs: Int, valueReceiver: Mapping.ValueReceiver): CompositeDefinition {
-        composites.add(MutableCompositeDefinition(composites.size, clazz,  ctr, nargs, valueReceiver))
-
-        return composites.last
+        return intermediateResultDefinitions.last
     }
 
     fun createMapping(mapper: Mapper): Mapping<S, T> {
         val (operations, constructor, stackSize) = this.createOperations(mapper)
 
-        return Mapping(this, constructor, operations, stackSize, composites, collectFinalizer())
+        return Mapping(this, constructor, operations, stackSize, intermediateResultDefinitions, collectFinalizer())
     }
 
     fun describe(builder: StringBuilder) {
@@ -1174,7 +1190,7 @@ class Mapping<S : Any, T : Any>(
     val constructor: KFunction<Any>,
     operations: Array<Operation<Context>>,
     private val stackSize: Int,
-    private val composites: List<MappingDefinition.CompositeDefinition>,
+    private val intermediateResultDefinitions: List<MappingDefinition.IntermediateResultDefinition>,
     private val finalizer : Array<Finalizer<S,T>>
 ) : Transformer<Mapping.Context>(operations) {
     // local classes
@@ -1185,7 +1201,7 @@ class Mapping<S : Any, T : Any>(
         class State(context: Context) {
             // instance data
 
-            private val compositeBuffers: Array<CompositeBuffer?>
+            private val resultBuffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?>
             private val stack: Array<Any?>
             var result : Any? = null
             var nextState: State? = context.currentState
@@ -1194,14 +1210,14 @@ class Mapping<S : Any, T : Any>(
 
             init {
                 context.currentState = this
-                compositeBuffers = context.compositeBuffers
+                resultBuffers = context.resultBuffers
                 stack = context.stack
             }
 
             // public
 
             fun restore(context: Context) {
-                context.compositeBuffers = compositeBuffers
+                context.resultBuffers = resultBuffers
                 context.stack = stack
                 context.currentState = nextState
                 context.decrement()
@@ -1213,7 +1229,7 @@ class Mapping<S : Any, T : Any>(
         private var level = 0
         private val sourceAndTarget = arrayOfNulls<Any>(2)
         private val mappedObjects: MutableMap<Any, Any> = IdentityHashMap()
-        private var compositeBuffers: Array<CompositeBuffer?> = NO_BUFFERS
+        private var resultBuffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?> = NO_BUFFERS
         private var stack: Array<Any?> = arrayOf()
 
         var currentState : State? = null
@@ -1241,29 +1257,27 @@ class Mapping<S : Any, T : Any>(
             return mappedObjects[source]
         }
 
-        private fun setupComposites(buffers: Array<CompositeBuffer?>): Array<CompositeBuffer?> {
-            val saved = compositeBuffers
-            compositeBuffers = buffers
+        private fun setupResultBuffers(buffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?>): Array<MappingDefinition.IntermediateResultDefinition.Buffer?> {
+            val saved = resultBuffers
+            resultBuffers = buffers
 
             return saved
         }
 
-        fun setup(compositeDefinitions: Array<MappingDefinition.CompositeDefinition>, stackSize: Int): Array<CompositeBuffer?> {
-            //val buffers = compositeDefinitions.map { definition -> definition.createBuffer(mapper) }.toTypedArray()
-
-            val buffers = arrayOfNulls<CompositeBuffer?>(compositeDefinitions.size)
-            for ( i in 0..<compositeDefinitions.size)
-                buffers[i] = compositeDefinitions[i].createBuffer(mapper)
+        fun setup(intermediateResultDefinitions: Array<MappingDefinition.IntermediateResultDefinition>, stackSize: Int): Array<MappingDefinition.IntermediateResultDefinition.Buffer?> {
+            val buffers = arrayOfNulls<MappingDefinition.IntermediateResultDefinition.Buffer?>(intermediateResultDefinitions.size)
+            for ( i in 0..<intermediateResultDefinitions.size)
+                buffers[i] = intermediateResultDefinitions[i].createBuffer()
 
             stack = if (stackSize == 0) NO_STACK else arrayOfNulls(stackSize)
 
             increment()
 
-            return setupComposites(buffers)
+            return setupResultBuffers(buffers)
         }
 
-        fun getCompositeBuffer(compositeIndex: Int): CompositeBuffer {
-            return compositeBuffers[compositeIndex]!!
+        fun getResultBuffer(index: Int): MappingDefinition.IntermediateResultDefinition.Buffer {
+            return resultBuffers[index]!!
         }
 
         fun push(value: Any?, index: Int) {
@@ -1275,60 +1289,8 @@ class Mapping<S : Any, T : Any>(
         }
 
         companion object {
-            private val NO_BUFFERS = arrayOf<CompositeBuffer?>()
+            private val NO_BUFFERS = arrayOf<MappingDefinition.IntermediateResultDefinition.Buffer?>()
             private val NO_STACK = arrayOfNulls<Any>(0)
-        }
-    }
-
-    abstract class CompositeBuffer(protected @JvmField val definition: MappingDefinition.CompositeDefinition, @JvmField val nArgs: Int) {
-        @JvmField
-        protected var nSuppliedArgs = 0
-
-        // abstract
-
-        abstract fun set(instance: Any, value: Any?, property: Property<Context>?, index: Int, mappingContext: Context)
-    }
-
-    class ImmutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, nargs: Int, val constructorArgs: Int) : CompositeBuffer(definition, nargs) {
-        // instance data
-
-        private var arguments: Array<Any?> = arrayOfNulls(constructorArgs)
-        var composite : Any? = null
-
-        // override
-
-        override fun set(instance: Any, value: Any?, property:  Property<Context>?, index: Int, mappingContext: Context) {
-            // are we done?
-
-            if (nSuppliedArgs < constructorArgs) {
-                // create composite
-
-                arguments[index] = value
-                if ( nSuppliedArgs == constructorArgs - 1)
-                    composite = definition.constructor.call(*arguments)
-            } // if
-            else
-                property!!.set(composite!!, value, mappingContext) // TODO?
-
-            if ( ++nSuppliedArgs == nArgs)
-                definition.valueReceiver.receive(mappingContext, instance, composite!!)
-        }
-    }
-
-    class MutableCompositeBuffer(definition: MappingDefinition.CompositeDefinition, ctr: KFunction<Any>, nargs: Int) : CompositeBuffer(definition, nargs) {
-        // instance data
-
-        private val newInstance = ctr.call()
-
-        // public
-
-        override fun set(instance: Any, value: Any?, property: Property<Context>?, index: Int, mappingContext: Context) {
-            property!!.set(newInstance, value, mappingContext)
-
-            // are we done?
-
-            if (++nSuppliedArgs == nArgs)
-                definition.valueReceiver.receive(mappingContext, instance, newInstance)
         }
     }
 
@@ -1346,19 +1308,11 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class SetMutableCompositePropertyValueReceiver(val composite: MappingDefinition.CompositeDefinition, val property: Property<Context>) : ValueReceiver {
+    class SetResultPropertyValueReceiver(private val resultIndex: Int, private val index: Int, private val property: Property<Context>?) : ValueReceiver {
         // implement ValueReceiver
 
         override fun receive(context: Context, instance: Any, value: Any) {
-            context.getCompositeBuffer(composite.index).set(instance, value, property, 0, context)
-        }
-    }
-
-    class SetImmutableCompositePropertyValueReceiver(val composite: MappingDefinition.CompositeDefinition, val index: Int) : ValueReceiver {
-        // implement ValueReceiver
-
-        override fun receive(context: Context, instance: Any, value: Any) {
-            context.getCompositeBuffer(composite.index).set(instance, value, null, index, context)
+            context.getResultBuffer(resultIndex).set(instance, value, property, index, context)
         }
     }
 
@@ -1722,7 +1676,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class SetCompositeArgument(private val composite: MappingDefinition.CompositeDefinition, private val index: Int, private val property: Property<Context>) : Property<Context> {
+    class SetResultArgument(private val resultDefinition: MappingDefinition.IntermediateResultDefinition, private val index: Int, private val property: Property<Context>) : Property<Context> {
         // implement Property
 
         override operator fun get(instance: Any, context: Context): Any? {
@@ -1730,16 +1684,13 @@ class Mapping<S : Any, T : Any>(
         }
 
         override operator fun set(instance: Any, value: Any?, context: Context) {
-            context.getCompositeBuffer(composite.index).set(instance, value, property, index, context)
+            context.getResultBuffer(resultDefinition.index).set(instance, value, property, index, context)
         }
 
         // override Any
 
         override fun toString() : String {
-            if ( composite.immutable())
-                return "${composite.clazz.simpleName}[${index}]"
-            else
-                return "${composite.clazz.simpleName}.${property}"
+            return "${resultDefinition.clazz.simpleName}[${index}](${property})"
         }
     }
 
@@ -1762,7 +1713,7 @@ class Mapping<S : Any, T : Any>(
     fun setupContext(context: Context): Context.State {
         val state = Context.State(context)
 
-        context.setup(composites.toTypedArray(), stackSize)
+        context.setup(intermediateResultDefinitions.toTypedArray(), stackSize)
 
         return state
     }

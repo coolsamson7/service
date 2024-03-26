@@ -59,7 +59,7 @@ class MapperTest {
         // classes
 
         class StrangeConstructor(val a: Int, val b: String) {
-            var c = ""
+            var c = 1
             var d = ""
         }
 
@@ -67,18 +67,20 @@ class MapperTest {
 
         val mapper = Mapper(
             mapping(StrangeConstructor::class, StrangeConstructor::class) {
-                map { properties()}
+                map { properties("a", "b")}
+                map { "d" to "d"}
+                map { "c" to "c"}
             })
 
-        println(mapper.describe())
 
         val source = StrangeConstructor(1, "b")
-        source.c = "c"
+        source.c = 2
         source.d = "d"
         val target = mapper.map<StrangeConstructor>(source)!!
 
         assertEquals(1, target.a)
-        assertEquals("c", target.c)
+        assertEquals(2, target.c)
+        assertEquals("d", target.d)
     }
 
     @Test()
@@ -106,7 +108,6 @@ class MapperTest {
                 map { path("price2", "value") to "price2"}
             })
 
-        println(mapper.describe())
 
         val source = Product("product", null/*Price("EU", 1)*/, Price("EU", 2))
         val target = mapper.map<Target>(source)!!
@@ -225,7 +226,7 @@ class MapperTest {
     @Test()
     fun testReadOnlyException() {
         try {
-            Mapper(
+            val m = Mapper(
                 mapping(From::class, ReadOnly::class) {
                     map { "name" to "name"}
                 })
@@ -272,8 +273,6 @@ class MapperTest {
             mapping(From::class, To::class) {
                 map { properties() }
             })
-
-        println(mapper.describe())
 
         val result = mapper.map<To>(from)
 
