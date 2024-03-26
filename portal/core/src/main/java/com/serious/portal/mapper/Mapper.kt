@@ -385,9 +385,11 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                 // compute operation
 
-                var writeProperty = accessor.makeTransformerProperty(!accessor.readOnly)//!parent!!.isImmutable()) // property, constant or synchronizer
+                val requiresWrite = parent!!.composite == null || parent.composite!!.constructor.parameters.find { param ->param.name == accessor.name  } == null
 
-                if (parent!!.composite != null)
+                var writeProperty = accessor.makeTransformerProperty(requiresWrite) // property, constant or synchronizer
+
+                if (parent.composite != null)
                     writeProperty = Mapping.SetCompositeArgument(parent.composite!!, accessor.index, writeProperty)
 
                 if ( deep )
