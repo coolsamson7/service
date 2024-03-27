@@ -9,69 +9,64 @@ import java.util.HashMap
 
 typealias PKGetter<T,PK> = (any: T) -> PK
 
-abstract class RelationSynchronizer<TO, ENTITY, PK> protected constructor(private val toPK: PKGetter<TO,PK>, private val entityPK: PKGetter<ENTITY,PK>) {
+abstract class RelationSynchronizer<S, T, PK> protected constructor(private val toPK: PKGetter<S,PK>, private val pk: PKGetter<T,PK>) {
     // protected
 
     protected open fun missingPK(pk: PK) : Boolean {
         return false
     }
-    protected abstract fun provide(referencedTransportObject: TO, context: Mapping.Context): ENTITY
+    protected abstract fun provide(source: S, context: Mapping.Context): T
 
-    protected open fun delete(entity: ENTITY) {}
+    protected open fun delete(entity: T) {}
 
-    protected open fun update(entity: ENTITY, transportObject: TO, context: Mapping.Context) {}
+    protected open fun update(target: T, source: S, context: Mapping.Context) {}
 
-    protected fun addToRelation(relation: MutableCollection<ENTITY>, referencedEntity: ENTITY) {
-        relation.add(referencedEntity)
+    protected fun addToRelation(relation: MutableCollection<T>, target: T) {
+        relation.add(target)
     }
 
-    protected fun removeFromRelation(relation: MutableCollection<ENTITY>, referencedEntity: ENTITY) {
-        relation.remove(referencedEntity)
+    protected fun removeFromRelation(relation: MutableCollection<T>, target: T) {
+        relation.remove(target)
     }
 
     // public
 
-    fun synchronize(toRelation: Collection<TO>, entityRelation: MutableCollection<ENTITY>, mappingContext: Mapping.Context) {
-        val entityMap: MutableMap<PK, ENTITY> = HashMap()
+    fun synchronize(source: Collection<S>, target: MutableCollection<T>, mappingContext: Mapping.Context) {
+        val targetMap: MutableMap<PK, T> = HashMap()
 
-        // collect all entities in a map
+        // collect all targets in a map
 
-        for (entity in entityRelation)
-            entityMap[entityPK(entity)] = entity
+        for (t in target)
+            targetMap[pk(t)] = t
 
-        // iterate over transport objects
+        // iterate over source objects
 
-        for (to in toRelation) {
-            val key = toPK(to)
+        for (s in source) {
+            val key = toPK(s)
 
             if (!missingPK(key)) {
-                val entity = entityMap[key]
+                val t = targetMap[key]
 
-                if (entity == null)
-                    addToRelation(entityRelation, provide(to, mappingContext))
+                if (t == null)
+                    addToRelation(target, provide(s, mappingContext))
 
                 else {
-                    // possibly update entity
+                    // possibly update
 
-                    update(entity, to, mappingContext)
+                    update(t, s, mappingContext)
 
-                    entityMap.remove(key)
+                    targetMap.remove(key)
                 } // else
             } // if
-            else addToRelation(entityRelation, provide(to, mappingContext))
+            else addToRelation(target, provide(s, mappingContext))
         } // for
 
-        // deleted entities
+        // deleted
 
-        for (deletedPersistent in entityMap.values)
-            if (isEntityToRemove(deletedPersistent)) {
-                removeFromRelation(entityRelation, deletedPersistent)
+        for (deleted in targetMap.values) {
+            removeFromRelation(target, deleted)
 
-                delete(deletedPersistent)
-            } // if
-    }
-
-    protected fun isEntityToRemove(entity: ENTITY): Boolean {
-        return true
+            delete(deleted)
+        } // if
     }
 }
