@@ -1,6 +1,6 @@
 package com.serious.portal.mapper
 
-open class Transformer<CONTEXT>(val operations: Array<Operation<CONTEXT>>) {
+open class Transformer<CONTEXT>(@JvmField val operations: Array<Operation<CONTEXT>>) {
     // local classes & interfaces
 
     interface Property<CONTEXT> {
@@ -9,7 +9,7 @@ open class Transformer<CONTEXT>(val operations: Array<Operation<CONTEXT>>) {
         fun set(instance: Any, value: Any?, context: CONTEXT)
     }
 
-    class Operation<CONTEXT>(val source: Property<CONTEXT>, val target: Property<CONTEXT>) {
+    class Operation<CONTEXT>(@JvmField val source: Property<CONTEXT>, @JvmField val target: Property<CONTEXT>) {
         fun setTarget(from: Any, to: Any, context: CONTEXT) {
             target.set(to, source.get(from, context), context)
         }

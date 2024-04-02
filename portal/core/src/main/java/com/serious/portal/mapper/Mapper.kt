@@ -5,7 +5,12 @@ package com.serious.portal.mapper
  * All rights reserved
  */
 
+import javassist.ClassPool
+import javassist.CtNewConstructor
+import javassist.CtNewMethod
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
@@ -79,11 +84,12 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
     data class OperationResult(
         val operations: Array<Transformer.Operation<Mapping.Context>>,
+        val compiled: Boolean,
         val constructor: KFunction<Any>,
         val stackSize: Int
     )
 
-    private class SourceTree(private val type: KClass<*>, matches: Collection<MappingDefinition.Match>) {
+    private class SourceTree(val clazz: KClass<*>, matches: Collection<MappingDefinition.Match>) {
         // local class
 
         class Node(private val parent: Node?, val accessor: MappingDefinition.Accessor, val match: MappingDefinition.Match?) {
@@ -211,7 +217,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         }
 
         fun makeNode(parent: Node?, step: MappingDefinition.Accessor, match: MappingDefinition.Match?): Node {
-            step.resolve(parent?.accessor?.type ?: type, false)
+            step.resolve(parent?.accessor?.type ?: clazz, false)
 
             return Node(parent, step, match)
         }
@@ -491,6 +497,77 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 throw e
             }
 
+            return optimize(sourceTree.clazz, this.clazz, definition, operations)
+        }
+
+        fun <S: Any,T:Any>optimize(sourceClass: KClass<*>, targetClass: KClass<*>,  definition: MappingDefinition<S, T>, operations: List<Transformer.Operation<Mapping.Context>>) : Array<Transformer.Operation<Mapping.Context>> {
+            // generate bytecode with javassist
+
+            val optimize = java.lang.Boolean.getBoolean("optimize-mapper");
+
+            if (optimize) {
+                val codeGenerator = Mapping.CodeGenerator(definition as MappingDefinition<Any, Any>)
+
+                codeGenerator
+                    .code("public void set(Object object, Object value, Object context)  {\n")
+
+                    // context
+
+                    .javaClass(Mapping.Context::class).code(" ")
+                    .code("ctx")
+                    .code(" = (").javaClass(Mapping.Context::class).code(")context;\n")
+
+                    // source
+
+                    .javaClass(sourceClass).code(" ")
+                    .code("source")
+                    .code(" = (").javaClass(sourceClass).code(")value;\n")
+
+                // target
+
+                if ( targetClass.constructors.find { ctr -> ctr.parameters.size == 0 } != null)
+                    codeGenerator.javaClass(targetClass).code(" ")
+                        .code("target")
+                        .code(" = (").javaClass(targetClass).code(")object;\n")
+
+                // ops
+
+                for (operation in operations) {
+                    if (operation.source is Mapping.CompilableProperty && operation.target is Mapping.CompilableProperty) {
+                        val sourceProperty: Mapping.CompilableProperty<Mapping.Context> = operation.source
+                        val targetProperty: Mapping.CompilableProperty<Mapping.Context> = operation.target
+
+                        targetProperty.setCode(codeGenerator, sourceProperty, { code: Mapping.CodeGenerator -> sourceProperty.getCode(code) } )
+
+                        codeGenerator.code(";\n")
+                    } // if
+                    else {
+                        println("### property does not support compiling")
+
+                        return operations.toTypedArray()
+                    }
+                } // for
+
+
+                codeGenerator.code("}")
+
+                println(codeGenerator.code()) // TODO
+
+                try {
+                    val property = codeGenerator.createProperty()
+
+                    return arrayOf(Transformer.Operation(property, property))
+                }
+                catch (exception: Exception) {
+                    println("###################")
+                    println(exception)
+
+                    println(codeGenerator.code())
+                }
+            } // if
+
+            // normal behaviour
+
             return operations.toTypedArray()
         }
 
@@ -518,7 +595,9 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         val operations = targetTree.makeOperations(sourceTree, mapper, definition)
         val constructor = if ( targetTree.root.resultDefinition != null ) targetTree.root.resultDefinition?.constructor!! else definition.targetClass.primaryConstructor!!
 
-        return OperationResult(operations, constructor, sourceTree.stackSize)
+        val compiled = operations.size == 1 && operations[0].source is Mapping.CompiledPropertyProperty
+
+        return OperationResult(operations, compiled, constructor, sourceTree.stackSize)
     }
 
     companion object {
@@ -1017,7 +1096,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
     private var finalizer : Finalizer<S,T>? = null
     private var baseMapping: MappingDefinition<*,*>? = null
-    private val intermediateResultDefinitions = LinkedList<IntermediateResultDefinition>()
+    val intermediateResultDefinitions = LinkedList<IntermediateResultDefinition>()
     private val operations = ArrayList<MapOperation>()
 
     // public
@@ -1029,9 +1108,9 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
     }
 
     fun createMapping(mapper: Mapper): Mapping<S, T> {
-        val (operations, constructor, stackSize) = this.createOperations(mapper)
+        val (operations, compiled, constructor, stackSize) = this.createOperations(mapper)
 
-        return Mapping(this, constructor, operations, stackSize, intermediateResultDefinitions, collectFinalizer())
+        return Mapping(this, constructor, operations, compiled, stackSize, intermediateResultDefinitions, collectFinalizer())
     }
 
     fun describe(builder: StringBuilder) {
@@ -1186,16 +1265,17 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 }
 
 class Mapping<S : Any, T : Any>(
-    definition: MappingDefinition<S, T>,
+    val definition: MappingDefinition<S, T>,
     val constructor: KFunction<Any>,
     operations: Array<Operation<Context>>,
+    private val compiled: Boolean,
     private val stackSize: Int,
     private val intermediateResultDefinitions: List<MappingDefinition.IntermediateResultDefinition>,
     private val finalizer : Array<Finalizer<S,T>>
 ) : Transformer<Mapping.Context>(operations) {
     // local classes
 
-    class Context(val mapper: Mapper) {
+    class Context(@JvmField val mapper: Mapper) {
         // local classes
 
         class State(context: Context) {
@@ -1203,7 +1283,9 @@ class Mapping<S : Any, T : Any>(
 
             private val resultBuffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?>
             private val stack: Array<Any?>
+            @JvmField
             var result : Any? = null
+            @JvmField
             var nextState: State? = context.currentState
 
             // constructor
@@ -1220,36 +1302,30 @@ class Mapping<S : Any, T : Any>(
                 context.resultBuffers = resultBuffers
                 context.stack = stack
                 context.currentState = nextState
-                context.decrement()
             }
         }
 
         // instance data
 
-        private var level = 0
         private val sourceAndTarget = arrayOfNulls<Any>(2)
         private val mappedObjects: MutableMap<Any, Any> = IdentityHashMap()
         private var resultBuffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?> = NO_BUFFERS
-        private var stack: Array<Any?> = arrayOf()
+        @JvmField()
+        internal var stack: Array<Any?> = arrayOf()
 
+        @JvmField()
         var currentState : State? = null
 
-        private fun increment() {
-            level++
-        }
-
-        fun decrement() {
-            level--
-        }
-
-        private fun setSourceAndTarget(source: Any?, target: Any?) {
+        inline private fun setSourceAndTarget(source: Any?, target: Any?) {
             sourceAndTarget[0] = source
             sourceAndTarget[1] = target
         }
 
         fun remember(source: Any, target: Any): Context {
             mappedObjects[source] = target
+
             setSourceAndTarget(source, target) // also remember the current involved objects!
+
             return this
         }
 
@@ -1264,14 +1340,12 @@ class Mapping<S : Any, T : Any>(
             return saved
         }
 
-        fun setup(intermediateResultDefinitions: Array<MappingDefinition.IntermediateResultDefinition>, stackSize: Int): Array<MappingDefinition.IntermediateResultDefinition.Buffer?> {
+        fun setup(intermediateResultDefinitions: List<MappingDefinition.IntermediateResultDefinition>, stackSize: Int): Array<MappingDefinition.IntermediateResultDefinition.Buffer?> {
             val buffers = arrayOfNulls<MappingDefinition.IntermediateResultDefinition.Buffer?>(intermediateResultDefinitions.size)
             for ( i in 0..<intermediateResultDefinitions.size)
                 buffers[i] = intermediateResultDefinitions[i].createBuffer()
 
             stack = if (stackSize == 0) NO_STACK else arrayOfNulls(stackSize)
-
-            increment()
 
             return setupResultBuffers(buffers)
         }
@@ -1280,11 +1354,11 @@ class Mapping<S : Any, T : Any>(
             return resultBuffers[index]!!
         }
 
-        fun push(value: Any?, index: Int) {
+        internal inline fun push(value: Any?, index: Int) {
             stack[index] = value
         }
 
-        fun peek(index: Int): Any? {
+        internal inline fun peek(index: Int): Any? {
             return stack[index]
         }
 
@@ -1298,6 +1372,8 @@ class Mapping<S : Any, T : Any>(
 
     interface ValueReceiver {
         fun receive(context: Context, instance: Any, value: Any)
+
+        fun setCode(generator: CodeGenerator, getter: (code:CodeGenerator) -> Unit)
     }
 
     class SetPropertyValueReceiver(val property:  Property<Context>) : ValueReceiver {
@@ -1305,6 +1381,12 @@ class Mapping<S : Any, T : Any>(
 
         override fun receive(context: Context, instance: Any, value: Any) {
             property.set(instance, value, context)
+        }
+
+        override fun setCode(generator: CodeGenerator, getter: (code:CodeGenerator) -> Unit) {
+            generator
+                .code("target.")
+                .setter(property as MutablePropertyProperty, getter)
         }
     }
 
@@ -1314,6 +1396,64 @@ class Mapping<S : Any, T : Any>(
         override fun receive(context: Context, instance: Any, value: Any) {
             context.getResultBuffer(resultIndex).set(instance, value, property, index, context)
         }
+
+        override fun setCode(generator: CodeGenerator, getter: (code:CodeGenerator) -> Unit) {
+            val resultDefinition = generator.getResultDefinition(resultIndex)
+
+            // create mutable class
+
+            if ( resultDefinition.constructor.parameters.size == 0) {
+                generator
+                    .javaClass(resultDefinition.clazz)
+                    .assign(" t${resultIndex}",  {gen -> gen.code("new ").javaClass(resultDefinition.clazz).code("()") })
+                    .code(";\n")
+
+                resultDefinition.valueReceiver.setCode(generator, {gen -> gen.code("t${resultIndex}")})
+
+                generator.code(";\n")
+            }
+
+            // either constructor arg or property
+
+            if (index < resultDefinition.constructorArgs)
+                generator
+                    .javaClass(resultDefinition.constructor.parameters[index].type.jvmErasure)
+                    .assign(" t${resultIndex}$index", getter)
+            else {
+                //
+                generator
+                    .code("t${resultIndex}.")
+
+                generator.setter(property as MutablePropertyProperty, getter)
+            }
+
+            if ( index == resultDefinition.constructorArgs - 1) {
+                // we have a result
+
+                generator
+                    .code(";\n")
+                    .javaClass(resultDefinition.clazz)
+                    .assign(" t${resultDefinition.index}", {gen -> gen.code("new ").javaClass(resultDefinition.clazz).code("(")})
+
+                for ( i in 0..resultDefinition.constructorArgs - 1) {
+                    if ( i > 0 )
+                        generator.code(", ")
+
+                    val s = (property as CompilableProperty<Context>)
+
+                    if ( property.getType() !=  resultDefinition.constructor.parameters[i].type.jvmErasure) {
+                        if (property.getType().java.isPrimitive)
+                            generator.toPrimitive(property.getType(), {generator -> generator.code("t${resultDefinition.index}$i")})
+                        else
+                            generator.toNullable(property.getType(), {generator -> generator.code("t${resultDefinition.index}$i")})
+                    }
+                    else generator.code("t${resultDefinition.index}$i")
+                }
+                generator.code(");\n")
+
+                resultDefinition.valueReceiver.setCode(generator, {gen -> gen.code("t${resultDefinition.index}")})
+            }
+        }
     }
 
     class MappingResultValueReceiver : ValueReceiver {
@@ -1322,11 +1462,18 @@ class Mapping<S : Any, T : Any>(
         override fun receive(context: Context, instance: Any, value: Any) {
             context.currentState!!.result = value
         }
+
+        override fun setCode(generator: CodeGenerator, getter: (code:CodeGenerator) -> Unit) {
+            generator
+                .code("ctx.currentState.result = ")
+
+            getter(generator)
+        }
     }
 
     // properties
 
-    class ConstantValue(val value: Any?) : Property<Context> {
+    class ConstantValue(val value: Any?) : CompilableProperty<Context> {
         // implement
 
         override fun get(instance: Any, context: Context): Any? {
@@ -1336,6 +1483,16 @@ class Mapping<S : Any, T : Any>(
         override fun set(instance: Any, value: Any?, context: Context) {
         }
 
+        override fun getType() : KClass<*> {
+            return value!!::class
+        }
+        override fun getCode(generator: CodeGenerator) {
+            generator.constant(value!!)
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            throw MapperDefinitionException("NYI")
+        }
+
         // override Any
 
         override fun toString() : String {
@@ -1343,7 +1500,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    data class Convert(val property: Property<Context>, val conversion: Conversion<Any?,Any?>) : Property<Context> {
+    data class Convert(val property: Property<Context>, val conversion: Conversion<Any?,Any?>) : CompilableProperty<Context> {
         // implement Property
 
         override fun get(instance: Any, context: Context): Any? {
@@ -1356,6 +1513,40 @@ class Mapping<S : Any, T : Any>(
             property.set(instance, conversion(value), context)
         }
 
+        // implement CompilableProperty
+
+        @OptIn(ExperimentalReflectionOnLambdas::class)
+        override fun getType() : KClass<*> {
+            val type = conversion.reflect()!!.returnType.jvmErasure
+
+            return type
+        }
+        override fun getCode(generator: CodeGenerator) {
+            throw MapperDefinitionException("not allowed")
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            val index = generator.addConversion(conversion) // currently named conversion
+
+            (property as CompilableProperty).setCode(generator, this, {
+                gen ->  gen
+                .code("((")
+                .javaClass(getType(), false)
+                .code(")convert(" + index + ", ")
+
+                if ( sourceProperty.getType().java.isPrimitive)
+                    generator.toNullable(sourceProperty.getType(), getter)
+
+                else
+                    getter(gen)
+
+                gen.code("))")
+
+                if (getType().java.isPrimitive)
+                    gen.toPrimitive(getType(), {gen -> gen.code("")})
+            })
+        }
+
+
         // override Any
 
         @OptIn(ExperimentalReflectionOnLambdas::class)
@@ -1364,7 +1555,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class PeekValueProperty(private var index: Int, private val property: Property<Context>) : Property<Context> {
+    class PeekValueProperty(private var index: Int, private val property: Property<Context>) : CompilableProperty<Context> {
         // implement Property
 
         override fun get(instance: Any, context: Context): Any? {
@@ -1380,6 +1571,26 @@ class Mapping<S : Any, T : Any>(
             throw IllegalArgumentException("not possible")
         }
 
+        override fun getType(): KClass<*> {
+            return (property as CompilableProperty).getType()
+        }
+
+        override fun getCode(generator: CodeGenerator) {
+            if ( property is PropertyProperty) {
+                generator
+                    .code("s$index.")
+                    .getter(property.property)
+            }
+            else if ( property is MutablePropertyProperty) {
+                generator
+                    .code("s$index.")
+                    .getter(property.property)
+            }
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            throw MapperDefinitionException("should not happen")
+        }
+
         // override Any
 
         override fun toString() : String {
@@ -1387,15 +1598,30 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class PushValueProperty(private val index: Int) : Property<Context> {
+    class PushValueProperty(private val index: Int) : CompilableProperty<Context> {
         // implement Property
 
-        override fun get(instance: Any, context: Context): Any? {
+        override fun get(instance: Any, context: Context): KClass<*> {
             throw java.lang.IllegalArgumentException("not possible")
         }
 
         override fun set(instance: Any, value: Any?, context: Context) {
             context.push(value, index)
+        }
+
+        // implement CompilableProperty
+
+        override fun getType(): KClass<*> {
+            return Object::class
+        }
+
+        override fun getCode(generator: CodeGenerator) {
+            throw MapperDefinitionException("should not happen")
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            generator
+                .javaClass(sourceProperty.getType())
+                .assign(" s$index", getter)
         }
 
         // override Any
@@ -1405,13 +1631,261 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class PropertyProperty<CONTEXT>(private val property: KProperty1<Any, Any?>) : Property<CONTEXT> {
+    class CodeGenerator(val definition: MappingDefinition<Any, Any>) {
+        companion object {
+            val pool = ClassPool.getDefault()
+            val classes = HashMap<String, Class<*>>()
+        }
+
+        // instance data
+
+        val builder = StringBuilder();
+        val conversions = ArrayList<Conversion<Any?,Any?>>()
+
+        fun createProperty() : CompiledPropertyProperty  {
+            // create class
+
+            val baseName = "Map" + definition.sourceClass.simpleName + "To" + definition.targetClass.simpleName
+            var className = baseName // + UUID.randomUUID()
+            var index = 1
+            while ( classes.containsKey(className)) {
+                className = "${baseName}${index}"
+                index++
+            }
+
+            val clazz = pool.makeClass(className)
+            clazz.superclass = pool.get(CompiledPropertyProperty::class.java.name)
+
+            // add constructor
+
+            val ctr = CtNewConstructor.make("public " + className + "(" + Conversion::class.java.name + "[] " + "conversions" + ") { this.conversions = conversions; }", clazz)
+
+            clazz.addConstructor(ctr)
+
+            // add method
+
+            clazz.addMethod(CtNewMethod.make(code(), clazz))
+
+            // instantiate
+
+            val propertyClass = clazz.toClass()
+
+            classes.put(className, propertyClass)
+
+            return propertyClass.constructors[0].newInstance(conversions.toTypedArray()) as  CompiledPropertyProperty
+        }
+
+        fun addConversion(conversion: Conversion<Any?,Any?>) : Int {
+            conversions.add(conversion)
+
+            return conversions.size - 1
+        }
+
+        fun getResultDefinition(index: Int) : MappingDefinition.IntermediateResultDefinition {
+            return definition.intermediateResultDefinitions[index]
+        }
+
+        // fluent
+
+        fun javaClass(clazz: KClass<*>, preferPrimitive : Boolean = true) : CodeGenerator {
+            var className = when (clazz) {
+                String::class -> "String"
+                Char::class -> "Char"
+                Byte::class -> "Byte"
+                Short::class -> "Short"
+                Int::class -> "Integer"
+                Long::class -> "Long"
+                Double::class -> "Double"
+                Float::class -> "Float"
+                else -> if (clazz.java.isArray())
+                        clazz.java.componentType.name + "[]"
+                    else
+                        clazz.java.name
+            }
+
+            if ( clazz.java.isPrimitive && preferPrimitive ) {
+                className = className.toLowerCase()
+                if ( className == "integer")
+                    className = "int"
+            }
+
+            code(className)
+
+            return this
+        }
+
+        fun constant(value: Any) {
+            if ( value is String)
+                code("\"").code(value).code("\"")
+            else
+                code(value.toString())
+        }
+
+        fun getter(property: KMutableProperty<out Any?>) : CodeGenerator {
+            code("get" + property.name.capitalize() + "()")
+
+            return this
+        }
+
+        fun primitiveSetter(property: MutablePropertyProperty, getter: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            code("set" + property.property.name.capitalize() + "(")
+
+            toPrimitive(property.getType(), getter)
+
+            code(")")
+
+            return this
+        }
+
+        fun toNullable(clazz: KClass<*>, value: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            when {
+                clazz == Char::class -> code("Char.valueOf(")
+                clazz == Byte::class -> code("Byte.valueOf(")
+                clazz == Long::class -> code("Long.valueOf(")
+                clazz == Int::class -> code("Integer.valueOf(")
+                clazz == Short::class -> code("Short.valueOf(")
+                clazz == Double::class -> code("Double.valueOf(")
+                clazz == Float::class -> code("Float.valueOf(")
+            }
+
+            value(this)
+
+            code(")")
+
+
+            return this
+        }
+
+        fun toPrimitive(clazz: KClass<*>, value: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            value(this)
+
+            when {
+                clazz == Char::class -> code(".charValue()")
+                clazz == Byte::class -> code(".byteValue()")
+                clazz == Long::class -> code(".longValue()")
+                clazz == Int::class -> code(".intValue()")
+                clazz == Short::class -> code(".shortValue()")
+                clazz == Double::class -> code(".doubleValue()")
+                clazz == Float::class -> code(".floatValue()")
+            }
+
+            return this
+        }
+
+        fun nullableSetter(property: MutablePropertyProperty, getter: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            code("set" + property.property.name.capitalize() + "(")
+
+            toNullable(property.getType(), getter)
+
+            code(")")
+
+            return this
+        }
+        fun getter(property: KProperty1<Any, Any?>) : CodeGenerator {
+            code("get" + property.name.capitalize() + "()")
+
+            return this
+        }
+
+        fun setter(property: MutablePropertyProperty, getter: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            code("set" + property.property.name.capitalize() + "(")
+
+            getter(this)
+
+            code(")")
+
+            return this
+        }
+
+        fun assign(variable: String, value: (code:CodeGenerator) -> Unit) : CodeGenerator {
+            builder
+                .append(" ")
+                .append(variable)
+                .append(" = ")
+
+            value(this)
+
+            return this
+        }
+
+        fun code(code: String) : CodeGenerator {
+            builder.append(code)
+
+            return this
+        }
+
+        // public
+
+        fun code() : String {
+            return builder.toString()
+        }
+    }
+
+
+    interface CompilableProperty<CONTEXT> : Property<CONTEXT> {
+        fun getType() : KClass<*>
+        fun getCode(generator: CodeGenerator)
+        fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit)
+    }
+
+    // move
+    open class CompiledPropertyProperty : Property<Context> {
+        // instance data
+
+        @JvmField
+        var conversions : Array<Conversion<Any,Any>> = arrayOf()
+
+        fun convert(index: Int, value: Any) : Any {
+            return conversions[index](value)
+        }
+
+        // collection container array
+        // synchronizer array
+
+        // protected
+
+        fun mapDeep(instance: Any, context: Context) : Any? {
+            return context.mapper.map(instance, context)
+        }
+
+        fun mapCollectionDeep(instance: Any, reader: MapCollection2Collection.Container.Reader, writer: MapCollection2Collection.Container.Writer, context: Context) : Any? {
+            val result = writer.create(reader.size())
+
+            while ( reader.hasMore())
+                writer.set(context.mapper.map(reader.get(), context)!!)
+
+            return result
+        }
+
+        // implement Property
+        override operator fun get(instance: Any, context: Context): Any? {
+            return instance // simply pass the instance so that the set method can access it
+        }
+
+        override operator fun set(instance: Any, value: Any?, context: Context) {}
+    }
+
+    class PropertyProperty<CONTEXT>(val property: KProperty1<Any, Any?>) : CompilableProperty<CONTEXT> {
         override fun get(instance: Any, context: CONTEXT): Any? {
             return property.getter.call(instance)
         }
 
         override fun set(instance: Any, value: Any?, context: CONTEXT) {
             throw Exception("read only")
+        }
+
+        // implement CompilableProperty
+
+        override fun getType(): KClass<*> {
+            return property.returnType.jvmErasure
+        }
+        override fun getCode(generator: CodeGenerator) {
+            generator
+                .code("source.")
+                .getter(property)
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            throw MapperDefinitionException("should not be called")
         }
 
         // override Any
@@ -1421,13 +1895,43 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class MutablePropertyProperty<CONTEXT>(private val property: KMutableProperty<out Any?>) : Property<CONTEXT> {
-        override fun get(instance: Any, context: CONTEXT): Any? {
+    class MutablePropertyProperty(val property: KMutableProperty<out Any?>) : CompilableProperty<Context> {
+        override fun get(instance: Any, context: Context): Any? {
             return property.getter.call(instance)
         }
 
-        override fun set(instance: Any, value: Any?, context: CONTEXT) {
+        override fun set(instance: Any, value: Any?, context: Context) {
             property.setter.call(instance, value)
+        }
+
+        override fun getType() : KClass<*> {
+            return property.returnType.jvmErasure
+        }
+
+        override fun getCode(generator: CodeGenerator) {
+            generator
+                .code("source.")
+                .getter(property)
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            if ( getType().java.isPrimitive != sourceProperty.getType().java.isPrimitive) {
+                if (getType().java.isPrimitive)
+                    generator
+                        .code("target.")
+                        .primitiveSetter(this, getter)
+                else
+                    generator
+                        .code("target.")
+                        .nullableSetter(this, getter)
+            }
+            else {
+                generator
+                    .code("target.")
+                    .setter(this, getter)
+            }
+
+            sourceProperty.getType().java.isPrimitive
+            getType().java.isPrimitive
         }
 
         // override Any
@@ -1472,10 +1976,12 @@ class Mapping<S : Any, T : Any>(
     }
 
     class MapCollection2Collection(sourceClass: KClass<*>, targetClass: KClass<*>,  val property: Property<Context>)
-        : Property<Context> {
+        : CompilableProperty<Context> {
         // local classes
 
         interface Container<T> {
+            val containerClass: KClass<*>
+
             interface Reader {
                 fun size() : Int
                 fun get(): Any
@@ -1493,7 +1999,10 @@ class Mapping<S : Any, T : Any>(
 
         // array
 
-        class ArrayContainer<T>(val containerClass: KClass<*>) : Container<T> {
+        class ArrayContainer<T>(override val containerClass: KClass<*>) : Container<T> {
+
+            constructor(clazz: Class<Any>) : this(clazz.kotlin) {
+            }
             class Reader(val array: Array<Any>) : Container.Reader {
                 var index = 0
 
@@ -1535,7 +2044,10 @@ class Mapping<S : Any, T : Any>(
 
         // collection
 
-        class CollectionContainer<T>(val containerClass: KClass<*>) : Container<T> {
+        class CollectionContainer<T>(override val containerClass: KClass<*>) : Container<T> {
+            constructor(clazz: Class<Any>) : this(clazz.kotlin) {
+            }
+
             class Reader(val collection: Collection<Any>) : Container.Reader {
                 var iterator = collection.iterator()
 
@@ -1642,6 +2154,50 @@ class Mapping<S : Any, T : Any>(
             return null
         }
 
+        override fun getType() : KClass<*> {
+            return Object::class // TODO ??
+        }
+        override fun getCode(generator: CodeGenerator) {
+            throw MapperDefinitionException("NYI")
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            val reader = sourceProperty.toString()  + "Reader"
+            val writer =  property.toString()  + "Writer"
+            val result = reader + "Result"
+
+            generator
+                .javaClass(Container.Reader::class)
+                .code(" $reader = new ")
+                .javaClass(source::class)
+                .code("(")
+                .javaClass(Object::class)
+                .code(".class).reader(")
+
+            getter(generator)
+
+            generator.code(");\n")
+
+            generator
+                .javaClass(Container.Writer::class)
+                .code(" $writer = new ")
+                .javaClass(target::class)
+                .code("(")
+                .javaClass(target.containerClass)
+                .code(".class).writer();\n")
+
+            // TODO: move to superclass
+
+            generator
+                .javaClass((property as CompilableProperty).getType())
+                .code(" $result = (")
+                .javaClass((property as CompilableProperty).getType())
+                .code(")$writer.create($reader.size());\n")
+                .code("while ( $reader.hasMore() )\n")
+                .code("   $writer.set(ctx.mapper.map($reader.get(), ctx));\n")
+
+            this.property.setCode(generator, this /* ? */, { generator -> generator.code(result)})
+        }
+
         // override Any
 
         override fun toString() : String {
@@ -1649,10 +2205,10 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class MapDeep(val targetProperty: Property<Context>) : Property<Context> {
+    class MapDeep(val targetProperty: Property<Context>) : CompilableProperty<Context> {
         // override AccessorValue
 
-        override fun get(insatnce: Any, context: Context): Any? {
+        override fun get(instance: Any, context: Context): Any? {
             return null
         }
 
@@ -1669,6 +2225,25 @@ class Mapping<S : Any, T : Any>(
             targetProperty.set(instance, transformed, context)
         }
 
+        override fun getType() : KClass<*> {
+            return (targetProperty as CompilableProperty).getType()
+        }
+        override fun getCode(generator: CodeGenerator) {
+            throw MapperDefinitionException("NYI")
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            val type =  (targetProperty as CompilableProperty).getType()
+            targetProperty.setCode(generator, this /* ? */, { generator ->  generator
+                .code("(")
+                .javaClass(type)
+                .code(")")
+                .code("mapDeep(")
+
+                getter(generator)
+
+                generator.code(", ctx)") })
+        }
+
         // override Any
 
         override fun toString() : String {
@@ -1676,7 +2251,7 @@ class Mapping<S : Any, T : Any>(
         }
     }
 
-    class SetResultArgument(private val resultDefinition: MappingDefinition.IntermediateResultDefinition, private val index: Int, private val property: Property<Context>) : Property<Context> {
+    class SetResultArgument(private val resultDefinition: MappingDefinition.IntermediateResultDefinition, private val index: Int, private val property: Property<Context>) : CompilableProperty<Context> {
         // implement Property
 
         override operator fun get(instance: Any, context: Context): Any? {
@@ -1685,6 +2260,67 @@ class Mapping<S : Any, T : Any>(
 
         override operator fun set(instance: Any, value: Any?, context: Context) {
             context.getResultBuffer(resultDefinition.index).set(instance, value, property, index, context)
+        }
+
+        override fun getType(): KClass<*> {
+            if ( index < resultDefinition.constructorArgs)
+                return resultDefinition.constructor.parameters[index].type.jvmErasure
+            else
+                return (property as MutablePropertyProperty).getType()
+        }
+        override fun getCode(generator: CodeGenerator) {
+            throw  MapperDefinitionException("should not happen")
+        }
+        override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            if (index < resultDefinition.constructorArgs) {
+                val expectedType = resultDefinition.constructor.parameters[index].type.jvmErasure
+                if ( sourceProperty.getType() != expectedType) {
+                    if ( sourceProperty.getType().java.isPrimitive ) {
+                        // primitive to non-primitive
+
+                        generator
+                            .javaClass(expectedType)
+                            .assign(" t${resultDefinition.index}$index", {generator -> generator.toNullable(expectedType, getter) })
+                    }
+                    else {
+                        // non-primitive to primitive
+
+                        generator
+                            .javaClass(expectedType)
+                            .assign(" t${resultDefinition.index}$index", {generator -> generator.toPrimitive(expectedType, getter) })
+                    }
+                }
+                else
+                    generator
+                        .javaClass(sourceProperty.getType())
+                        .assign(" t${resultDefinition.index}$index", getter)
+            }
+
+            if ( index >= resultDefinition.constructorArgs) {
+                generator
+                    .code("t${resultDefinition.index}.")
+                    //.setter(prop, getter)
+
+                generator.setter( property as MutablePropertyProperty, getter)
+            }
+            else if ( index == resultDefinition.constructorArgs - 1) {
+                // we have a result
+
+                generator
+                    .code(";\n")
+                    .javaClass(resultDefinition.clazz)
+                    .assign(" t${resultDefinition.index}", {gen -> gen.code("new ").javaClass(resultDefinition.clazz).code("(")})
+
+                for ( i in 0..resultDefinition.constructorArgs - 1) {
+                    if ( i > 0 )
+                        generator.code(", ")
+
+                    generator.code("t${resultDefinition.index}$i")
+                }
+                generator.code(");\n")
+
+                resultDefinition.valueReceiver.setCode(generator, {gen -> gen.code("t${resultDefinition.index}")})
+            }
         }
 
         // override Any
@@ -1713,7 +2349,8 @@ class Mapping<S : Any, T : Any>(
     fun setupContext(context: Context): Context.State {
         val state = Context.State(context)
 
-        context.setup(intermediateResultDefinitions.toTypedArray(), stackSize)
+        if (!compiled)
+            context.setup(intermediateResultDefinitions, stackSize)
 
         return state
     }
@@ -1866,11 +2503,12 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) {
 
         val mapping = getMapping(source::class)
 
+        val lazyCreate = mapping.constructor.parameters.isNotEmpty()
         if ( target == null) {
-            if (mapping.constructor.parameters.isNotEmpty())
+            if (lazyCreate)
                 target = context // hmm....
             else {
-                target = mapping.constructor.call()
+                target = mapping.definition.targetClass.java.newInstance() as Any// constructor.call()
 
                 context.remember(source, target)
             }
@@ -1880,7 +2518,7 @@ class Mapper(vararg definitions: MappingDefinition<*, *>) {
         try {
             mapping.transform(source, target, context)
 
-            if ( mapping.constructor.parameters.isNotEmpty() ) {
+            if ( lazyCreate ) {
                 target =  context.currentState!!.result
 
                 context.remember(source, target!!)
