@@ -1439,7 +1439,7 @@ class Mapping<S : Any, T : Any>(
                     if ( i > 0 )
                         generator.code(", ")
 
-                    val s = (property as CompilableProperty<Context>)
+                    /*val s = (property as CompilableProperty<Context>)
 
                     if ( property.getType() !=  resultDefinition.constructor.parameters[i].type.jvmErasure) {
                         if (property.getType().java.isPrimitive)
@@ -1447,7 +1447,8 @@ class Mapping<S : Any, T : Any>(
                         else
                             generator.toNullable(property.getType(), {generator -> generator.code("t${resultDefinition.index}$i")})
                     }
-                    else generator.code("t${resultDefinition.index}$i")
+                    else */
+                    generator.code("t${resultDefinition.index}$i")
                 }
                 generator.code(");\n")
 
@@ -1641,12 +1642,13 @@ class Mapping<S : Any, T : Any>(
 
         val builder = StringBuilder();
         val conversions = ArrayList<Conversion<Any?,Any?>>()
+        val collectionMapper = ArrayList<Array<MapCollection2Collection.Container<Any>>>()
 
         fun createProperty() : CompiledPropertyProperty  {
             // create class
 
             val baseName = "Map" + definition.sourceClass.simpleName + "To" + definition.targetClass.simpleName
-            var className = baseName // + UUID.randomUUID()
+            var className = baseName
             var index = 1
             while ( classes.containsKey(className)) {
                 className = "${baseName}${index}"
@@ -1658,7 +1660,10 @@ class Mapping<S : Any, T : Any>(
 
             // add constructor
 
-            val ctr = CtNewConstructor.make("public " + className + "(" + Conversion::class.java.name + "[] " + "conversions" + ") { this.conversions = conversions; }", clazz)
+            val ctr = CtNewConstructor.make("public " + className + "(" +
+                    Conversion::class.java.name + "[] " + "conversions, " +
+                    MapCollection2Collection.Container::class.java.name + "[][] " + "collectionMapper" +
+                    ") { this.conversions = conversions; this.collectionMapper = collectionMapper;}", clazz)
 
             clazz.addConstructor(ctr)
 
@@ -1672,7 +1677,10 @@ class Mapping<S : Any, T : Any>(
 
             classes.put(className, propertyClass)
 
-            return propertyClass.constructors[0].newInstance(conversions.toTypedArray()) as  CompiledPropertyProperty
+            return propertyClass.constructors[0].newInstance(
+                conversions.toTypedArray(),
+                collectionMapper.toTypedArray()
+            ) as  CompiledPropertyProperty
         }
 
         fun addConversion(conversion: Conversion<Any?,Any?>) : Int {
@@ -1819,6 +1827,12 @@ class Mapping<S : Any, T : Any>(
         fun code() : String {
             return builder.toString()
         }
+
+        fun addCollectionContainer(source: MapCollection2Collection.Container<Any>, target: MapCollection2Collection.Container<Any>) : Int {
+            collectionMapper.add(arrayOf(source, target))
+
+            return collectionMapper.size - 1
+        }
     }
 
 
@@ -1834,12 +1848,13 @@ class Mapping<S : Any, T : Any>(
 
         @JvmField
         var conversions : Array<Conversion<Any,Any>> = arrayOf()
+        @JvmField
+        var collectionMapper : Array<Array<MapCollection2Collection.Container<Any>>> = arrayOf()
 
         fun convert(index: Int, value: Any) : Any {
             return conversions[index](value)
         }
 
-        // collection container array
         // synchronizer array
 
         // protected
@@ -1848,7 +1863,10 @@ class Mapping<S : Any, T : Any>(
             return context.mapper.map(instance, context)
         }
 
-        fun mapCollectionDeep(instance: Any, reader: MapCollection2Collection.Container.Reader, writer: MapCollection2Collection.Container.Writer, context: Context) : Any? {
+        fun mapCollectionDeep(instance: Any, index: Int, context: Context) : Any? {
+            val reader =  collectionMapper[index][0].reader(instance)
+            val writer =  collectionMapper[index][1].writer()
+
             val result = writer.create(reader.size())
 
             while ( reader.hasMore())
@@ -2161,39 +2179,18 @@ class Mapping<S : Any, T : Any>(
             throw MapperDefinitionException("NYI")
         }
         override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
-            val reader = sourceProperty.toString()  + "Reader"
-            val writer =  property.toString()  + "Writer"
-            val result = reader + "Result"
+            val index = generator.addCollectionContainer(this.source, this.target)
+            val result = "collectionResult" + index
 
-            generator
-                .javaClass(Container.Reader::class)
-                .code(" $reader = new ")
-                .javaClass(source::class)
-                .code("(")
-                .javaClass(Object::class)
-                .code(".class).reader(")
-
-            getter(generator)
-
-            generator.code(");\n")
-
-            generator
-                .javaClass(Container.Writer::class)
-                .code(" $writer = new ")
-                .javaClass(target::class)
-                .code("(")
-                .javaClass(target.containerClass)
-                .code(".class).writer();\n")
-
-            // TODO: move to superclass
-
-            generator
+            val code = generator
                 .javaClass((property as CompilableProperty).getType())
                 .code(" $result = (")
                 .javaClass((property as CompilableProperty).getType())
-                .code(")$writer.create($reader.size());\n")
-                .code("while ( $reader.hasMore() )\n")
-                .code("   $writer.set(ctx.mapper.map($reader.get(), ctx));\n")
+                .code(")mapCollectionDeep(")
+
+            getter(generator)
+
+            generator.code(", $index, ctx);\n")
 
             this.property.setCode(generator, this /* ? */, { generator -> generator.code(result)})
         }
