@@ -2271,7 +2271,7 @@ class Mapping<S : Any, T : Any>(
         override fun setCode(generator: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
             if (index < resultDefinition.constructorArgs) {
                 val expectedType = resultDefinition.constructor.parameters[index].type.jvmErasure
-                if ( sourceProperty.getType() != expectedType) {
+                if ( sourceProperty.getType().java.isPrimitive != expectedType.java.isPrimitive) {
                     if ( sourceProperty.getType().java.isPrimitive ) {
                         // primitive to non-primitive
 
