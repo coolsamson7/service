@@ -503,7 +503,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         fun <S: Any,T:Any>optimize(sourceClass: KClass<*>, targetClass: KClass<*>,  definition: MappingDefinition<S, T>, operations: List<Transformer.Operation<Mapping.Context>>) : Array<Transformer.Operation<Mapping.Context>> {
             // generate bytecode with javassist
 
-            val optimize = java.lang.Boolean.getBoolean("optimize-mapper");
+            val optimize = true//java.lang.Boolean.getBoolean("optimize-mapper");
 
             if (optimize) {
                 val codeGenerator = Mapping.CodeGenerator(definition as MappingDefinition<Any, Any>)
@@ -551,15 +551,13 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                 codeGenerator.code("}")
 
-                println(codeGenerator.code()) // TODO
-
                 try {
                     val property = codeGenerator.createProperty()
 
                     return arrayOf(Transformer.Operation(property, property))
                 }
                 catch (exception: Exception) {
-                    println("###################")
+                    println("faile to compile mapper")
                     println(exception)
 
                     println(codeGenerator.code())
@@ -1643,6 +1641,7 @@ class Mapping<S : Any, T : Any>(
         val builder = StringBuilder();
         val conversions = ArrayList<Conversion<Any?,Any?>>()
         val collectionMapper = ArrayList<Array<MapCollection2Collection.Container<Any>>>()
+        val synchronizer = ArrayList<RelationSynchronizer<*, *, *>>()
 
         fun createProperty() : CompiledPropertyProperty  {
             // create class
@@ -1662,8 +1661,9 @@ class Mapping<S : Any, T : Any>(
 
             val ctr = CtNewConstructor.make("public " + className + "(" +
                     Conversion::class.java.name + "[] " + "conversions, " +
-                    MapCollection2Collection.Container::class.java.name + "[][] " + "collectionMapper" +
-                    ") { this.conversions = conversions; this.collectionMapper = collectionMapper;}", clazz)
+                    MapCollection2Collection.Container::class.java.name + "[][] " + "collectionMapper, " +
+                    RelationSynchronizer::class.java.name + "[] " + "synchronizer" +
+                    ") { this.synchronizer = synchronizer; this.conversions = conversions; this.collectionMapper = collectionMapper;}", clazz)
 
             clazz.addConstructor(ctr)
 
@@ -1679,7 +1679,8 @@ class Mapping<S : Any, T : Any>(
 
             return propertyClass.constructors[0].newInstance(
                 conversions.toTypedArray(),
-                collectionMapper.toTypedArray()
+                collectionMapper.toTypedArray(),
+                synchronizer.toTypedArray()
             ) as  CompiledPropertyProperty
         }
 
@@ -1833,6 +1834,12 @@ class Mapping<S : Any, T : Any>(
 
             return collectionMapper.size - 1
         }
+
+        fun addSynchronizer(synchronizer: RelationSynchronizer<*, *, *>): Int {
+            this.synchronizer.add(synchronizer)
+
+            return this.synchronizer.size - 1
+        }
     }
 
 
@@ -1850,12 +1857,16 @@ class Mapping<S : Any, T : Any>(
         var conversions : Array<Conversion<Any,Any>> = arrayOf()
         @JvmField
         var collectionMapper : Array<Array<MapCollection2Collection.Container<Any>>> = arrayOf()
+        @JvmField
+        var synchronizer : Array<RelationSynchronizer<Any,Any,*>> = arrayOf()
 
         fun convert(index: Int, value: Any) : Any {
             return conversions[index](value)
         }
 
-        // synchronizer array
+        fun synchronize(index: Int, source: Collection<Any>, target: MutableCollection<Any>, context: Context) : Any {
+            return synchronizer[index].synchronize(source, target, context)
+        }
 
         // protected
 
@@ -1960,7 +1971,7 @@ class Mapping<S : Any, T : Any>(
     }
 
     class SynchronizeMultiValuedRelationship<TO:Any, ENTITY:Any, PK:Any?>(val property: KProperty1<Any, Any?>, val synchronizer: RelationSynchronizer<TO, ENTITY, PK>)
-        :Property<Context> {
+        :CompilableProperty<Context> {
         // override
 
         override fun get(entity: Any, context: Context): Any? {
@@ -1971,6 +1982,30 @@ class Mapping<S : Any, T : Any>(
             val entityList = get(entity, context) as MutableCollection<ENTITY> // ???
 
             synchronizer.synchronize(toList as Collection<TO>, entityList, context)
+        }
+
+        // implement  CompilableProperty
+
+        override fun getType() : KClass<*> {
+            return Object::class // not called
+        }
+        override fun getCode(generator: CodeGenerator) {
+            throw MapperDefinitionException("should not be called")
+        }
+        override fun setCode(gen: CodeGenerator, sourceProperty: CompilableProperty<Context>, getter: (code:CodeGenerator) -> Unit) {
+            val index = gen.addSynchronizer(synchronizer)
+
+            gen.code("synchronize($index, ")
+
+            getter(gen)
+
+            gen.code(", target.")
+
+            gen.getter(property)
+
+            gen.code(", ctx)")
+
+
         }
 
         // override Any
@@ -2173,7 +2208,7 @@ class Mapping<S : Any, T : Any>(
         }
 
         override fun getType() : KClass<*> {
-            return Object::class // TODO ??
+            return (property as CompilableProperty).getType()
         }
         override fun getCode(generator: CodeGenerator) {
             throw MapperDefinitionException("NYI")

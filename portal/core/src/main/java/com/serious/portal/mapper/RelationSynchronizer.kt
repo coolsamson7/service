@@ -9,7 +9,7 @@ import java.util.HashMap
 
 typealias PKGetter<T,PK> = (any: T) -> PK
 
-abstract class RelationSynchronizer<S, T, PK> protected constructor(private val toPK: PKGetter<S,PK>, private val pk: PKGetter<T,PK>) {
+abstract class RelationSynchronizer<S:Any, T:Any, PK> protected constructor(private val toPK: PKGetter<S,PK>, private val pk: PKGetter<T,PK>) {
     // protected
 
     protected open fun missingPK(pk: PK) : Boolean {
