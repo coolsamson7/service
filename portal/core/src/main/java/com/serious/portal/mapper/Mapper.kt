@@ -21,7 +21,7 @@ typealias Conversion<I, O> = (I) -> O
 
 typealias Finalizer<S, T> = (S,T) -> Unit
 
-class ConversionFactory {
+class ConversionFactory(parent: ConversionFactory? = null) {
     // local classes
     data class ConversionKey(val from : KClass<*>, val to: KClass<*>)
 
@@ -29,7 +29,18 @@ class ConversionFactory {
 
     val conversions = HashMap<ConversionKey,Conversion<*,*>>()
 
+    // init
+
     init {
+        if ( parent != null)
+            for ( conversion in parent.conversions.values )
+                register(conversion as Conversion<Any,Any>)
+    }
+
+
+    fun initStandardConversions() : ConversionFactory {
+        // TODO: char, boolean, byte
+
         // short
 
         register {value: Short -> value.toInt() }
@@ -64,6 +75,10 @@ class ConversionFactory {
         register {value: Float -> value.toInt() }
         register {value: Float -> value.toLong() }
         register {value: Float -> value.toDouble() }
+
+        // done
+
+        return this
     }
 
     @OptIn(ExperimentalReflectionOnLambdas::class)
@@ -76,6 +91,10 @@ class ConversionFactory {
 
     fun <I:Any,O:Any> findConversion(from : KClass<I>, to: KClass<O>) :Conversion<I,O>? {
         return conversions.get(ConversionKey(from,to)) as Conversion<I,O>?
+    }
+
+    companion object {
+        val standardFactory = ConversionFactory().initStandardConversions();
     }
 }
 
@@ -357,12 +376,12 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
 
                     sourceNode.fetchValue(sourceTree, type, operations) // compute property needed to fetch source value
 
-                    operations.add(makeOperation(sourceNode))
+                    operations.add(makeOperation(sourceNode, mapper))
                 } // if
             }
 
             @OptIn(ExperimentalReflectionOnLambdas::class)
-            private fun calculateConversion(sourceNode: SourceTree.Node) : Conversion<Any?,Any?>? {
+            private fun calculateConversion(sourceNode: SourceTree.Node, conversionFactory: ConversionFactory) : Conversion<Any?,Any?>? {
                 var conversion = match!!.conversion
                 val deep = match.deep
 
@@ -384,16 +403,16 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                         throw MapperDefinitionException("conversion target type ${to.simpleName} does not match ${targetType.simpleName}", null)
                 }
                 else if (sourceType !== targetType && !sourceType.isSubclassOf(targetType) && !deep )
-                    conversion = tryConvert(sourceType, targetType) // try automatic conversion for low-level types
+                    conversion = tryConvert(sourceType, targetType, conversionFactory) // try automatic conversion for low-level types
 
                 return conversion as Conversion<Any?,Any?>?
             }
 
-            private fun makeOperation(sourceNode: SourceTree.Node): Transformer.Operation<Mapping.Context> {
+            private fun makeOperation(sourceNode: SourceTree.Node, mapper: Mapper): Transformer.Operation<Mapping.Context> {
                 val sourceProperty: Transformer.Property<Mapping.Context> = sourceNode.fetchProperty!!
 
                 val deep = match!!.deep
-                val conversion = calculateConversion(sourceNode)
+                val conversion = calculateConversion(sourceNode, mapper.conversionFactory)
 
                 // compute operation
 
@@ -412,8 +431,8 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                 return Transformer.Operation(sourceProperty, writeProperty)
             }
 
-            private fun <S : Any,T: Any> tryConvert(sourceType: KClass<S>, targetType: KClass<T>): Conversion<S,T> {
-                val conversion = ConversionFactory().findConversion(sourceType, targetType) // TODO
+            private fun <S : Any,T: Any> tryConvert(sourceType: KClass<S>, targetType: KClass<T>, conversionFactory: ConversionFactory): Conversion<S,T> {
+                val conversion = conversionFactory.findConversion(sourceType, targetType)
 
                if ( conversion != null)
                    return conversion
@@ -557,7 +576,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
                     return arrayOf(Transformer.Operation(property, property))
                 }
                 catch (exception: Exception) {
-                    println("faile to compile mapper")
+                    println("failed to compile mapper")
                     println(exception)
 
                     println(codeGenerator.code())
@@ -617,6 +636,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
         }
     }
 
+    @MapperMarker
     class Builder<S:Any,T:Any>(val definition: MappingDefinition<S,T>) {
         // map { ... }
 
@@ -1152,7 +1172,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
     }
 
     private fun createOperations(mapper: Mapper): OperationBuilder.OperationResult {
-        val matches: MutableCollection<Match> = ArrayList<Match>()
+        val matches: MutableCollection<Match> = ArrayList()
 
         findMatches(matches)
 
@@ -1305,7 +1325,8 @@ class Mapping<S : Any, T : Any>(
 
         // instance data
 
-        private val sourceAndTarget = arrayOfNulls<Any>(2)
+        private var currentSource : Any? = null
+        private var currentTarget : Any? = null
         private val mappedObjects: MutableMap<Any, Any> = IdentityHashMap()
         private var resultBuffers: Array<MappingDefinition.IntermediateResultDefinition.Buffer?> = NO_BUFFERS
         @JvmField()
@@ -1314,15 +1335,11 @@ class Mapping<S : Any, T : Any>(
         @JvmField()
         var currentState : State? = null
 
-        inline private fun setSourceAndTarget(source: Any?, target: Any?) {
-            sourceAndTarget[0] = source
-            sourceAndTarget[1] = target
-        }
-
         fun remember(source: Any, target: Any): Context {
             mappedObjects[source] = target
 
-            setSourceAndTarget(source, target) // also remember the current involved objects!
+            currentSource = source
+            currentTarget = target
 
             return this
         }
@@ -2423,16 +2440,76 @@ fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda:
 
 // one mapper has n mappings
 
-class Mapper(vararg definitions: MappingDefinition<*, *>) {
+@DslMarker
+annotation class MapperMarker
+
+fun mapper(lambda: Mapper.Builder.() -> Unit) : Mapper {
+    val builder = Mapper.Builder()
+
+    builder
+        .apply(lambda)
+
+    return Mapper(builder)
+}
+
+class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conversion<*,*>>) {
+    constructor(builder: Builder) : this(builder.definitions, builder.conversions) {
+    }
+
+    constructor(vararg definitions: MappingDefinition<*, *>) : this(listOf(*definitions), emptyList()) {
+    }
+
+    // local class
+
+    //@MapperMarker
+    class Builder {
+        // instance data
+
+        val definitions = ArrayList<MappingDefinition<Any,Any>>()
+        val conversions = ArrayList<Conversion<Any,Any>>()
+
+        // dsl
+
+        fun <I:Any, O:Any> register(conversion: Conversion<I,O>) :Builder {
+            conversions.add(conversion as Conversion<Any,Any>)
+
+            return this
+        }
+
+        fun <S:Any,T:Any>mapping(definition: MappingDefinition<S,T>) : Builder {
+            definitions.add(definition as MappingDefinition<Any,Any>)
+
+            return this
+        }
+
+        fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda: MappingDefinition.Builder<S,T>.() -> Unit) : Builder {
+            val definition = MappingDefinition(sourceClass, targetClass)
+
+            MappingDefinition.Builder(definition)
+                .apply(lambda)
+
+            definitions.add(definition as MappingDefinition<Any,Any>)
+
+            return this
+        }
+    }
+
     // instance data
 
     private var mappings = HashMap<KClass<*>, Mapping<out Any, out Any>>()
 
-    var conversionFactory = ConversionFactory()
+    var conversionFactory = ConversionFactory(ConversionFactory.standardFactory)
 
     // constructor
 
     init {
+        // conversions
+
+        for ( conversion in conversions)
+            conversionFactory.register(conversion as Conversion<Any,Any>)
+
+        // definitions
+
         for (definition in definitions)
             try {
                 registerMapping(definition.createMapping(this))
