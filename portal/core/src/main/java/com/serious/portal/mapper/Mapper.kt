@@ -17,8 +17,14 @@ import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.reflect
 
+/**
+ * a [Conversion] is a function that converts an input in an output object
+ */
 typealias Conversion<I, O> = (I) -> O
 
+/**
+ * a [Finalizer] can be used to add finishing touches to a ampping operation given the source and target object.
+ */
 typealias Finalizer<S, T> = (S,T) -> Unit
 
 class ConversionFactory(parent: ConversionFactory? = null) {
@@ -623,6 +629,15 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
     }
 }
 
+/**
+ * A MappingDefinition is a specification of the operations needed to convert a source class in a target class
+ *
+ * @param S the source type
+ * @param T the target type
+ * @property sourceClass the associated source class
+ * @property targetClass the associated target class
+ * @constructor Create empty Mapping definition
+ */
 class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val targetClass: KClass<T>) {
     // local classes
 
@@ -637,8 +652,16 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
     }
 
     @MapperMarker
+    /**
+     * builder for a mapping definition
+     *
+     * @param S source type
+     * @param T target type
+     * @property definition the related definition
+     * @constructor Create empty Builder
+     */
     class Builder<S:Any,T:Any>(val definition: MappingDefinition<S,T>) {
-        // map { ... }
+        // builder for map { ... }
 
         data class MapBuilder<S: Any,T: Any>(val definition : MappingDefinition<S,T>) {
             val This = this
@@ -656,6 +679,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // string
 
+            /**
+             * map a named source property  to a target property
+             *
+             * @param target the target property name
+             * @return the builder
+             */
             infix fun String.to(target: String) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(PropertyAccessor(this))
                 targetAccessor = arrayOf(PropertyAccessor(target))
@@ -663,6 +692,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return This
             }
 
+            /**
+             * map a named source property  to a path of target properties
+             *
+             * @param target array of target property names
+             * @return the builder
+             */
             infix fun String.to(target: Array<String>) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(PropertyAccessor(this))
                 targetAccessor = target.map {PropertyAccessor(it) }.toTypedArray()
@@ -672,6 +707,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // array of strings
 
+            /**
+             * map a source property path to a target property
+             *
+             * @param target target property name
+             * @return the builder
+             */
             infix fun Array<String>.to(target: String) :MapBuilder<S,T> {
                 sourceAccessor = this.map {PropertyAccessor(it) }.toTypedArray()
                 targetAccessor = arrayOf(PropertyAccessor(target))
@@ -679,6 +720,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return This
             }
 
+            /**
+             * map a source property path to a path of target properties
+             *
+             * @param target target array of target property names
+             * @return the builder
+             */
             infix fun Array<String>.to(target: Array<String>) :MapBuilder<S,T> {
                 sourceAccessor = this.map {PropertyAccessor(it) }.toTypedArray()
                 targetAccessor = target.map { PropertyAccessor(it) }.toTypedArray()
@@ -688,6 +735,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // accessor
 
+            /**
+             * maps a source accessor to a target accessor
+             *
+             * @param target the target accessor
+             * @return the builder
+             */
             infix fun Accessor.to(target: Accessor) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(this)
                 targetAccessor = arrayOf(target)
@@ -695,6 +748,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return This
             }
 
+            /**
+             * maps a source accessor to a target property
+             *
+             * @param target the target property
+             * @return the builder
+             */
             infix fun Accessor.to(target: String) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(this)
                 targetAccessor = arrayOf(PropertyAccessor(target))
@@ -702,6 +761,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                 return This
             }
 
+            /**
+             * maps a source accessor to a path of target property names
+             *
+             * @param target array of target property names
+             * @return the builder
+             */
             infix fun Accessor.to(target: Array<String>) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(this)
                 targetAccessor = target.map { PropertyAccessor(it) }.toTypedArray()
@@ -711,6 +776,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // property
 
+            /**
+             * maps a source kotlin property to a target kotlin property
+             *
+             * @param target the target property
+             * @return the builder
+             */
             infix fun KProperty1<S,*>.to(target: KProperty1<T,*>):MapBuilder<S,T> {
                 val sourceProperty = PropertyAccessor(this.name)
                 sourceProperty.readProperty = this as KProperty1<Any, Any?>
@@ -726,7 +797,16 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // synchronize
 
-            infix fun<TO: Any,ENTITY:Any, PK:Any?> synchronize(synchronizer: RelationSynchronizer<TO,ENTITY, PK>) : MapBuilder<S,T> {
+            /**
+             * synchronize two collections with the given [RelationSynchronizer]
+             *
+             * @param RS the source element type
+             * @param RT the target element type
+             * @param PK the primary key type of both classes
+             * @param synchronizer the [RelationSynchronizer]
+             * @return the builder
+             */
+            infix fun<RS: Any,RT:Any, PK:Any?> synchronize(synchronizer: RelationSynchronizer<RS, RT, PK>) : MapBuilder<S,T> {
                 this.synchronizer = synchronizer as RelationSynchronizer<Any,Any,Any?>
                 this.deep = true
 
@@ -735,6 +815,14 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // convert
 
+            /**
+             * convert the source value given a [Conversion]
+             *
+             * @param I the conversion input type
+             * @param O the conversion output type
+             * @param conversion teh conversion function
+             * @return the builder
+             */
             infix fun<I:Any,O:Any> convert(conversion: Conversion<I,O>) : MapBuilder<S,T> {
                 this.conversion = conversion as Conversion<Any,Any>
 
@@ -743,6 +831,12 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // deep
 
+            /**
+             * mark this mapping as deep
+             *
+             * @param deep the deep property
+             * @return the builder
+             */
             infix fun deep(deep : Boolean) : MapBuilder<S,T>  {
                 this.deep = deep
 
@@ -751,32 +845,79 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
             // path
 
+            /**
+             * create an array of property names
+             *
+             * @param path restarg of property names
+             * @return the array
+             */
             fun path(vararg path: String): Array<String> {
                 return path as Array<String> // ha !
             }
 
+            /**
+             * create a property accessor giben a property name
+             *
+             * @param name the property name
+             * @return the accessor
+             */
             fun property(name: String) : PropertyAccessor {
                 return PropertyAccessor(name)
             }
 
+            /**
+             * create an accessor given a constant value
+             *
+             * @param value the value
+             * @return the accessor
+             */
             fun constant(value: Any) : Accessor {
                 return ConstantAccessor(value)
             }
 
             // properties
 
-            fun properties(vararg property: String): MapBuilder<S,T>  {
+            /**
+             * map matching properties of the source and target class.
+             * If arguments are supplied, they will refer to the desired properties,
+             * otherwise all matching properties are considered.
+             * @param property optional property names
+             * @return the builder
+             */
+            fun matchingProperties(vararg property: String): MapBuilder<S,T>  {
                 this.properties = Properties(*property)
 
                 return this
             }
 
+            /**
+             * create an array of property names
+             *
+             * @param path restarg of property names
+             * @return the array
+             */
+            fun properties(vararg path: String): Array<String> {
+                return path as Array<String> // ha !
+            }
+
+            /**
+             * except removes a list of properties from the list of properties that should be matched
+             *
+             * @param property property name array
+             * @return the builder
+             */
             infix fun except(property: Array<String>) :MapBuilder<S,T>  {
                 this.properties?.except(*property)
 
                 return this
             }
 
+            /**
+             * except removes a single property from the list of properties that should be matched
+             *
+             * @param property property name array
+             * @return the builder
+             */
             infix fun except(property: String) :MapBuilder<S,T>  {
                 this.properties?.except(property)
 
@@ -805,10 +946,18 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
                     else
                         definition.map(sourceAccessor!!, targetAccessor!!, conversion)
                 }
-
             }
         }
 
+        // public
+
+        /**
+         * add a map operation
+         *
+         * @param lambda the lambda
+         * @receiver
+         * @return the builder
+         */
         fun map(lambda: MapBuilder<S,T>.() -> Unit) : Builder<S,T> {
             val builder = MapBuilder(definition)
 
@@ -823,14 +972,24 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
             return this
         }
 
-        // top level
-
+        /**
+         * set a [Finalizer] for this mapping defintion
+         *
+         * @param finalizer a  [Finalizer]
+         * @return the builder
+         */
         infix fun finalize(finalizer: Finalizer<Any,Any>) : Builder<S,T> {
             definition.finalizer = finalizer
 
             return this
         }
 
+        /**
+         * tell the mapper that this definition should derive from a base definition
+         *
+         * @param mappingDefinition the base definition
+         * @return the builder
+         */
         infix fun derives(mappingDefinition: MappingDefinition<*,*>) : Builder<S,T> {
             definition.derives(mappingDefinition)
 
@@ -856,6 +1015,11 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
 
     // accessors
 
+    /**
+     * Accessor is an interface for different mapping sources or targets
+     *
+     * @constructor Create empty Accessor
+     */
     interface Accessor {
         val name: String
         var index: Int
@@ -926,7 +1090,6 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
             return "\"${name}\""
         }
     }
-
 
     class ConstantAccessor(private val constant: Any) : Accessor {
         // override
@@ -1282,6 +1445,9 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
     }
 }
 
+/**
+ * Mapping is the internal object that covers the mapping operations related to one object type
+ */
 class Mapping<S : Any, T : Any>(
     val definition: MappingDefinition<S, T>,
     val constructor: KFunction<Any>,
@@ -1293,6 +1459,12 @@ class Mapping<S : Any, T : Any>(
 ) : Transformer<Mapping.Context>(operations) {
     // local classes
 
+    /**
+     * Context is an internal class that keeps track of the mapping state 8 like list of mapped objects, etc. -
+     *
+     * @property mapper the related mapper
+     * @constructor Create empty Context
+     */
     class Context(@JvmField val mapper: Mapper) {
         // local classes
 
@@ -2443,6 +2615,13 @@ fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda:
 @DslMarker
 annotation class MapperMarker
 
+/**
+ * create a new mapper by specifiying the required mappings and operations
+ *
+ * @param lambda the corresponding mappings
+ * @receiver
+ * @return the mapper
+ */
 fun mapper(lambda: Mapper.Builder.() -> Unit) : Mapper {
     val builder = Mapper.Builder()
 
@@ -2452,6 +2631,14 @@ fun mapper(lambda: Mapper.Builder.() -> Unit) : Mapper {
     return Mapper(builder)
 }
 
+/**
+ * A Mapper is the main object that is able to execute mapping operations.
+ *
+ * @constructor
+ *
+ * @param definitions list of [MappingDefinition]
+ * @param conversions list of [Conversion]s that should be applied to mappings
+ */
 class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conversion<*,*>>) {
     constructor(builder: Builder) : this(builder.definitions, builder.conversions) {
     }
@@ -2470,18 +2657,45 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
 
         // dsl
 
-        fun <I:Any, O:Any> register(conversion: Conversion<I,O>) :Builder {
+        /**
+         * convert all input objects of type I to O given a [Conversion]
+         *
+         * @param I the input type
+         * @param O the output type
+         * @param conversion the conversion
+         * @return the builder
+         */
+        fun <I:Any, O:Any> convert(conversion: Conversion<I,O>) :Builder {
             conversions.add(conversion as Conversion<Any,Any>)
 
             return this
         }
 
+        /**
+         * add a specific mapping definition to this mapper
+         *
+         * @param S the source type
+         * @param T the target type
+         * @param definition the mapping definition
+         * @return the builder
+         */
         fun <S:Any,T:Any>mapping(definition: MappingDefinition<S,T>) : Builder {
             definitions.add(definition as MappingDefinition<Any,Any>)
 
             return this
         }
 
+        /**
+         * map source objects of the given type to a target object given a list of required mapping operations
+         *
+         * @param S the source type
+         * @param T the target type
+         * @param sourceClass the source class
+         * @param targetClass the target class
+         * @param lambda the lambda used to define operations
+         * @receiver
+         * @return the builder
+         */
         fun <S:Any,T:Any>mapping(sourceClass: KClass<S>, targetClass: KClass<T>, lambda: MappingDefinition.Builder<S,T>.() -> Unit) : Builder {
             val definition = MappingDefinition(sourceClass, targetClass)
 
@@ -2561,10 +2775,22 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
 
     // public
 
+    /**
+     * create a [Mapping.Context] that will be used in subsequent mappings
+     *
+     * @return the created context
+     */
     fun createContext() : Mapping.Context {
         return Mapping.Context(this)
     }
 
+    /**
+     * map a source object and return the mapping result
+     *
+     * @param T the target type
+     * @param source the source
+     * @return the mapping result
+     */
     fun <T:Any>map(source: Any?): T? {
         if ( source == null)
             return null
@@ -2572,12 +2798,28 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
         return map(source, Mapping.Context(this))
     }
 
+    /**
+     * map a list of objects and return the mapped list
+     *
+     * @param T the target type
+     * @param source the source
+     * @return the result list
+     */
     fun <T:Any>map(source: List<Any?>): List<T?> {
        val context = createContext()
 
         return source.map { element -> map(element, context) }
     }
 
+    /**
+     * map a source on an existing target
+     *
+     * @param S the source type
+     * @param T the target type
+     * @param source the source
+     * @param target the target
+     * @return the - modified - target
+     */
     fun <S:Any,T:Any>map(source: S?, target: T): T? {
         if ( source == null)
             return null
@@ -2585,6 +2827,15 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
         return map(source, target, Mapping.Context(this))
     }
 
+    /**
+     * map a source on an existing target given an explicit [Mapping.Context]
+     *
+     * @param T the target type
+     * @param source the source
+     * @param target the target
+     * @param context the mapping context
+     * @return the - modified - target
+     */
     fun <T:Any> map(source: Any?, target: T, context: Mapping.Context): T? {
         if ( source == null)
             return null
@@ -2604,6 +2855,14 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
         return target
     }
 
+    /**
+     * map a source object given an explicit mapping context
+     *
+     * @param T the target type
+     * @param source the source
+     * @param context the context
+     * @return the mapping result
+     */
     fun <T:Any> map(source: Any?, context: Mapping.Context): T? {
         if ( source == null)
             return null
@@ -2612,12 +2871,13 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
 
         val mapping = getMapping(source::class)
 
-        val lazyCreate = mapping.constructor.parameters.isNotEmpty()
+        var lazyCreate = false
         if ( target == null) {
+            lazyCreate = mapping.constructor.parameters.isNotEmpty()
             if (lazyCreate)
-                target = context // hmm....
+                target = context // we need to set something....
             else {
-                target = mapping.definition.targetClass.java.newInstance() as Any// constructor.call()
+                target = mapping.definition.targetClass.java.newInstance() as Any
 
                 context.remember(source, target)
             }
@@ -2640,8 +2900,11 @@ class Mapper(definitions: List<MappingDefinition<*, *>>, conversions: List<Conve
         return target as T
     }
 
-    // override Any
-
+    /**
+     * describe the mapping process in form of a readable string
+     *
+     * @return the textual representation
+     */
     fun describe() : String {
         val builder = StringBuilder()
 

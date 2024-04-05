@@ -6,8 +6,6 @@ package com.serious.portal.mapper
  */
 
 import org.junit.jupiter.api.Test
-import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.reflect
 import kotlin.test.assertEquals
 
 class ConversionTest {
@@ -35,36 +33,11 @@ class ConversionTest {
 
     @Test
     fun testConversion() {
-        val conversion1 = {a: Long? -> a}
-        val conversion2 = {a: Long -> a}
-        val a : Long = conversion2(1)
-        val b : Long? = conversion1(1)
-
-        val type1 = conversion1.reflect()!!.returnType.jvmErasure
-        val type2 = conversion2.reflect()!!.returnType.jvmErasure
-
-        val xx =  conversion1.reflect()!!.parameters.get(0).type
-        val xxx =  conversion2.reflect()!!.parameters.get(0).type
-        val x = conversion2.reflect()!!.returnType.isMarkedNullable
-        val y = conversion2.reflect()!!.returnType.isMarkedNullable
-
-        if ( type1 == type2) {
-            println()
-        }
-
-        if ( type1 === type2) {
-            println()
-        }
-
-        if ( type1 !== type2) {
-            println()
-        }
-        else {
-            println()
-        }
-
-        val mapper = Mapper(
+        val mapper = mapper {
             mapping(Foo::class, Foo::class) {
+                convert<Short,Float> { value -> value * 2f}
+
+                map { Foo::short to Foo::short}
                 map { "short" to "short" }
                 map { "short" to "shortN" }
                 map { "shortN" to "short" }
@@ -79,7 +52,8 @@ class ConversionTest {
 
                 map { path("price", "currency") to  path("price", "currency") }
                 map { "longN" to  path("price", "value") }
-                })
+                }
+        }
 
         val c =  {obj: Long-> 2 * obj}
 

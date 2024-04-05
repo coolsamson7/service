@@ -172,17 +172,17 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     val readApplicationMapper = Mapper(
         mapping(ApplicationEntity::class, Application::class) {
-            map { properties("name", "configuration") }
+            map { matchingProperties("name", "configuration") }
             map { "versions" to "versions" deep true }
         },
 
         mapping(AssignedMicrofrontendEntity::class, AssignedMicrofrontend::class) {
-            map { properties("id", "version") }
+            map { matchingProperties("id", "version") }
             map { path("microfrontend", "name") to "microfrontend" }
         },
 
         mapping(ApplicationVersionEntity::class, ApplicationVersion::class) {
-            map { properties("id", "version", "configuration") }
+            map { matchingProperties("id", "version", "configuration") }
             map { "assignedMicrofrontends" to "assignedMicrofrontends" deep true}
         })
 
@@ -235,7 +235,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         val mapper = Mapper(
             mapping(Application::class, ApplicationEntity::class) {
-                map { properties("name", "configuration") }
+                map { matchingProperties("name", "configuration") }
                 map { "versions" to "versions" synchronize synch }
             })
 
@@ -319,7 +319,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         val mapper = Mapper(
             mapping(ApplicationVersion::class, ApplicationVersionEntity::class) {
-                map { properties("version", "configuration") }
+                map { matchingProperties("version", "configuration") }
                 map { "assignedMicrofrontends" to "assignedMicrofrontends" synchronize synchronizer }
             })
 
@@ -345,12 +345,12 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     val readMicrofrontendMapper = Mapper(
         mapping(MicrofrontendEntity::class, Microfrontend::class) {
-            map { properties("name", "enabled", "configuration") }
+            map { matchingProperties("name", "enabled", "configuration") }
             map { "versions" to "versions" deep true }
         },
 
         mapping(MicrofrontendVersionEntity::class, MicrofrontendVersion::class) {
-            map { properties("id", "version", "configuration", "enabled") }
+            map { matchingProperties("id", "version", "configuration", "enabled") }
             map { path("microfrontend", "name") to "microfrontend" }
             map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
             map { "instances" to "instances" deep true }
@@ -360,7 +360,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         mapping(MicrofrontendInstanceEntity::class, MicrofrontendInstance::class) {
             map { path("microfrontendVersion", "microfrontend", "name") to "microfrontend" }
             map { path("microfrontendVersion", "version") to "version" }
-            map { properties("uri", "enabled", "health", "configuration", "stage") }
+            map { matchingProperties("uri", "enabled", "health", "configuration", "stage") }
             map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
         })
 

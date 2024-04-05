@@ -39,7 +39,7 @@ class CompositeTest {
             mapping(Product::class, Product::class) {
                 map {"id" to "id"}
                 map {"name" to "name" }
-                map {properties("name1", "name2", "name3", "name4", "name5", "name6", "name7", "name8", "name9")}
+                map {matchingProperties("name1", "name2", "name3", "name4", "name5", "name6", "name7", "name8", "name9")}
                 map {path("price", "currency") to path("price", "currency") }
                 map {path("price", "value") to path("price", "value") }
             }

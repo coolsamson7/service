@@ -6,7 +6,6 @@ package com.serious.portal.mapper
  */
 
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class CollectionTest {
     // local classes
@@ -49,30 +48,78 @@ class CollectionTest {
 
     @Test
     fun testCollection() {
-        val mapper = Mapper(
-            mapping(Foo::class, Foo::class) {
-                map { "name0" to "name0" }
-                map { "name1" to "name1" }
-                map { "name2" to "name2" }
-                map { "name3" to "name3" }
-                map { "name4" to "name4" }
-                map { "name5" to "name5" }
-                map { "name6" to "name6" }
-                map { "name7" to "name7" }
+        val bazMapping = mapping(Baz::class, Baz::class) {
+            map { "name" to "name" }
+        }
 
-                map { "barArray" to "barList" deep true}
-                map { "barList" to "barArray" deep true}
-            },
+        val mapper = mapper {
+            convert<Long,Long> { value -> value }
+
+            convert<Long,String> { value -> value.toString() }
+
+            mapping(Foo::class, Foo::class) {
+                map { matchingProperties() except properties("barArray", "barList") }
+
+                map { "barArray" to "barList" deep true }
+                map { "barList" to "barArray" deep true }
+            }
 
             mapping(Bar::class, Bar::class) {
-                map { properties() }
-                map { "baz" to "baz" deep true}
-            },
-
-            mapping(Baz::class, Baz::class) {
-                map { "name" to "name" }
+                map { matchingProperties() except properties("baz") }
+                map { "baz" to "baz" deep true }
             }
-        )
+
+            mapping(bazMapping)
+
+            //(Baz::class, Baz::class) {
+            //    map { "name" to "name" }
+            //}
+        }
+
+        fun mapBaz(baz: Baz) :Baz {
+            val result = Baz()
+
+            result.name = baz.name
+
+            return result
+        }
+
+        fun mapBar(bar: Bar) :Bar {
+            val result = Bar()
+
+            result.name = bar.name
+            result.name0 = bar.name0
+            result.name1 = bar.name1
+            result.name2 = bar.name2
+            result.name3 = bar.name3
+            result.name4 = bar.name4
+            result.name5 = bar.name5
+            result.name6 = bar.name6
+            result.name7 = bar.name7
+
+            result.baz = bar.baz.map { baz -> mapBaz(baz) }.toTypedArray()
+
+            return result
+        }
+
+        fun mapFoo(foo: Foo) :Foo {
+            val result = Foo()
+
+            result.name0 = foo.name0
+            result.name1 = foo.name1
+            result.name2 = foo.name2
+            result.name3 = foo.name3
+            result.name4 = foo.name4
+            result.name5 = foo.name5
+            result.name6 = foo.name6
+            result.name7 = foo.name7
+
+            result.barArray = foo.barArray!!.map { bar -> mapBar(bar) }.toTypedArray()
+            result.barList = foo.barList!!.map { bar -> mapBar(bar) }
+
+            return result
+        }
+
 
         val foo = Foo()
 
@@ -89,8 +136,16 @@ class CollectionTest {
                 mapper.map<Foo>(foo)
 
             var ms = System.currentTimeMillis() - start
-            println("" + loops + " loops in " + ms + "ms, avg " + ms.toDouble() / loops)
+            println("mapper: " + loops + " loops in " + ms + "ms, avg " + ms.toDouble() / loops)
 
+            // manual
+
+            start = System.currentTimeMillis()
+            for (i in 0 until loops)
+                mapFoo(foo)
+
+            ms = System.currentTimeMillis() - start
+            println("manual: " + loops + " loops in " + ms + "ms, avg " + ms.toDouble() / loops)
         }
 
         //assertEquals(1, result.barArray.size)

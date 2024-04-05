@@ -25,7 +25,7 @@ class InheritanceTest {
     @Test
     fun testInheritance() {
         val baseMapping = mapping(Base::class,Base::class) {
-            map { properties() }
+            map { matchingProperties() }
         }
 
         val mapper = Mapper(
@@ -34,7 +34,7 @@ class InheritanceTest {
             mapping(Derived::class, Derived::class) {
                 derives(baseMapping)
 
-                map { properties("name") }
+                map { matchingProperties("name") }
             }
         )
 

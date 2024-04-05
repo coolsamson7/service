@@ -6,8 +6,6 @@ package com.serious.portal.mapper
  */
 
 import org.junit.jupiter.api.Test
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.valueParameters
 import kotlin.test.assertEquals
 
 class MapperTest {
@@ -89,7 +87,7 @@ class MapperTest {
 
         val mapper = Mapper(
             mapping(StrangeConstructor::class, StrangeConstructor::class) {
-                map { properties("a", "b")}
+                map { matchingProperties("a", "b")}
                 map { "d" to "d"}
                 map { "c" to "c"}
             })
@@ -119,7 +117,7 @@ class MapperTest {
 
         val mapper = Mapper(
             mapping(Product::class, Target::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
                 map { path("price1", "value") to "price1"}
                 map { path("price2", "value") to "price2"}
             })
@@ -153,11 +151,11 @@ class MapperTest {
 
         val mapper = Mapper(
             mapping(Source::class, Target::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
                 map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
             },
             mapping(BarSource::class, BarTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
             })
 
         val source = Source("source", InnerClassSource(arrayListOf(BarSource("bar"))))
@@ -188,11 +186,11 @@ class MapperTest {
 
         val mapper = Mapper(
             mapping(Source::class, Target::class) {
-                map { properties("name")}
-                map { path("innerClass", "bars") to  path("innerClass", "bars") deep true}
+                map { matchingProperties("name")}
+                map { path("innerClass", "bars") to  path("innerClass", "bars") deep true }
             },
             mapping(BarSource::class, BarTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
             })
 
         val foo = Source("source", InnerClassSource(arrayListOf(BarSource("bar"))))
@@ -207,11 +205,11 @@ class MapperTest {
     fun testTopLevelDeepCollection() {
         val mapper = Mapper(
             mapping(FooSource::class, FooTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
                 map { "bars" to "bars" deep true}
             },
             mapping(BarSource::class, BarTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
             })
 
         val source = FooSource("source", arrayListOf(BarSource("bar")))
@@ -224,11 +222,11 @@ class MapperTest {
     fun testTopLevelDataDeepCollection() {
         val mapper = Mapper(
             mapping(FooDataSource::class, FooTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
                 map { "bars" to "bars" deep true}
             },
             mapping(BarSource::class, BarTarget::class) {
-                map { properties("name")}
+                map { matchingProperties("name")}
             })
 
         val source = FooDataSource("source", arrayListOf(BarSource("bar")))
@@ -289,7 +287,8 @@ class MapperTest {
             mapping(From::class, To::class) {
                 map { path("price", "currency") to path("price", "currency") }
                 map { path("price", "value") to path("price", "value") }
-                map { properties() }
+                map { matchingProperties() }
+                finalize {source, target -> target }
             })
 
         // warm up
@@ -298,7 +297,7 @@ class MapperTest {
 
         val loops = 100000
 
-        while(false) {
+        while (false) {
             var start = System.currentTimeMillis()
             for (i in 0 until loops)
                 mapper.map<To>(from)
@@ -339,10 +338,10 @@ class MapperTest {
     fun test() {
         val mapper = Mapper(
             mapping(Money::class, Money::class) {
-                map { properties() }
+                map { matchingProperties() }
             },
             mapping(Product::class, Product::class) {
-                map { properties("id") }
+                map { matchingProperties("id") }
                 //map { Product::isNull to Product::isNull}
 
                 map { path("innerComposite", "price", "value") to  path("innerComposite", "price", "value")}
