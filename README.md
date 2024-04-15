@@ -18,7 +18,8 @@ the result from a developer perspective in my mind is still too poor and also ha
 
 Let's look at an example ( in Java ) 
 
-```@Configuration
+```java
+@Configuration
 public class MyConfiguration {
    @Bean
    @LoadBalanced
@@ -63,7 +64,7 @@ The following design ideas or principles where the basis of the implemented arch
 ## Sample
 
 Let's look at a simple example at a final result. Let's declare a service interface first
-```
+```kotlin
 @ServiceInterface(name = "TestService")
 interface TestService : Service {
     @GetMapping("/hello")
@@ -74,12 +75,12 @@ interface TestService : Service {
 By coincidence, it declares all the necessary annotations for spring! The framework onyl cares abou the - tagging - interface and the annotation.
 
 Services are bundled by a _component_
-```
+```kotlin
 @ComponentInterface(name = "TestComponent", services = [TestService::class])
 interface TestRemoteComponent : Component
 ```
 The service implementation is a normal rest controller
-```
+```kotlin
 @RestController
 class TestServiceImpl : TestService {
     override fun hello(): String {
@@ -92,7 +93,7 @@ The component implementation adds the necessary details in order to establish a 
 * the address
 * and http health endpoints that are usually called by different kind of registries
 
-```
+```kotlin
 @ComponentHost(health = "/api/health")
 @RestController
 @RequestMapping("/api")
@@ -114,7 +115,7 @@ As we can see here, we utilize the normal spring mechanisms to expose the health
 
 Assuming that a channel of type "rest" is known ( we will come back to that later ), we can now call
 service methods easily.
-```
+```kotlin
   // get the manager from spring
   
   val context : ApplicationContext  = ... 
@@ -130,7 +131,7 @@ service methods easily.
     
 ```
 An alternative approach would be to use annotations
-```
+```kotlin
 class Foo {
    // inject services
    
