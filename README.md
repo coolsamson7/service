@@ -1,9 +1,11 @@
 [![Java CI with Maven](https://github.com/coolsamson7/service/actions/workflows/maven.yml/badge.svg)](https://github.com/coolsamson7/service/actions/workflows/maven.yml)
 # Service
 
-This library is based on spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
+This Kotlin library is based on spring ( core, mvc, cloud ) and tries to simplify the approach for typical architectures with distributed (micro)services that need to discover and communicate with each other in a dynamic environment.
 
-By coincidence 😄 while i was busy working on the integrated ui, i thought that refactoring a ui framework including a complete microfrontend based approach would be cool as well...Check the associated Wiki for details...
+By coincidence 😄 while i was busy working on an integrated administrative Angular UI, i thought that refactoring the framework part including a complete dynamic microfrontend  approach based on module federation would be cool as well...
+
+Check the associated [Wiki]([https://pages.github.com/](https://github.com/coolsamson7/service/wiki/Microfrontends)) for details...
 
 ## Motivation and goals
 
