@@ -1,0 +1,30 @@
+@import './mat-resizable-dialog.directive';
+
+:host {
+  display: block;
+  height: 100%;
+  background: none;
+
+  .header {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+::ng-deep {
+  .g3-dialog.g3-dockable-pane {
+    @include resizable;
+
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute !important;
+
+    .mat-dialog-container {
+      padding: 0;
+      background: none;
+    }
+  }
+}

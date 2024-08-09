@@ -1,0 +1,12 @@
+<ng-content></ng-content>
+
+<div
+  (drag)="dragging($event)"
+  (dragEnd)="dragEnd($event)"
+  (dragStart)="dragStart($event, direction)"
+  *ngFor="let direction of directions"
+  [class]="'drag-' + direction"
+  dragHandle
+>
+  <span></span>
+</div>

@@ -1,0 +1,5 @@
+<ng-container>
+  <mat-icon *ngIf="type==='svg'" [matTooltip]="tooltip"  [ngClass]="classes" [ngStyle]="styles" [svgIcon]="name" (click)="emitClick($event)"></mat-icon>
+  <mat-icon *ngIf="type==='material'" [matTooltip]="tooltip"  [ngClass]="classes" [ngStyle]="styles" (click)="emitClick($event)">{{name}}</mat-icon>
+  <mat-icon *ngIf="type==='font'" [matTooltip]="tooltip" [ngClass]="classes"  [ngStyle]="styles" [class]="name" (click)="emitClick($event)"></mat-icon>
+</ng-container>

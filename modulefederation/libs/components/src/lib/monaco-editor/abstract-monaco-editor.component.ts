@@ -1,8 +1,9 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild,  NgZone } from "@angular/core";
 import { filter, fromEvent, Subscription, take } from "rxjs";
 import { EditorModel } from "./monaco-editor";
 import { MonacoEditorLoader } from "./monaco-editor-loader";
+import { ResizeObservable } from "../ui/resize-observable";
 
 declare let monaco : any;
 
@@ -15,14 +16,14 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     protected editor : any;
     protected model! : EditorModel;
     protected editorOptions : any;
-    protected windowResizeSubscription! : Subscription;
+    protected resizeSubscription! : Subscription;
     protected modelInstance : any
     protected uri : any
     protected value = ""
 
     // constructor
 
-    constructor(private loader : MonacoEditorLoader) {
+    constructor(private loader : MonacoEditorLoader, private el: ElementRef, protected zone: NgZone) {
     }
 
     // public
@@ -31,6 +32,10 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         return monaco.editor.getModelMarkers({
             resource: this.uri
         });
+    }
+
+    private onResize(resize: ResizeObserverEntry) {
+        this.layout()
     }
 
     // protected
@@ -42,11 +47,14 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         ).subscribe(() => {
             setTimeout(() => this.setupEditor(), 0)
         })
+
+        this.resizeSubscription = new ResizeObservable(this.el.nativeElement.childNodes[0], this.zone)
+        //TODO .pipe(debounceTime(200))
+        .subscribe((entries: ResizeObserverEntry[]) => this.onResize(entries[0]));
     }
 
     ngOnDestroy() {
-        if (this.windowResizeSubscription)
-            this.windowResizeSubscription.unsubscribe();
+        if (this.resizeSubscription) this.resizeSubscription.unsubscribe();
 
         if (this.editor) {
             this.editor.getModel()?.dispose()
@@ -58,9 +66,6 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
     protected setupEditor() {
         if (this.model.schema)
             this.setSchema()
-
-        this.windowResizeSubscription = fromEvent(window, 'resize')
-            .subscribe(() => this.layout());
 
         this.layout();
     }

@@ -1,0 +1,193 @@
+<resizable-container *ngIf="horizontal; else vertical" [directions]="['none']" class="row">
+  <!-- left -->
+
+  <ng-container *ngIf="leftPane?.tabs!.length">
+    <ng-container
+      *ngTemplateOutlet="
+        paneTpl;
+        context: {
+          class: 'left',
+          pane: leftPane
+        }
+      "
+    ></ng-container>
+  </ng-container>
+
+  <!-- content -->
+
+  <resizable-container [directions]="['none']" [flex]="false" class="cell">
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+  </resizable-container>
+
+  <!-- right -->
+
+  <ng-container *ngIf="rightPane?.tabs!.length">
+    <ng-container
+      *ngTemplateOutlet="
+        paneTpl;
+        context: {
+          class: 'right',
+          pane: rightPane
+        }
+      "
+    ></ng-container>
+  </ng-container>
+</resizable-container>
+
+<!-- templates -->
+
+<!-- vertical alignment -->
+
+<ng-template #vertical>
+  <section class="vertical content cols">
+    <resizable-container [directions]="['none']" [flex]="true" class="row">
+      <!-- top -->
+
+      <ng-container *ngIf="topPane?.tabs!.length">
+        <ng-container
+          *ngTemplateOutlet="
+            paneTpl;
+            context: {
+              class: 'top',
+              pane: topPane
+            }
+          "
+        ></ng-container>
+      </ng-container>
+
+      <!-- content -->
+
+      <resizable-container [directions]="['none']" [flex]="false" class="cell">
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+      </resizable-container>
+
+      <!-- bottom -->
+
+      <ng-container *ngIf="bottomPane?.tabs!.length">
+        <ng-container
+          *ngTemplateOutlet="
+            paneTpl;
+            context: {
+              class: 'bottom',
+              pane: bottomPane
+            }
+          "
+        ></ng-container>
+      </ng-container>
+    </resizable-container>
+  </section>
+</ng-template>
+
+<!-- pane container  -->
+
+<ng-template #paneContainerTpl let-contentTpl="contentTpl" let-icon="icon" let-pane="pane" let-title="title">
+  <section [ngClass]="pane.tabs[pane.selectedTabIndex].class" class="pane-container">
+    <section class="header">
+      <icon [name]="icon"></icon>
+      <div class="title">{{ title }}</div>
+      <div class="spacer"></div>
+      <icon (click)="pane.undock()" name="font:si-moredata"></icon>
+      <icon
+
+        (click)="$event.stopPropagation(); pane.opened = false"
+        name="font:pi-low"
+      ></icon>
+    </section>
+    <section class="content">
+      <ng-container [ngTemplateOutlet]="contentTpl"></ng-container>
+    </section>
+  </section>
+</ng-template>
+
+<!-- pane -->
+
+<ng-template #paneTpl let-class="class" let-pane="pane">
+  <!-- Place tabs before the content, if it's left or top pane -->
+  <ng-container *ngIf="['left', 'top'].includes(class)">
+    <ng-container
+      *ngTemplateOutlet="
+        paneTabsTpl;
+        context: {
+          paneContainer: paneContainer,
+          class: class,
+          pane: pane
+        }
+      "
+    ></ng-container>
+  </ng-container>
+
+  <!-- TODO  [ngStyle]="(!pane.opened || !pane.tabs.length) && { display: 'none' }"-->
+  <resizable-container #paneContainer
+                       (resizeEnd)="
+      pane.sizes[pane.selectedTabIndex] = $event.data[['left', 'right'].includes(class) ? 'width' : 'height']
+    "
+                       [directions]="directionsFor(class)"
+                       [flex]="true"
+                       [initialSize]="pane.initialSize"
+                       [ngClass]="class"
+                       [ngStyle]="computeStyle(pane)"
+                       class="cell pane-container"
+  >
+    <ng-container *ngIf="pane.tabs[pane.selectedTabIndex] as selectedTab">
+      <ng-container
+        *ngTemplateOutlet="
+          paneContainerTpl;
+          context: {
+            title: selectedTab.title,
+            icon: selectedTab.icon,
+            contentTpl: selectedTab.template,
+            pane: pane
+          }
+        "
+      ></ng-container>
+    </ng-container>
+  </resizable-container>
+
+  <!-- Place tabs after the content, if it's right or bottom pane -->
+  <ng-container *ngIf="['right', 'bottom'].includes(class)">
+    <ng-container
+      *ngTemplateOutlet="
+        paneTabsTpl;
+        context: {
+          paneContainer: paneContainer,
+          class: class,
+          pane: pane
+        }
+      "
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<!-- tabs -->
+
+<ng-template #paneTabsTpl let-class="class" let-pane="pane" let-paneContainer="paneContainer">
+  <mat-tab-group
+    (selectedTabChange)="
+      pane.selectedTabIndex = $event.index;
+      paneContainer.nativeElement.style.flexBasis = pane.sizes[pane.selectedTabIndex] || pane.initialSize
+    "
+    [ngClass]="{
+      'horizontal-tabs': ['top', 'bottom'].includes(class),
+      'vertical-tabs': ['left', 'right'].includes(class),
+      'overlap-mode': pane.tabsOverlapMode,
+      'icon-tabs': pane.iconTabs
+    }"
+    [selectedIndex]="pane.selectedTabIndex"
+    class="{{ class }}"
+  >
+    <mat-tab *ngFor="let tab of pane.tabs">
+      <ng-template mat-tab-label>
+        <div (click)="pane.opened = true" [title]="tab.title" class="tab-wrapper">
+          {{ pane.iconTabs ? null : tab.title }}
+          <icon [name]="tab.icon"></icon>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</ng-template>
+
+<!--  content -->
+
+<ng-template #content>
+  <ng-content></ng-content>
+</ng-template>

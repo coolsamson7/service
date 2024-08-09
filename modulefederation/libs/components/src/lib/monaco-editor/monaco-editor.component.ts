@@ -11,8 +11,10 @@ import {
     Input,
     NgZone,
     OnChanges,
+    OnDestroy,
     Output,
-    SimpleChanges
+    SimpleChanges,
+    ElementRef
 } from "@angular/core";
 import {
     AbstractControl,
@@ -36,7 +38,7 @@ declare let monaco : any;
     styles: [`
       :host {
           display: block;
-          height: 200px;
+          height:100%;
       }
 
       .editor-container {
@@ -61,15 +63,15 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
 
     // input & ouput
 
-    @Input() override model! : EditorModel
+    @Input() declare model : EditorModel
     @Output() onInit : EventEmitter<MonacoEditorComponent> = new EventEmitter();
     errorMessages : string[] = []
     control! : FormControl
 
     // instance data
 
-    constructor(private zone : NgZone, loader : MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config : MonacoEditorConfig, private injector : Injector) {
-        super(loader)
+    constructor(zone : NgZone, loader : MonacoEditorLoader, @Inject(MONACO_EDITOR_CONFIG) protected config : MonacoEditorConfig, private injector : Injector, el: ElementRef) {
+        super(loader, el, zone)
     }
 
     get options() : any {
