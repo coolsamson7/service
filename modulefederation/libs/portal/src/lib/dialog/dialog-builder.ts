@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { inject } from "@angular/core"
-import { get } from "../common/lang/get"
+import { get } from "@modulefederation/common"
 import { ButtonConfiguration, ButtonData } from "./dialogs"
 import { MatDialogRef } from "@angular/material/dialog"
 import { Translator } from "../i18n"

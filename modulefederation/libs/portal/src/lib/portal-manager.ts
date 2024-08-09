@@ -13,7 +13,7 @@ import {
   LocalDeploymentLoader,
   ManifestDecorator,
 } from './deployment';
-import { TraceLevel, Tracer } from './tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 import { ReplaySubject } from 'rxjs';
 import { LocaleManager } from './locale';
 import { DeploymentConfigurationSource } from './deployment/deployment-configuration-source';

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FeatureRegistry } from '../feature-registry';
 import { FeatureData } from "../portal-manager";
-import { TraceLevel, Tracer } from '../tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 
 @Component({
     selector: 'unknown-feature',
@@ -77,7 +77,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
 
         if (this.featureData)
             this.load()
-        
+
         else {
             this.component = this.container.createComponent(UnknownFeatureComponent);
             this.component.instance.feature = feature
@@ -87,7 +87,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
     // implement OnDestroy
 
     private async load() {
-        
+
         // local function
 
         const nextLoader = (feature? : FeatureData) : FeatureData | undefined => {

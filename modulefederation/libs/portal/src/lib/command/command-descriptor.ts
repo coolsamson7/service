@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { TraceLevel, Tracer } from "../tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 import { CommandConfig } from "./command-config";
 import { CommandInterceptor } from "./command-interceptor";
 import { CommandManager } from "./command-manager";

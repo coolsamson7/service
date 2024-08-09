@@ -1,12 +1,12 @@
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../common/lang/mixin";
+import { registerMixins } from "@modulefederation/common";
 import { DialogService, Dialogs } from "./dialogs";
 import { ComponentType } from "@angular/cdk/portal";
 import { Observable } from "rxjs";
 import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { InputDialogBuilder } from "./input-dialog-builder";
-import { GConstructor } from "../common/lang/constructor.type";
+import { GConstructor } from "@modulefederation/common";
 
 
 export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Dialogs> &  T  {

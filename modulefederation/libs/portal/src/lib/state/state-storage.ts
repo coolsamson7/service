@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Session } from "../security";
-import { TraceLevel, Tracer } from "../tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 import { State } from "./state";
 
 /**
@@ -15,7 +15,7 @@ export abstract class StateStorage {
   abstract load(application: string, session?: Session): State
 
   /**
-   * save the sate 
+   * save the sate
    * @param state the state object
    * @param application the application name
    * @param session the current session

@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, shareReplay } from 'rxjs/operators';
 import { I18nLoader } from '../i18n-loader';
 import { TranslationLoaderConfig, TranslationLoaderConfigInjectionToken } from '../i18n.module';
-import { TraceLevel, Tracer } from "../../tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 
 /**
  * a {@link I18nLoader} that will load translations form the static assets

@@ -3,7 +3,7 @@ import { filter } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 import { BusMessage } from "./message"
-import { TraceLevel, Tracer } from '../../tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 
 /**
  * A <code>MessageBus</code> is a central hub where messages can be sent which will be delivered to any subscribed client.

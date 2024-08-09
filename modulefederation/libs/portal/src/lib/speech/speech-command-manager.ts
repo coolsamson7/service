@@ -2,10 +2,10 @@
 import { Injectable } from "@angular/core";
 import { SpeechRecognitionManager } from "./speech-recognition-manager";
 import { SpeechEvent } from "./speech-engine";
-import { TraceLevel, Tracer } from "../tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 import { ButtonConfiguration, ButtonData, DialogService } from "../dialog";
 import { CommonDialog } from "../dialog/dialog-builder";
-import { StringBuilder } from "../common/util/string-builder";
+import { StringBuilder } from "@modulefederation/common";
 
 interface CommandEntry {
     command: string
@@ -31,13 +31,13 @@ export class SpeechCommandManager {
         const This = this
 
         ;(window as any)["commands"] = () => this.report()
-        
+
         CommonDialog.addDecorator({
             decorate(button: ButtonConfiguration, _dialog: CommonDialog) : void {
                 if ( button.speech ) {
                     This.addCommand(
-                        button.speech,  
-                        (...args: any[]) => (<ButtonData>button).run(), 
+                        button.speech,
+                        (...args: any[]) => (<ButtonData>button).run(),
                         () => true
                         )
                     }
@@ -82,7 +82,7 @@ export class SpeechCommandManager {
         const optionalParam = /\((.*?)\)/g;
         const namedParam    = /:(\w+)/g
         const restParam    = /\*(\w+)/g;
-    
+
         const compiledCommand = command
             .replace(optionalParam, '($1)?')
             .replace(namedParam, '(?<$1>\\w+)')
@@ -90,7 +90,7 @@ export class SpeechCommandManager {
 
         if ( Tracer.ENABLED)
             Tracer.Trace("speech.commands", TraceLevel.HIGH, "compiled speech command {0} to {1}", command,  '^' + compiledCommand + '$')
-  
+
         return new RegExp('^' + compiledCommand + '$', 'i');
     }
 
@@ -128,7 +128,7 @@ export class SpeechCommandManager {
 
             let result: RegExpMatchArray | null
             if ((result = command.re.exec(event.result!))) {
-                if ( result.groups ) 
+                if ( result.groups )
                     command.callback(result.groups)
                 else
                     command.callback()

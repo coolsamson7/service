@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Key, Shortcut } from './shortcut';
-import { TraceLevel, Tracer } from '../tracer';
-import { StringBuilder } from '../common/util/string-builder';
+import { TraceLevel, Tracer, StringBuilder } from '@modulefederation/common';
 import { DialogService } from '../dialog';
 
 /**

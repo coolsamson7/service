@@ -1,4 +1,4 @@
-import { StringBuilder } from "../util/string-builder";
+import { StringBuilder } from "@modulefederation/common";
 import { MethodDescriptor } from "./method-descriptor";
 import { PropertyDescriptor } from "./property-descriptor";
 

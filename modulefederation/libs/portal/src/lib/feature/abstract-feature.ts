@@ -10,7 +10,7 @@ import {
   ProviderToken,
   Type
 } from '@angular/core';
-import { TraceLevel, Tracer } from '../tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 import { FeatureManager } from './feature-manager';
 import { FeatureConfig } from '../feature-config';
 import { TypeDescriptor } from '../common';

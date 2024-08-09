@@ -4,7 +4,7 @@ import { Inject, Injectable, NgZone } from "@angular/core";
 import { SpeechEngine } from "../speech-engine";
 import { SpeechRecognitionManager } from "../speech-recognition-manager";
 import { SpeechRecognitionConfig, SpeechRecognitionConfigInjectionToken } from "../speech-recognition.module";
-import { TraceLevel, Tracer } from "../../tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 
 
 //import "@types/webspeechapi"
@@ -159,7 +159,7 @@ export class WebkitSpeechEngine extends SpeechEngine {
                         // give up
                         return
                     }
-                    else if (timeSinceLastStart < 1000) 
+                    else if (timeSinceLastStart < 1000)
                         setTimeout(() => this.start(), 1000 - timeSinceLastStart)
                     else
                         this.start()

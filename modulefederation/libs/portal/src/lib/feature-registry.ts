@@ -3,7 +3,7 @@ import { Observable, of, ReplaySubject } from "rxjs";
 import { FeatureConfig, Visibility } from "./feature-config";
 import { FeatureData } from "./portal-manager";
 import { FolderData } from "./folder.decorator";
-import { TraceLevel, Tracer } from "./tracer";
+import { TraceLevel, Tracer } from "@modulefederation/common";
 import { LocaleManager, OnLocaleChange } from "./locale";
 import { Translator } from "./i18n";
 

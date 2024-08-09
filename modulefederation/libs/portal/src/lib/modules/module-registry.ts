@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ModuleMetadata } from './module.interface';
-import { TraceLevel, Tracer } from '../tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 
 /**
  * A <code>ModuleRegistry</code> keeps track of - specifically decorated - modules, including their

@@ -1,4 +1,4 @@
-import { Constructor } from "../lang/constructor.type"
+import { Constructor } from "@modulefederation/common"
 import { AbstractHTTPService } from "./abstract-http-service"
 
 export interface ServiceConfig {

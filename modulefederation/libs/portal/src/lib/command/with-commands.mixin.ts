@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../common/lang";
 import { Type, TypeDescriptor } from "../common/reflection";
-import { TraceLevel, Tracer } from "../tracer";
+import { TraceLevel, Tracer , registerMixins, get} from "@modulefederation/common";
 import { CommandConfig } from "./command-config";
 import { CommandDescriptor } from "./command-descriptor";
 import { CommandFactory } from "./command-factory";
@@ -15,7 +14,6 @@ import { CommandError } from "./command-error";
 import { ShortcutManager } from "../shortcuts";
 import { LocaleManager, OnLocaleChange } from "../locale";
 import { Observable, of } from "rxjs";
-import { get } from '../common';
 import { Translator } from "../i18n";
 
 

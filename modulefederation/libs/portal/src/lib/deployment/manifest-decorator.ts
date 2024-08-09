@@ -1,4 +1,4 @@
-import { ObjectDecorator } from "../common/util";
+import { ObjectDecorator } from "@modulefederation/common";
 import { Manifest } from "./deployment-model";
 import { FeatureData } from "../portal-manager";
 

@@ -2,7 +2,7 @@
 
 import { ViewChild, Component } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../common/lang/mixin";
+import { registerMixins } from "@modulefederation/common";
 import { ViewComponent } from "./view.component";
 import { CommandConfig, CommandManager, ExecutionContext, LockCommandGroupInterceptor, LockCommandInterceptor } from "../command";
 import { CommandInterceptor } from "../command/command-interceptor";

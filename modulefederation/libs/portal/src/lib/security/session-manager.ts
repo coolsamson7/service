@@ -5,11 +5,11 @@ import { Authentication } from './authentication';
 import { Session } from "./session.interface";
 import { Ticket } from "./ticket.interface";
 import { AuthenticationRequest } from "./authentication-request.interface";
-import { Tracer, TraceLevel } from '../tracer';
+import { Tracer, TraceLevel } from '@modulefederation/common';
 
 export interface SessionEvent<U=any,T extends Ticket = Ticket> {
     type: "opening" | "opened" | "closing" | "closed"
-    session: Session<U,T> 
+    session: Session<U,T>
 }
 
 /**

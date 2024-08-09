@@ -1,5 +1,4 @@
-import { TraceLevel, Tracer } from "../../tracer";
-import { Constructor } from "../lang/constructor.type"
+import { TraceLevel, Tracer, Constructor } from "@modulefederation/common";
 import { TypeDescriptor } from "../reflection";
 import { ErrorContext } from "./error-context"
 import { Injectable } from "@angular/core";

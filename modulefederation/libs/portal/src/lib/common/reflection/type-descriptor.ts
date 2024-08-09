@@ -7,8 +7,7 @@ import { Decorator } from "./decorator";
 import { InjectProperty } from "./injector";
 import { Injector } from "@angular/core";
 import { MemberDescriptor, PropertyType } from "./member-descriptor";
-import { TraceLevel, Tracer } from "../../tracer";
-import { StringBuilder } from "../util";
+import { TraceLevel, Tracer, StringBuilder } from "@modulefederation/common";
 
 export declare const Type: FunctionConstructor
 

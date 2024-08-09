@@ -7,7 +7,7 @@ import { Ticket } from "../ticket.interface";
 import { OIDCModuleConfig, OIDCModuleConfigToken } from "./oidc-module";
 import { Router } from "@angular/router";
 import { ConfigurationManager } from "../../common/configuration";
-import { Tracer, TraceLevel } from "../../tracer";
+import { Tracer, TraceLevel } from "@modulefederation/common";
 
 export interface OIDCTicket extends Ticket {
     token : string

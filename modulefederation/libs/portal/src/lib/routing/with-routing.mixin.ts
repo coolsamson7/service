@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../common/lang/mixin";
-import { GConstructor } from "../common/lang/constructor.type";
+import { registerMixins } from "@modulefederation/common";
+import { GConstructor } from "@modulefederation/common";
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from "@angular/router";
 import { FeatureConfig } from "../feature-config";
 import { FeatureData } from "../portal-manager";

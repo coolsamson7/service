@@ -1,8 +1,8 @@
 import { Observable, of } from "rxjs";
 import { AbstractFeature } from "../feature";
 import { LocaleManager } from "./locale.manager";
-import { registerMixins } from "../common/lang/mixin";
-import { GConstructor } from "../common/lang/constructor.type";
+import { registerMixins } from "@modulefederation/common";
+import { GConstructor } from "@modulefederation/common";
 
 export interface OnLocaleChange {
     /**

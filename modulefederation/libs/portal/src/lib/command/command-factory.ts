@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { CommandConfig } from './command-config';
 import { Injectable, InjectFlags, Injector } from '@angular/core';
-import { TraceLevel, Tracer } from '../tracer';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 import { CommandDescriptor } from './command-descriptor';
 import { CommandConfigToken } from './command.module';
 import { AbstractCommandInterceptor, CommandInterceptor } from './command-interceptor';
@@ -47,13 +47,13 @@ export class CommandContextInterceptor implements CommandInterceptor {
  */
 export class CommandCallFunctionInterceptor extends AbstractCommandInterceptor {
     // constructor
-  
+
     constructor(private call: Function) {
       super();
     }
-  
+
     // implement CommandInterceptor
-  
+
     /**
      * @inheritdoc
      */
@@ -63,13 +63,13 @@ export class CommandCallFunctionInterceptor extends AbstractCommandInterceptor {
 
       try {
         context.result = this.call.apply(context.commands, context.args);
-      } 
+      }
       finally {
         context.commands.currentExecutionContext = previousContext;
       }
     }
   }
-  
+
 
 /**
  * A <code>CommandFactory</code> is used to create a {@link Command} given a configuration object.

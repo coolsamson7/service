@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { GConstructor } from "../common/lang/constructor.type";
+import { GConstructor } from "@modulefederation/common";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "../common/lang/mixin";
+import { registerMixins } from "@modulefederation/common";
 
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef, TextOnlySnackBar } from "@angular/material/snack-bar";
 

@@ -4,7 +4,7 @@ const identity = (...args: any[]) => args[0]
 
 import { FeatureConfig } from "./feature-config";
 import { AbstractFeature } from './feature/abstract-feature';
-import { isSubclassOf } from './common';
+import { isSubclassOf } from '@modulefederation/common';
 import { FeatureData } from './portal-manager';
 
 export function Feature(config : FeatureConfig) {

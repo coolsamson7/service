@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { FormatterRegistry } from './formatter';
 import { PlaceholderParser } from './interpolator.parser';
-import { LRUCache, StringBuilder } from '../common';
+import { LRUCache } from '../common';
+import { StringBuilder } from '@modulefederation/common';
 
 /**
  * @ignore
