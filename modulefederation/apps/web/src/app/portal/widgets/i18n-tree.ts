@@ -42,21 +42,25 @@ interface Node {
 
 export class NodeSuggestionProvider implements SuggestionProvider {
     // constructor
-  
+
     constructor(private nodes: TreeNode[]) {
     }
-  
+
     // implement SuggestionProvider
-  
+
+    highlightSuggestion(suggestion: string | null) : void {}
+
+    selectSuggestion(suggestion: string) : void {}
+
     provide(input : string) : string[] {
       const colon = input.indexOf(":")
       let legs : string[]
-  
+
       if ( colon > 0) {
         legs = input.substring(0, colon).split(".")
         legs.push(input.substring(colon + 1))
       }
-      else 
+      else
         legs = input.split(".")
 
 
@@ -66,32 +70,32 @@ export class NodeSuggestionProvider implements SuggestionProvider {
 
            return node
       }
-  
+
       let nodes : TreeNode[] | undefined = this.nodes
       let index = 0
       const length = legs.length
       let lastNodes = this.nodes
-  
+
       while (nodes != null && index < length) {
         lastNodes = nodes
         nodes = nodes.find(node => checkNode(node).name == legs[index])?.children // TODO more calls??
         index++
       } // while
-  
+
       if (index == length) {
         // we reached the last leg, so good so far
         const suggestions: string[] = []
-  
+
         if ( nodes ) {
           // and it as a match
           // add all children as possible suffixes
-  
+
           for (const child of nodes)
             suggestions.push(input + (child.type == "translation" ? ":" : ".") + child.name)
         }
         else if ( lastNodes != undefined) {
           // check if we have a valid prefix
-  
+
           for ( const node of lastNodes) {
             const lastLeg = legs[index-1]
 
@@ -99,7 +103,7 @@ export class NodeSuggestionProvider implements SuggestionProvider {
               suggestions.push(input + node.name.substring(lastLeg.length))
           } // for
         } // if
-  
+
         return suggestions
       }
       else return []
@@ -125,7 +129,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
     isFocused = false
     lastFilter = ""
 
-    
+
    transformer = (node: TreeNode, level: number) : Node => {
     return {
       expandable: node.load != undefined || (!!node.children && node.children.length > 0), // TODO?
@@ -173,7 +177,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
         const findOrCreateFolder = (name : string, folders : TreeNode[], prefix : string, namespace: string) => {
           let folder = folders.find(folder => folder.name == name)
-    
+
           if (!folder) {
             folders.push(folder = {
                 type: prefix + name == namespace ? "folder" : "namespace",
@@ -184,7 +188,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
             if (folder.path == namespace) { // TODO: lazy, aber ich brauche leeres child!!! oder?
                folder.load = () => {
-                delete folder?.load 
+                delete folder?.load
 
                 translationsForNamespace(namespace).subscribe(names => {
                   // sort alphabetically
@@ -194,7 +198,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
                   if ( folder!.children === undefined)
                     folder!.children = []
 
-                  folder?.children.push(...names.map(name => {  
+                  folder?.children.push(...names.map(name => {
                       return {
                         type: "translation",
                         name: name,
@@ -203,18 +207,18 @@ export class I18NTreeComponent implements OnInit, OnChanges {
                   }))
 
                   // filter again!
-                  
+
                   this.filterTree(this.lastFilter)
                 })
                }
             } // if
         }
-    
+
           return folder
         }
-    
+
         // go forrest
-    
+
         for (const namespace of namespaces) {
           let parent = this.nodes
           let prefix = ""
@@ -252,7 +256,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
       legs = filterText.substring(0, colon).split(".")
       legs.push(filterText.substring(colon + 1))
     }
-    else 
+    else
       legs = filterText.split(".")
 
 
@@ -293,7 +297,7 @@ export class I18NTreeComponent implements OnInit, OnChanges {
                 node.children = children
                 node.inPath = true
 
-                return [node] 
+                return [node]
             } // if
             else return undefined
         }
@@ -322,10 +326,10 @@ export class I18NTreeComponent implements OnInit, OnChanges {
 
     // show / hide based on state of filter string
 
-    if (filter) 
+    if (filter)
       this.treeControl.expandAll();
-    
-    else 
+
+    else
       this.treeControl.collapseAll();
   }
 

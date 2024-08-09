@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouteElement } from '../widgets/navigation-component.component';
 import { Observable, Subscription, of, switchMap } from 'rxjs';
 import { MirofrontendsComponent } from "./microfrontends.component";
-import { EditorModel } from "../widgets/monaco-editor/monaco-editor";
+import { EditorModel } from "@modulefederation/components";
 import { v4 as uuidv4 } from 'uuid'
 import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilder, FormGroup, NgControl, NgForm, ValidationErrors } from "@angular/forms";
 import { AbstractFeature, Command, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";

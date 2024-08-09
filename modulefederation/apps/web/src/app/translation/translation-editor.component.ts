@@ -63,7 +63,7 @@ interface TranslationState {
 @Feature({
   id: "translations",
   label: "Translations",
-  folder: "translations",
+  folder: "portals",
   labelKey: "translations:title.label",
   i18n: ["translations", "portal.commands"],
   icon: "language",
@@ -103,12 +103,14 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
   // callbacks
 
-  prefix(name : string) {
-    const index = name.indexOf(".") // e.g. bla.label
-    const prefix = name.substring(0, index) // e.g. bla
-    const suffix = name.substring(index + 1) // e.g. "label"
 
-    return prefix
+  private split(name : string, by = ".") : {prefix: string, suffix: string} {
+    const index = name.lastIndexOf(by) // e.g. bla.label
+
+    return {
+      prefix: name.substring(0, index),
+      suffix: name.substring(index + 1)
+    }
   }
 
   @Command({
@@ -270,9 +272,7 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
     }
 
     for (const message of messages) {
-      const index = message.name.indexOf(".") // e.g. bla.label
-      const prefix = message.name.substring(0, index) // e.g. bla
-      const suffix = message.name.substring(index + 1) // e.g. "label"
+      const {prefix, suffix} = this.split(message.name) // bla.blu.label -> {prefix: bla.blu, suffix: label}
 
       let messagesByType = result[prefix]
 
@@ -281,15 +281,29 @@ export class TranslationEditorComponent extends WithState<TranslationState>()(Wi
 
         messagesByType = {}
 
+        // TODO: this only works if the name only sticks to valid combinations <name>.<type>
+        // bla:blu.foo.label does not work
+
         for (const type of this.types)
           messagesByType[type] = this.locales.map(locale => newMessage(locale, prefix + "." + type))
 
         result[prefix] = messagesByType
       }
 
-      // add real message
+      // add any unknown type not in the standard list
 
+      if ( !messagesByType[suffix]) {
+        this.types = [...this.types, suffix]
+          messagesByType[suffix] = this.locales.map(locale => newMessage(locale, prefix + "." + suffix))
+      }
+
+      // add real message
+try {
       messagesByType[suffix][this.locales.indexOf(message.locale)] = message
+}
+catch(e) {
+  console.log(e)
+}
     }
 
     // done

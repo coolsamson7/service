@@ -1,7 +1,8 @@
 {
   "name": "web",
+  "type": "shell",
   "version": "0.0.0",
-  "commitHash": "6fe6c8a3e43ae7957c3c81f2096e396f7f79a962",
+  "commitHash": "38550bcbbf39d36d6ba5ea603848f98227d9f460",
   "module": "AppModule",
   "features": [
     {
@@ -13,7 +14,7 @@
       "folder": "portals",
       "component": "TranslationEditorComponent",
       "tags": ["navigation"],
-      "visibility": ["private"]
+      "visibility": ["private", "public"]
     },
     {
       "id": "application",
@@ -29,7 +30,7 @@
       "id": "components",
       "label": "Components",
       "icon": "folder",
-      "folder": "portals",
+      "folder": "microservices",
       "component": "ComponentsComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -61,6 +62,16 @@
       "folder": "portals",
       "component": "ErrorComponent",
       "tags": ["error", "navigation"],
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "form-designer",
+      "label": "Form Designer",
+      "i18n": ["form.designer", "validation", "portal", "portal.commands"],
+      "component": "FormDesignerFeatureComponent",
+      "categories": ["forms"],
+      "icon": "help",
+      "tags": ["navigation"],
       "visibility": ["public", "private"]
     },
     {
@@ -99,7 +110,7 @@
       "label": "Microfrontends",
       "i18n": ["portal.commands"],
       "icon": "apps",
-      "folder": "portals",
+      "folder": "microfrontends",
       "component": "MirofrontendsComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -119,7 +130,7 @@
       "id": "nodes",
       "label": "Nodes",
       "icon": "computer",
-      "folder": "portals",
+      "folder": "microservices",
       "component": "NodesComponent",
       "tags": ["navigation"],
       "visibility": ["public", "private"],
@@ -141,6 +152,26 @@
       "tags": ["preferences"]
     },
     {
+      "id": "questionnaire-designer",
+      "label": "Questionnaire Designer",
+      "i18n": ["questionnaire", "validation", "types"],
+      "component": "QuestionnaireDesignerFeature",
+      "categories": ["Questionnaire"],
+      "tags": ["navigation"],
+      "icon": "help",
+      "visibility": ["public", "private"]
+    },
+    {
+      "id": "questionnaire-renderer",
+      "label": "Questionnaire Renderer",
+      "i18n": ["com.global", "validation", "questionnaire", "types"],
+      "component": "QuestionnaireRendererFeatureController",
+      "categories": ["Questionnaire"],
+      "tags": ["navigation"],
+      "icon": "help",
+      "visibility": ["private", "public"]
+    },
+    {
       "id": "**",
       "label": "Page not found",
       "icon": "language",
@@ -155,8 +186,8 @@
       "icon": "apps"
     },
     {
-      "name": "microservices",
-      "label": "Microservices",
+      "name": "microfrontends",
+      "label": "Microfrontends",
       "icon": "apps"
     }
   ]

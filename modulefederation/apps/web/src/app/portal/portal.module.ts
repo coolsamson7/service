@@ -8,7 +8,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MirofrontendsComponent } from "./microfrontends.component";
 import { MatErrorMessagesComponent, MicrofrontendDetailsComponent } from "./microfrontend-details.component";
-import { MonacoEditorModule } from "../widgets/monaco-editor/monaco-editor.module";
+import { MonacoEditorModule } from "@modulefederation/components";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatLineModule, MatOptionModule } from "@angular/material/core";
@@ -50,7 +50,7 @@ import { I18NTreeComponent } from "./widgets/i18n-tree";
         MatAutocompleteModule,
         MatFormFieldModule,
         MatIconModule,
-    
+
         MatChipsModule,
         MatSlideToggleModule,
         MatLineModule,

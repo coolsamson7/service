@@ -1,21 +1,45 @@
-import { Component, Injector, forwardRef } from "@angular/core";
-import { AbstractFeature, Feature, WithCommands, Command, WithState, WithView, ViewComponent, LockType, CommandButtonComponent, Stacktrace } from "@modulefederation/portal";
+import { Component, ElementRef, Injector, Input, OnInit, forwardRef } from "@angular/core";
+import {
+  AbstractFeature,
+  Feature,
+  WithCommands,
+  Command,
+  WithState,
+  WithView,
+  ViewComponent,
+  LockType,
+  CommandButtonComponent,
+  Stacktrace,
+  I18nModule
+} from "@modulefederation/portal";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDividerModule } from "@angular/material/divider";
+import {FormDesignerModule} from "@modulefederation/form/designer";
+import {LayoutModule, IconComponent} from "@modulefederation/components";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    providers: [{ 
-      provide: AbstractFeature, 
-      useExisting: forwardRef(() => HomeComponent) 
+    providers: [{
+      provide: AbstractFeature,
+      useExisting: forwardRef(() => HomeComponent)
     }],
-    imports: [CommonModule, FormsModule, ViewComponent, MatToolbarModule, MatDividerModule, CommandButtonComponent]
+  imports: [
+    CommonModule,
+
+    IconComponent,
+
+    MatIconModule,
+
+    FormsModule,
+    ViewComponent,
+    MatToolbarModule, MatDividerModule, CommandButtonComponent, FormDesignerModule, I18nModule, LayoutModule]
 })
 @Feature({
     id: "home",
@@ -108,7 +132,7 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
       console.error(e)
     }
 
-   
+
 
     return new Promise((resolve) => setTimeout(() => resolve('done'), 5000));
   }
@@ -147,5 +171,10 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
   @Command({})
   callBadURL() {
     this.portalAdministrationService.callBadURL().subscribe(_ => console.log())
+  }
+
+
+  click() {
+    console.log("click")
   }
 }

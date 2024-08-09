@@ -29,6 +29,10 @@
       },
       "configurations": {
         "production": {
+          "aot": true,
+          "buildOptimizer": true,
+          "optimization": true,
+          "vendorChunk": false,
           "sourceMap": true,
           "fileReplacements": [
             {
@@ -40,12 +44,12 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumError": "6mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "maximumWarning": "10kb",
+              "maximumError": "40kb"
             }
           ],
           "outputHashing": "all"

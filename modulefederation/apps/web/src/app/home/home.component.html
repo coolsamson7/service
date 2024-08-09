@@ -1,23 +1,68 @@
-<view>
-  <mat-toolbar class="toolbar">
-    <mat-toolbar-row>
-      <command-button command="g11"></command-button>
-      <command-button command="g12"></command-button>
+ <layout>
+    <left initialSize="244px" [iconTabs]="true">
+      <!-- palette -->
 
-      <mat-divider [vertical]="true"></mat-divider>
+      <tab title="tab 1" icon="tb-edit">
+        Tab 1 content
 
-      <command-button command="toggleBusy"></command-button>
-      <command-button command="longRunning"></command-button>
-      <command-button command="lockView"></command-button>
 
-    </mat-toolbar-row>
-  </mat-toolbar>
 
-  <button mat-button (click)="throwString()">String error</button>
-  <button mat-button (click)="throwError()">Error</button>
+        <mat-icon class="tb-clinicalpathways"></mat-icon>
+        <mat-icon class="tb-edit"></mat-icon>
+        <mat-icon class="tb-mail"></mat-icon>
+        <mat-icon class="co-close"></mat-icon>
+        <mat-icon class="si-moredata"></mat-icon>
+      </tab>
 
-  <button mat-button (click)="throwDeclaredServerError()">server error</button>
-  <button mat-button (click)="throwServerError()">fatal server error</button>
-  <button mat-button (click)="callBadURL()">bad url</button>
-</view>
+      <!-- tree -->
+
+      <tab title="tab 2" icon="tb-mail">
+        Tab 2 content
+      </tab>
+    </left>
+
+    <!-- right side -->
+
+    <right [iconTabs]="true">
+      <tab title="tab 3" icon="tb-mail">
+        Tab 3 content
+      </tab>
+    </right>
+
+   <!-- middle -->
+
+   <mat-toolbar class="toolbar">
+     <mat-toolbar-row>
+       <command-button command="g11"></command-button>
+       <command-button command="g12"></command-button>
+
+       <mat-divider [vertical]="true"></mat-divider>
+
+       <command-button command="toggleBusy"></command-button>
+       <command-button command="longRunning"></command-button>
+       <command-button command="lockView"></command-button>
+
+     </mat-toolbar-row>
+   </mat-toolbar>
+
+   <view>
+     <button mat-button (click)="throwString()">String error</button>
+     <button mat-button (click)="throwError()">Error</button>
+
+     <button mat-button (click)="throwDeclaredServerError()">server error</button>
+     <button mat-button (click)="throwServerError()">fatal server error</button>
+     <button mat-button (click)="callBadURL()">bad url</button>
+
+       <!-- font -->
+       edit
+       <icon name="font:tb-edit" (click)="click()"></icon>
+       <!-- svg -->
+       laptop
+       <icon name="svg:cgm-laptop-window"></icon>
+       <!-- material -->
+       home
+       <icon name="material:home"></icon>
+   </view>
+  </layout>
+
 

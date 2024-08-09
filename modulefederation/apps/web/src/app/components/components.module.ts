@@ -16,7 +16,7 @@ import { ServiceInstanceListComponent } from "./service-instance-list.component"
 import { ServiceComponent } from "./service.component";
 import { FormsModule } from "@angular/forms";
 import { ParameterValidator } from "./service-runner/parameter-validator";
-import { MonacoEditorModule } from "../widgets/monaco-editor/monaco-editor.module";
+import { MonacoEditorModule } from "@modulefederation/components";
 import { ServiceMethodRunnerComponent } from "./service-runner/service-method-runner.component";
 import { ServiceAnnotationComponent } from "./service/service-annotation.component";
 import { ServiceClassComponent } from "./service/service-class.component";

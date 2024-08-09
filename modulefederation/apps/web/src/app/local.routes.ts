@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { TranslationEditorComponent } from './translation/translation-editor.component';
 
+import { ApplicationFeatureComponent } from './portal/applications/application.feature';
 
 import { ComponentsComponent } from './components/components.component';
 
@@ -14,6 +15,8 @@ import { ServiceInstanceComponent } from './components/service-instance.componen
 
 import { ErrorComponent } from './error/error-feature';
 
+import { FormDesignerFeatureComponent } from './form-designer/form-designer-feature.component';
+
 import { HelpComponent } from './help/help.component';
 
 import { HelpAdministrationComponent } from './help/help-administration.component';
@@ -22,6 +25,7 @@ import { HomeComponent } from './home/home-component';
 
 import { LocalePreferences } from './home/locale-preferences';
 
+import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 import { MicrofrontendDetailsComponent } from './portal/microfrontend-details.component';
 
@@ -31,9 +35,11 @@ import { NodeDetailsComponent } from './nodes/node-details.component';
 
 import { OtherPreferences } from './home/preferences-dialog';
 
+import { QuestionnaireDesignerFeature } from './questionnaire-designer/questionnaire-designer-feature.component';
+
+import { QuestionnaireRendererFeatureController } from './questionnaire-renderer/questionnaire-renderer.feature';
+
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { ApplicationFeatureComponent } from './portal/applications/application.feature';
-import { MirofrontendsComponent } from './portal/microfrontends.component';
 
 export const localRoutes: Routes = [
   {
@@ -71,6 +77,11 @@ export const localRoutes: Routes = [
   {
     path: 'error',
     component: ErrorComponent,
+    children: [],
+  },
+  {
+    path: 'form-designer',
+    component: FormDesignerFeatureComponent,
     children: [],
   },
   {
@@ -118,6 +129,16 @@ export const localRoutes: Routes = [
   {
     path: 'other-preferences',
     component: OtherPreferences,
+    children: [],
+  },
+  {
+    path: 'questionnaire-designer',
+    component: QuestionnaireDesignerFeature,
+    children: [],
+  },
+  {
+    path: 'questionnaire-renderer',
+    component: QuestionnaireRendererFeatureController,
     children: [],
   },
 

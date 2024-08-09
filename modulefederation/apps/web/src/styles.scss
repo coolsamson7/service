@@ -2,6 +2,8 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 
+@include mat.all-component-densities(-1);
+
 .dense-1 {
   @include mat.all-component-densities(-1);
 }
@@ -10,9 +12,4529 @@
   @include mat.all-component-densities(-2);
 }
 
-.mat-form-field-infix { 
+.dense-3 {
+  @include mat.all-component-densities(-3);
+}
+
+.dense-4 {
+  @include mat.all-component-densities(-4);
+}
+
+.dense-5 {
+  @include mat.all-component-densities(-5);
+}
+
+@font-face {
+  font-family: 'icons';
+  src: url('./assets/icons/cgm-g3-symbols-regular.ttf');
+}
+
+.mat-icon {
+  &.p:before {
+    font-family: "icons";
+    content: '\70';
+  }
+
+  &.tb-addfolder:before {
+    font-family: "icons";
+    content: '\e001';
+  }
+
+  &.tb-addsubdiagnosis:before {
+    font-family: "icons";
+    content: '\e002';
+  }
+
+  &.tb-addtofile:before {
+    font-family: "icons";
+    content: '\e003';
+  }
+
+  &.tb-administered:before {
+    font-family: "icons";
+    content: '\e004';
+  }
+
+  &.tb-admission:before {
+    font-family: "icons";
+    content: '\e005';
+  }
+
+  &.tb-admit:before {
+    font-family: "icons";
+    content: '\e006';
+  }
+
+  &.tb-apply:before {
+    font-family: "icons";
+    content: '\e007';
+  }
+
+  &.tb-arrowlineright:before {
+    font-family: "icons";
+    content: '\e008';
+  }
+
+  &.tb-assigndiagnosis:before {
+    font-family: "icons";
+    content: '\e009';
+  }
+
+  &.tb-audittrail:before {
+    font-family: "icons";
+    content: '\e00a';
+  }
+
+  &.tb-authorize:before {
+    font-family: "icons";
+    content: '\e00b';
+  }
+
+  &.tb-back:before {
+    font-family: "icons";
+    content: '\e00c';
+  }
+
+  &.tb-batchentries:before {
+    font-family: "icons";
+    content: '\e00d';
+  }
+
+  &.tb-billing:before {
+    font-family: "icons";
+    content: '\e00e';
+  }
+
+  &.tb-bottom:before {
+    font-family: "icons";
+    content: '\e00f';
+  }
+
+  &.tb-cancel:before {
+    font-family: "icons";
+    content: '\e010';
+  }
+
+  &.tb-caredashboard:before {
+    font-family: "icons";
+    content: '\e011';
+  }
+
+  &.tb-carrydiagnosisforward:before {
+    font-family: "icons";
+    content: '\e012';
+  }
+
+  &.tb-change:before {
+    font-family: "icons";
+    content: '\e013';
+  }
+
+  &.tb-changepassword:before {
+    font-family: "icons";
+    content: '\e014';
+  }
+
+  &.tb-changetype:before {
+    font-family: "icons";
+    content: '\e015';
+  }
+
+  &.tb-chat:before {
+    font-family: "icons";
+    content: '\e016';
+  }
+
+  &.tb-claimtask:before {
+    font-family: "icons";
+    content: '\e017';
+  }
+
+  &.tb-clinicalpathways:before {
+    font-family: "icons";
+    content: '\e018';
+  }
+
+  &.tb-close:before {
+    font-family: "icons";
+    content: '\e019';
+  }
+
+  &.tb-closetask:before {
+    font-family: "icons";
+    content: '\e01a';
+  }
+
+  &.tb-compare:before {
+    font-family: "icons";
+    content: '\e01b';
+  }
+
+  &.tb-contexthelp:before {
+    font-family: "icons";
+    content: '\e01c';
+  }
+
+  &.tb-continue:before {
+    font-family: "icons";
+    content: '\e01d';
+  }
+
+  &.tb-converter:before {
+    font-family: "icons";
+    content: '\e01e';
+  }
+
+  &.tb-copy:before {
+    font-family: "icons";
+    content: '\e01f';
+  }
+
+  &.tb-createandstarttask:before {
+    font-family: "icons";
+    content: '\e020';
+  }
+
+  &.tb-cumulativeview:before {
+    font-family: "icons";
+    content: '\e021';
+  }
+
+  &.tb-cut:before {
+    font-family: "icons";
+    content: '\e022';
+  }
+
+  &.tb-dashboard:before {
+    font-family: "icons";
+    content: '\e023';
+  }
+
+  &.tb-delegatetask:before {
+    font-family: "icons";
+    content: '\e024';
+  }
+
+  &.tb-delete:before {
+    font-family: "icons";
+    content: '\e025';
+  }
+
+  &.tb-deleteepisode:before {
+    font-family: "icons";
+    content: '\e026';
+  }
+
+  &.tb-demography:before {
+    font-family: "icons";
+    content: '\e027';
+  }
+
+  &.tb-diagnosisexplorer:before {
+    font-family: "icons";
+    content: '\e028';
+  }
+
+  &.tb-discard:before {
+    font-family: "icons";
+    content: '\e029';
+  }
+
+  &.tb-discardall:before {
+    font-family: "icons";
+    content: '\e02a';
+  }
+
+  &.tb-discharge:before {
+    font-family: "icons";
+    content: '\e02b';
+  }
+
+  &.tb-down:before {
+    font-family: "icons";
+    content: '\e02c';
+  }
+
+  &.tb-duplicate:before {
+    font-family: "icons";
+    content: '\e02d';
+  }
+
+  &.tb-edit:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e02e';
+  }
+
+  &.tb-employee:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e02f';
+  }
+
+  &.tb-episodeexplorer:before {
+    font-family: "icons";
+    content: '\e030';
+  }
+
+  &.tb-executetask:before {
+    font-family: "icons";
+    content: '\e031';
+  }
+
+  &.tb-expressadmission:before {
+    font-family: "icons";
+    content: '\e032';
+  }
+
+  &.tb-favorite:before {
+    font-family: "icons";
+    content: '\e033';
+  }
+
+  &.tb-feverchart:before {
+    font-family: "icons";
+    content: '\e034';
+  }
+
+  &.tb-filtered:before {
+    font-family: "icons";
+    content: '\e035';
+  }
+
+  &.tb-help:before {
+    font-family: "icons";
+    content: '\e036';
+  }
+
+  &.tb-holiday:before {
+    font-family: "icons";
+    content: '\e037';
+  }
+
+  &.tb-home:before {
+    font-family: "icons";
+    content: '\e038';
+  }
+
+  &.tb-horizontalfilterandform:before {
+    font-family: "icons";
+    content: '\e039';
+  }
+
+  &.tb-linkobjects:before {
+    font-family: "icons";
+    content: '\e03a';
+  }
+
+  &.tb-lockworkplace:before {
+    font-family: "icons";
+    content: '\e03b';
+  }
+
+  &.tb-magnifier:before {
+    font-family: "icons";
+    content: '\e03c';
+  }
+
+  &.tb-mail:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e03d';
+  }
+
+  &.tb-mailopen:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e03e';
+  }
+
+  &.tb-maindiagnosis:before {
+    font-family: "icons";
+    content: '\e03f';
+  }
+
+  &.tb-mainmenu:before {
+    font-family: "icons";
+    content: '\e040';
+  }
+
+  &.tb-medicalintervention:before {
+    font-family: "icons";
+    content: '\e041';
+  }
+
+  &.tb-medicalservice:before {
+    font-family: "icons";
+    content: '\e042';
+  }
+
+  &.tb-merge:before {
+    font-family: "icons";
+    content: '\e043';
+  }
+
+  &.tb-more:before {
+    font-family: "icons";
+    content: '\e044';
+  }
+
+  &.tb-move:before {
+    font-family: "icons";
+    content: '\e045';
+  }
+
+  &.tb-moveindentleft:before {
+    font-family: "icons";
+    content: '\e046';
+  }
+
+  &.tb-moveindentright:before {
+    font-family: "icons";
+    content: '\e047';
+  }
+
+  &.tb-add:before {
+    font-family: "icons";
+    content: '\e048';
+  }
+
+  &.tb-newcomment:before {
+    font-family: "icons";
+    content: '\e049';
+  }
+
+  &.tb-newmail:before {
+    font-family: "icons";
+    content: '\e04a';
+  }
+
+  &.tb-next:before {
+    font-family: "icons";
+    content: '\e04b';
+  }
+
+  &.tb-notadministered:before {
+    font-family: "icons";
+    content: '\e04c';
+  }
+
+  &.tb-notfiltered:before {
+    font-family: "icons";
+    content: '\e04d';
+  }
+
+  &.tb-notondemand:before {
+    font-family: "icons";
+    content: '\e04e';
+  }
+
+  &.tb-notprepared:before {
+    font-family: "icons";
+    content: '\e04f';
+  }
+
+  &.tb-ondemand:before {
+    font-family: "icons";
+    content: '\e050';
+  }
+
+  &.tb-onlinedoc:before {
+    font-family: "icons";
+    content: '\e051';
+  }
+
+  &.tb-openinfeature:before {
+    font-family: "icons";
+    content: '\e052';
+  }
+
+  &.tb-overview:before {
+    font-family: "icons";
+    content: '\e053';
+  }
+
+  &.tb-overviewcolumns:before {
+    font-family: "icons";
+    content: '\e054';
+  }
+
+  &.tb-overviewlines:before {
+    font-family: "icons";
+    content: '\e055';
+  }
+
+  &.tb-overviewlist:before {
+    font-family: "icons";
+    content: '\e056';
+  }
+
+  &.tb-overviewsearch:before {
+    font-family: "icons";
+    content: '\e057';
+  }
+
+  &.tb-overviewtimeline:before {
+    font-family: "icons";
+    content: '\e058';
+  }
+
+  &.tb-overviewwardmanagement:before {
+    font-family: "icons";
+    content: '\e059';
+  }
+
+  &.tb-pan:before {
+    font-family: "icons";
+    content: '\e05a';
+  }
+
+  &.tb-paste:before {
+    font-family: "icons";
+    content: '\e05b';
+  }
+
+  &.tb-pause:before {
+    font-family: "icons";
+    content: '\e05c';
+  }
+
+  &.tb-person:before {
+    font-family: "icons";
+    content: '\e05d';
+  }
+
+  &.tb-photoupload:before {
+    font-family: "icons";
+    content: '\e05e';
+  }
+
+  &.tb-pin:before {
+    font-family: "icons";
+    content: '\e05f';
+  }
+
+  &.tb-placeholder:before {
+    font-family: "icons";
+    content: '\e060';
+  }
+
+  &.tb-play:before {
+    font-family: "icons";
+    content: '\e061';
+  }
+
+  &.tb-postponetask:before {
+    font-family: "icons";
+    content: '\e062';
+  }
+
+  &.tb-prepared:before {
+    font-family: "icons";
+    content: '\e063';
+  }
+
+  &.tb-preparetray:before {
+    font-family: "icons";
+    content: '\e064';
+  }
+
+  &.tb-prescription:before {
+    font-family: "icons";
+    content: '\e065';
+  }
+
+  &.tb-previous:before {
+    font-family: "icons";
+    content: '\e066';
+  }
+
+  &.tb-principalresidence:before {
+    font-family: "icons";
+    content: '\e067';
+  }
+
+  &.tb-print:before {
+    font-family: "icons";
+    content: '\e068';
+  }
+
+  &.tb-reassigntask:before {
+    font-family: "icons";
+    content: '\e069';
+  }
+
+  &.tb-recommended:before {
+    font-family: "icons";
+    content: '\e06a';
+  }
+
+  &.tb-recordedbillableservices:before {
+    font-family: "icons";
+    content: '\e06b';
+  }
+
+  &.tb-recordtasknotdone:before {
+    font-family: "icons";
+    content: '\e06c';
+  }
+
+  &.tb-redo:before {
+    font-family: "icons";
+    content: '\e06d';
+  }
+
+  &.tb-refresh:before {
+    font-family: "icons";
+    content: '\e06e';
+  }
+
+  &.tb-rejecttask:before {
+    font-family: "icons";
+    content: '\e06f';
+  }
+
+  &.tb-relocate:before {
+    font-family: "icons";
+    content: '\e070';
+  }
+
+  &.tb-replymail:before {
+    font-family: "icons";
+    content: '\e071';
+  }
+
+  &.tb-ressourceplanning:before {
+    font-family: "icons";
+    content: '\e072';
+  }
+
+  &.tb-rotatecounterclockwise:before {
+    font-family: "icons";
+    content: '\e073';
+  }
+
+  &.tb-save:before {
+    font-family: "icons";
+    content: '\e074';
+  }
+
+  &.tb-saveall:before {
+    font-family: "icons";
+    content: '\e075';
+  }
+
+  &.tb-scheduledadmission:before {
+    font-family: "icons";
+    content: '\e076';
+  }
+
+  &.tb-scheduler:before {
+    font-family: "icons";
+    content: '\e077';
+  }
+
+  &.tb-search:before {
+    font-family: "icons";
+    content: '\e078';
+  }
+
+  &.tb-secondaryresidence:before {
+    font-family: "icons";
+    content: '\e079';
+  }
+
+  &.tb-seefileindexaminer:before {
+    font-family: "icons";
+    content: '\e07a';
+  }
+
+  &.tb-settings:before {
+    font-family: "icons", serif;
+    content: '\e07b';
+  }
+
+  &.tb-settodefault:before {
+    font-family: "icons";
+    content: '\e07c';
+  }
+
+  &.tb-shifthandover:before {
+    font-family: "icons";
+    content: '\e07d';
+  }
+
+  &.tb-show:before {
+    font-family: "icons";
+    content: '\e07e';
+  }
+
+  &.tb-sortdown:before {
+    font-family: "icons";
+    content: '\e07f';
+  }
+
+  &.tb-sortup:before {
+    font-family: "icons";
+    content: '\e080';
+  }
+
+  &.tb-split:before {
+    font-family: "icons";
+    content: '\e081';
+  }
+
+  &.tb-starttask:before {
+    font-family: "icons";
+    content: '\e082';
+  }
+
+  &.tb-stop:before {
+    font-family: "icons";
+    content: '\e083';
+  }
+
+  &.tb-stopepisode:before {
+    font-family: "icons";
+    content: '\e084';
+  }
+
+  &.tb-storno:before {
+    font-family: "icons";
+    content: '\e085';
+  }
+
+  &.tb-sum:before {
+    font-family: "icons";
+    content: '\e086';
+  }
+
+  &.tb-swap:before {
+    font-family: "icons";
+    content: '\e087';
+  }
+
+  &.tb-switchrole:before {
+    font-family: "icons";
+    content: '\e088';
+  }
+
+  &.tb-tasklist:before {
+    font-family: "icons";
+    content: '\e089';
+  }
+
+  &.tb-tasktab:before {
+    font-family: "icons";
+    content: '\e08a';
+  }
+
+  &.tb-timeline:before {
+    font-family: "icons";
+    content: '\e08b';
+  }
+
+  &.tb-top:before {
+    font-family: "icons";
+    content: '\e08c';
+  }
+
+  &.tb-transfer:before {
+    font-family: "icons";
+    content: '\e08d';
+  }
+
+  &.tb-unclaimtask:before {
+    font-family: "icons";
+    content: '\e08e';
+  }
+
+  &.tb-undo:before {
+    font-family: "icons";
+    content: '\e08f';
+  }
+
+  &.tb-unlinkobjects:before {
+    font-family: "icons";
+    content: '\e090';
+  }
+
+  &.tb-unrecommended:before {
+    font-family: "icons";
+    content: '\e091';
+  }
+
+  &.tb-up:before {
+    font-family: "icons";
+    content: '\e092';
+  }
+
+  &.tb-vacationadress:before {
+    font-family: "icons";
+    content: '\e093';
+  }
+
+  &.tb-verticalfilterandform:before {
+    font-family: "icons";
+    content: '\e094';
+  }
+
+  &.tb-viewcomments:before {
+    font-family: "icons";
+    content: '\e095';
+  }
+
+  &.tb-viewhorizontalformonly:before {
+    font-family: "icons";
+    content: '\e096';
+  }
+
+  &.tb-viewhorizontalgridandform:before {
+    font-family: "icons";
+    content: '\e097';
+  }
+
+  &.tb-viewhorizontalgridonly:before {
+    font-family: "icons";
+    content: '\e098';
+  }
+
+  &.tb-viewverticalformonly:before {
+    font-family: "icons";
+    content: '\e099';
+  }
+
+  &.tb-viewverticalgridandform:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e09a';
+  }
+
+  &.tb-viewverticalgridonly:before {
+    font-family: "icons";
+    content: '\e09b';
+  }
+
+  &.tb-ward:before {
+    font-family: "icons";
+    content: '\e09c';
+  }
+
+  &.tb-wardround:before {
+    font-family: "icons";
+    content: '\e09d';
+  }
+
+  &.tb-workadress:before {
+    font-family: "icons";
+    content: '\e09e';
+  }
+
+  &.tb-workplace:before {
+    font-family: "icons";
+    content: '\e09f';
+  }
+
+  &.tb-zoomin:before {
+    font-family: "icons";
+    content: '\e0a0';
+  }
+
+  &.tb-zoomout:before {
+    font-family: "icons";
+    content: '\e0a1';
+  }
+
+  &.tb-zoompage:before {
+    font-family: "icons";
+    content: '\e0a2';
+  }
+
+  &.tb-zoomscreen:before {
+    font-family: "icons";
+    content: '\e0a3';
+  }
+
+  &.tb-addcarrier:before {
+    font-family: "icons";
+    content: '\e0a4';
+  }
+
+  &.ch-absence:before {
+    font-family: "icons";
+    content: '\e0a5';
+  }
+
+  &.ch-accident:before {
+    font-family: "icons";
+    content: '\e0a6';
+  }
+
+  &.ch-addpatient:before {
+    font-family: "icons";
+    content: '\e0a7';
+  }
+
+  &.ch-administration:before {
+    font-family: "icons";
+    content: '\e0a8';
+  }
+
+  &.ch-admission:before {
+    font-family: "icons";
+    content: '\e0a9';
+  }
+
+  &.ch-age:before {
+    font-family: "icons";
+    content: '\e0aa';
+  }
+
+  &.ch-allergy:before {
+    font-family: "icons";
+    content: '\e0ab';
+  }
+
+  &.ch-anaestheticinduction:before {
+    font-family: "icons";
+    content: '\e0ac';
+  }
+
+  &.ch-analyzer:before {
+    font-family: "icons";
+    content: '\e0ad';
+  }
+
+  &.ch-authorization:before {
+    font-family: "icons";
+    content: '\e0ae';
+  }
+
+  &.ch-bathtub:before {
+    font-family: "icons";
+    content: '\e0af';
+  }
+
+  &.ch-begincooling:before {
+    font-family: "icons";
+    content: '\e0b0';
+  }
+
+  &.ch-benefactor:before {
+    font-family: "icons";
+    content: '\e0b1';
+  }
+
+  &.ch-billingprint:before {
+    font-family: "icons";
+    content: '\e0b2';
+  }
+
+  &.ch-bloodpressure:before {
+    font-family: "icons";
+    content: '\e0b3';
+  }
+
+  &.ch-bloodsugar:before {
+    font-family: "icons";
+    content: '\e0b4';
+  }
+
+  &.ch-bodymassindex:before {
+    font-family: "icons";
+    content: '\e0b5';
+  }
+
+  &.ch-breathing:before {
+    font-family: "icons";
+    content: '\e0b6';
+  }
+
+  &.ch-businesspartner:before {
+    font-family: "icons";
+    content: '\e0b7';
+  }
+
+  &.ch-calendar:before {
+    font-family: "icons";
+    content: '\e0b8';
+  }
+
+  &.ch-calendarday:before {
+    font-family: "icons";
+    content: '\e0b9';
+  }
+
+  &.ch-calendarmonth:before {
+    font-family: "icons";
+    content: '\e0ba';
+  }
+
+  &.ch-calendarnewevent:before {
+    font-family: "icons";
+    content: '\e0bb';
+  }
+
+  &.ch-calendartoday:before {
+    font-family: "icons";
+    content: '\e0bc';
+  }
+
+  &.ch-calendarweek:before {
+    font-family: "icons";
+    content: '\e0bd';
+  }
+
+  &.ch-calendarworkweek:before {
+    font-family: "icons";
+    content: '\e0be';
+  }
+
+  &.ch-cardiacinfraction:before {
+    font-family: "icons";
+    content: '\e0bf';
+  }
+
+  &.ch-changerecords:before {
+    font-family: "icons";
+    content: '\e0c0';
+  }
+
+  &.ch-clientservice:before {
+    font-family: "icons";
+    content: '\e0c1';
+  }
+
+  &.ch-collector:before {
+    font-family: "icons";
+    content: '\e0c2';
+  }
+
+  &.ch-comment:before {
+    font-family: "icons";
+    content: '\e0c3';
+  }
+
+  &.ch-contraindication:before {
+    font-family: "icons";
+    content: '\e0c4';
+  }
+
+  &.ch-controlgraphstudies:before {
+    font-family: "icons";
+    content: '\e0c5';
+  }
+
+  &.ch-conversion:before {
+    font-family: "icons";
+    content: '\e0c6';
+  }
+
+  &.ch-copaymentwaiver:before {
+    font-family: "icons";
+    content: '\e0c7';
+  }
+
+  &.ch-correlationstudies:before {
+    font-family: "icons";
+    content: '\e0c8';
+  }
+
+  &.ch-country:before {
+    font-family: "icons";
+    content: '\e0c9';
+  }
+
+  &.ch-currency:before {
+    font-family: "icons";
+    content: '\e0ca';
+  }
+
+  &.ch-daqdashboard:before {
+    font-family: "icons";
+    content: '\e0cb';
+  }
+
+  &.ch-datadetails:before {
+    font-family: "icons";
+    content: '\e0cc';
+  }
+
+  &.ch-datamanagement:before {
+    font-family: "icons";
+    content: '\e0cd';
+  }
+
+  &.ch-dataminer:before {
+    font-family: "icons";
+    content: '\e0ce';
+  }
+
+  &.ch-date:before {
+    font-family: "icons";
+    content: '\e0cf';
+  }
+
+  &.ch-deathanddying:before {
+    font-family: "icons";
+    content: '\e0d0';
+  }
+
+  &.ch-deleterecords:before {
+    font-family: "icons";
+    content: '\e0d1';
+  }
+
+  &.ch-denomination:before {
+    font-family: "icons";
+    content: '\e0d2';
+  }
+
+  &.ch-desinfection:before {
+    font-family: "icons";
+    content: '\e0d3';
+  }
+
+  &.ch-diagnosisvsprocedure:before {
+    font-family: "icons";
+    content: '\e0d4';
+  }
+
+  &.ch-dimension:before {
+    font-family: "icons";
+    content: '\e0d5';
+  }
+
+  &.ch-districtsetup:before {
+    font-family: "icons";
+    content: '\e0d6';
+  }
+
+  &.ch-document:before {
+    font-family: "icons";
+    content: '\e0d7';
+  }
+
+  &.ch-download:before {
+    font-family: "icons";
+    content: '\e0d8';
+  }
+
+  &.ch-dressing:before {
+    font-family: "icons";
+    content: '\e0d9';
+  }
+
+  &.ch-drugdruginteraction:before {
+    font-family: "icons";
+    content: '\e0da';
+  }
+
+  &.ch-drugfoodinteraction:before {
+    font-family: "icons";
+    content: '\e0db';
+  }
+
+  &.ch-druglabinteraction:before {
+    font-family: "icons";
+    content: '\e0dc';
+  }
+
+  &.ch-duplicatetherapy:before {
+    font-family: "icons";
+    content: '\e0dd';
+  }
+
+  &.ch-eatanddrink:before {
+    font-family: "icons";
+    content: '\e0de';
+  }
+
+  &.ch-edocument:before {
+    font-family: "icons";
+    content: '\e0df';
+  }
+
+  &.ch-elimination:before {
+    font-family: "icons";
+    content: '\e0e0';
+  }
+
+  &.ch-enumerationtype:before {
+    font-family: "icons";
+    content: '\e0e1';
+  }
+
+  &.ch-export:before {
+    font-family: "icons";
+    content: '\e0e2';
+  }
+
+  &.ch-gdt:before {
+    font-family: "icons";
+    content: '\e0e3';
+  }
+
+  &.ch-goaereferencedata:before {
+    font-family: "icons";
+    content: '\e0e4';
+  }
+
+  &.ch-graphresults:before {
+    font-family: "icons";
+    content: '\e0e5';
+  }
+
+  &.ch-grouptreatment:before {
+    font-family: "icons";
+    content: '\e0e6';
+  }
+
+  &.ch-healthinsurance:before {
+    font-family: "icons";
+    content: '\e0e7';
+  }
+
+  &.ch-history:before {
+    font-family: "icons";
+    content: '\e0e8';
+  }
+
+  &.ch-hospital:before {
+    font-family: "icons";
+    content: '\e0e9';
+  }
+
+  &.ch-icd10index:before {
+    font-family: "icons";
+    content: '\e0ea';
+  }
+
+  &.ch-import:before {
+    font-family: "icons";
+    content: '\e0eb';
+  }
+
+  &.ch-individualtreatment:before {
+    font-family: "icons";
+    content: '\e0ec';
+  }
+
+  &.ch-information:before {
+    font-family: "icons";
+    content: '\e0ed';
+  }
+
+  &.ch-integrity:before {
+    font-family: "icons";
+    content: '\e0ee';
+  }
+
+  &.ch-kidney:before {
+    font-family: "icons";
+    content: '\e0ef';
+  }
+
+  &.ch-labdocument:before {
+    font-family: "icons";
+    content: '\e0f0';
+  }
+
+  &.ch-laboratorygroups:before {
+    font-family: "icons";
+    content: '\e0f1';
+  }
+
+  &.ch-lactation:before {
+    font-family: "icons";
+    content: '\e0f2';
+  }
+
+  &.ch-language:before {
+    font-family: "icons";
+    content: '\e0f3';
+  }
+
+  &.ch-linearitystudies:before {
+    font-family: "icons";
+    content: '\e0f4';
+  }
+
+  &.ch-liver:before {
+    font-family: "icons";
+    content: '\e0f5';
+  }
+
+  &.ch-location:before {
+    font-family: "icons";
+    content: '\e0f6';
+  }
+
+  &.ch-longtimediagnosis:before {
+    font-family: "icons";
+    content: '\e0f7';
+  }
+
+  &.ch-longtimemedication:before {
+    font-family: "icons";
+    content: '\e0f8';
+  }
+
+  &.ch-management:before {
+    font-family: "icons";
+    content: '\e0f9';
+  }
+
+  &.ch-manifestmanagement:before {
+    font-family: "icons";
+    content: '\e0fa';
+  }
+
+  &.ch-measurement:before {
+    font-family: "icons";
+    content: '\e0fb';
+  }
+
+  &.ch-medicalserviceconsultant:before {
+    font-family: "icons";
+    content: '\e0fc';
+  }
+
+  &.ch-medicalservices:before {
+    font-family: "icons";
+    content: '\e0fd';
+  }
+
+  &.ch-medication:before {
+    font-family: "icons";
+    content: '\e0fe';
+  }
+
+  &.ch-medicationrisk:before {
+    font-family: "icons";
+    content: '\e0ff';
+  }
+
+  &.ch-microbiologypanels:before {
+    font-family: "icons";
+    content: '\e100';
+  }
+
+  &.ch-mobilisation:before {
+    font-family: "icons";
+    content: '\e101';
+  }
+
+  &.ch-nose:before {
+    font-family: "icons";
+    content: '\e102';
+  }
+
+  &.ch-openpatient:before {
+    font-family: "icons";
+    content: '\e103';
+  }
+
+  &.ch-operationtheater:before {
+    font-family: "icons";
+    content: '\e104';
+  }
+
+  &.ch-oralingestion:before {
+    font-family: "icons";
+    content: '\e105';
+  }
+
+  &.ch-organizationsofparticipants:before {
+    font-family: "icons";
+    content: '\e106';
+  }
+
+  &.ch-owndiagnosislist:before {
+    font-family: "icons";
+    content: '\e107';
+  }
+
+  &.ch-ownmedicationlist:before {
+    font-family: "icons";
+    content: '\e108';
+  }
+
+  &.ch-panelclosing:before {
+    font-family: "icons";
+    content: '\e109';
+  }
+
+  &.ch-panelinformation:before {
+    font-family: "icons";
+    content: '\e10a';
+  }
+
+  &.ch-patient:before {
+    font-family: "icons";
+    content: '\e10b';
+  }
+
+  &.ch-patientbandageleft:before {
+    font-family: "icons";
+    content: '\e10c';
+  }
+
+  &.ch-patientdetails:before {
+    font-family: "icons";
+    content: '\e10d';
+  }
+
+  &.ch-patientfile:before {
+    font-family: "icons";
+    content: '\e10e';
+  }
+
+  &.ch-patientpositioning:before {
+    font-family: "icons";
+    content: '\e10f';
+  }
+
+  &.ch-patientsettings:before {
+    font-family: "icons";
+    content: '\e110';
+  }
+
+  &.ch-pkvreferencedata:before {
+    font-family: "icons";
+    content: '\e111';
+  }
+
+  &.ch-plannedadmission:before {
+    font-family: "icons";
+    content: '\e112';
+  }
+
+  &.ch-planneddischarge:before {
+    font-family: "icons";
+    content: '\e113';
+  }
+
+  &.ch-plannedtransfer:before {
+    font-family: "icons";
+    content: '\e114';
+  }
+
+  &.ch-plannedvisit:before {
+    font-family: "icons";
+    content: '\e115';
+  }
+
+  &.ch-practiceadministration:before {
+    font-family: "icons";
+    content: '\e116';
+  }
+
+  &.ch-pregnancy:before {
+    font-family: "icons";
+    content: '\e117';
+  }
+
+  &.ch-priscus:before {
+    font-family: "icons";
+    content: '\e118';
+  }
+
+  &.ch-procedurevsdiagnosis:before {
+    font-family: "icons";
+    content: '\e119';
+  }
+
+  &.ch-professionalassociation:before {
+    font-family: "icons";
+    content: '\e11a';
+  }
+
+  &.ch-publichealthdepartment:before {
+    font-family: "icons";
+    content: '\e11b';
+  }
+
+  &.ch-range:before {
+    font-family: "icons";
+    content: '\e11c';
+  }
+
+  &.ch-readinsurancecard:before {
+    font-family: "icons";
+    content: '\e11d';
+  }
+
+  &.ch-referencelabprofile:before {
+    font-family: "icons";
+    content: '\e11e';
+  }
+
+  &.ch-regionsetup:before {
+    font-family: "icons";
+    content: '\e11f';
+  }
+
+  &.ch-relative:before {
+    font-family: "icons";
+    content: '\e120';
+  }
+
+  &.ch-removalofanaesthesia:before {
+    font-family: "icons";
+    content: '\e121';
+  }
+
+  &.ch-requisitioncompleted:before {
+    font-family: "icons";
+    content: '\e122';
+  }
+
+  &.ch-requisitioncreate:before {
+    font-family: "icons";
+    content: '\e123';
+  }
+
+  &.ch-requisitionnotreceived:before {
+    font-family: "icons";
+    content: '\e124';
+  }
+
+  &.ch-requisitionpreordered:before {
+    font-family: "icons";
+    content: '\e125';
+  }
+
+  &.ch-requisitionsettings:before {
+    font-family: "icons";
+    content: '\e126';
+  }
+
+  &.ch-requisitiontobecollected:before {
+    font-family: "icons";
+    content: '\e127';
+  }
+
+  &.ch-resuscitation:before {
+    font-family: "icons";
+    content: '\e128';
+  }
+
+  &.ch-rulelistingreport:before {
+    font-family: "icons";
+    content: '\e129';
+  }
+
+  &.ch-rulesetup:before {
+    font-family: "icons";
+    content: '\e12a';
+  }
+
+  &.ch-safeenvironment:before {
+    font-family: "icons";
+    content: '\e12b';
+  }
+
+  &.ch-sendtovisit:before {
+    font-family: "icons";
+    content: '\e12c';
+  }
+
+  &.ch-sexuality:before {
+    font-family: "icons";
+    content: '\e12d';
+  }
+
+  &.ch-shoppingcart:before {
+    font-family: "icons";
+    content: '\e12e';
+  }
+
+  &.ch-shortmessage:before {
+    font-family: "icons";
+    content: '\e12f';
+  }
+
+  &.ch-size:before {
+    font-family: "icons";
+    content: '\e130';
+  }
+
+  &.ch-skinincision:before {
+    font-family: "icons";
+    content: '\e131';
+  }
+
+  &.ch-sleeping:before {
+    font-family: "icons";
+    content: '\e132';
+  }
+
+  &.ch-socialintegration:before {
+    font-family: "icons";
+    content: '\e133';
+  }
+
+  &.ch-startclamping:before {
+    font-family: "icons";
+    content: '\e134';
+  }
+
+  &.ch-sterilewounddressing:before {
+    font-family: "icons";
+    content: '\e135';
+  }
+
+  &.ch-stopclamping:before {
+    font-family: "icons";
+    content: '\e136';
+  }
+
+  &.ch-stopcooling:before {
+    font-family: "icons";
+    content: '\e137';
+  }
+
+  &.ch-summary:before {
+    font-family: "icons";
+    content: '\e138';
+  }
+
+  &.ch-suturetime:before {
+    font-family: "icons";
+    content: '\e139';
+  }
+
+  &.ch-taskandservicemanagement:before {
+    font-family: "icons";
+    content: '\e13a';
+  }
+
+  &.ch-telecommunication:before {
+    font-family: "icons";
+    content: '\e13b';
+  }
+
+  &.ch-temperature:before {
+    font-family: "icons";
+    content: '\e13c';
+  }
+
+  &.ch-testsetup:before {
+    font-family: "icons";
+    content: '\e13d';
+  }
+
+  &.ch-time:before {
+    font-family: "icons";
+    content: '\e13e';
+  }
+
+  &.ch-timeline:before {
+    font-family: "icons";
+    content: '\e13f';
+  }
+
+  &.ch-tooth:before {
+    font-family: "icons";
+    content: '\e140';
+  }
+
+  &.ch-transfer:before {
+    font-family: "icons";
+    content: '\e141';
+  }
+
+  &.ch-unit:before {
+    font-family: "icons";
+    content: '\e142';
+  }
+
+  &.ch-unknowninsurancecard:before {
+    font-family: "icons";
+    content: '\e143';
+  }
+
+  &.ch-useroffline:before {
+    font-family: "icons";
+    content: '\e144';
+  }
+
+  &.ch-usersetup:before {
+    font-family: "icons";
+    content: '\e145';
+  }
+
+  &.ch-uterus:before {
+    font-family: "icons";
+    content: '\e146';
+  }
+
+  &.ch-vaccination:before {
+    font-family: "icons";
+    content: '\e147';
+  }
+
+  &.ch-visit:before {
+    font-family: "icons";
+    content: '\e148';
+  }
+
+  &.ch-visitor:before {
+    font-family: "icons";
+    content: '\e149';
+  }
+
+  &.ch-waitingroom:before {
+    font-family: "icons";
+    content: '\e14a';
+  }
+
+  &.ch-wards:before {
+    font-family: "icons";
+    content: '\e14b';
+  }
+
+  &.ch-water:before {
+    font-family: "icons";
+    content: '\e14c';
+  }
+
+  &.ch-weight:before {
+    font-family: "icons";
+    content: '\e14d';
+  }
+
+  &.ch-workandplay:before {
+    font-family: "icons";
+    content: '\e14e';
+  }
+
+  &.ch-workflow:before {
+    font-family: "icons";
+    content: '\e14f';
+  }
+
+  &.mi-backward:before {
+    font-family: "icons";
+    content: '\e150';
+  }
+
+  &.mi-fastbackward:before {
+    font-family: "icons";
+    content: '\e151';
+  }
+
+  &.mi-fastforward:before {
+    font-family: "icons";
+    content: '\e152';
+  }
+
+  &.mi-forward:before {
+    font-family: "icons";
+    content: '\e153';
+  }
+
+  &.mi-now:before {
+    font-family: "icons";
+    content: '\e154';
+  }
+
+  &.co-close:before {
+    font-family: "icons";
+    content: '\e155';
+  }
+
+  &.rt-bold:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\e156';
+  }
+
+  &.rt-bulletpoints:before {
+    font-family: "icons";
+    content: '\e157';
+  }
+
+  &.rt-crossedout:before {
+    font-family: "icons";
+    content: '\e158';
+  }
+
+  &.rt-insertimage:before {
+    font-family: "icons";
+    content: '\e159';
+  }
+
+  &.rt-insertsmiley:before {
+    font-family: "icons";
+    content: '\e15a';
+  }
+
+  &.rt-italic:before {
+    font-family: "icons";
+    content: '\e15b';
+  }
+
+  &.rt-rotateleft:before {
+    font-family: "icons";
+    content: '\e15c';
+  }
+
+  &.rt-rotateright:before {
+    font-family: "icons";
+    content: '\e15d';
+  }
+
+  &.rt-underlined:before {
+    font-family: "icons";
+    content: '\e15e';
+  }
+
+  &.tb-exit:before {
+    font-family: "icons";
+    content: '\e15f';
+  }
+
+  &.tb-arrowdown:before {
+    font-family: "icons";
+    content: '\e160';
+  }
+
+  &.tb-arrowup:before {
+    font-family: "icons";
+    content: '\e161';
+  }
+
+  &.tb-hook:before {
+    font-family: "icons";
+    content: '\e162';
+  }
+
+  &.tb-continuebackward:before {
+    font-family: "icons";
+    content: '\e163';
+  }
+
+  &.tb-playbackward:before {
+    font-family: "icons";
+    content: '\e164';
+  }
+
+  &.tb-plus:before {
+    font-family: "icons";
+    content: '\e165';
+  }
+
+  &.ch-laboratorygroups:before {
+    font-family: "icons";
+    content: '\e166';
+  }
+
+  &.ch-securityshortmessage:before {
+    font-family: "icons";
+    content: '\e167';
+  }
+
+  &.ch-highlighter:before {
+    font-family: "icons";
+    content: '\e168';
+  }
+
+  &.ch-standardcontract:before {
+    font-family: "icons";
+    content: '\e169';
+  }
+
+  &.ch-basiccontract:before {
+    font-family: "icons";
+    content: '\e16a';
+  }
+
+  &.ch-posthorn:before {
+    font-family: "icons";
+    content: '\e16b';
+  }
+
+  &.ch-userdefinedcontracts:before {
+    font-family: "icons";
+    content: '\e16c';
+  }
+
+  &.ch-hedgehog:before {
+    font-family: "icons";
+    content: '\e16d';
+  }
+
+  &.ch-kvbiiii:before {
+    font-family: "icons";
+    content: '\e16e';
+  }
+
+  &.ch-kvbiv:before {
+    font-family: "icons";
+    content: '\e16f';
+  }
+
+  &.tb-sorttable:before {
+    font-family: "icons";
+    content: '\e170';
+  }
+
+  &.tb-mobilemainmenu:before {
+    font-family: "icons";
+    content: '\e171';
+  }
+
+  &.ch-medicationplan:before {
+    font-family: "icons";
+    content: '\e172';
+  }
+
+  &.ch-sunday:before {
+    font-family: "icons";
+    content: '\e173';
+  }
+
+  &.ch-insurancecard:before {
+    font-family: "icons";
+    content: '\e174';
+  }
+
+  &.tb-arrowlinedown:before {
+    font-family: "icons";
+    content: '\e175';
+  }
+
+  &.tb-arrowlineleft:before {
+    font-family: "icons";
+    content: '\e176';
+  }
+
+  &.tb-arrowlineup:before {
+    font-family: "icons";
+    content: '\e177';
+  }
+
+  &.ff-css:before {
+    font-family: "icons";
+    content: '\e178';
+  }
+
+  &.ff-excel:before {
+    font-family: "icons";
+    content: '\e179';
+  }
+
+  &.ff-pdf:before {
+    font-family: "icons";
+    content: '\e17a';
+  }
+
+  &.ff-powerpoint:before {
+    font-family: "icons";
+    content: '\e17b';
+  }
+
+  &.ff-word:before {
+    font-family: "icons";
+    content: '\e17c';
+  }
+
+  &.ff-xml:before {
+    font-family: "icons";
+    content: '\e17d';
+  }
+
+  &.ff-zip:before {
+    font-family: "icons";
+    content: '\e17e';
+  }
+
+  &.ch-insurance:before {
+    font-family: "icons";
+    content: '\e17f';
+  }
+
+  &.ch-list:before {
+    font-family: "icons";
+    content: '\e180';
+  }
+
+  &.tb-maximize:before {
+    font-family: "icons";
+    content: '\e181';
+  }
+
+  &.tb-minimize:before {
+    font-family: "icons";
+    content: '\e182';
+  }
+
+  &.tb-makefullscreen:before {
+    font-family: "icons";
+    content: '\e183';
+  }
+
+  &.g3-collapsedbig:before {
+    font-family: "icons";
+    content: '\e184';
+  }
+
+  &.g3-collapsedsmall:before {
+    font-family: "icons";
+    content: '\e185';
+  }
+
+  &.g3-expandedbig:before {
+    font-family: "icons";
+    content: '\e186';
+  }
+
+  &.g3-expandedsmall:before {
+    font-family: "icons";
+    content: '\e187';
+  }
+
+  &.tb-photocamera:before {
+    font-family: "icons";
+    content: '\e188';
+  }
+
+  &.g3-numericinputfield:before {
+    font-family: "icons";
+    content: '\e189';
+  }
+
+  &.g3-dropdownlist:before {
+    font-family: "icons";
+    content: '\e18a';
+  }
+
+  &.g3-thirdlevelpointer:before {
+    font-family: "icons";
+    content: '\e18b';
+  }
+
+  &.ch-treatmentroom:before {
+    font-family: "icons";
+    content: '\e18c';
+  }
+
+  &.ch-eraser:before {
+    font-family: "icons";
+    content: '\e18d';
+  }
+
+  &.g3-checkboxhook:before {
+    font-family: "icons";
+    content: '\e18e';
+  }
+
+  &.g3-checkboxindeterminate:before {
+    font-family: "icons";
+    content: '\e18f';
+  }
+
+  &.g3-radiobuttoncircle:before {
+    font-family: "icons";
+    content: '\e190';
+  }
+
+  &.g3-menu:before {
+    font-family: "icons";
+    content: '\e191';
+  }
+
+  &.g3-hideleft:before {
+    font-family: "icons";
+    content: '\e192';
+  }
+
+  &.g3-hideright:before {
+    font-family: "icons";
+    content: '\e193';
+  }
+
+  &.tb-addperson:before {
+    font-family: "icons";
+    content: '\e194';
+  }
+
+  &.g3-sorttableascending:before {
+    font-family: "icons";
+    content: '\e195';
+  }
+
+  &.g3-sorttabledescending:before {
+    font-family: "icons";
+    content: '\e196';
+  }
+
+  &.g3-popupbuttonarrow:before {
+    font-family: "icons";
+    content: '\e197';
+  }
+
+  &.ch-questionnaire:before {
+    font-family: "icons";
+    content: '\e089';
+    //  '\e198';
+  }
+
+  &.ch-followup:before {
+    font-family: "icons";
+    content: '\e199';
+  }
+
+  &.g3-no2ndlevelphoto:before {
+    font-family: "icons";
+    content: '\e19a';
+  }
+
+  &.tb-listview:before {
+    font-family: "icons";
+    content: '\e19c';
+  }
+
+  &.tb-captureportrait:before {
+    font-family: "icons";
+    content: '\e19d';
+  }
+
+  &.tb-editfolder:before {
+    font-family: "icons";
+    content: '\e19e';
+  }
+
+  &.tb-deselectallfolders:before {
+    font-family: "icons";
+    content: '\e19f';
+  }
+
+  &.tb-selectallfolders:before {
+    font-family: "icons";
+    content: '\e1a0';
+  }
+
+  &.tb-folderopen:before {
+    font-family: "icons";
+    content: '\e1a1';
+  }
+
+  &.tb-folderclosed:before {
+    font-family: "icons";
+    content: '\e1a2';
+  }
+
+  &.tb-addfavorite:before {
+    font-family: "icons";
+    content: '\e1a3';
+  }
+
+  &.tb-isfavorite:before {
+    font-family: "icons";
+    content: '\e1a4';
+  }
+
+  &.ch-teeth:before {
+    font-family: "icons";
+    content: '\e1a5';
+  }
+
+  &.ch-skulllateral:before {
+    font-family: "icons";
+    content: '\e1a6';
+  }
+
+  &.ch-skullfront:before {
+    font-family: "icons";
+    content: '\e1a7';
+  }
+
+  &.ch-jawbone:before {
+    font-family: "icons";
+    content: '\e1a8';
+  }
+
+  &.ch-dicomviewer:before {
+    font-family: "icons";
+    content: '\e1a9';
+  }
+
+  &.ch-dicom:before {
+    font-family: "icons";
+    content: '\e1aa';
+  }
+
+  &.ff-audio:before {
+    font-family: "icons";
+    content: '\e1ab';
+  }
+
+  &.ff-openofficespreadsheet:before {
+    font-family: "icons";
+    content: '\e1ac';
+  }
+
+  &.ff-openofficetext:before {
+    font-family: "icons";
+    content: '\e1ad';
+  }
+
+  &.ff-openofficepresentation:before {
+    font-family: "icons";
+    content: '\e1ae';
+  }
+
+  &.rt-text:before {
+    font-family: "icons";
+    content: '\e1af';
+  }
+
+  &.ch-scan:before {
+    font-family: "icons";
+    content: '\e1b0';
+  }
+
+  &.ch-corner:before {
+    font-family: "icons";
+    content: '\e1b1';
+  }
+
+  &.ch-internetexplorer:before {
+    font-family: "icons";
+    content: '\e1b2';
+  }
+
+  &.ch-arrowtool:before {
+    font-family: "icons";
+    content: '\e1b3';
+  }
+
+  &.ch-fileinfo:before {
+    font-family: "icons";
+    content: '\e1b4';
+  }
+
+  &.ch-fax:before {
+    font-family: "icons";
+    content: '\e1b5';
+  }
+
+  &.ch-documentserver:before {
+    font-family: "icons";
+    content: '\e1b6';
+  }
+
+  &.ch-medium:before {
+    font-family: "icons";
+    content: '\e1b7';
+  }
+
+  &.ch-addtoburninglist:before {
+    font-family: "icons";
+    content: '\e1b8';
+  }
+
+  &.ch-cdburner:before {
+    font-family: "icons";
+    content: '\e1b9';
+  }
+
+  &.ch-closeburning:before {
+    font-family: "icons";
+    content: '\e1ba';
+  }
+
+  &.ch-startburning:before {
+    font-family: "icons";
+    content: '\e1bb';
+  }
+
+  &.ch-backup:before {
+    font-family: "icons";
+    content: '\e1bc';
+  }
+
+  &.ch-brightnesscontrast:before {
+    font-family: "icons";
+    content: '\e1bd';
+  }
+
+  &.ch-leave:before {
+    font-family: "icons";
+    content: '\e1be';
+  }
+
+  &.ch-rotate180left:before {
+    font-family: "icons";
+    content: '\e1bf';
+  }
+
+  &.ch-rotate180right:before {
+    font-family: "icons";
+    content: '\e1c0';
+  }
+
+  &.ch-rotate90left:before {
+    font-family: "icons";
+    content: '\e1c1';
+  }
+
+  &.ch-rotate90right:before {
+    font-family: "icons";
+    content: '\e1c2';
+  }
+
+  &.ch-rotate0:before {
+    font-family: "icons";
+    content: '\e1c3';
+  }
+
+  &.ch-ais:before {
+    font-family: "icons";
+    content: '\e1c4';
+  }
+
+  &.ch-printtoarchive:before {
+    font-family: "icons";
+    content: '\e1c5';
+  }
+
+  &.ch-rectangletool:before {
+    font-family: "icons";
+    content: '\e1c6';
+  }
+
+  &.ch-searchserver:before {
+    font-family: "icons";
+    content: '\e1c7';
+  }
+
+  &.ch-archiving:before {
+    font-family: "icons";
+    content: '\e1c8';
+  }
+
+  &.ch-archivelocation:before {
+    font-family: "icons";
+    content: '\e1c9';
+  }
+
+  &.ch-invert:before {
+    font-family: "icons";
+    content: '\e1ca';
+  }
+
+  &.ch-mirrorhorizontally:before {
+    font-family: "icons";
+    content: '\e1cb';
+  }
+
+  &.ch-mirrorvertically:before {
+    font-family: "icons";
+    content: '\e1cc';
+  }
+
+  &.ch-interoralcamera:before {
+    font-family: "icons";
+    content: '\e1cd';
+  }
+
+  &.ch-linetool:before {
+    font-family: "icons";
+    content: '\e1ce';
+  }
+
+  &.ch-licenceadministration:before {
+    font-family: "icons";
+    content: '\e1cf';
+  }
+
+  &.ch-manageserver:before {
+    font-family: "icons";
+    content: '\e1d0';
+  }
+
+  &.ch-windowsmediaplayer:before {
+    font-family: "icons";
+    content: '\e1d1';
+  }
+
+  &.ch-video:before {
+    font-family: "icons";
+    content: '\e1d2';
+  }
+
+  &.ch-vddsmediasource:before {
+    font-family: "icons";
+    content: '\e1d3';
+  }
+
+  &.ch-traceviewer:before {
+    font-family: "icons";
+    content: '\e1d4';
+  }
+
+  &.ch-productinformation:before {
+    font-family: "icons";
+    content: '\e1d5';
+  }
+
+  &.ch-serverinformation:before {
+    font-family: "icons";
+    content: '\e1d6';
+  }
+
+  &.ch-areazoom:before {
+    font-family: "icons";
+    content: '\e1d7';
+  }
+
+  &.ch-imagefilter:before {
+    font-family: "icons";
+    content: '\e1d8';
+  }
+
+  &.rt-editimage:before {
+    font-family: "icons";
+    content: '\e1d9';
+  }
+
+  &.ch-turnaround:before {
+    font-family: "icons";
+    content: '\e1da';
+  }
+
+  &.ch-tablecolumnsdefault:before {
+    font-family: "icons";
+    content: '\e1db';
+  }
+
+  &.ch-acquirealt:before {
+    font-family: "icons";
+    content: '\e1dc';
+  }
+
+  &.ch-backup02:before {
+    font-family: "icons";
+    content: '\e1dd';
+  }
+
+  &.ch-backupcrypt:before {
+    font-family: "icons";
+    content: '\e1de';
+  }
+
+  &.ch-bankout:before {
+    font-family: "icons";
+    content: '\e1df';
+  }
+
+  &.ch-bookeuro:before {
+    font-family: "icons";
+    content: '\e1e0';
+  }
+
+  &.ch-cardec:before {
+    font-family: "icons";
+    content: '\e1e1';
+  }
+
+  &.ch-chipcard:before {
+    font-family: "icons";
+    content: '\e1e2';
+  }
+
+  &.ch-currencyeuro:before {
+    font-family: "icons";
+    content: '\e1e3';
+  }
+
+  &.ch-deferredpayment:before {
+    font-family: "icons";
+    content: '\e1e4';
+  }
+
+  &.ch-demandrates:before {
+    font-family: "icons";
+    content: '\e1e5';
+  }
+
+  &.ch-dentalscaleofcharges:before {
+    font-family: "icons";
+    content: '\e1e6';
+  }
+
+  &.ch-ecsettings:before {
+    font-family: "icons";
+    content: '\e1e7';
+  }
+
+  &.ch-errorlist:before {
+    font-family: "icons";
+    content: '\e1e8';
+  }
+
+  &.ch-euro:before {
+    font-family: "icons";
+    content: '\e1e9';
+  }
+
+  &.ch-exportvdds:before {
+    font-family: "icons";
+    content: '\e1ea';
+  }
+
+  &.ch-fibu:before {
+    font-family: "icons";
+    content: '\e1eb';
+  }
+
+  &.ch-importdzr:before {
+    font-family: "icons";
+    content: '\e1ec';
+  }
+
+  &.ch-importkto:before {
+    font-family: "icons";
+    content: '\e1ed';
+  }
+
+  &.ch-importlab:before {
+    font-family: "icons";
+    content: '\e1ee';
+  }
+
+  &.ch-importvdds:before {
+    font-family: "icons";
+    content: '\e1ef';
+  }
+
+  &.ch-labbill:before {
+    font-family: "icons";
+    content: '\e1f0';
+  }
+
+  &.ch-letters:before {
+    font-family: "icons";
+    content: '\e1f1';
+  }
+
+  &.ch-money:before {
+    font-family: "icons";
+    content: '\e1f2';
+  }
+
+  &.ch-moneylist:before {
+    font-family: "icons";
+    content: '\e1f3';
+  }
+
+  &.ch-nomoney:before {
+    font-family: "icons";
+    content: '\e1f4';
+  }
+
+  &.ch-nomoneyleft:before {
+    font-family: "icons";
+    content: '\e1f5';
+  }
+
+  &.ch-norules:before {
+    font-family: "icons";
+    content: '\e1f6';
+  }
+
+  &.ch-printquestionmark:before {
+    font-family: "icons";
+    content: '\e1f7';
+  }
+
+  &.ch-request:before {
+    font-family: "icons";
+    content: '\e1f8';
+  }
+
+  &.ch-restore:before {
+    font-family: "icons";
+    content: '\e1f9';
+  }
+
+  &.ch-restorecrypt:before {
+    font-family: "icons";
+    content: '\e1fa';
+  }
+
+  &.ch-saveadt:before {
+    font-family: "icons";
+    content: '\e1fb';
+  }
+
+  &.ch-savebank:before {
+    font-family: "icons";
+    content: '\e1fc';
+  }
+
+  &.ch-savebeb:before {
+    font-family: "icons";
+    content: '\e1fd';
+  }
+
+  &.ch-savebel:before {
+    font-family: "icons";
+    content: '\e1fe';
+  }
+
+  &.ch-savebkv:before {
+    font-family: "icons";
+    content: '\e1ff';
+  }
+
+  &.ch-savedta:before {
+    font-family: "icons";
+    content: '\e200';
+  }
+
+  &.ch-savedta2:before {
+    font-family: "icons";
+    content: '\e201';
+  }
+
+  &.ch-saveexport:before {
+    font-family: "icons";
+    content: '\e202';
+  }
+
+  &.ch-savekts:before {
+    font-family: "icons";
+    content: '\e203';
+  }
+
+  &.ch-savequestionmark:before {
+    font-family: "icons";
+    content: '\e204';
+  }
+
+  &.ch-savewdh:before {
+    font-family: "icons";
+    content: '\e205';
+  }
+
+  &.ch-scaleofcharges:before {
+    font-family: "icons";
+    content: '\e206';
+  }
+
+  &.ch-patientabsent:before {
+    font-family: "icons";
+    content: '\e207';
+  }
+
+  &.ch-patientleaving:before {
+    font-family: "icons";
+    content: '\e208';
+  }
+
+  &.ch-abrechnungslistenalbis:before {
+    font-family: "icons";
+    content: '\e209';
+  }
+
+  &.ch-abrechnungslistencommon:before {
+    font-family: "icons";
+    content: '\e20a';
+  }
+
+  &.ch-archivrechnungslauf:before {
+    font-family: "icons";
+    content: '\e20b';
+  }
+
+  &.ch-laborbuch:before {
+    font-family: "icons";
+    content: '\e20c';
+  }
+
+  &.ch-leistungsketten:before {
+    font-family: "icons";
+    content: '\e20d';
+  }
+
+  &.ch-makros:before {
+    font-family: "icons";
+    content: '\e20e';
+  }
+
+  &.ch-makrosownlist:before {
+    font-family: "icons";
+    content: '\e20f';
+  }
+
+  &.ch-patientnotassigned:before {
+    font-family: "icons";
+    content: '\e210';
+  }
+
+  &.ch-rechnungsverwaltungalbis:before {
+    font-family: "icons";
+    content: '\e211';
+  }
+
+  &.ch-rechnungsverwaltungcommon:before {
+    font-family: "icons";
+    content: '\e212';
+  }
+
+  &.ch-upload:before {
+    font-family: "icons";
+    content: '\e213';
+  }
+
+  &.ch-z1abrechnungleistungfu:before {
+    font-family: "icons";
+    content: '\e214';
+  }
+
+  &.ch-z1archivroentgenaufn:before {
+    font-family: "icons";
+    content: '\e215';
+  }
+
+  &.ch-z1beb90:before {
+    font-family: "icons";
+    content: '\e216';
+  }
+
+  &.ch-z1beb97:before {
+    font-family: "icons";
+    content: '\e217';
+  }
+
+  &.ch-z1bel2:before {
+    font-family: "icons";
+    content: '\e218';
+  }
+
+  &.ch-z1bema:before {
+    font-family: "icons";
+    content: '\e219';
+  }
+
+  &.ch-z1bemarechnung:before {
+    font-family: "icons";
+    content: '\e21a';
+  }
+
+  &.ch-z1bueroklammer:before {
+    font-family: "icons";
+    content: '\e21b';
+  }
+
+  &.ch-z1dig0:before {
+    font-family: "icons";
+    content: '\e21c';
+  }
+
+  &.ch-z1dig1:before {
+    font-family: "icons";
+    content: '\e21d';
+  }
+
+  &.ch-z1dig2:before {
+    font-family: "icons";
+    content: '\e21e';
+  }
+
+  &.ch-z1dig3:before {
+    font-family: "icons";
+    content: '\e21f';
+  }
+
+  &.ch-z1dig4:before {
+    font-family: "icons";
+    content: '\e220';
+  }
+
+  &.ch-z1dig5:before {
+    font-family: "icons";
+    content: '\e221';
+  }
+
+  &.ch-z1dig6:before {
+    font-family: "icons";
+    content: '\e222';
+  }
+
+  &.ch-z1dig7:before {
+    font-family: "icons";
+    content: '\e223';
+  }
+
+  &.ch-z1dig8:before {
+    font-family: "icons";
+    content: '\e224';
+  }
+
+  &.ch-z1dig9:before {
+    font-family: "icons";
+    content: '\e225';
+  }
+
+  &.ch-z1digstar:before {
+    font-family: "icons";
+    content: '\e226';
+  }
+
+  &.ch-z1digx:before {
+    font-family: "icons";
+    content: '\e227';
+  }
+
+  &.ch-z1ebm:before {
+    font-family: "icons";
+    content: '\e228';
+  }
+
+  &.ch-z1falplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e229';
+  }
+
+  &.ch-z1falplanerstellt:before {
+    font-family: "icons";
+    content: '\e22a';
+  }
+
+  &.ch-z1formularparameter:before {
+    font-family: "icons";
+    content: '\e22b';
+  }
+
+  &.ch-z1gewerbelabor:before {
+    font-family: "icons";
+    content: '\e22c';
+  }
+
+  &.ch-z1goz:before {
+    font-family: "icons";
+    content: '\e22d';
+  }
+
+  &.ch-z1implantatkomplexe:before {
+    font-family: "icons";
+    content: '\e22e';
+  }
+
+  &.ch-z1implantatplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e22f';
+  }
+
+  &.ch-z1implantatplanerstellt:before {
+    font-family: "icons";
+    content: '\e230';
+  }
+
+  &.ch-z1ipbefund:before {
+    font-family: "icons";
+    content: '\e231';
+  }
+
+  &.ch-z1kasse:before {
+    font-family: "icons";
+    content: '\e232';
+  }
+
+  &.ch-z1kbrplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e233';
+  }
+
+  &.ch-z1kbrplanerstellt:before {
+    font-family: "icons";
+    content: '\e234';
+  }
+
+  &.ch-z1kfoplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e235';
+  }
+
+  &.ch-z1kfoplanerstellt:before {
+    font-family: "icons";
+    content: '\e236';
+  }
+
+  &.ch-z1kfoplanmehrkabgerechnet:before {
+    font-family: "icons";
+    content: '\e237';
+  }
+
+  &.ch-z1kfoplanmehrkerstellt:before {
+    font-family: "icons";
+    content: '\e238';
+  }
+
+  &.ch-z1kfoplanpauschalen:before {
+    font-family: "icons";
+    content: '\e239';
+  }
+
+  &.ch-z1kfoplanpauschalenabger:before {
+    font-family: "icons";
+    content: '\e23a';
+  }
+
+  &.ch-z1leistungenauskomplexuebern:before {
+    font-family: "icons";
+    content: '\e23b';
+  }
+
+  &.ch-z1manuellerechnung:before {
+    font-family: "icons";
+    content: '\e23c';
+  }
+
+  &.ch-z1modellnummer:before {
+    font-family: "icons";
+    content: '\e23d';
+  }
+
+  &.ch-z1nachrichtenabholen:before {
+    font-family: "icons";
+    content: '\e23e';
+  }
+
+  &.ch-z1paplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e23f';
+  }
+
+  &.ch-z1paplanerstellt:before {
+    font-family: "icons";
+    content: '\e240';
+  }
+
+  &.ch-z1patientenberater3d:before {
+    font-family: "icons";
+    content: '\e241';
+  }
+
+  &.ch-z1patientenberater3dbefunda:before {
+    font-family: "icons";
+    content: '\e242';
+  }
+
+  &.ch-z1patientenberater3dbefundb:before {
+    font-family: "icons";
+    content: '\e243';
+  }
+
+  &.ch-z1privatkomplexe:before {
+    font-family: "icons";
+    content: '\e244';
+  }
+
+  &.ch-z1psibefund:before {
+    font-family: "icons";
+    content: '\e245';
+  }
+
+  &.ch-z1rechnungfertig:before {
+    font-family: "icons";
+    content: '\e246';
+  }
+
+  &.ch-z1rzstufe3:before {
+    font-family: "icons";
+    content: '\e247';
+  }
+
+  &.ch-z1smilie1:before {
+    font-family: "icons";
+    content: '\e248';
+  }
+
+  &.ch-z1smilie2:before {
+    font-family: "icons";
+    content: '\e249';
+  }
+
+  &.ch-z1smilie3:before {
+    font-family: "icons";
+    content: '\e24a';
+  }
+
+  &.ch-z1smilie4:before {
+    font-family: "icons";
+    content: '\e24b';
+  }
+
+  &.ch-z1smilie5:before {
+    font-family: "icons";
+    content: '\e24c';
+  }
+
+  &.ch-z1smilie6:before {
+    font-family: "icons";
+    content: '\e24d';
+  }
+
+  &.ch-z1terminalserver:before {
+    font-family: "icons";
+    content: '\e24e';
+  }
+
+  &.ch-z1unfallkomplexe:before {
+    font-family: "icons";
+    content: '\e24f';
+  }
+
+  &.ch-z1uvgoea:before {
+    font-family: "icons";
+    content: '\e250';
+  }
+
+  &.ch-z1wartelistehinweis:before {
+    font-family: "icons";
+    content: '\e251';
+  }
+
+  &.ch-z1wartelistewarnung:before {
+    font-family: "icons";
+    content: '\e252';
+  }
+
+  &.ch-z1wartungabholen:before {
+    font-family: "icons";
+    content: '\e253';
+  }
+
+  &.ch-z1zeplanabgerechnet:before {
+    font-family: "icons";
+    content: '\e254';
+  }
+
+  &.ch-z1zeplanerstellt:before {
+    font-family: "icons";
+    content: '\e255';
+  }
+
+  &.ch-z1zeplaninaktiv:before {
+    font-family: "icons";
+    content: '\e256';
+  }
+
+  &.ch-z13dbefund:before {
+    font-family: "icons";
+    content: '\e257';
+  }
+
+  &.ch-z101befund:before {
+    font-family: "icons";
+    content: '\e258';
+  }
+
+  &.ch-z102befund:before {
+    font-family: "icons";
+    content: '\e259';
+  }
+
+  &.ch-centered:before {
+    font-family: "icons";
+    content: '\e25a';
+  }
+
+  &.ch-closed-status:before {
+    font-family: "icons";
+    content: '\e25b';
+  }
+
+  &.ch-closed:before {
+    font-family: "icons";
+    content: '\e25c';
+  }
+
+  &.ch-emergency:before {
+    font-family: "icons";
+    content: '\e25d';
+  }
+
+  &.ch-font-style:before {
+    font-family: "icons";
+    content: '\e25e';
+  }
+
+  &.ch-justify:before {
+    font-family: "icons";
+    content: '\e25f';
+  }
+
+  &.ch-left-aligned:before {
+    font-family: "icons";
+    content: '\e260';
+  }
+
+  &.ch-right-aligned:before {
+    font-family: "icons";
+    content: '\e261';
+  }
+
+  &.ch-wish:before {
+    font-family: "icons";
+    content: '\e262';
+  }
+
+  &.ch-zoom-in:before {
+    font-family: "icons";
+    content: '\e263';
+  }
+
+  &.ch-zoom-out:before {
+    font-family: "icons";
+    content: '\e264';
+  }
+
+  &.ch-30-links:before {
+    font-family: "icons";
+    content: '\e265';
+  }
+
+  &.ch-30-rechts:before {
+    font-family: "icons";
+    content: '\e266';
+  }
+
+  &.ch-90-links:before {
+    font-family: "icons";
+    content: '\e267';
+  }
+
+  &.ch-90-rechts:before {
+    font-family: "icons";
+    content: '\e268';
+  }
+
+  &.ch-135-links:before {
+    font-family: "icons";
+    content: '\e269';
+  }
+
+  &.ch-135-rechts:before {
+    font-family: "icons";
+    content: '\e26a';
+  }
+
+  &.ch-auto:before {
+    font-family: "icons";
+    content: '\e26b';
+  }
+
+  &.ch-bauchlage:before {
+    font-family: "icons";
+    content: '\e26c';
+  }
+
+  &.ch-bus:before {
+    font-family: "icons";
+    content: '\e26d';
+  }
+
+  &.ch-diabetes:before {
+    font-family: "icons";
+    content: '\e26e';
+  }
+
+  &.ch-fahrrad:before {
+    font-family: "icons";
+    content: '\e26f';
+  }
+
+  &.ch-fussgaenger:before {
+    font-family: "icons";
+    content: '\e270';
+  }
+
+  &.ch-isolation:before {
+    font-family: "icons";
+    content: '\e271';
+  }
+
+  &.ch-kopfendehoch:before {
+    font-family: "icons";
+    content: '\e272';
+  }
+
+  &.ch-lehnstuhl:before {
+    font-family: "icons";
+    content: '\e273';
+  }
+
+  &.ch-microlagerungen:before {
+    font-family: "icons";
+    content: '\e274';
+  }
+
+  &.ch-oberkoerperhoch:before {
+    font-family: "icons";
+    content: '\e275';
+  }
+
+  &.ch-querbett:before {
+    font-family: "icons";
+    content: '\e276';
+  }
+
+  &.ch-resuscationno:before {
+    font-family: "icons";
+    content: '\e277';
+  }
+
+  &.ch-resuscationyes:before {
+    font-family: "icons";
+    content: '\e278';
+  }
+
+  &.ch-rhesusnegative:before {
+    font-family: "icons";
+    content: '\e279';
+  }
+
+  &.ch-rueckenlage:before {
+    font-family: "icons";
+    content: '\e27a';
+  }
+
+  &.ch-schocklagerung:before {
+    font-family: "icons";
+    content: '\e27b';
+  }
+
+  &.ch-waitfortask:before {
+    font-family: "icons";
+    content: '\e27c';
+  }
+
+  &.ch-delaytask:before {
+    font-family: "icons";
+    content: '\e27d';
+  }
+
+  &.ch-edittask:before {
+    font-family: "icons";
+    content: '\e27e';
+  }
+
+  &.ai-a:before {
+    font-family: "icons";
+    content: '\f000';
+  }
+
+  &.ai-b:before {
+    font-family: "icons";
+    content: '\f001';
+  }
+
+  &.ai-c:before {
+    font-family: "icons";
+    content: '\f002';
+  }
+
+  &.ai-d:before {
+    font-family: "icons";
+    content: '\f003';
+  }
+
+  &.ai-e:before {
+    font-family: "icons";
+    content: '\f004';
+  }
+
+  &.ai-f:before {
+    font-family: "icons";
+    content: '\f005';
+  }
+
+  &.ai-g:before {
+    font-family: "icons";
+    content: '\f006';
+  }
+
+  &.ai-h:before {
+    font-family: "icons";
+    content: '\f007';
+  }
+
+  &.ai-i:before {
+    font-family: "icons";
+    content: '\f008';
+  }
+
+  &.ai-j:before {
+    font-family: "icons";
+    content: '\f009';
+  }
+
+  &.ai-k:before {
+    font-family: "icons";
+    content: '\f00a';
+  }
+
+  &.ai-l:before {
+    font-family: "icons";
+    content: '\f00b';
+  }
+
+  &.ai-m:before {
+    font-family: "icons";
+    content: '\f00c';
+  }
+
+  &.ai-n:before {
+    font-family: "icons";
+    content: '\f00d';
+  }
+
+  &.ai-o:before {
+    font-family: "icons";
+    content: '\f00e';
+  }
+
+  &.ai-p:before {
+    font-family: "icons";
+    content: '\f00f';
+  }
+
+  &.ai-q:before {
+    font-family: "icons";
+    content: '\f010';
+  }
+
+  &.ai-r:before {
+    font-family: "icons";
+    content: '\f011';
+  }
+
+  &.ai-s:before {
+    font-family: "icons";
+    content: '\f012';
+  }
+
+  &.ai-t:before {
+    font-family: "icons";
+    content: '\f013';
+  }
+
+  &.ai-u:before {
+    font-family: "icons";
+    content: '\f014';
+  }
+
+  &.ai-v:before {
+    font-family: "icons";
+    content: '\f015';
+  }
+
+  &.ai-w:before {
+    font-family: "icons";
+    content: '\f016';
+  }
+
+  &.ai-x:before {
+    font-family: "icons";
+    content: '\f017';
+  }
+
+  &.ai-y:before {
+    font-family: "icons";
+    content: '\f018';
+  }
+
+  &.ai-z:before {
+    font-family: "icons";
+    content: '\f019';
+  }
+
+  &.si-absent:before {
+    font-family: "icons";
+    content: '\f01a';
+  }
+
+  &.si-actioncancelled:before {
+    font-family: "icons";
+    content: '\f01b';
+  }
+
+  &.si-administered:before {
+    font-family: "icons";
+    content: '\f01c';
+  }
+
+  &.si-authorized:before {
+    font-family: "icons";
+    content: '\f01d';
+  }
+
+  &.si-between:before {
+    font-family: "icons";
+    content: '\f01e';
+  }
+
+  &.si-birthday:before {
+    font-family: "icons";
+    content: '\f01f';
+  }
+
+  &.si-bulkbill:before {
+    font-family: "icons";
+    content: '\f020';
+  }
+
+  &.si-comment:before {
+    font-family: "icons";
+    content: '\f021';
+  }
+
+  &.si-contains:before {
+    font-family: "icons";
+    content: '\f022';
+  }
+
+  &.si-continued:before {
+    font-family: "icons";
+    content: '\f023';
+  }
+
+  &.si-continued:before {
+    font-family: "icons";
+    content: '\f024';
+  }
+
+  &.si-dayshift:before {
+    font-family: "icons";
+    content: '\f025';
+  }
+
+  &.si-delete:before {
+    font-family: "icons";
+    content: '\f026';
+  }
+
+  &.si-discharged:before {
+    font-family: "icons";
+    content: '\f027';
+  }
+
+  &.si-discontinuedmedication:before {
+    font-family: "icons";
+    content: '\f028';
+  }
+
+  &.si-done:before {
+    font-family: "icons";
+    content: '\f029';
+  }
+
+  &.si-down:before {
+    font-family: "icons";
+    content: '\f02a';
+  }
+
+  &.si-downoutline:before {
+    font-family: "icons";
+    content: '\f02b';
+  }
+
+  &.si-empty:before {
+    font-family: "icons";
+    content: '\f02c';
+  }
+
+  &.si-endoforderisconditional:before {
+    font-family: "icons";
+    content: '\f02d';
+  }
+
+  &.si-equal:before {
+    font-family: "icons";
+    content: '\f02e';
+  }
+
+  &.si-executionproblem:before {
+    font-family: "icons";
+    content: '\f02f';
+  }
+
+  &.si-filled:before {
+    font-family: "icons";
+    content: '\f030';
+  }
+
+  &.si-forwardmail:before {
+    font-family: "icons";
+    content: '\f031';
+  }
+
+  &.si-import:before {
+    font-family: "icons";
+    content: '\f032';
+  }
+
+  &.si-importantinfo:before {
+    font-family: "icons";
+    content: '\f033';
+  }
+
+  &.si-importantissue:before {
+    font-family: "icons";
+    content: '\f034';
+  }
+
+  &.si-info:before {
+    font-family: "icons";
+    content: '\f035';
+  }
+
+  &.si-informationdisclosure:before {
+    font-family: "icons";
+    content: '\f036';
+  }
+
+  &.si-inprogress:before {
+    font-family: "icons";
+    content: '\f037';
+  }
+
+  &.si-last:before {
+    font-family: "icons";
+    content: '\f038';
+  }
+
+  &.si-less:before {
+    font-family: "icons";
+    content: '\f039';
+  }
+
+  &.si-lessequal:before {
+    font-family: "icons";
+    content: '\f03a';
+  }
+
+  &.si-liquidbalanceminus:before {
+    font-family: "icons";
+    content: '\f03b';
+  }
+
+  &.si-liquidbalanceplus:before {
+    font-family: "icons";
+    content: '\f03c';
+  }
+
+  &.si-liquidbalancesum:before {
+    font-family: "icons";
+    content: '\f03d';
+  }
+
+  &.si-locked:before {
+    font-family: "icons";
+    content: '\f03e';
+  }
+
+  &.si-mailbill:before {
+    font-family: "icons";
+    content: '\f03f';
+  }
+
+  &.si-modified:before {
+    font-family: "icons";
+    content: '\f040';
+  }
+
+  &.si-more:before {
+    font-family: "icons";
+    content: '\f041';
+  }
+
+  &.si-moredata:before {
+    font-family: "icons";
+    font-family: "icons";
+    content: '\f042';
+  }
+
+  &.si-moreequal:before {
+    font-family: "icons";
+    content: '\f043';
+  }
+
+  &.si-moreinfo:before {
+    font-family: "icons";
+    content: '\f044';
+  }
+
+  &.si-morerise:before {
+    font-family: "icons";
+    content: '\f045';
+  }
+
+  &.si-newdiscontinuedmedication:before {
+    font-family: "icons";
+    content: '\f046';
+  }
+
+  &.si-newhomemedication:before {
+    font-family: "icons";
+    content: '\f047';
+  }
+
+  &.si-newinwardmedication:before {
+    font-family: "icons";
+    content: '\f048';
+  }
+
+  &.si-nightshift:before {
+    font-family: "icons";
+    content: '\f049';
+  }
+
+  &.si-noselfadministration:before {
+    font-family: "icons";
+    content: '\f04a';
+  }
+
+  &.si-notadministered:before {
+    font-family: "icons";
+    content: '\f04b';
+  }
+
+  &.si-notequal:before {
+    font-family: "icons";
+    content: '\f04c';
+  }
+
+  &.si-notonlist:before {
+    font-family: "icons";
+    content: '\f04d';
+  }
+
+  &.si-notprepared:before {
+    font-family: "icons";
+    content: '\f04e';
+  }
+
+  &.si-nurseorder:before {
+    font-family: "icons";
+    content: '\f04f';
+  }
+
+  &.si-oncall:before {
+    font-family: "icons";
+    content: '\f050';
+  }
+
+  &.si-ondemand:before {
+    font-family: "icons";
+    content: '\f051';
+  }
+
+  &.si-partlyfilled:before {
+    font-family: "icons";
+    content: '\f052';
+  }
+
+  &.si-paused:before {
+    font-family: "icons";
+    content: '\f053';
+  }
+
+  &.si-physician:before {
+    font-family: "icons";
+    content: '\f054';
+  }
+
+  &.si-postponed:before {
+    font-family: "icons";
+    content: '\f055';
+  }
+
+  &.si-prepared:before {
+    font-family: "icons";
+    content: '\f056';
+  }
+
+  &.si-printed:before {
+    font-family: "icons";
+    content: '\f057';
+  }
+
+  &.si-productplaceholder:before {
+    font-family: "icons";
+    content: '\f058';
+  }
+
+  &.si-progress:before {
+    font-family: "icons";
+    content: '\f059';
+  }
+
+  &.si-published:before {
+    font-family: "icons";
+    content: '\f05a';
+  }
+
+  &.si-readmail:before {
+    font-family: "icons";
+    content: '\f05b';
+  }
+
+  &.si-recommended:before {
+    font-family: "icons";
+    content: '\f05c';
+  }
+
+  &.si-replymail:before {
+    font-family: "icons";
+    content: '\f05d';
+  }
+
+  &.si-required:before {
+    font-family: "icons";
+    content: '\f05e';
+  }
+
+  &.si-review:before {
+    font-family: "icons";
+    content: '\f05f';
+  }
+
+  &.si-rise:before {
+    font-family: "icons";
+    content: '\f060';
+  }
+
+  &.si-roleassignee:before {
+    font-family: "icons";
+    content: '\f061';
+  }
+
+  &.si-rolecandidat:before {
+    font-family: "icons";
+    content: '\f062';
+  }
+
+  &.si-scheduled:before {
+    font-family: "icons";
+    content: '\f063';
+  }
+
+  &.si-selfadministration:before {
+    font-family: "icons";
+    content: '\f064';
+  }
+
+  &.si-singlebill:before {
+    font-family: "icons";
+    content: '\f065';
+  }
+
+  &.si-startswith:before {
+    font-family: "icons";
+    content: '\f066';
+  }
+
+  &.si-stooltype1:before {
+    font-family: "icons";
+    content: '\f067';
+  }
+
+  &.si-stooltype2:before {
+    font-family: "icons";
+    content: '\f068';
+  }
+
+  &.si-stooltype3:before {
+    font-family: "icons";
+    content: '\f069';
+  }
+
+  &.si-stooltype4:before {
+    font-family: "icons";
+    content: '\f06a';
+  }
+
+  &.si-stooltype5:before {
+    font-family: "icons";
+    content: '\f06b';
+  }
+
+  &.si-stooltype6:before {
+    font-family: "icons";
+    content: '\f06c';
+  }
+
+  &.si-stooltype7:before {
+    font-family: "icons";
+    content: '\f06d';
+  }
+
+  &.si-suggested:before {
+    font-family: "icons";
+    content: '\f06e';
+  }
+
+  &.si-textmedication:before {
+    font-family: "icons";
+    content: '\f06f';
+  }
+
+  &.si-trendnegative:before {
+    font-family: "icons";
+    content: '\f070';
+  }
+
+  &.si-trendnotavailable:before {
+    font-family: "icons";
+    content: '\f071';
+  }
+
+  &.si-trendunchanged:before {
+    font-family: "icons";
+    content: '\f072';
+  }
+
+  &.si-unrecommended:before {
+    font-family: "icons";
+    content: '\f073';
+  }
+
+  &.si-up:before {
+    font-family: "icons";
+    content: '\f074';
+  }
+
+  &.si-upoutline:before {
+    font-family: "icons";
+    content: '\f075';
+  }
+
+  &.si-warning:before {
+    font-family: "icons";
+    content: '\f076';
+  }
+
+  &.si-warningnew:before {
+    font-family: "icons";
+    content: '\f077';
+  }
+
+  &.bi-false:before {
+    font-family: "icons";
+    content: '\f078';
+  }
+
+  &.bi-true:before {
+    font-family: "icons";
+    content: '\f079';
+  }
+
+  &.pi-high:before {
+    font-family: "icons";
+    content: '\f07a';
+  }
+
+  &.pi-higher:before {
+    font-family: "icons";
+    content: '\f07b';
+  }
+
+  &.pi-highest:before {
+    font-family: "icons";
+    content: '\f07c';
+  }
+
+  &.pi-low:before {
+    font-family: "icons";
+    content: '\f07d';
+  }
+
+  &.pi-lower:before {
+    font-family: "icons";
+    content: '\f07e';
+  }
+
+  &.pi-lowest:before {
+    font-family: "icons";
+    content: '\f07f';
+  }
+
+  &.at-addendum:before {
+    font-family: "icons";
+    content: '\f080';
+  }
+
+  &.at-alias:before {
+    font-family: "icons";
+    content: '\f081';
+  }
+
+  &.at-allergy:before {
+    font-family: "icons";
+    content: '\f082';
+  }
+
+  &.at-anticoagualtion:before {
+    font-family: "icons";
+    content: '\f083';
+  }
+
+  &.at-defibrilator:before {
+    font-family: "icons";
+    content: '\f084';
+  }
+
+  &.at-bar:before {
+    font-family: "icons";
+    content: '\f085';
+  }
+
+  &.at-bed:before {
+    font-family: "icons";
+    content: '\f086';
+  }
+
+  &.at-blind:before {
+    font-family: "icons";
+    content: '\f087';
+  }
+
+  &.at-communicationbarrier:before {
+    font-family: "icons";
+    content: '\f088';
+  }
+
+  &.at-custodian:before {
+    font-family: "icons";
+    content: '\f089';
+  }
+
+  &.at-cycling:before {
+    font-family: "icons";
+    content: '\f08a';
+  }
+
+  &.at-deaf:before {
+    font-family: "icons";
+    content: '\f08b';
+  }
+
+  &.at-dementia:before {
+    font-family: "icons";
+    content: '\f08c';
+  }
+
+  &.at-dialysis:before {
+    font-family: "icons";
+    content: '\f08d';
+  }
+
+  &.at-diving:before {
+    font-family: "icons";
+    content: '\f08e';
+  }
+
+  &.at-document:before {
+    font-family: "icons";
+    content: '\f08f';
+  }
+
+  &.at-documenterror:before {
+    font-family: "icons";
+    content: '\f090';
+  }
+
+  &.at-dontinform:before {
+    font-family: "icons";
+    content: '\f091';
+  }
+
+  &.at-dysphagia:before {
+    font-family: "icons";
+    content: '\f092';
+  }
+
+  &.at-elevator:before {
+    font-family: "icons";
+    content: '\f093';
+  }
+
+  &.at-emergencyexit:before {
+    font-family: "icons";
+    content: '\f094';
+  }
+
+  &.at-endangerment:before {
+    font-family: "icons";
+    content: '\f095';
+  }
+
+  &.at-fallingrisk:before {
+    font-family: "icons";
+    content: '\f096';
+  }
+
+  &.at-favorite:before {
+    font-family: "icons";
+    content: '\f097';
+  }
+
+  &.at-fellrecently:before {
+    font-family: "icons";
+    content: '\f098';
+  }
+
+  &.at-female:before {
+    font-family: "icons";
+    content: '\f099';
+  }
+
+  &.at-firealert:before {
+    font-family: "icons";
+    content: '\f09a';
+  }
+
+  &.at-fireblanket:before {
+    font-family: "icons";
+    content: '\f09b';
+  }
+
+  &.at-fireextinguisher:before {
+    font-family: "icons";
+    content: '\f09c';
+  }
+
+  &.at-firstaidkit:before {
+    font-family: "icons";
+    content: '\f09d';
+  }
+
+  &.at-football:before {
+    font-family: "icons";
+    content: '\f09e';
+  }
+
+  &.at-freeinternetaccess:before {
+    font-family: "icons";
+    content: '\f09f';
+  }
+
+  &.at-golf:before {
+    font-family: "icons";
+    content: '\f0a0';
+  }
+
+  &.at-hammock:before {
+    font-family: "icons";
+    content: '\f0a1';
+  }
+
+  &.at-handicap:before {
+    font-family: "icons";
+    content: '\f0a2';
+  }
+
+  &.at-hepb:before {
+    font-family: "icons";
+    content: '\f0a3';
+  }
+
+  &.at-hepc:before {
+    font-family: "icons";
+    content: '\f0a4';
+  }
+
+  &.at-hiv:before {
+    font-family: "icons";
+    content: '\f0a5';
+  }
+
+  &.at-holiday:before {
+    font-family: "icons";
+    content: '\f0a6';
+  }
+
+  &.at-information:before {
+    font-family: "icons";
+    content: '\f0a7';
+  }
+
+  &.at-insurance1st:before {
+    font-family: "icons";
+    content: '\f0a8';
+  }
+
+  &.at-insurance2nd:before {
+    font-family: "icons";
+    content: '\f0a9';
+  }
+
+  &.at-insurancenormal:before {
+    font-family: "icons";
+    content: '\f0aa';
+  }
+
+  &.at-internet:before {
+    font-family: "icons";
+    content: '\f0ab';
+  }
+
+  &.at-intersexual:before {
+    font-family: "icons";
+    content: '\f0ac';
+  }
+
+  &.at-location:before {
+    font-family: "icons";
+    content: '\f0ad';
+  }
+
+  &.at-lock:before {
+    font-family: "icons";
+    content: '\f0ae';
+  }
+
+  &.at-male:before {
+    font-family: "icons";
+    content: '\f0af';
+  }
+
+  &.at-milkbottle:before {
+    font-family: "icons";
+    content: '\f0b0';
+  }
+
+  &.at-more:before {
+    font-family: "icons";
+    content: '\f0b1';
+  }
+
+  &.at-music:before {
+    font-family: "icons";
+    content: '\f0b2';
+  }
+
+  &.at-narcoticgas:before {
+    font-family: "icons";
+    content: '\f0b3';
+  }
+
+  &.at-nitrogen:before {
+    font-family: "icons";
+    content: '\f0b4';
+  }
+
+  &.at-nitriousoxide:before {
+    font-family: "icons";
+    content: '\f0b5';
+  }
+
+  &.at-nooralnutrition:before {
+    font-family: "icons";
+    content: '\f0b6';
+  }
+
+  &.at-nurses:before {
+    font-family: "icons";
+    content: '\f0b7';
+  }
+
+  &.at-orientation:before {
+    font-family: "icons";
+    content: '\f0b8';
+  }
+
+  &.at-otherinfection:before {
+    font-family: "icons";
+    content: '\f0b9';
+  }
+
+  &.at-oxygen:before {
+    font-family: "icons";
+    content: '\f0ba';
+  }
+
+  &.at-patient:before {
+    font-family: "icons";
+    content: '\f0bb';
+  }
+
+  &.at-patientinbed:before {
+    font-family: "icons";
+    content: '\f0bc';
+  }
+
+  &.at-phone:before {
+    font-family: "icons";
+    content: '\f0bd';
+  }
+
+  &.at-pregnant:before {
+    font-family: "icons";
+    content: '\f0be';
+  }
+
+  &.at-publictelephone:before {
+    font-family: "icons";
+    content: '\f0bf';
+  }
+
+  &.at-quarantine:before {
+    font-family: "icons";
+    content: '\f0c0';
+  }
+
+  &.at-radio:before {
+    font-family: "icons";
+    content: '\f0c1';
+  }
+
+  &.at-riding:before {
+    font-family: "icons";
+    content: '\f0c2';
+  }
+
+  &.at-salmonellae:before {
+    font-family: "icons";
+    content: '\f0c3';
+  }
+
+  &.at-spiderchart:before {
+    font-family: "icons";
+    content: '\f0c4';
+  }
+
+  &.at-surfing:before {
+    font-family: "icons";
+    content: '\f0c5';
+  }
+
+  &.at-swimming:before {
+    font-family: "icons";
+    content: '\f0c6';
+  }
+
+  &.at-tv:before {
+    font-family: "icons";
+    content: '\f0c7';
+  }
+
+  &.at-unknown:before {
+    font-family: "icons";
+    content: '\f0c8';
+  }
+
+  &.at-vacuum:before {
+    font-family: "icons";
+    content: '\f0c9';
+  }
+
+  &.at-vip:before {
+    font-family: "icons";
+    content: '\f0ca';
+  }
+
+  &.at-wc:before {
+    font-family: "icons";
+    content: '\f0cb';
+  }
+
+  &.at-wlan:before {
+    font-family: "icons";
+    content: '\f0cc';
+  }
+
+  &.at-yoga:before {
+    font-family: "icons";
+    content: '\f0cd';
+  }
+
+  &.me-bagliquid:before {
+    font-family: "icons";
+    content: '\f0ce';
+  }
+
+  &.me-bagpowder:before {
+    font-family: "icons";
+    content: '\f0cf';
+  }
+
+  &.me-bar:before {
+    font-family: "icons";
+    content: '\f0d0';
+  }
+
+  &.me-capsule:before {
+    font-family: "icons";
+    content: '\f0d1';
+  }
+
+  &.me-dosis:before {
+    font-family: "icons";
+    content: '\f0d2';
+  }
+
+  &.me-drop:before {
+    font-family: "icons";
+    content: '\f0d3';
+  }
+
+  &.me-filledapplicator:before {
+    font-family: "icons";
+    content: '\f0d4';
+  }
+
+  &.me-gramm:before {
+    font-family: "icons";
+    content: '\f0d5';
+  }
+
+  &.me-hub:before {
+    font-family: "icons";
+    content: '\f0d6';
+  }
+
+  &.me-inhalator:before {
+    font-family: "icons";
+    content: '\f0d7';
+  }
+
+  &.me-injection:before {
+    font-family: "icons";
+    content: '\f0d8';
+  }
+
+  &.me-inspiration:before {
+    font-family: "icons";
+    content: '\f0d9';
+  }
+
+  &.me-lozenge:before {
+    font-family: "icons";
+    content: '\f0da';
+  }
+
+  &.me-measuringscoop:before {
+    font-family: "icons";
+    content: '\f0db';
+  }
+
+  &.me-milligramm:before {
+    font-family: "icons";
+    content: '\f0dc';
+  }
+
+  &.me-microgramm:before {
+    font-family: "icons";
+    content: '\f0dd';
+  }
+
+  &.me-milliliter:before {
+    font-family: "icons";
+    content: '\f0de';
+  }
+
+  &.me-packet:before {
+    font-family: "icons";
+    content: '\f0df';
+  }
+
+  &.me-pad:before {
+    font-family: "icons";
+    content: '\f0e0';
+  }
+
+  &.me-patch:before {
+    font-family: "icons";
+    content: '\f0e1';
+  }
+
+  &.me-percent:before {
+    font-family: "icons";
+    content: '\f0e2';
+  }
+
+  &.me-pill:before {
+    font-family: "icons";
+    content: '\f0e3';
+  }
+
+  &.me-puff:before {
+    font-family: "icons";
+    content: '\f0e4';
+  }
+
+  &.me-suppository:before {
+    font-family: "icons";
+    content: '\f0e5';
+  }
+
+  &.me-tablespoon:before {
+    font-family: "icons";
+    content: '\f0e6';
+  }
+
+  &.me-teaspoon:before {
+    font-family: "icons";
+    content: '\f0e7';
+  }
+
+  &.me-tube:before {
+    font-family: "icons";
+    content: '\f0e8';
+  }
+
+  &.fo-privateform:before {
+    font-family: "icons";
+    content: '\f0e9';
+  }
+
+  &.si-pupilconstricted:before {
+    font-family: "icons";
+    content: '\f0ea';
+  }
+
+  &.si-pupildilated:before {
+    font-family: "icons";
+    content: '\f0eb';
+  }
+
+  &.si-pupilnormal:before {
+    font-family: "icons";
+    content: '\f0ec';
+  }
+
+  &.si-pupilslightlydilated:before {
+    font-family: "icons";
+    content: '\f0ed';
+  }
+
+  &.si-pupilveryconstricted:before {
+    font-family: "icons";
+    content: '\f0ee';
+  }
+
+  &.si-pupilverydilated:before {
+    font-family: "icons";
+    content: '\f0ef';
+  }
+
+  &.si-opencircle:before {
+    font-family: "icons";
+    content: '\f0f0';
+  }
+
+  &.ai-number0:before {
+    font-family: "icons";
+    content: '\f0f1';
+  }
+
+  &.ai-number1:before {
+    font-family: "icons";
+    content: '\f0f2';
+  }
+
+  &.ai-number2:before {
+    font-family: "icons";
+    content: '\f0f3';
+  }
+
+  &.ai-number3:before {
+    font-family: "icons";
+    content: '\f0f4';
+  }
+
+  &.ai-number4:before {
+    font-family: "icons";
+    content: '\f0f5';
+  }
+
+  &.ai-number5:before {
+    font-family: "icons";
+    content: '\f0f6';
+  }
+
+  &.ai-number6:before {
+    font-family: "icons";
+    content: '\f0f7';
+  }
+
+  &.ai-number7:before {
+    font-family: "icons";
+    content: '\f0f8';
+  }
+
+  &.ai-number8:before {
+    font-family: "icons";
+    content: '\f0f9';
+  }
+
+  &.ai-number9:before {
+    font-family: "icons";
+    content: '\f0fa';
+  }
+
+  &.em-nohurt:before {
+    font-family: "icons";
+    content: '\f0fb';
+  }
+
+  &.em-hurtslittlebit:before {
+    font-family: "icons";
+    content: '\f0fc';
+  }
+
+  &.em-hurtslittlemore:before {
+    font-family: "icons";
+    content: '\f0fd';
+  }
+
+  &.em-hurts:before {
+    font-family: "icons";
+    content: '\f0fe';
+  }
+
+  &.em-hurtswholelot:before {
+    font-family: "icons";
+    content: '\f0ff';
+  }
+
+  &.em-hurtsworst:before {
+    font-family: "icons";
+    content: '\f100';
+  }
+
+  &.si-indeterminatecheckbox:before {
+    font-family: "icons";
+    content: '\f101';
+  }
+
+  &.si-unlocked:before {
+    font-family: "icons";
+    content: '\f102';
+  }
+}
+
+.dense-1 {
+  @include mat.all-component-densities(-1);
+}
+
+.dense-2 {
+  @include mat.all-component-densities(-2);
+}
+
+.mat-form-field-infix {
   width: fit-content !important;
-  min-width: 200px !important; 
+  min-width: 200px !important;
 }
 
 // Plus imports for other components in your app.
@@ -22,7 +4544,7 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-@import "~quill/dist/quill.snow.css"; 
+@import "~quill/dist/quill.snow.css";
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
@@ -36,11 +4558,11 @@ $shell-warn: mat.define-palette(mat.$red-palette);
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $shell-theme: mat.define-light-theme((
-        color: (
-                primary: $shell-primary,
-                accent: $shell-accent,
-                warn: $shell-warn,
-        )
+  color: (
+    primary: $shell-primary,
+    accent: $shell-accent,
+    warn: $shell-warn,
+  )
 ));
 
 // Include theme styles for core and each component used in your app.

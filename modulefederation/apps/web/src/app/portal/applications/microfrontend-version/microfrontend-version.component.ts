@@ -20,12 +20,16 @@ import { MatInputModule } from "@angular/material/input";
 
 export class ApplicationVersionSuggestionProvider implements SuggestionProvider {
     // constructor
-  
+
     constructor(private applications: Application[]) {
     }
-  
+
     // implement SuggestionProvider
-  
+
+    highlightSuggestion(suggestion: string | null) : void {}
+
+    selectSuggestion(suggestion: string) : void {}
+
     provide(input : string) : string[] {
         if ( input.includes(":")) {
             const colon = input.indexOf(":")
@@ -153,7 +157,7 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
 
     if ( applicationVersion )
        this.microfrontendVersion.applicationVersion = applicationVersion!.id!
-    else    
+    else
         this.microfrontendVersion!.applicationVersion = null
 
     this.onDirty(true)

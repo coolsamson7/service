@@ -1,10 +1,10 @@
-import { AbstractFeature, WithCommands, hasMixin } from "@modulefederation/portal"
+import { AbstractFeature, WithCommands, WithSnackbar, hasMixin } from "@modulefederation/portal"
 import { ConfigurationProperty } from "../config/configuration-model"
 import { WithCommandToolbar } from "./toolbar/with-command-toolbar.mixin"
 import { CommandToolbarComponent } from "./toolbar/command-toolbar.component"
 import { Injector } from "@angular/core"
 
-export abstract class ApplicationView extends WithCommandToolbar(WithCommands(AbstractFeature)) {
+export abstract class ApplicationView extends WithSnackbar(WithCommandToolbar(WithCommands(AbstractFeature))) {
    // instance data
 
    override commandToolbar?: CommandToolbarComponent

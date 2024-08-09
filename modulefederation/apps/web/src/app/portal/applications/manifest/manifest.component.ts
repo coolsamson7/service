@@ -8,14 +8,13 @@ import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilde
 import { AbstractFeature, FeatureConfig, Manifest, ManifestDecorator, MessageAdministrationService, NgModelSuggestionsDirective, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";
 
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
-import { EditorModel } from "../../../widgets/monaco-editor/monaco-editor";
+import { EditorModel, MonacoEditorModule } from "@modulefederation/components";
 import { I18NTreeComponent } from "../../widgets/i18n-tree";
 import { CommonModule } from "@angular/common";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
-import { MonacoEditorModule } from "../../../widgets/monaco-editor/monaco-editor.module";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ChipsComponent } from "../../chips.component";
 import { MatDividerModule } from "@angular/material/divider";

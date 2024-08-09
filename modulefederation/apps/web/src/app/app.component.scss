@@ -2,6 +2,9 @@
   flex-grow: 2;
 }
 
+.example-container {
+  height: calc(100% - 64px);
+}
 .content {
   display: flex;
   flex-direction: column;

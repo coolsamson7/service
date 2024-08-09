@@ -25,7 +25,7 @@
 <mat-sidenav-container autosize class="example-container">
     <!--  navigation -->
 
-    <mat-sidenav [fixedBottomGap]="0" [fixedInViewport]="true" [fixedTopGap]="64"
+    <mat-sidenav [fixedBottomGap]="0" [fixedInViewport]="false" [fixedTopGap]="64"
                  [opened]="true"
                  class="example-sidenav"
                  mode="side">
@@ -35,7 +35,7 @@
 
     <!--  help   [resizeEdges]="{right: true}" -->
 
-    <mat-sidenav #help class="sidenav2" position="end" mode="side" 
+    <mat-sidenav #help class="sidenav2" position="end" mode="side"
     mwlResizable
     [enableGhostResize]="true"
     [ngStyle]="resizeStyle"

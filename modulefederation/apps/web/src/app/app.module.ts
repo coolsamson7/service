@@ -40,7 +40,7 @@ import {
   TraceLevel,
   TracerModule
 } from "@modulefederation/portal";
-import { MonacoEditorModule } from "./widgets/monaco-editor/monaco-editor.module";
+import { MonacoEditorModule } from "@modulefederation/components";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatIconModule } from "@angular/material/icon";
 
@@ -57,6 +57,18 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { QuillModule } from "ngx-quill";
 import { HelpComponent } from "./help/help.component";
 import { ResizableModule } from "angular-resizable-element";
+import { CommonModule } from "@angular/common";
+import {FormDesignerModule} from "@modulefederation/form/designer";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatSliderModule } from "@angular/material/slider";
+import { MatSelectModule } from "@angular/material/select";
+import {FormRendererModule} from "@modulefederation/form/renderer";
+import {ThemeRuntimeModule} from "@modulefederation/form/theme/runtime";
+import {ThemeDesignModule} from "@modulefederation/form/theme/design";
+import {LayoutModule} from "@modulefederation/components";
+import {QuestionnaireDesignerModule} from "@modulefederation/questionnaire/designer";
+import {QuestionnaireModule} from "@modulefederation/questionnaire/renderer";
+import { MarkdownModule } from "ngx-markdown";
 
 @Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
@@ -72,6 +84,18 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     return this.configuration.get<string>("backend." + domain)!
   }
 }
+
+const viaThemeRuntimeModule = ThemeRuntimeModule.forRoot({
+  style: 'outline'
+});
+
+const viaThemeDesignModule = ThemeDesignModule.forRoot({
+  style: 'outline'
+});
+
+const questionnaireModule = QuestionnaireModule.forRoot({
+  valueSetProvider: undefined
+});
 
 @Shell({
     name: "shell"
@@ -92,6 +116,38 @@ export class ApplicationEndpointLocator extends EndpointLocator {
     ],
     bootstrap: [AppComponent],
     imports: [
+      // TODO just guessing
+      CommonModule,
+      MatIconModule,
+      MatSliderModule,
+      MatSelectModule,
+      MatChipsModule,
+
+      LayoutModule,
+
+      // theme
+
+      viaThemeRuntimeModule,
+      viaThemeDesignModule,
+
+      QuestionnaireDesignerModule,
+
+      FormRendererModule,
+
+      FormDesignerModule,
+
+      MarkdownModule.forRoot(),
+
+      // form
+
+
+
+      // questionnaire
+
+      questionnaireModule,
+
+
+
         ConfigurationModule.forRoot(new ValueConfigurationSource(environment)),
 
         /*ErrorModule.forRoot({
@@ -103,9 +159,14 @@ export class ApplicationEndpointLocator extends EndpointLocator {
             trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
             paths: {
                 "": TraceLevel.OFF,
+                //"form": TraceLevel.FULL,
+              //"form.editor": TraceLevel.FULL,
+               //"form.designer": TraceLevel.FULL,
+              //"ui.dd": TraceLevel.FULL,
+                //"questionnaire": TraceLevel.FULL,
                 "type": TraceLevel.OFF,
-                "speech": TraceLevel.HIGH,
-                "portal": TraceLevel.HIGH,
+                "speech": TraceLevel.OFF,
+                //"portal": TraceLevel.FULL,
                 "session": TraceLevel.FULL,
             }
         }),
@@ -249,7 +310,7 @@ class Version {
     // public
 
     eq(version: Version) :boolean {
-        // exactly same length 
+        // exactly same length
 
         if (this.len() !== version.len())
             return false
@@ -263,7 +324,7 @@ class Version {
         return true
     }
 
-    lt(version: Version) :boolean { 
+    lt(version: Version) :boolean {
         const len = Math.max(this.numbers.length, version.numbers.length)
 
         let eq = true
@@ -277,7 +338,7 @@ class Version {
         return !eq
     }
 
-    le(version: Version) :boolean { 
+    le(version: Version) :boolean {
         const len = Math.max(this.numbers.length, version.numbers.length)
 
         for ( let i = 0; i < len; i++) {
@@ -305,7 +366,7 @@ class Version {
     ge(version: Version) :boolean {
         const len = Math.max(this.numbers.length, version.numbers.length)
 
-    
+
         for ( let i = 0; i < len; i++) {
             if ( this.pos(i) < version.pos(i))
                 return false
@@ -350,7 +411,7 @@ class VersionRange {
         const result = exp.exec(version)
         if ( result?.groups ) {
             this.operations.push(this.compare(new Version(result.groups["v"]), result.groups["op"]))
-           
+
             if ( result?.groups["op1"])
                 this.operations.push(this.compare(new Version(result.groups["v1"]), result.groups["op1"]))
         }

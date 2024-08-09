@@ -5,7 +5,7 @@ import { ServerError } from "@modulefederation/portal";
 import { ComponentModel } from "../../model/component.interface"
 import { InterfaceDescriptor, MethodDescriptor, TypeDescriptor } from "../../model/service.interface"
 import { ComponentService } from "../../service/component-service.service"
-import { EditorModel } from "../../widgets/monaco-editor/monaco-editor"
+import { EditorModel } from "@modulefederation/components"
 import { ServiceRequest } from "../service.component"
 import { v4 as uuidv4 } from 'uuid'
 import { ParameterType, Query, QueryAnalyzer, QueryParameter } from "../../json/query-analyzer"
