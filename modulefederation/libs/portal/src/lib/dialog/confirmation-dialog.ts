@@ -7,17 +7,24 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { CommonDialog } from "./dialog-builder";
+import { I18nModule } from "../i18n";
 
 @Component({
     selector: 'confirmation-dialog',
     templateUrl: './confirmation-dialog.html',
     styleUrls: ['./confirmation-dialog.scss'],
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatDialogModule, MatButtonModule]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatDialogModule,
+        MatButtonModule,
+        I18nModule
+    ]
 })
 export class ConfirmationDialog extends CommonDialog implements OnInit {
     // constructor
-    
+
     constructor(dialogRef : MatDialogRef<ConfirmationDialog>, @Inject(MAT_DIALOG_DATA) public data : ConfirmationDialogConfig) {
         super(dialogRef)
     }
@@ -42,7 +49,7 @@ export class ConfirmationDialog extends CommonDialog implements OnInit {
     }
 
     // implement OnInit
-    
+
  ngOnInit() : void {
         this.data.buttons.forEach(button => this.decorate(button))
 

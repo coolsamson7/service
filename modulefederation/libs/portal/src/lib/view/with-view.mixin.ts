@@ -14,25 +14,25 @@ type Constructor<T = any> =  new (...args: any[]) => T;
  */
 export class BusyCursorInterceptor implements CommandInterceptor {
     // constructor
-  
+
     constructor(private view: WithView) {}
-  
+
     // implement CommandInterceptor
-  
+
     onCall(executionContext: ExecutionContext): void {
       executionContext.data.wasBusy = this.view.view.isBusy
-  
+
       if (!executionContext.data.wasBusy )
         setTimeout(() => {
             if (executionContext.running)
                 this.view.setBusy(true);
         }, 100);
     }
-  
+
     onResult(executionContext: ExecutionContext): void {
       this.view.setBusy(executionContext.data.wasBusy)
     }
-  
+
     onError(executionContext: ExecutionContext): void {
         this.view.setBusy(executionContext.data.wasBusy)
     }
@@ -40,28 +40,28 @@ export class BusyCursorInterceptor implements CommandInterceptor {
 
   export class LockViewInterceptor implements CommandInterceptor {
     // constructor
-  
+
     constructor(private withView:  WithView) {
     }
-  
+
     // implement CommandInterceptor
-  
+
     onCall(context: ExecutionContext) {
       context.command.enabled = false;
       this.withView.showMessage('Holla'); // reset previous message if any
-  
+
       this.withView.showOverlay(true);
     }
-  
+
     onError(context: ExecutionContext): void {
       context.command.enabled = true;
-  
+
       this.withView.showOverlay(false);
     }
-  
+
     onResult(context: ExecutionContext): void {
       context.command.enabled = true;
-  
+
       this.withView.showOverlay(false);
     }
   }
@@ -77,9 +77,9 @@ export interface WithView {
 }
 
 export function WithView<T extends Constructor<AbstractFeature & CommandManager>>(base: T) :Constructor<WithView> &  T  {
-    @Component({ 
+    @Component({
         selector: 'with-view-component',
-        template: ""    
+        template: ""
     })
     class WithViewClass extends base implements WithView {
         // instance data
@@ -107,11 +107,11 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
         return this.busyCursorInterceptor
        }
 
-       // override 
-       
+       // override
+
        override addCommandInterceptors(commandConfig: CommandConfig, interceptors: CommandInterceptor[]) : void  {
         super.addCommandInterceptors(commandConfig, interceptors)
-        
+
         switch ( commandConfig.lock) {
           case "view":
             interceptors.push(this.getBusyCursorInterceptor(), this.getLockViewInterceptor())
@@ -145,5 +145,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
        }
     }//, WithView)
 
-    return registerMixins(WithViewClass, WithView)
+    registerMixins(WithViewClass, WithView)
+
+    return WithViewClass
   }

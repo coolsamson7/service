@@ -9,14 +9,14 @@ export class PlaceholderParser {
   variable = /^{(?<variable>\w+)}$/
   variableFormat = /^{(?<variable>\w+)\s*:\s*(?<format>\w+)}$/
   variableFormatArgs = /^{(?<variable>\w+)\s*:\s*(?<format>\w+)\((?<parameter>\w+\s*:\s*(\d+|'\w+')(\s*,\s*\w+\s*:\s*(-?\d+|'\w+'|true|false))*)\)}$/
-  parameter =  /\s*(?<parameter>\w+)\s*:\s*(?<value>-?\d+|'\w+'|true|false)(?:,|$)*/g
+  parameter = /\s*(?<parameter>\w+)\s*:\s*(?<value>-?\d+|'\w+'|true|false)(?:,|$)*/g
 
   // public
 
-  parse(input: string) : Placeholder {
+  parse(input : string) : Placeholder {
     // variable
 
-    let result: RegExpMatchArray | null
+    let result : RegExpMatchArray | null
     if ((result = input.match(this.variable))) {
       return {
         name: result.groups!['variable']
@@ -27,8 +27,8 @@ export class PlaceholderParser {
 
     else if ((result = input.match(this.variableFormat))) {
       return {
-        name:  result.groups!['variable'],
-        format:  {format: result.groups!['format']}
+        name: result.groups!['variable'],
+        format: {format: result.groups!['format']}
       }
     }
 
@@ -49,7 +49,7 @@ export class PlaceholderParser {
 
       while ((result = this.parameter.exec(parameters))) {
         const parameter = result.groups!["parameter"]
-        let value: any = result.groups!["value"] as string
+        let value : any = result.groups!["value"] as string
 
         if (value.startsWith("'"))
           value = value.substring(1, value.length - 1)
@@ -59,8 +59,8 @@ export class PlaceholderParser {
           value = false
 
         else {
-          if ( value.startsWith("-"))
-            value = - +value.substring(1)
+          if (value.startsWith("-"))
+            value = -+value.substring(1)
           else
             value = +value
         }

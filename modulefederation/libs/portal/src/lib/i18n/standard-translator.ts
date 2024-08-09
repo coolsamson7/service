@@ -57,7 +57,7 @@ export abstract class AbstractCachingTranslator extends Translator {
     const translation = this.get(this.cachedNamespaces[namespace], path);
 
     // @ts-ignore
-    return this.interpolate(translation) || this.missingTranslationHandler.resolve(key);
+    return this.interpolate(translation, options) || this.missingTranslationHandler.resolve(key);
   }
 
   // implement Translator

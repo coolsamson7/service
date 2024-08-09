@@ -30,7 +30,7 @@ const noop = () => {
 export class NgModelSuggestionsDirective implements ControlValueAccessor {
   // input
 
-  @Input() suggestionProvider?: SuggestionProvider
+  @Input() suggestionProvider!: SuggestionProvider
 
   // instance data
 
@@ -62,9 +62,13 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
 
   // private
 
+  private setActiveSuggestion(suggestion: string | null) : void {
+    this.suggestionProvider.highlightSuggestion(this.activeSuggestion = suggestion)
+  }
+
    private clearActiveSuggestion() : void {
-    if ( this.activeSuggestion ) { 
-      this.activeSuggestion = null;
+    if ( this.activeSuggestion ) {
+      this.setActiveSuggestion(null);
       this.elementRef.nativeElement.value = this.value;
     }
   }
@@ -113,8 +117,8 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
       // cater to a "continuation" of the previous value.
 
       if ( selectionStart === newValue.length ) {
-        this.activeSuggestion = this.getFirstMatchingSuggestion( newValue )
-        
+        this.setActiveSuggestion(this.getFirstMatchingSuggestion( newValue ))
+
         if (this.activeSuggestion  !== undefined && this.activeSuggestion  !== null) {
 
           // NOTE: We are using only the ending portion of the suggestion,
@@ -167,7 +171,7 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
         this.elementRef.nativeElement.selectionStart = this.value.length;
         this.elementRef.nativeElement.selectionEnd = this.value.length;
 
-        this.activeSuggestion = null;
+        this.setActiveSuggestion(null);
 
         this.onChangeCallback( this.value );
 
@@ -183,10 +187,10 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
             if ( --this.activeSuggestionIndex < 0)
               this.activeSuggestionIndex = this.currentSuggestions.length - 1
 
-            this.activeSuggestion = this.currentSuggestions[this.activeSuggestionIndex]
+            this.setActiveSuggestion(this.currentSuggestions[this.activeSuggestionIndex])
           }
           else
-            this.activeSuggestion = this.currentSuggestions[this.activeSuggestionIndex = ++this.activeSuggestionIndex %  this.currentSuggestions.length]
+            this.setActiveSuggestion(this.currentSuggestions[this.activeSuggestionIndex = ++this.activeSuggestionIndex %  this.currentSuggestions.length])
 
           this.elementRef.nativeElement.value = this.activeSuggestion
 
@@ -229,14 +233,17 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
 
     if ( this.value !== normalizedValue ) {
       this.value = this.elementRef.nativeElement.value = normalizedValue;
-      this.activeSuggestion = null;
+      this.setActiveSuggestion(null);
     }
   }
 }
 
-
 export interface SuggestionProvider {
   provide(input: string) : string[]
+
+  selectSuggestion(suggestion: string) : void;
+
+  highlightSuggestion(suggestion: string | null) : void
 }
 
 export class ArraySuggestionProvider implements SuggestionProvider {
@@ -250,6 +257,10 @@ export class ArraySuggestionProvider implements SuggestionProvider {
   provide(input : string) : string[] {
     return this.suggestions.filter(suggestion => suggestion.startsWith(input));
   }
+
+  highlightSuggestion(suggestion: string | null) : void {}
+
+  selectSuggestion(suggestion: string) {}
 }
 
 export class ObjectSuggestionProvider implements SuggestionProvider {
@@ -258,19 +269,34 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
   constructor(private values: any) {
   }
 
+  // protected
+
+  protected follow(object: any) : boolean {
+    return object !== undefined
+  }
+
+  protected child(object: any, property: string) : any {
+    return  Reflect.get(object, property)
+  }
+
+  protected properties(object: any): string[] {
+    return Object.keys(object)
+  }
+
   // implement SuggestionProvider
 
   provide(input : string) : string[] {
     const legs = input.split(".")
 
     let object = this.values
-    let index = 0
     const length = legs.length
+
+    let index = 0
     let lastMatch = this.values
 
-    while (object != null && index < length) {
+    while (this.follow(object) && index < length) {
       lastMatch = object
-      object = Reflect.get(object, legs[index++])
+      object = this.child(object, legs[index++])
     } // while
 
     if (index == length) {
@@ -281,13 +307,14 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
         // and it as a match
         // add all children as possible suffixes
 
-        for (const key in object)
-          suggestions.push(input + "." + key)
+        if ( this.follow(object))
+          for (const key of this.properties(object))
+            suggestions.push(input + "." + key)
       }
       else if ( lastMatch != undefined) {
         // check if we have a valid prefix
 
-        for ( const key in lastMatch) {
+        for ( const key of this.properties(lastMatch)) {
           const lastLeg = legs[index-1]
 
           if (key.startsWith(lastLeg))
@@ -299,4 +326,8 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
     }
     else return []
   }
+
+  highlightSuggestion(suggestion: string | null) : void {}
+
+  selectSuggestion(suggestion: string) {}
 }

@@ -10,7 +10,7 @@ export interface WithSnackbar {
     showSnackbar(message: string, action? : string, config?: MatSnackBarConfig) : MatSnackBarRef<TextOnlySnackBar>;
 }
 
-export function WithSnackbar<T extends GConstructor<AbstractFeature>>(base: T) :T & WithSnackbar  {
+export function WithSnackbar<T extends GConstructor<AbstractFeature>>(base: T) :T & GConstructor<WithSnackbar> {
     return registerMixins(class WithSnackbarClass extends base implements WithSnackbar {
         // constructor
 

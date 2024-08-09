@@ -185,12 +185,16 @@ export class FeatureRegistry implements OnLocaleChange {
         if (feature.folder) {
             const folder = this.path2Folder[feature.folder]
 
+          if ( folder )
             // TODO CHECK null
 
             if (folder.features)
                 folder.features.push(feature)
             else
                 folder.features = [feature]
+          else {
+            console.log("unknown folder ''" + feature.folder + "''")
+          }
         }
 
         // recursion

@@ -56,7 +56,7 @@ export interface CommandAdministration extends CommandManager {
     popExecutionContext(context: ExecutionContext): void
 }
 
-export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager> &  T & OnLocaleChange  {
+export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, config: WithCommandsConfig = {inheritCommands: false} ) :Constructor<CommandManager & OnLocaleChange> &  T  {
     class WithCommandsClass extends base implements CommandAdministration, OnLocaleChange {
         // instance data
 

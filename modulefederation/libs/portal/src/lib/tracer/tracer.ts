@@ -31,7 +31,7 @@ export class Tracer {
 
     constructor() {
         const tracerConfiguration = TracerModule.tracerConfiguration
-      
+
         // enabled
 
         Tracer.ENABLED = tracerConfiguration.enabled
@@ -43,7 +43,7 @@ export class Tracer {
         // set paths
 
         if (tracerConfiguration.paths)
-            for (const path of Object.keys(tracerConfiguration.paths)) 
+            for (const path of Object.keys(tracerConfiguration.paths))
                 this.setTraceLevel(path, tracerConfiguration.paths[path])
 
         Tracer.instance = this
@@ -59,13 +59,17 @@ export class Tracer {
     // public
 
     public static Trace(path : string, level : TraceLevel, message : string, ...args : any[]) {
-        const stack = new Error().stack!
+        const instance = Tracer.getInstance()
 
-        const frames = Stacktrace.createFrames(stack)
+        if ( instance.getTraceLevel(path) >= level) {
+            const stack = new Error().stack!
 
-        const lastFrame =  frames[1]
+            const frames = Stacktrace.createFrames(stack)
 
-        Tracer.getInstance().trace(path, level, message, lastFrame, ...args)
+            const lastFrame = frames[1]
+
+            instance.trace(path, level, message, lastFrame, ...args)
+        }
     }
 
     // public

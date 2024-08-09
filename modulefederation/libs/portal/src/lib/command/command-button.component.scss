@@ -1,5 +1,7 @@
 
-
+.mat-mdc-button {
+min-width: 48px;
+}
   .mat-mdc-button > .mat-icon {
     width: unset;
     height: unset;
@@ -9,7 +11,7 @@
 
 .button {
     padding: 0;
-    display: grid !important;
+    //display: grid !important;
     align-items: center !important;
 
     .mdc-button__label {

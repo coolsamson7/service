@@ -8,7 +8,7 @@
             [color]="button.primary === true ? 'primary' : 'basic'"
             [mat-dialog-close]="button.result"
             mat-button mat-raised-button>
-        {{button.label}}
+        {{button.label || (button.i18n! | translate)}}
     </button>
 </div>
 

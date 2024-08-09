@@ -8,6 +8,8 @@ import { AbstractFeature } from "../feature";
 import { hasMixin } from "../common/lang";
 import { CommandManager } from "./command-manager";
 import { WithCommands } from "./with-commands.mixin";
+import { CommonModule } from "@angular/common";
+import { IconComponent } from "@modulefederation/components";
 
 
 @Component({
@@ -16,7 +18,7 @@ import { WithCommands } from "./with-commands.mixin";
     styleUrls: ['./command-button.component.scss'],
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [MatButtonModule, MatIconModule, MatTooltipModule]
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule, IconComponent]
 })
 export class CommandButtonComponent implements OnInit, CommandListener {
     // view child

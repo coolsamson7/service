@@ -1,4 +1,3 @@
-import { Observable } from "rxjs"
 import { ConfigurationSource } from "./configuration-source"
 
 /**
@@ -62,13 +61,13 @@ export class ConfigurationManager {
                 const value = values[property]
 
                 if (isObject(value)) {
-                    if (target[property]) 
+                    if (target[property])
                         merge(value, target[property], [...path, property])
-                    else 
+                    else
                         target[property] = value
-                } 
+                }
                 else {
-                    if (target[property]) 
+                    if (target[property])
                         console.log("override " + [...path, property].join(".")) // TODO
 
                     target[property] = value
@@ -85,7 +84,7 @@ export class ConfigurationManager {
      * load all registered sources.
      */
     async load(): Promise<any> {
-        for (const source of this.sources) 
+        for (const source of this.sources)
             if (!source.isLoaded())
                 await this.loadSource(source)
 
@@ -106,7 +105,7 @@ export class ConfigurationManager {
         const length = path.length
 
         let object = this.values
-        while (object != null && index < length) 
+        while (object != null && index < length)
             object = Reflect.get(object, path[index++])
 
         return index && index == length ? <T>object : defaultValue
