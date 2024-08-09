@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@modulefederation/common": ["libs/common/src/index.ts"],
+      "@modulefederation/components": ["libs/components/src/index.ts"],
       "@modulefederation/portal": ["libs/portal/src/index.ts"],
       "mf/Routes": ["mf/src/app/remote-entry/entry.routes.ts"],
       "mf/mf": ["apps"],
