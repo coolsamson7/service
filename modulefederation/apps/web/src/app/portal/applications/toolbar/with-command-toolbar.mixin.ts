@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import { GConstructor, CommandManager, AbstractFeature, registerMixins, CommandAdministration, hasMixin } from "@modulefederation/portal";
+import { GConstructor ,registerMixins, hasMixin } from "@modulefederation/common";
+import { CommandManager, AbstractFeature, CommandAdministration } from "@modulefederation/portal";
 import { CommandToolbarComponent } from "./command-toolbar.component";
 
 

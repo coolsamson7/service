@@ -7,11 +7,10 @@ import {
   WithState,
   WithView,
   ViewComponent,
-  LockType,
   CommandButtonComponent,
-  Stacktrace,
   I18nModule
 } from "@modulefederation/portal";
+import { Stacktrace } from "@modulefederation/common";
 import { PortalAdministrationService } from "../portal/service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";

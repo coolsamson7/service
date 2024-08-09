@@ -2,8 +2,8 @@ import "reflect-metadata";
 
 import { environment } from "../environments/environment"
 
-import { CommandErrorInterceptor, ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, Tracer, ValueConfigurationSource } from "@modulefederation/portal";
-
+import { CommandErrorInterceptor, ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, ValueConfigurationSource } from "@modulefederation/portal";
+import { Tracer } from "@modulefederation/common";
 Tracer.ENABLED = environment.production !== true
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,7 +24,6 @@ import {
   CanActivateGuard,
   CanDeactivateGuard,
   CommandModule,
-  ConsoleTrace,
   EndpointLocator,
   ErrorModule,
   I18nModule, I18nResolver, LocaleModule,
@@ -37,9 +36,9 @@ import {
   SessionGuard,
   Shell,
   StateModule,
-  TraceLevel,
-  TracerModule
+ 
 } from "@modulefederation/portal";
+import { TraceLevel,TracerModule, ConsoleTrace} from "@modulefederation/common"
 import { MonacoEditorModule } from "@modulefederation/components";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatIconModule } from "@angular/material/icon";

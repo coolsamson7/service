@@ -9,13 +9,14 @@ import {
   I18nModule,
   Message,
   MessageAdministrationService,
-  MessageChanges, VoiceInputDirective, StringBuilder,
+  MessageChanges, VoiceInputDirective,
   WithCommands,
   WithDialogs,
   WithSpeechCommands,
   WithState,
   MicrofoneComponent
 } from "@modulefederation/portal";
+import { StringBuilder } from "@modulefederation/common";
 import { NamespaceNode, NamespaceTreeComponent } from "./namespace-tree.component";
 import { CommonModule } from "@angular/common";
 import { MatListModule } from "@angular/material/list";

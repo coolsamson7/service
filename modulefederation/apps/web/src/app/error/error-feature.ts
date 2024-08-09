@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from "@angular/core";
-import { AbstractFeature, Feature, StackFrame, Stacktrace } from "@modulefederation/portal";
+import { AbstractFeature, Feature } from "@modulefederation/portal";
+import { Stacktrace } from "@modulefederation/common";
 import { ErrorEntry, ErrorStorage } from "./error-storage";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";

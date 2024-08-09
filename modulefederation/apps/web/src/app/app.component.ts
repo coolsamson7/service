@@ -10,11 +10,11 @@ import {
   ShortcutManager,
   SpeechRecognitionManager,
   StateStorage,
-  StringBuilder,
   WithCommands,
   WithRouting,
   WithState
 } from "@modulefederation/portal";
+import { StringBuilder } from '@modulefederation/common';
 import { ErrorDialog } from "./error/error-dialog";
 import { ErrorEntry, ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
