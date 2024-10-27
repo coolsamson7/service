@@ -14,7 +14,7 @@ export class BooleanConstraint extends Type<boolean> {
 
     // fluent
 
-    isTrue(min: number, info?: ConstraintInfo): BooleanConstraint {
+    isTrue(info?: ConstraintInfo): BooleanConstraint {
         this.test({
             type: "boolean",
             name: "isTrue",
@@ -28,7 +28,7 @@ export class BooleanConstraint extends Type<boolean> {
         return this
     }
 
-    isFalse(min: number, info?: ConstraintInfo): BooleanConstraint {
+    isFalse(info?: ConstraintInfo): BooleanConstraint {
         this.test({
             type: "boolean",
             name: "isFalse",

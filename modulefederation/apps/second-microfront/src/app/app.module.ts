@@ -4,7 +4,6 @@ import { AppComponent } from './app.component';
 import {
   ConfigurationManager,
   ConfigurationModule,
-  ConsoleTrace,
   EndpointLocator,
   I18nModule,
   LocaleModule,
@@ -13,10 +12,15 @@ import {
   PortalModule,
   SecurityModule,
   ServerTranslationLoader,
-  TraceLevel,
-  TracerModule,
   ValueConfigurationSource
 } from "@modulefederation/portal";
+
+import {
+  ConsoleTrace,
+  TraceLevel,
+  TracerModule,
+} from "@modulefederation/common";
+
 import { environment } from "../environments/environment";
 import { appRoutes } from "./app.routes";
 import * as localManifest from "../assets/manifest.json"

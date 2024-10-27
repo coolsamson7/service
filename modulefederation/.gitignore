@@ -41,3 +41,4 @@ Thumbs.db
 .angular
 
 .nx/cache
+**/vite.config.{js,ts,mjs,mts,cjs,cts}.timestamp*

@@ -57,7 +57,7 @@ export class IconComponent implements OnInit, OnChanges {
   ngOnInit(): void {
       this.resolveName()
 
-      //return
+      return
 
       // strip root element
 

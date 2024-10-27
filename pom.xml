@@ -207,6 +207,7 @@
         <module>client</module>
         <module>administration</module>
         <module>demo</module>
+        <module>plugin</module>
         <module>test</module>
         <!--module>docker</module-->
     </modules>

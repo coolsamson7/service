@@ -11,18 +11,22 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name="APPLICATION_VERSION")
-class ApplicationVersionEntity(
+class ApplicationVersionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    var id : Long = 0,
+    var id: Long = 0
+
     @ManyToOne
-    @JoinColumn(name="OR_APPLICATION")
-    var application : ApplicationEntity,
+    @JoinColumn(name = "OR_APPLICATION")
+    lateinit var application: ApplicationEntity
+
     @Column(name = "VERSION")
-    var version : String,
+    lateinit var version: String
+
     @Column(name = "CONFIGURATION", length = 4000)
-    var configuration : String,
-    @OneToMany(mappedBy="applicationVersion", cascade=[CascadeType.ALL])
-    var assignedMicrofrontends : MutableList<AssignedMicrofrontendEntity>
-)
+    lateinit var configuration: String
+
+    @OneToMany(mappedBy = "applicationVersion", cascade = [CascadeType.ALL])
+    lateinit var assignedMicrofrontends: MutableList<AssignedMicrofrontendEntity>
+}

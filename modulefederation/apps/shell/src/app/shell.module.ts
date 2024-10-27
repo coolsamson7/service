@@ -11,16 +11,20 @@ import {
     CanDeactivateGuard,
     ConfigurationManager,
     ConfigurationModule,
-    ConsoleTrace,
     EndpointLocator,
     I18nModule, I18nResolver, LocaleModule, Manifest, PortalComponentsModule,
     PortalModule,
     SecurityModule, ServerTranslationLoader,
     Shell,
-    TraceLevel,
-    TracerModule,
     ValueConfigurationSource
 } from "@modulefederation/portal";
+
+import {
+    ConsoleTrace,
+    TraceLevel,
+    TracerModule,
+} from "@modulefederation/common";
+
 import {  Route } from "@angular/router";
 
 import * as localManifest from "../assets/manifest.json"

@@ -71,6 +71,10 @@ export class TypeParser {
                     return constraint
                 },
             },
+            isTrue: { call: "isTrue" },
+            isFalse: { call: "isFalse" },
+            "is-true": { call: "isTrue" },
+            "is-false": { call: "isFalse" },
             nullable: { call: "optional" },
             // "required": {},
         },
@@ -119,13 +123,21 @@ export class TypeParser {
         // local functions
 
         const parseArgument = (type: string, input: string): any[] => {
-            if (type == "string") return [input]
+            if (type == "string") 
+                return [input]
 
-            if (type == "number") return [parseInt(input)]
+            if (type == "number") {
+                if ( /^-?\d+\.?\d*$/.test(input))
+                    return [parseInt(input)]
+                else
+                    throw new Error(`expected a number`)
+            }
 
-            if (type == "boolean") return [input === "true"]
+            if (type == "boolean") 
+                return [input === "true"]
 
-            if (type == "re") return [new RegExp(input)]
+            if (type == "re") 
+                return [new RegExp(input)]
 
             throw new Error(`unsupported type ${type}`)
         }
@@ -188,14 +200,25 @@ export class TypeParser {
 
                 if (keyword) {
                     if (keyword.argument) {
-                        if (typeof keyword.call == "string")
-                            constraint = (constraint as any)[keyword.call](...parseArgument(keyword.argument, tokens[index++]))
-                        else
-                            constraint = keyword.call.apply(this, [
-                                constraint,
-                                ...parseArgument(keyword.argument, tokens[index++]),
-                            ])
-                    } else {
+                        const token = tokens[index++]
+
+                        if (!token)
+                            throw new Error(`type ${type} expected an ${key} argument of type ${keyword.argument}`)
+
+                        try {
+                            if (typeof keyword.call == "string")
+                                constraint = (constraint as any)[keyword.call](...parseArgument(keyword.argument, token))
+                            else
+                                constraint = keyword.call.apply(this, [
+                                    constraint,
+                                    ...parseArgument(keyword.argument, token),
+                                ])
+                        }
+                        catch(e) {
+                            throw new Error(`type ${type} expected an ${key} argument of type ${keyword.argument}`)
+                        }
+                    } 
+                    else {
                         if (typeof keyword.call == "string") constraint = (constraint as any)[keyword.call]()
                         else constraint = keyword.call.apply(this, [constraint])
                     }

@@ -32,6 +32,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.serious</groupId>
+            <artifactId>service-plugin-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- we need the web part -->
 
         <dependency>
@@ -58,6 +64,13 @@
             <groupId>com.serious</groupId>
             <artifactId>service-registry-consul</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- websocket -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
         <!-- keycloak -->

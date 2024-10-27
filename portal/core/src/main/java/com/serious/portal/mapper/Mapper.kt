@@ -528,7 +528,7 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         fun <S: Any,T:Any>optimize(sourceClass: KClass<*>, targetClass: KClass<*>,  definition: MappingDefinition<S, T>, operations: List<Transformer.Operation<Mapping.Context>>) : Array<Transformer.Operation<Mapping.Context>> {
             // generate bytecode with javassist
 
-            val optimize = true//java.lang.Boolean.getBoolean("optimize-mapper");
+            val optimize = false//java.lang.Boolean.getBoolean("optimize-mapper");
 
             if (optimize) {
                 val codeGenerator = Mapping.CodeGenerator(definition as MappingDefinition<Any, Any>)

@@ -2,7 +2,6 @@ import { NgModule, Injectable } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import {
-  ConsoleTrace,
   EndpointLocator,
   I18nModule,
   LocaleModule,
@@ -10,12 +9,17 @@ import {
   PortalModule,
   SecurityModule,
   ServerTranslationLoader,
-  TraceLevel,
-  TracerModule,
   ConfigurationModule,
   ConfigurationManager,
   ValueConfigurationSource,
 } from '@modulefederation/portal';
+
+import {
+  ConsoleTrace,
+  TraceLevel,
+  TracerModule,
+} from "@modulefederation/common";
+
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
 import * as localManifest from '../assets/manifest.json';

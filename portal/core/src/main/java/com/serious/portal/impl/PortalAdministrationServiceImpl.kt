@@ -208,19 +208,25 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             }
 
             override fun provide(referencedTransportObject: ApplicationVersion, context: Mapping.Context): ApplicationVersionEntity {
-                val entity = ApplicationVersionEntity(
+                val entity1 = ApplicationVersionEntity()/*
                     0, // pk
                     entity, // applicationVersion
                     referencedTransportObject.version,
                     referencedTransportObject.configuration,
                     ArrayList(),
-                )
+                )*/
 
-                entityManager.persist(entity)
+                entity1.id = 0
+                entity1.application = entity
+                entity1.version =  referencedTransportObject.version
+                entity1.configuration = referencedTransportObject.configuration
+                entity1.assignedMicrofrontends = ArrayList()
 
-                referencedTransportObject.id = entity.id
+                entityManager.persist(entity1)
 
-                return entity
+                referencedTransportObject.id = entity1.id
+
+                return entity1
             }
 
             override fun delete(entity: ApplicationVersionEntity) {
@@ -262,13 +268,16 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     @Transactional
     override fun createApplicationVersion(application: String, applicationVersion: ApplicationVersion) : ApplicationVersion {
         val applicationEntity = this.applicationRepository.findById(application).get()
-        val entity = this.applicationVersionRepository.save(ApplicationVersionEntity(
-           0,
-            applicationEntity,
-            applicationVersion. version,
-            applicationVersion.configuration,
-            ArrayList()
-        ))
+        var entity = ApplicationVersionEntity()
+
+
+        entity.id = 0
+        entity.application = applicationEntity
+        entity.version =  applicationVersion. version
+        entity.configuration = applicationVersion.configuration
+        entity.assignedMicrofrontends =  ArrayList()
+
+        entity = this.applicationVersionRepository.save(entity)
 
         applicationVersion.id = entity.id
 

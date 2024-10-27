@@ -1,4 +1,4 @@
-<portal-header class="example-header">
+s<portal-header class="example-header">
     <!-- burger -->
 
     <burger (toggle)="navigation.toggleCollapse()" [isBurger]="true"></burger>
@@ -17,7 +17,15 @@
 
     <user></user>
 
+    <!-- microfone-->
+
     <button #mic mat-button (click)="toggleSpeech()"><mat-icon>{{isRecording() ? 'mic': 'mic_none'}}</mat-icon></button>
+
+    <!-- agent-->
+
+  <button #mic mat-button (click)="showPlugins()"><mat-icon>{{pluginsListening ? 'alarm': 'alarm_off'}}</mat-icon></button>
+
+  <!-- help -->
 
     <button mat-button (click)="help.toggle()"><mat-icon>help</mat-icon></button>
 </portal-header>

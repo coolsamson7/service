@@ -1,5 +1,6 @@
 import { get, set } from "../../lang";
 import { Test } from "../test"
+//import { TypeParser } from "../type-parser";
 import { ValidationContext } from "../validation-context"
 import { ValidationError } from "../validation-error"
 
@@ -32,13 +33,13 @@ class Patch {
 }
 
 export class Type<T> {
-    // instance data
+    // static data
 
-    public static cache: { } = {}
+    static cache: { } = {}
+    private static patches: Patch[] = [];
+    private static timeout = false
 
-    // public
-
-    static patches: Patch[] = [];
+    // static methods
 
     static register(constraint: Type<any>) {
         set(this.cache, constraint.name!, constraint)
@@ -60,11 +61,12 @@ export class Type<T> {
 
     /*static valueOf(type: string) : Type<any> {
         const lowLevelType = type.split(" ")[0]
-        type = type.substring(lowLevelType.length + 1)
+        type = type.substring(lowLevelType.length + 1) // TODO
+
         return TypeParser.parse(lowLevelType, type)
     }*/
 
-    static resolve() {
+    private static resolve() {
         let patch;
         while ((patch = this.patches.shift()))
             patch.resolve();
@@ -72,9 +74,7 @@ export class Type<T> {
         this.timeout = false
     }
 
-    private static timeout = false
-
-    static patch(object: any, property: string, evaluate: () => any) {
+ static patch(object: any, property: string, evaluate: () => any) {
         this.patches.push(new Patch(object, property, evaluate))
 
         if ( !this.timeout) {
@@ -88,6 +88,7 @@ export class Type<T> {
     // instance data
 
     protected tests: Test<T>[] = []
+    message?: string
 
     // protected
 
@@ -133,6 +134,12 @@ export class Type<T> {
     }
 
     // fluent: not here!
+
+    errorMessage(message: string) : Type<T> {
+        this.message = message
+
+        return this
+    }
 
     test(test: Test<T>): Type<T> {
         this.tests.push(test)

@@ -20,6 +20,7 @@ import { ErrorEntry, ErrorStorage } from "./error/error-storage";
 import { MatSidenav } from '@angular/material/sidenav';
 import { ResizeEvent } from 'angular-resizable-element';
 import { MatIconButton } from '@angular/material/button';
+import { PluginManager, PluginsPlugin } from './plugin';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationErrorHandler {
@@ -128,10 +129,18 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
     locales: string[] = []
     helpEntries: string[] = []
 
+    pluginsListening = false
+
     // constructor
 
-    constructor(private speechRecognitionManager : SpeechRecognitionManager, private messageBus: MessageBus, helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
+    constructor(private pluginManager: PluginManager, private plugins: PluginsPlugin, private speechRecognitionManager : SpeechRecognitionManager, private messageBus: MessageBus, helpAdministrationService : HelpAdministrationService, private aboutService: AboutDialogService, private stateStorage: StateStorage, private sessionManager : SessionManager, private shortcutManager: ShortcutManager, injector: Injector,  localeManager: LocaleManager) {
       super(injector)
+
+      pluginManager.open$.subscribe(open => {
+        this.pluginsListening = open
+
+        console.log("state = " + open)
+      })
 
       helpAdministrationService.readEntries().subscribe(entries => this.helpEntries = entries)
 
@@ -236,6 +245,13 @@ export class AppComponent extends WithRouting(WithCommands(WithState<Application
       return this.speechRecognitionManager.isRunning()
     }
 
+    showPlugins() {
+      console.log("plugins")
+
+      this.plugins.plugins().then(plugins => {
+        console.log(plugins)
+      })
+    }
   
     toggleSpeech() {
         if ( this.isRecording() ) 

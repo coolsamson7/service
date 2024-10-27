@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import { environment } from "../environments/environment"
 
-import { CommandErrorInterceptor, ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, ValueConfigurationSource } from "@modulefederation/portal";
+import { CommandErrorInterceptor, ConfigurationManager, ConfigurationModule, SpeechRecognitionModule, TypeDescriptor, ValueConfigurationSource } from "@modulefederation/portal";
 import { Tracer } from "@modulefederation/common";
 Tracer.ENABLED = environment.production !== true
 
@@ -36,7 +36,7 @@ import {
   SessionGuard,
   Shell,
   StateModule,
- 
+
 } from "@modulefederation/portal";
 import { TraceLevel,TracerModule, ConsoleTrace} from "@modulefederation/common"
 import { MonacoEditorModule } from "@modulefederation/components";
@@ -67,8 +67,15 @@ import {ThemeDesignModule} from "@modulefederation/form/theme/design";
 import {LayoutModule} from "@modulefederation/components";
 import {QuestionnaireDesignerModule} from "@modulefederation/questionnaire/designer";
 import {QuestionnaireModule} from "@modulefederation/questionnaire/renderer";
-import { MarkdownModule } from "ngx-markdown";
+//import { MarkdownModule } from "ngx-markdown";
+import { RxStomp } from "@stomp/rx-stomp";
+import { map, Observable, ReplaySubject, share, Subject } from "rxjs";
+import { PluginModule } from "./plugin";
 
+// NEW
+
+
+// NEW
 @Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
   // constructor
@@ -104,6 +111,7 @@ const questionnaireModule = QuestionnaireModule.forRoot({
         AppComponent
     ],
     providers: [
+
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: { duration: 2500 }
@@ -124,6 +132,8 @@ const questionnaireModule = QuestionnaireModule.forRoot({
 
       LayoutModule,
 
+      PluginModule.forRoot({url:  'ws://localhost:8088/ws'}),
+
       // theme
 
       viaThemeRuntimeModule,
@@ -135,7 +145,7 @@ const questionnaireModule = QuestionnaireModule.forRoot({
 
       FormDesignerModule,
 
-      MarkdownModule.forRoot(),
+     // MarkdownModule.forRoot(),
 
       // form
 
@@ -158,6 +168,7 @@ const questionnaireModule = QuestionnaireModule.forRoot({
             trace: new ConsoleTrace('%d [%p]: %m %f\n'), // d(ate), l(evel), p(ath), m(message), f(rame)
             paths: {
                 "": TraceLevel.OFF,
+                "plugin": TraceLevel.FULL,
                 //"form": TraceLevel.FULL,
               //"form.editor": TraceLevel.FULL,
                //"form.designer": TraceLevel.FULL,
@@ -254,8 +265,12 @@ const questionnaireModule = QuestionnaireModule.forRoot({
     ]
 })
 export class AppModule extends AbstractModule() {
+    static injector = new ReplaySubject<Injector>(1);
+
     constructor(injector: Injector) {
         super(injector)
+
+        AppModule.injector.next(injector);
     }
 }
 
@@ -436,3 +451,6 @@ let t5 = new VersionRange(">=1.0,<2.0.0").matches(new Version("1"))
 
 
 console.log(t1)
+
+
+// NEW

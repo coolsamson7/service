@@ -8,7 +8,6 @@ import {
   AbstractModule,
   CanActivateGuard,
   CanDeactivateGuard,
-  ConsoleTrace,
   EndpointLocator,
   I18nModule,
   I18nResolver,
@@ -18,8 +17,6 @@ import {
   SecurityModule,
   ServerTranslationLoader,
   Shell,
-  TraceLevel,
-  TracerModule,
   Manifest,
   ConfigurationModule,
   ConfigurationManager,
@@ -31,6 +28,13 @@ import {
   CommandModule,
   CommandErrorInterceptor,
 } from '@modulefederation/portal';
+
+import {
+  ConsoleTrace,
+  TraceLevel,
+  TracerModule,
+} from "@modulefederation/common";
+
 import { Route } from '@angular/router';
 
 import * as localManifest from '../assets/manifest.json';

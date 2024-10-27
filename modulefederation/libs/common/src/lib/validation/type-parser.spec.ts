@@ -1,7 +1,7 @@
 import "reflect-metadata"
 
-import { array, date, enumeration, number, object, record, reference, string } from "./base-types/index"
-import { Types }from "./types"
+import { array, date, enumeration, number, object, record, reference, string, Type } from "./type"
+import { TypeParser } from "./type-parser"
 
 interface Bar {
     name: string
@@ -42,8 +42,59 @@ object({
     }, "Foo")
 
 describe("constraint parser", () => {
-    it("should parse & validate", async () => {
-        const constraint = Types.get("Foo")
+    it("should throw parse errors", async () => {
+        // wrong keyword
+
+        try {
+            TypeParser.parse("number", "is-foo")
+
+            fail("should throw")
+        }
+        catch(e) {
+            console.log(e)
+        }
+
+         // missing argument
+
+         try {
+            TypeParser.parse("number", ">")
+
+            fail("should throw")
+        }
+        catch(e) {
+            console.log(e)
+        }
+
+          // wrong argument
+
+          try {
+            TypeParser.parse("number", "> f")
+
+            fail("should throw")
+        }
+        catch(e) {
+            console.log(e)
+        }
+    }),
+
+    it("should parse", () => {
+        // boolean
+
+        let type = TypeParser.parse("boolean", "is-true")
+
+        // string
+
+         type = TypeParser.parse("string", "min-length 1 max-length 10")
+
+        // number
+
+        type = TypeParser.parse("number", "> 1 < 10")
+
+        console.log(type)
+    }),
+
+    it("should validate", async () => {
+        const constraint = Type.get("Foo")
 
         const foo = {
             name: "foo",
@@ -71,7 +122,7 @@ describe("constraint parser", () => {
         expect(constraint).toBeDefined()
 
         try {
-            constraint.validate(foo)
+            constraint!.validate(foo)
         }
         catch (err) {
             console.log(err)

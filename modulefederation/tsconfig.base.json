@@ -17,7 +17,21 @@
     "paths": {
       "@modulefederation/common": ["libs/common/src/index.ts"],
       "@modulefederation/components": ["libs/components/src/index.ts"],
+      "@modulefederation/form/designer": ["libs/form/designer/src/index.ts"],
+      "@modulefederation/form/renderer": ["libs/form/renderer/src/index.ts"],
+      "@modulefederation/form/theme/design": [
+        "libs/form/theme/design/src/index.ts"
+      ],
+      "@modulefederation/form/theme/runtime": [
+        "libs/form/theme/runtime/src/index.ts"
+      ],
       "@modulefederation/portal": ["libs/portal/src/index.ts"],
+      "@modulefederation/questionnaire/designer": [
+        "libs/questionnaire/designer/src/index.ts"
+      ],
+      "@modulefederation/questionnaire/renderer": [
+        "libs/questionnaire/renderer/src/index.ts"
+      ],
       "mf/Routes": ["mf/src/app/remote-entry/entry.routes.ts"],
       "mf/mf": ["apps"],
       "workspace-plugin": ["tools/workspace-plugin/src/index.ts"]
