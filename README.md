@@ -45,7 +45,7 @@ What's wrong?
 - we have to commit to a specific protocol and take care of technical details on protocol level ( e.g.  loadbalancing )
 - we have to write technical boilerplate webclient code
 
-This is _clumsy_ and against some major architectural principles like separation of concern, etc.
+This is _clumsy_ and contradicts some major architectural principles like separation of concern, etc.
 
 Talking about modularization: Spring assumes that the basis for clustering services is an application which is _wrong_ in my mind. Teams split up work
 by working on different modules. It should be a deployment aspect at the very end how modules are mapped to processes. So we bascially need a smaller building block! 
@@ -72,7 +72,7 @@ interface TestService : Service {
     fun hello(): String
 }
 ```
-By coincidence, it declares all the necessary annotations for spring! The framework onyl cares abou the - tagging - interface and the annotation.
+By coincidence, it declares all the necessary annotations for spring! The framework only cares about the - tagging - interface and the annotation.
 
 Services are bundled by a _component_
 ```kotlin
