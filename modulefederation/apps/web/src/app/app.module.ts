@@ -57,25 +57,22 @@ import { QuillModule } from "ngx-quill";
 import { HelpComponent } from "./help/help.component";
 import { ResizableModule } from "angular-resizable-element";
 import { CommonModule } from "@angular/common";
-import {FormDesignerModule} from "@modulefederation/form/designer";
+//TODO FORM import {FormDesignerModule} from "@modulefederation/form/designer";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSelectModule } from "@angular/material/select";
-import {FormRendererModule} from "@modulefederation/form/renderer";
-import {ThemeRuntimeModule} from "@modulefederation/form/theme/runtime";
-import {ThemeDesignModule} from "@modulefederation/form/theme/design";
+//TODO FORM import {FormRendererModule} from "@modulefederation/form/renderer";
+//import {ThemeRuntimeModule} from "@modulefederation/form/theme/runtime";
+//import {ThemeDesignModule} from "@modulefederation/form/theme/design";
 import {LayoutModule} from "@modulefederation/components";
-import {QuestionnaireDesignerModule} from "@modulefederation/questionnaire/designer";
-import {QuestionnaireModule} from "@modulefederation/questionnaire/renderer";
+//import {QuestionnaireDesignerModule} from "@modulefederation/questionnaire/designer";
+//import {QuestionnaireModule} from "@modulefederation/questionnaire/renderer";
 //import { MarkdownModule } from "ngx-markdown";
 import { RxStomp } from "@stomp/rx-stomp";
 import { map, Observable, ReplaySubject, share, Subject } from "rxjs";
 import { PluginModule } from "./plugin";
 
-// NEW
 
-
-// NEW
 @Injectable({providedIn: 'root'})
 export class ApplicationEndpointLocator extends EndpointLocator {
   // constructor
@@ -91,7 +88,7 @@ export class ApplicationEndpointLocator extends EndpointLocator {
   }
 }
 
-const viaThemeRuntimeModule = ThemeRuntimeModule.forRoot({
+/*TODO FORM const viaThemeRuntimeModule = ThemeRuntimeModule.forRoot({
   style: 'outline'
 });
 
@@ -101,7 +98,7 @@ const viaThemeDesignModule = ThemeDesignModule.forRoot({
 
 const questionnaireModule = QuestionnaireModule.forRoot({
   valueSetProvider: undefined
-});
+});*/
 
 @Shell({
     name: "shell"
@@ -134,7 +131,7 @@ const questionnaireModule = QuestionnaireModule.forRoot({
 
       PluginModule.forRoot({url:  'ws://localhost:8088/ws'}),
 
-      // theme
+      /* TODO FORM  theme
 
       viaThemeRuntimeModule,
       viaThemeDesignModule,
@@ -153,7 +150,7 @@ const questionnaireModule = QuestionnaireModule.forRoot({
 
       // questionnaire
 
-      questionnaireModule,
+      questionnaireModule,*/
 
 
 
@@ -273,184 +270,3 @@ export class AppModule extends AbstractModule() {
         AppModule.injector.next(injector);
     }
 }
-
-/* TEST
-
-class Foo {
-    // variables
-
-    @Injected()
-    locator!: EndpointLocator
-
-    bar!: SessionManager
-
-    // constructor
-
-    constructor(private id: string) {
-        console.log("created " + id)
-    }
-}
-
-let d = PortalModule.New(Foo, {bar: SessionManager})("foo")
-
-console.log(d)
-*/
-
-class Version {
-    // instance data
-
-    private numbers: number[]
-
-    // constructor
-
-    constructor(v: string) {
-       this.numbers = v.split(".").map(digit => +digit)
-    }
-
-    // 1.0.0 < 2
-    // 1.0 < 1.1
-    // x 1.1 < 1.1
-    // 1 < 2.0.0
-    // 1.0 = 1??? 1.0.0
-
-    private pos(i: number) {
-        return i < this.numbers.length ? this.numbers[i] : 0
-    }
-
-    private len() : number {
-        return this.numbers.length
-    }
-
-    // public
-
-    eq(version: Version) :boolean {
-        // exactly same length
-
-        if (this.len() !== version.len())
-            return false
-
-        // and same elements
-
-        for ( let i = this.len() - 1; i >= 0; i--)
-            if ( this.pos(i) !== version.pos(i))
-                return false
-
-        return true
-    }
-
-    lt(version: Version) :boolean {
-        const len = Math.max(this.numbers.length, version.numbers.length)
-
-        let eq = true
-        for ( let i = 0; i < len; i++) {
-            if ( this.pos(i) < version.pos(i))
-                return true
-            else if (this.pos(i) !== version.pos(i))
-                eq = false
-        }
-
-        return !eq
-    }
-
-    le(version: Version) :boolean {
-        const len = Math.max(this.numbers.length, version.numbers.length)
-
-        for ( let i = 0; i < len; i++) {
-            if ( this.pos(i) > version.pos(i))
-                return false
-        }
-
-        return true
-    }
-
-    gt(version: Version) :boolean {
-        const len = Math.max(this.numbers.length, version.numbers.length)
-
-        let eq = true
-        for ( let i = 0; i < len; i++) {
-            if ( this.pos(i) > version.pos(i))
-                return true
-            else if (this.pos(i) !== version.pos(i))
-                eq = false
-        }
-
-        return !eq
-    }
-
-    ge(version: Version) :boolean {
-        const len = Math.max(this.numbers.length, version.numbers.length)
-
-
-        for ( let i = 0; i < len; i++) {
-            if ( this.pos(i) < version.pos(i))
-                return false
-        }
-
-        return true
-    }
-}
-
-type VersionComparator = (version: Version) => boolean
-
-class VersionRange {
-    // instance data
-
-    private operations: VersionComparator[] = []
-
-    // constructor
-
-    constructor(version: string) {
-        this.parse(version)
-    }
-
-    // private
-
-    private compare(version: Version, op: string) : VersionComparator{
-        switch (op) {
-            case "<":
-                return (v: Version) => v.lt(version)
-            case "<=":
-                return (v: Version) => v.le(version)
-            case ">":
-                return (v: Version) => v.gt(version)
-            case ">=":
-                return (v: Version) => v.ge(version)
-            default:
-                throw new Error("bad operator")
-        }
-    }
-
-    private parse(version: string) {
-        const exp = /^(?<op>(>|>=|<|<=))(?<v>\d[.\d]+)(,(?<op1>(>|>=|<|<=))(?<v1>\d[.\d]+))*$/
-        const result = exp.exec(version)
-        if ( result?.groups ) {
-            this.operations.push(this.compare(new Version(result.groups["v"]), result.groups["op"]))
-
-            if ( result?.groups["op1"])
-                this.operations.push(this.compare(new Version(result.groups["v1"]), result.groups["op1"]))
-        }
-        else throw new Error(`could not parse version '${version}'`)
-    }
-
-    // public
-
-    matches(version: Version) : boolean {
-        for ( const operation of this.operations)
-            if ( !operation(version))
-                return false
-
-        return true
-    }
-}
-
-let t1 = new VersionRange(">1.0,<2.0.0").matches(new Version("1.2"))
-let t2 = new VersionRange(">1.0,<2.0.0").matches(new Version("1.0"))
-let t3 = new VersionRange(">=1.0,<2.0.0").matches(new Version("1"))
-let t4 = new VersionRange(">1.0").matches(new Version("2.0.0.0"))
-let t5 = new VersionRange(">=1.0,<2.0.0").matches(new Version("1"))
-
-
-console.log(t1)
-
-
-// NEW

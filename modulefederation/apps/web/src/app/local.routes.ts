@@ -15,7 +15,7 @@ import { ServiceInstanceComponent } from './components/service-instance.componen
 
 import { ErrorComponent } from './error/error-feature';
 
-import { FormDesignerFeatureComponent } from './form-designer/form-designer-feature.component';
+//TODO FORM import { FormDesignerFeatureComponent } from './form-designer/form-designer-feature.component';
 
 import { HelpComponent } from './help/help.component';
 
@@ -35,9 +35,9 @@ import { NodeDetailsComponent } from './nodes/node-details.component';
 
 import { OtherPreferences } from './home/preferences-dialog';
 
-import { QuestionnaireDesignerFeature } from './questionnaire-designer/questionnaire-designer-feature.component';
+//import { QuestionnaireDesignerFeature } from './questionnaire-designer/questionnaire-designer-feature.component';
 
-import { QuestionnaireRendererFeatureController } from './questionnaire-renderer/questionnaire-renderer.feature';
+//import { QuestionnaireRendererFeatureController } from './questionnaire-renderer/questionnaire-renderer.feature';
 
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
@@ -79,11 +79,21 @@ export const localRoutes: Routes = [
     component: ErrorComponent,
     children: [],
   },
-  {
+  /*TODO FORM {
     path: 'form-designer',
     component: FormDesignerFeatureComponent,
     children: [],
   },
+  {
+      path: 'questionnaire-designer',
+      component: QuestionnaireDesignerFeature,
+      children: [],
+    },
+    {
+      path: 'questionnaire-renderer',
+      component: QuestionnaireRendererFeatureController,
+      children: [],
+    },*/
   {
     path: 'help',
     component: HelpComponent,
@@ -129,16 +139,6 @@ export const localRoutes: Routes = [
   {
     path: 'other-preferences',
     component: OtherPreferences,
-    children: [],
-  },
-  {
-    path: 'questionnaire-designer',
-    component: QuestionnaireDesignerFeature,
-    children: [],
-  },
-  {
-    path: 'questionnaire-renderer',
-    component: QuestionnaireRendererFeatureController,
     children: [],
   },
 

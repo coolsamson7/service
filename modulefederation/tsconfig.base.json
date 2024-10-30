@@ -32,8 +32,7 @@
       "@modulefederation/questionnaire/renderer": [
         "libs/questionnaire/renderer/src/index.ts"
       ],
-      "mf/Routes": ["mf/src/app/remote-entry/entry.routes.ts"],
-      "mf/mf": ["apps"],
+      "react-remote/Module": ["apps/react/react-remote/src/remote-entry.ts"],
       "workspace-plugin": ["tools/workspace-plugin/src/index.ts"]
     }
   },
