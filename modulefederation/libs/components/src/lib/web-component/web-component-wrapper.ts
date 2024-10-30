@@ -49,10 +49,13 @@ export class WebComponentWrapper implements AfterContentInit, OnChanges {
   async ngAfterContentInit() {
     const options = this.options ?? (this.route.snapshot.data as WebComponentWrapperOptions);
 
-    try {
-      await loadRemoteModule("react", "./Module"); // TODO
+    try { // TODO
+      setRemoteDefinitions({
+        "foo": "http://localhost:4205/remoteEntry.js"
+      })
+      await loadRemoteModule("foo", "./Module"); // TODO
 
-      this.element = document.createElement(options.elementName);
+      this.element = document.createElement("react-element")//options.elementName);
       this.populateProps();
       this.setupEvents();
 

@@ -16,11 +16,10 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDividerModule } from "@angular/material/divider";
-import {FormDesignerModule} from "@modulefederation/form/designer";
+//TODO FORM import {FormDesignerModule} from "@modulefederation/form/designer";
 import {LayoutModule, IconComponent} from "@modulefederation/components";
 import { MatIconModule } from "@angular/material/icon";
 import { AbstractPlugin, RegisterPlugin, Public, Callback, PluginInfo, PluginManager, PluginsPlugin } from "../plugin";
-import { MAT_SINGLE_DATE_SELECTION_MODEL_FACTORY } from "@angular/material/datepicker";
 
 
 @RegisterPlugin("foo")
@@ -72,7 +71,9 @@ export interface Message {
 
     FormsModule,
     ViewComponent,
-    MatToolbarModule, MatDividerModule, CommandButtonComponent, FormDesignerModule, I18nModule, LayoutModule]
+    MatToolbarModule, MatDividerModule, CommandButtonComponent,
+    //TODO FORM FormDesignerModule,
+    I18nModule, LayoutModule]
 })
 @Feature({
     id: "home",
@@ -88,7 +89,7 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
   busy = false
   today = new Date()
 
-  
+
 
   // constructor
 
@@ -121,7 +122,7 @@ export class HomeComponent extends WithView(WithState<any>()(WithCommands(Abstra
   g11() {
     this.fooPlugin.nix()
 
-    this.fooPlugin.foo("hello", 2).then(result => 
+    this.fooPlugin.foo("hello", 2).then(result =>
       console.log(result)
     )
 

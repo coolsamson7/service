@@ -191,9 +191,5 @@ export class ErrorHandlers {
 export class ShellModule extends AbstractModule() {
   constructor(injector: Injector) {
     super(injector);
-
-    injector.get(ErrorManager).handle(new FooError("ocuh"))
-    injector.get(ErrorManager).handle("ouch")
-    injector.get(ErrorManager).handle({})
   }
 }

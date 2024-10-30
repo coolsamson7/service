@@ -64,6 +64,13 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/webpack:webpack": {
+      "inputs": [
+        {
+          "env": "NX_MF_DEV_SERVER_STATIC_REMOTES"
+        }
+      ]
     }
   },
   "namedInputs": {
@@ -94,6 +101,21 @@
     },
     "@nx/angular:component": {
       "style": "scss"
+    },
+    "@nx/react": {
+      "application": {
+        "babel": true,
+        "style": "css",
+        "linter": "eslint",
+        "bundler": "webpack"
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
     }
   },
   "nxCloudAccessToken": "NzJjMDljNTEtYTM5NS00ZGYzLWEyODEtNGM3Y2M3OTlkYjBifHJlYWQtd3JpdGU="

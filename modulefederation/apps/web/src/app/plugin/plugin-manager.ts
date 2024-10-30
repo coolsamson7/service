@@ -181,7 +181,7 @@ export class PluginManager extends PluginRegistry {
         else
             request.id = ""
 
-        // TODO call websocket
+        // call websocket
 
         this.stomp.publish({
             destination: '/app/call',

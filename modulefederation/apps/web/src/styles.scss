@@ -24,10 +24,10 @@
   @include mat.all-component-densities(-5);
 }
 
-@font-face {
-  font-family: 'icons';
-  src: url('./assets/icons/cgm-g3-symbols-regular.ttf');
-}
+//TODO FORM @font-face {
+//  font-family: 'icons';
+//  src: url('./assets/icons/cgm-g3-symbols-regular.ttf');
+//}
 
 .mat-icon {
   &.p:before {

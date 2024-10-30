@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { WebComponentWrapper, WebComponentWrapperOptions } from '@modulefederation/components';
 
 export const localRoutes: Routes = [
   {
@@ -18,6 +19,16 @@ export const localRoutes: Routes = [
     component: HomeComponent,
     children: [],
   },
+    { // TODO react
+       path: 'react',
+       component: WebComponentWrapper,
+       data: {
+           remoteEntry: 'http://localhost:4205/remoteEntry.js', // ?
+           remoteName: 'react-remote',
+           exposedModule: './Module',
+           elementName: 'react-element'
+       } as WebComponentWrapperOptions
+    },
 
   {
     path: '**',
