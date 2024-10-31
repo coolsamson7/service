@@ -248,6 +248,8 @@ class ServiceAdministrationApplication {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            System.setProperty("java.net.preferIPv4Stack" , "true");
+
             SpringApplication.run(ServiceAdministrationApplication::class.java, *args)
         }
     }

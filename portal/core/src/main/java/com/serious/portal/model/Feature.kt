@@ -26,7 +26,7 @@ data class Feature(
     var i18n : Array<String>? = null,
     var folder : String? = null,
     var icon : String? = null,
-    var component : String,
+    var component : String? = null,
     var tags : Array<String>? = null,
     var categories : Array<String>? = null,
     var visibility: Array<String>? = null,
