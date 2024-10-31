@@ -18,6 +18,7 @@ import { ReplaySubject } from 'rxjs';
 import { LocaleManager } from './locale';
 import { DeploymentConfigurationSource } from './deployment/deployment-configuration-source';
 import { ConfigurationManager } from './common';
+import { RouteBuilder, RouteBuilderManager } from './federation';
 
 /**
  * the runtime data of feature
@@ -66,6 +67,7 @@ export class PortalManager {
     private router: Router,
     private localeManager: LocaleManager,
     private configurationManager: ConfigurationManager,
+    private routeBuilder : RouteBuilderManager,
     private injector: Injector
   ) {}
 
@@ -143,9 +145,10 @@ export class PortalManager {
 
     // set  feature as data
 
-    route.data = {
-      feature: feature,
-    };
+    if ( !route.data)
+      route.data = {}
+
+    route.data!["feature"] = feature
 
     // remember component
 
@@ -204,12 +207,9 @@ export class PortalManager {
     } // while
   }
 
-  private buildRoutes(
-    deployment: Deployment,
-    localRoutes: Routes,
-    merge: boolean
-  ): Routes {
-    if (Tracer.ENABLED) Tracer.Trace('portal', TraceLevel.FULL, 'build routes');
+  private buildRoutes(deployment: Deployment, localRoutes: Routes, merge: boolean): Routes {
+    if (Tracer.ENABLED) 
+      Tracer.Trace('portal', TraceLevel.FULL, 'build routes');
 
     const modules = deployment.modules;
 
@@ -226,13 +226,18 @@ export class PortalManager {
         if (!route) {
           route = {
             path: key,
-            loadChildren: () => loadRemoteModule(key, './Module')
+            data:{}
+            /*loadChildren: () => loadRemoteModule(key, './Module')
               .then(m => m[module.module])
               .catch(e => {
                 console.log(e)
                 throw e
-              }),
+              }),*/
           };
+
+          // different technologies - angualr, react, ... -  require different settings 
+
+          this.routeBuilder.build(module, route)
 
           feature.origin = module.remoteEntry;
 
@@ -376,6 +381,9 @@ export class PortalManager {
         remotes[moduleName] = module.remoteEntry;
       }
     }
+
+    if ( remotes.react)
+      remotes.react = remotes.react + "/remoteEntry.js" // TODO
 
     setRemoteDefinitions(remotes);
 

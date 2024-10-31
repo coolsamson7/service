@@ -19,16 +19,6 @@ export const localRoutes: Routes = [
     component: HomeComponent,
     children: [],
   },
-    { // TODO react
-       path: 'react',
-       component: WebComponentWrapper,
-       data: {
-           remoteEntry: 'http://localhost:4205/remoteEntry.js', // ?
-           remoteName: 'react-remote',
-           exposedModule: './Module',
-           elementName: 'react-element'
-       } as WebComponentWrapperOptions
-    },
 
   {
     path: '**',
