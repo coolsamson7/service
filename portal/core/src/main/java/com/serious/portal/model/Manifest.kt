@@ -19,6 +19,7 @@ data class Manifest(
     var stack: String?,
     var version: String,
     var commitHash: String,
+    var remoteEntryName: String?,
     var remoteEntry: String?,
     var healthCheck: String?,
 

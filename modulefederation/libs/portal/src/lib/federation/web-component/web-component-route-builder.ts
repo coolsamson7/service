@@ -19,9 +19,12 @@ export class WebComponentRouteBuilder implements RouteBuilder {
     build(manifest: Manifest, route: Route) : void {
        route.component = WebComponentWrapper
 
+       const colon = manifest.stack!.indexOf(":")
+       const elementName = manifest.stack?.substring(colon + 1)
+
        // remember data
 
        route.data!["module"] = manifest.name
-       route.data!["elementName"] = manifest.name + "-element" // ??
+       route.data!["elementName"] = elementName
     }
 }

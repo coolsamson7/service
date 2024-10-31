@@ -378,12 +378,13 @@ export class PortalManager {
       if (module.remoteEntry) {
         module.type = 'microfrontend';
 
-        remotes[moduleName] = module.remoteEntry;
+        let remoteEntry = module.remoteEntry;
+        if ( module.remoteEntryName)
+          remoteEntry = remoteEntry + "/" + module.remoteEntryName
+
+        remotes[moduleName] = remoteEntry;
       }
     }
-
-    if ( remotes.react)
-      remotes.react = remotes.react + "/remoteEntry.js" // TODO
 
     setRemoteDefinitions(remotes);
 

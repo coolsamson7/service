@@ -39,8 +39,6 @@ export class WebComponentWrapper implements AfterContentInit {
   async ngAfterContentInit() {
      this.options = this.route.snapshot.data as WebComponentWrapperOptions
 
-     console.log(this.options)
-
     try {
       await loadRemoteModule(this.options.module, "./Module");
 

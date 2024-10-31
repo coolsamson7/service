@@ -19,7 +19,6 @@ export class ReactRouteBuilder implements RouteBuilder {
     build(manifest: Manifest, route: Route) : void {
         route.component = ReactComponentWrapper
 
-        route.data!["module"] = manifest.module
-        route.data!["elementName"] = manifest.module // ??
+        route.data!["module"] = manifest.name
     }
 }

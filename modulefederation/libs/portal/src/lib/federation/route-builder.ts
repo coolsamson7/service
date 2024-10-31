@@ -28,7 +28,12 @@ export class RouteBuilderManager {
     // public
 
     build(manifest: Manifest, route: Route) : void {
-        this.find(manifest.stack || "angular").build(manifest, route)
+        let stack = manifest.stack || "angular"
+        const colon = stack.indexOf(":")
+        if ( colon > 0)
+            stack = stack.substring(0, colon)
+
+        this.find(stack).build(manifest, route)
     }
 
     register(type: string, builder: RouteBuilder) {
