@@ -44,6 +44,6 @@ export class ReactComponentWrapper implements AfterContentInit, OnDestroy {
    // implement OnDestroy
 
    ngOnDestroy(): void {
-    this.root.unmount()
+    this.root?.unmount()
   }
 }

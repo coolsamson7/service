@@ -12,10 +12,6 @@
       "isDefault": true
     },
     {
-      "id": "react",
-      "label": "React"
-    },
-    {
       "id": "**",
       "label": "Page not found",
       "icon": "language",
