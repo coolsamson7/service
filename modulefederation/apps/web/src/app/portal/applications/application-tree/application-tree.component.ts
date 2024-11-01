@@ -68,9 +68,10 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         const version = treeConfig.instance!.version
 
         let node : Node
-        if ( treeConfig.microfrontend) { 
-            // add microfrontend
 
+         // new microfrontend?
+
+        if ( treeConfig.microfrontend) { 
             node =  {
                 type: "microfrontend",
                 data: treeConfig.microfrontend,
@@ -81,22 +82,24 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         }
         else node = this.dataSource.data.find(node => node.data.name == mfe)!
         
-        if (treeConfig.version) {
-            // add version
+        // new version?
 
+        if (treeConfig.version) {
             node!.children?.push(node =  {
                 type: "microfrontend-version",
                 data: treeConfig.version,
+                parent: node,
                 children: []
             })
         }
         else node = node.children!.find(node => node.data.version == version)!
 
-        if (treeConfig.instance) {
-            // add instance
+         // instance?
 
+        if (treeConfig.instance) {
             node!.children?.push(node =  {
                 type: "microfrontend-instance",
+                parent: node,
                 data:  treeConfig.instance 
             })
         }
@@ -122,14 +125,34 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         return node
     }
 
-    deletedApplication(node: Node) {
-        this.dataSource.data.splice(this.dataSource.data.indexOf(node), 1)
-        this.refreshData()
+    indexOf(node: Node) {
+        if ( node.parent)
+            return node.parent!.children!.indexOf(node)
+        else
+            return this.dataSource.data.indexOf(node)
     }
 
-    deletedApplicationVersion(node: Node) {
-        node.parent?.children?.splice(node.parent?.children.indexOf(node), 1)
+    // return the node which should be selected
+
+    deletedNode(node: Node) : Node | undefined {
+        let nextNode : Node | undefined = undefined
+        const index = this.indexOf(node)
+      
+        if ( node.parent) {
+            const children  = node.parent!.children!
+
+            children.splice(index, 1)
+            nextNode = children.length > 0 ? children[Math.max(children.length - 1, index)] : node.parent
+        }
+        else {
+            const children  =  this.dataSource.data
+            children.splice(index, 1)
+            nextNode = children.length > 0 ? children[Math.max(children.length - 1, index)] : undefined
+        }
+
         this.refreshData()
+
+        return nextNode
     }
 
     addApplication(application: Application) : Node{

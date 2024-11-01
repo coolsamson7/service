@@ -92,7 +92,7 @@ export class PortalAdministrationService extends AbstractHTTPService {
   }
 
   deleteApplication(application: String) :Observable<any> {
-    return this.delete<any>(`delete-application/${application}`)
+    return this.get<any>(`delete-application/${application}`)
   }
 
   readApplications() : Observable<Application[]>{
@@ -110,7 +110,7 @@ export class PortalAdministrationService extends AbstractHTTPService {
   }
 
   deleteApplicationVersion( application: String, version: string) : Observable<any> {
-      return this.delete<any>(`delete-application-version/${application}/${version}`)
+      return this.get<any>(`delete-application-version/${application}/${version}`)
   }
 
   // microfrontend
@@ -123,6 +123,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
       return this.post<Microfrontend>(`update-microfrontend`, microfrontend)
   }
 
+   deleteMicrofrontend( microfrontend: String) : Observable<any> {
+        return this.get<any>(`delete-microfrontend/${microfrontend}`)
+   }
+
   // microfrontend versions
 
   readMicrofrontendVersions() : Observable<MicrofrontendVersion[]>  {
@@ -133,6 +137,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
     return this.post<MicrofrontendVersion>(`update-microfrontend-version`, version)
   }
 
+  deleteMicrofrontendVersion( microfrontend: String, version : String) : Observable<any> {
+    return this.get<any>(`delete-microfrontend-version/${microfrontend}/${version}`)
+  }
+
   // microfrontend instances
 
   updateMicrofrontendInstance(instance: MicrofrontendInstance) : Observable<MicrofrontendInstance>  {
@@ -141,6 +149,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
   registerMicrofrontendInstance(manifest: Manifest) : Observable<MicrofrontendRegistryResult>  {
     return this.post<MicrofrontendRegistryResult>(`register-microfrontend-instance`, manifest)
+  }
+
+  deleteMicrofrontendInstance( microfrontend: String, version : String, instance : String) : Observable<any> {
+    return this.get<any>(`delete-microfrontend-instance/${microfrontend}/${version}/${instance}`)
   }
 
   // TEST

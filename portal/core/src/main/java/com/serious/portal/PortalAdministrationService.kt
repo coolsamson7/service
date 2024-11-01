@@ -55,7 +55,7 @@ interface PortalAdministrationService : Service {
     @PostMapping("create-stage")
     fun createStage(@RequestBody  stage: String)
 
-    @DeleteMapping("delete-stage/{stage}")
+    @GetMapping("delete-stage/{stage}")
     fun deleteStage(@PathVariable stage: String)
 
     @GetMapping("read-stages")
@@ -75,7 +75,7 @@ interface PortalAdministrationService : Service {
     @PostMapping("update-application")
     fun updateApplication(@RequestBody application: Application) : Application
 
-    @DeleteMapping("delete-application/{application}")
+    @GetMapping("delete-application/{application}")
     fun deleteApplication(@PathVariable application: String)
 
     @GetMapping("read-applications")
@@ -91,7 +91,7 @@ interface PortalAdministrationService : Service {
     @PostMapping("update-application-version")
     fun updateApplicationVersion(@RequestBody application: ApplicationVersion) : ApplicationVersion
 
-    @DeleteMapping("delete-application-version/{application}/{version}")
+    @GetMapping("delete-application-version/{application}/{version}")
     fun deleteApplicationVersion(@PathVariable application: String, @PathVariable version: String)
 
     // microfrontend
@@ -104,6 +104,9 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun updateMicrofrontend(@RequestBody version: Microfrontend) : Microfrontend
 
+    @GetMapping("delete-microfrontend/{microfrontend}")
+    fun deleteMicrofrontend(@PathVariable microfrontend: String)
+
     // microfrontend version
 
     @GetMapping("read-microfrontend-versions")
@@ -114,6 +117,9 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun updateMicrofrontendVersion(@RequestBody version: MicrofrontendVersion) : MicrofrontendVersion
 
+    @GetMapping("delete-microfrontend-version/{microfrontend}/{version}")
+    fun deleteMicrofrontendVersion(@PathVariable microfrontend: String, @PathVariable version: String)
+
     // microfrontend instance
 
     @PostMapping("update-microfrontend-instance")
@@ -123,4 +129,7 @@ interface PortalAdministrationService : Service {
     @PostMapping("register-microfrontend-instance")
     @ResponseBody
     fun registerMicrofrontendInstance(@RequestBody manifest: Manifest) : MicrofrontendRegistryResult
+
+    @GetMapping("delete-microfrontend-instance/{microfrontend}/{version}/{instance}")
+    fun deleteMicrofrontendInstance(@PathVariable microfrontend: String, @PathVariable version: String, @PathVariable instance: String)
 }

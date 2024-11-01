@@ -168,7 +168,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
        }
    }
 
-    selectNode(node: Node) {
+    selectNode(node: Node | undefined) {
         if ( this.dirty) {
             this.confirmationDialog()
                 .title("Dirty")
@@ -195,23 +195,25 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
         this.selectedMicrofrontendVersion = undefined
         this.selectedMicrofrontendInstance = undefined
 
-        if ( node.type == "microfrontend")
-            this.selectedMicrofrontend = node.data
+        if ( node ) {
+            if ( node.type == "microfrontend")
+                this.selectedMicrofrontend = node.data
 
-        else if ( node.type == "microfrontend-version") {
-            this.microfrontend = node.parent?.data
-            this.selectedMicrofrontendVersion = node.data
+            else if ( node.type == "microfrontend-version") {
+                this.microfrontend = node.parent?.data
+                this.selectedMicrofrontendVersion = node.data
+            }
+
+            else if ( node.type == "application")
+                this.selectedApplication = node.data
+
+            else if ( node.type == "application-version") {
+                this.application = node.parent?.data
+                this.selectedVersion = node.data
+            }
         }
 
-        else if ( node.type == "application")
-            this.selectedApplication = node.data
-
-        else if ( node.type == "application-version") {
-            this.application = node.parent?.data
-            this.selectedVersion = node.data
-        }
-
-    this.updateCommandState()
+        this.updateCommandState()
    }
 
    // private
@@ -256,24 +258,28 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
     }
 
     deleteApplication(node: Node) {
-        this.portalAdministrationService.deleteApplication(node.data.name).subscribe()
+        this.portalAdministrationService.deleteApplication(node.data.name).subscribe(_ => {
+            this.selectNode( this.tree.deletedNode(node)!)
+        })
     }
 
     deleteMicrofrontend(node: Node) {
-        // TODO
+        this.portalAdministrationService.deleteMicrofrontend(node.data.name).subscribe(_ => {
+            this.selectNode( this.tree.deletedNode(node)!)
+        })
     }
 
     deleteMicrofrontendVersion(node: Node) {
-        // TODO
+        this.portalAdministrationService.deleteMicrofrontendVersion(node.parent!.data.name, node.data.version).subscribe(_ => {
+            this.selectNode(this.tree.deletedNode(node)!)
+        })
     }
 
     deleteApplicationVersion(node: Node) {
         const application : Application = node.parent?.data
 
         this.portalAdministrationService.deleteApplicationVersion(application.name, node.data.version).subscribe(_ => {
-            this.tree.deletedApplicationVersion(node)
-
-            this.selectNode(node.parent!)
+            this.selectNode(this.tree.deletedNode(node)!)
         })
     }
 

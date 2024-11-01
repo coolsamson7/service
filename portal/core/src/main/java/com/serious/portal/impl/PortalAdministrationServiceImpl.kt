@@ -389,6 +389,11 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return microfrontend
     }
 
+    @Transactional
+    override fun deleteMicrofrontend(@PathVariable microfrontend: String) {
+        this.microfrontendRepository.deleteById(microfrontend)
+    }
+
     // microfrontend versions
 
     @Transactional
@@ -412,7 +417,25 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return version
     }
 
+    @Transactional
+    override fun deleteMicrofrontendVersion(microfrontend: String, version: String) {
+        val microfrontend = this.microfrontendRepository.findById(microfrontend).get()
+        val version = microfrontend.versions.find { mfev -> mfev.version == version }!!
+
+        microfrontendVersionRepository.delete(version)
+    }
+
     // microfrontend instance
+
+    @Transactional
+    override fun deleteMicrofrontendInstance(microfrontend: String, version: String, instance: String) {
+        val microfrontend = this.microfrontendRepository.findById(microfrontend).get()
+        val version = microfrontend.versions.find { mfev -> mfev.version == version }!!
+        val instance = version.instances.find { i -> i.uri == instance }
+
+        microfrontendInstanceRepository.delete(instance!!)
+    }
+
 
     @Transactional
     override fun updateMicrofrontendInstance(instance: MicrofrontendInstance) : MicrofrontendInstance {
