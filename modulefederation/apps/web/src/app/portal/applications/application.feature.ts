@@ -17,7 +17,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { ApplicationView } from "./application-view";
 import { ConfigurationTreeComponent } from "../config/configuration-tree.component";
 import { PortalAdministrationService } from "../service";
-import { ApplicationTreeComponent, MenuRequest, Node } from "./application-tree/application-tree.component";
+import { AddTreeData, ApplicationTreeComponent, MenuRequest, Node } from "./application-tree/application-tree.component";
 import { ApplicationVersionComponent } from "./application-version/application-version.component";
 import { ApplicationComponent } from "./application/application.component";
 import { MicrofrontendVersionComponent } from "./microfrontend-version/microfrontend-version.component";
@@ -381,39 +381,34 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                     if (result.instance) {
                         let microfrontend = this.microfrontends.find(mfe => mfe.name == manifest.name)
 
-                        const treeConfig : any  = {
+                        const addTree : AddTreeData  = {
                         }
 
-                        let addedMicrofontend = false
-                        let addedVersion = false
-
+            
                         if ( !microfrontend ) {
-                            addedMicrofontend = true
-
-                            // microfronted was cerated as well
+                            // microfronted was created as well
 
                             microfrontend = result.microfrontend
 
-                            treeConfig.microfrontend = microfrontend
+                            addTree.microfrontend = microfrontend
                         }
 
-                        let version = microfrontend?.versions.find(version => version.version == manifest.version) 
+                        let version = addTree.microfrontend ? null : microfrontend?.versions.find(version => version.version == manifest.version) 
 
                         if ( !version ) {
-                            addedVersion = true
-                            // microfronted was cerated as well
+                            // version was created as well
 
                             version = result.version!
-                            microfrontend?.versions.push(version)
+                            if (addTree.microfrontend == null ) microfrontend?.versions.push(version)
 
-                            treeConfig.version = version
+                            addTree.version = version
                         }
 
-                        version?.instances.push(result.instance)
+                        if (addTree.version == null ) version?.instances.push(result.instance)
 
-                        treeConfig.instance = result.instance
+                        addTree.instance = result.instance
 
-                        this.tree.addInstance(treeConfig)
+                        this.tree.addInstance(addTree)
                     }
 
                     else {

@@ -21,6 +21,12 @@ export interface MenuRequest {
     action: string
 }
 
+export interface AddTreeData {
+    microfrontend?: Microfrontend,
+    version?: MicrofrontendVersion,
+    instance?: MicrofrontendInstance
+}
+
 @Component({
     selector: 'application-tree',
     templateUrl: './application-tree.component.html',
@@ -55,17 +61,19 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
     // public
 
-    addInstance(treeConfig: any) {
-        const mfe = treeConfig.instance.microfrontend
-        const version = treeConfig.instance.version
+    addInstance(treeConfig: AddTreeData) {
+        // includes: microfrontend, version, instance depending on tree structure
+
+        const mfe = treeConfig.instance!.microfrontend
+        const version = treeConfig.instance!.version
 
         let node : Node
         if ( treeConfig.microfrontend) { 
-            const microfrontend : Microfrontend = treeConfig.microfrontend as Microfrontend
+            // add microfrontend
 
-             node =  {
+            node =  {
                 type: "microfrontend",
-                data: microfrontend,
+                data: treeConfig.microfrontend,
                 children: []
             }
 
@@ -74,22 +82,22 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         else node = this.dataSource.data.find(node => node.data.name == mfe)!
         
         if (treeConfig.version) {
-            const version : MicrofrontendVersion = treeConfig.version as MicrofrontendVersion
+            // add version
 
             node!.children?.push(node =  {
                 type: "microfrontend-version",
-                data: version,
+                data: treeConfig.version,
                 children: []
             })
         }
         else node = node.children!.find(node => node.data.version == version)!
 
         if (treeConfig.instance) {
-            const instance : MicrofrontendInstance = treeConfig.instance as MicrofrontendInstance
+            // add instance
 
             node!.children?.push(node =  {
                 type: "microfrontend-instance",
-                data: instance
+                data:  treeConfig.instance 
             })
         }
 

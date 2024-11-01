@@ -31,12 +31,18 @@ export class ReactComponentWrapper implements AfterContentInit, OnDestroy {
    async ngAfterContentInit() {
       this.options = this.route.snapshot.data as ReactWrapperOptions
 
-       const module = await loadRemoteModule(this.options.module, "./Module");
+      const module = await loadRemoteModule(this.options.module, "./Module");
 
       const component = module.default; // Assuming default export
       const reactElement = React.createElement(component); // args?
 
+    
+
       this.root = ReactDOM.createRoot(this.container.nativeElement);
+
+      console.log(component)
+      console.log(reactElement)
+      console.log(this.root)
 
       this.root.render(reactElement); // Render using 'createRoot'
   }
@@ -44,6 +50,7 @@ export class ReactComponentWrapper implements AfterContentInit, OnDestroy {
    // implement OnDestroy
 
    ngOnDestroy(): void {
+    console.log(this.root)
     this.root?.unmount()
   }
 }
