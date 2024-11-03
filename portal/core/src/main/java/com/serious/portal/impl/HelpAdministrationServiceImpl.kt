@@ -6,13 +6,6 @@ package com.serious.service.administration.portal.impl
  */
 
 import com.serious.portal.HelpAdministrationService
-import com.serious.portal.ManifestLoader
-import com.serious.portal.ManifestManager
-import com.serious.portal.PortalAdministrationService
-import com.serious.portal.model.Address
-import com.serious.portal.model.Manifest
-import com.serious.portal.model.RegistryError
-import com.serious.portal.model.RegistryResult
 import com.serious.portal.persistence.HelpEntityManager
 import com.serious.portal.persistence.HelpRepository
 import com.serious.portal.persistence.entity.HelpEntity

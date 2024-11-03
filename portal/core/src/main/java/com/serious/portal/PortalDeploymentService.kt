@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalDeploymentService : Service {
-    @GetMapping("deployment/{session}")
-    fun getDeployment(@PathVariable session: Boolean) : Deployment
-
     @GetMapping("compute-deployment/{application}/{version}/{session}")
     fun computeDeployment(@PathVariable application: String, @PathVariable version : String, @PathVariable session: Boolean) : Deployment
 }

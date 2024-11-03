@@ -5,9 +5,7 @@ package com.serious.portal
  * All rights reserved
  */
 
-import com.serious.portal.model.Manifest
 import com.serious.portal.model.MicrofrontendInstance
-import com.serious.portal.persistence.ManifestEntityManager
 import com.serious.portal.persistence.MicrofrontendEntityManager
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +15,7 @@ import java.net.URL
 
 
 @Component
-class MicrofrontendManager {
+class MicrofrontendHealthCheck {
     // instance data
 
     val instances = mutableListOf<MicrofrontendInstance>()
@@ -52,47 +50,13 @@ class MicrofrontendManager {
         } // for
     }
 
-    // public
-
-    fun load(url: URL) : MicrofrontendInstance {
-        val manifest = manifestLoader.load(url)
-
-        manifest.enabled = true
-        manifest.health = "alive"
-        manifest.remoteEntry = url.toString()
-
-        if ( manifest.healthCheck == null)
-            manifest.healthCheck = manifest.remoteEntry
-
-        return register(manifest)
-    }
-
-    fun register(manifest: Manifest) : MicrofrontendInstance {
-        val microfrontendInstance = entityManager.createMicrofrontendInstance(manifest)
-
+    fun register(microfrontendInstance: MicrofrontendInstance) {
         this.instances.add(microfrontendInstance)
-
-        return microfrontendInstance
     }
 
     fun remove(url: String) {
         instances.removeIf { instance -> instance.uri == url}
-
-        entityManager.deleteMicrofrontendInstanceById(url)
     }
-/*
-    fun save(manifest: Manifest) {
-        val index = instances.indexOfFirst { man -> man.remoteEntry == manifest.remoteEntry }
-
-        if ( index >= 0) {
-            instances[index] = manifest
-        }
-        else {
-            instances.add(manifest)
-        }
-
-        this.entityManager.saveManifest(manifest)
-    } */
 
     @Scheduled(fixedRate = 1000 * 10)
     fun checkHealth() {
@@ -142,12 +106,4 @@ class MicrofrontendManager {
             }
         }
     }
-
-    /*fun enableMicrofrontend(name : String, enabled: Boolean) {
-        val manifest = this.instances.find { instance -> instance.name == name }
-
-        manifest?.enabled = enabled
-
-        this.entityManager.updateEnabled(manifest!!.remoteEntry!!, enabled)
-    }*/
 }

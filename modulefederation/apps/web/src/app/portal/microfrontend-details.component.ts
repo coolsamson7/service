@@ -11,7 +11,7 @@ import { AbstractControl, AbstractControlDirective, AsyncValidatorFn, FormBuilde
 import { AbstractFeature, Command, Feature, FeatureConfig, Manifest, MessageAdministrationService, SuggestionProvider, Translator, WithCommands, WithDialogs } from "@modulefederation/portal";
 import { I18NTreeComponent } from "./widgets/i18n-tree";
 import { MatFormField } from "@angular/material/form-field";
-
+// TODO obsolete?
 @Component({
     selector: '[errorMessages]',
     template: '{{ error }}'

@@ -123,8 +123,8 @@ export class PortalAdministrationService extends AbstractHTTPService {
       return this.post<Microfrontend>(`update-microfrontend`, microfrontend)
   }
 
-   deleteMicrofrontend( microfrontend: String) : Observable<any> {
-        return this.get<any>(`delete-microfrontend/${microfrontend}`)
+   deleteMicrofrontend( microfrontend: String, force: boolean) : Observable<boolean> {
+        return this.get<any>(`delete-microfrontend/${microfrontend}/${force}`)
    }
 
   // microfrontend versions

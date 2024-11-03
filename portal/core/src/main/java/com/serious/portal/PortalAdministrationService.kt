@@ -17,27 +17,6 @@ import java.util.*
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalAdministrationService : Service {
-    @PostMapping("register-microfrontend")
-    @ResponseBody
-    fun registerMicrofrontend(@RequestBody url : Address) : RegistryResult
-
-    @PostMapping("register-manifest")
-    @ResponseBody
-    fun registerManifest(@RequestBody manifest: Manifest) : RegistryResult
-
-    @PostMapping("remove-microfrontend")
-    fun removeMicrofrontend(@RequestBody url : Address)
-
-    @PostMapping("save-manifest")
-    @ResponseBody
-    fun saveManifest(@RequestBody manifest : Manifest)
-
-    @GetMapping("enable-microfrontend/{name}/{enabled}")
-    fun enableMicrofrontend(@PathVariable name : String, @PathVariable enabled: Boolean)
-
-    @GetMapping("refresh")
-    fun refresh()
-
     // TEST TODO
     @RequestMapping(path = ["throwDeclared"], method = [RequestMethod.GET])
     @ResponseBody
@@ -104,8 +83,8 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun updateMicrofrontend(@RequestBody version: Microfrontend) : Microfrontend
 
-    @GetMapping("delete-microfrontend/{microfrontend}")
-    fun deleteMicrofrontend(@PathVariable microfrontend: String)
+    @GetMapping("delete-microfrontend/{microfrontend}/{force}")
+    fun deleteMicrofrontend(@PathVariable microfrontend: String, @PathVariable force: Boolean) : Boolean
 
     // microfrontend version
 

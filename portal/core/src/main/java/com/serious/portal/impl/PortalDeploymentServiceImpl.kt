@@ -25,10 +25,6 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
 
     // implement
 
-    override fun getDeployment(session: Boolean) : Deployment {
-        return deploymentManager.create(session)
-    }
-
     override fun computeDeployment(application: String, version : String, session: Boolean) : Deployment {
         return deploymentManager.create(application, version, session)
     }

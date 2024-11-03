@@ -159,7 +159,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                 this.deleteApplicationVersion(request.node)
 
             else if  ( request.node.type == "microfrontend")
-                this.deleteMicrofrontend(request.node)
+                this.deleteMicrofrontend(request.node, false)
 
             else if  ( request.node.type == "microfrontend-version")
                 this.deleteMicrofrontendVersion(request.node)
@@ -263,9 +263,23 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
         })
     }
 
-    deleteMicrofrontend(node: Node) {
-        this.portalAdministrationService.deleteMicrofrontend(node.data.name).subscribe(_ => {
-            this.selectNode( this.tree.deletedNode(node)!)
+    deleteMicrofrontend(node: Node, force: boolean) {
+        this.portalAdministrationService.deleteMicrofrontend(node.data.name, force).subscribe(ok => {
+            if (ok)
+                this.selectNode( this.tree.deletedNode(node)!)
+            else {
+                this.confirmationDialog()
+                    .title("Delete Microfrontend")
+                    .message("Microfrontend is assigned. Still delete?")
+                    .okCancel()
+                    .show()
+                    .subscribe(ok => {
+                        if ( ok )
+                            this.portalAdministrationService.deleteMicrofrontend(node.data.name, true).subscribe(_ => {
+                                this.selectNode( this.tree.deletedNode(node)!)
+                        })
+                    })
+            } // else
         })
     }
 

@@ -10,7 +10,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Feature, Manifest, WithDialogs } from "@modulefederation/portal";
 import { fromFetch } from "rxjs/fetch";
 import { catchError, of, switchMap } from "rxjs";
-
+// TODO obsolete?
 @Component({
     selector: 'microfrontends',
     templateUrl: './microfrontends.component.html',

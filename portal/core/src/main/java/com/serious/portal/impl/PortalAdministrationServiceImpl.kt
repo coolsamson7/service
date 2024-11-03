@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import java.net.MalformedURLException
-import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,13 +29,9 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    lateinit var manifestManager: ManifestManager
-
+    lateinit var microfrontendHealthCheck: MicrofrontendHealthCheck
     @Autowired
-    lateinit var microfrontendManager: MicrofrontendManager
-
-    @Autowired
-    lateinit var manifestLoader: ManifestLoader
+    lateinit var microfrontedEntityManager : MicrofrontendEntityManager
 
     @Autowired
     lateinit var stageRepository: StageRepository
@@ -64,78 +58,6 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var microfrontendInstanceRepository: MicrofrontedInstanceRepository
 
     // implement PortalAdministrationService
-
-    override fun registerManifest(manifest: Manifest) : RegistryResult {
-        var url = manifest.remoteEntry
-
-        if ( manifest.healthCheck == null)
-            manifest.healthCheck = manifest.remoteEntry
-
-        // check for duplicates
-
-        val result: Manifest? = manifestManager.manifests.find { manifest -> manifest.remoteEntry == url }
-
-        if (result != null)
-            return RegistryResult(RegistryError.duplicate, null, "microfrontend already registered")
-        else {
-            manifestManager.register(manifest)
-
-            return RegistryResult(null, manifest, "registered")
-        }
-    }
-
-    override fun registerMicrofrontend(address: Address): RegistryResult {
-        var url : URL? = null
-
-        try {
-            url = URL(address.protocol + "//" + address.host + ":" + address.port)
-        }
-        catch(exception: MalformedURLException) {
-            return RegistryResult(RegistryError.malformed_url, null, exception.message!!)
-        }
-
-        // check for duplicates
-
-        val result: Manifest? = manifestManager.manifests.find { manifest -> manifest.remoteEntry == url.toString() }
-
-        if (result != null)
-            return RegistryResult(RegistryError.duplicate, null, "microfrontend already registered")
-        else {
-            var manifest : Manifest? = null
-            try {
-                manifest = manifestLoader.load(url)
-
-                manifest.enabled = true
-                manifest.health  = "alive"
-                manifest.remoteEntry = url.toString()
-            }
-            catch (exception: Exception) {
-                return RegistryResult(RegistryError.unreachable, null, exception.message!!)
-            }
-
-            manifestManager.register(manifest)
-
-            return RegistryResult(null, manifest, "registered")
-        }
-    }
-
-    override fun removeMicrofrontend(address: Address) {
-        val url = URL(address.protocol + "//" + address.host + ":" + address.port).toString()
-
-        manifestManager.remove(url)
-    }
-
-    override fun saveManifest(manifest: Manifest) {
-        manifestManager.save(manifest)
-    }
-
-    override fun enableMicrofrontend(name : String, enabled: Boolean) {
-        manifestManager.enableMicrofrontend(name, enabled)
-    }
-
-    override fun refresh() {
-        manifestManager.refresh()
-    }
 
     // TEST TODO
     override fun throwDeclaredException(): String {
@@ -389,9 +311,49 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         return microfrontend
     }
 
+    private fun isAssigned(microfrontendEntity: MicrofrontendEntity) : Boolean {
+        // TODO: refactor as query
+        for ( applicationVersion in applicationVersionRepository.findAll()) {
+            for ( assignedMicrofrontend in applicationVersion.assignedMicrofrontends)
+                if ( assignedMicrofrontend.microfrontend == microfrontendEntity)
+                    return true
+        }
+
+        return false
+    }
+
+    private fun unAssign(microfrontendEntity: MicrofrontendEntity) {
+        outerloop@ for ( applicationVersion in applicationVersionRepository.findAll()) {
+            for ( assignedMicrofrontend in applicationVersion.assignedMicrofrontends)
+                if ( assignedMicrofrontend.microfrontend == microfrontendEntity) {
+                    applicationVersion.assignedMicrofrontends.remove(assignedMicrofrontend)
+                    continue@outerloop
+                }
+        }
+    }
+
     @Transactional
-    override fun deleteMicrofrontend(@PathVariable microfrontend: String) {
-        this.microfrontendRepository.deleteById(microfrontend)
+    override fun deleteMicrofrontend(@PathVariable microfrontend: String, force: Boolean ) : Boolean {
+        val microfrontendEntity = this.microfrontendRepository.findById(microfrontend).get()
+
+        if ( !force && isAssigned(microfrontendEntity))
+            return false
+
+        unAssign(microfrontendEntity)
+
+        // delete instances
+
+        for ( version in microfrontendEntity.versions)
+            for ( instance in version.instances) {
+                microfrontendHealthCheck.remove(instance.uri)
+                microfrontendInstanceRepository.deleteById(instance.uri)
+            }
+
+        // delete microfrontend
+
+        microfrontendRepository.deleteById(microfrontend)
+
+        return true
     }
 
     // microfrontend versions
@@ -422,6 +384,11 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         val microfrontend = this.microfrontendRepository.findById(microfrontend).get()
         val version = microfrontend.versions.find { mfev -> mfev.version == version }!!
 
+        for ( instance in version.instances) {
+            microfrontendInstanceRepository.deleteById(instance.uri)
+            microfrontendHealthCheck.remove(instance.uri)
+        }
+
         microfrontendVersionRepository.delete(version)
     }
 
@@ -429,11 +396,12 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
     @Transactional
     override fun deleteMicrofrontendInstance(microfrontend: String, version: String, instance: String) {
-        val microfrontend = this.microfrontendRepository.findById(microfrontend).get()
-        val version = microfrontend.versions.find { mfev -> mfev.version == version }!!
-        val instance = version.instances.find { i -> i.uri == instance }
+        //val microfrontend = this.microfrontendRepository.findById(microfrontend).get()
+        //val version = microfrontend.versions.find { mfev -> mfev.version == version }!!
+        //val instance = version.instances.find { i -> i.uri == instance }
 
-        microfrontendInstanceRepository.delete(instance!!)
+        microfrontendInstanceRepository.deleteById(instance)
+        microfrontendHealthCheck.remove(instance)
     }
 
 
@@ -461,12 +429,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         // check for duplicates
 
-        val result: MicrofrontendInstance? = microfrontendManager.instances.find { instance -> instance.uri == url }
+        val result: MicrofrontendInstance? = microfrontendHealthCheck.instances.find { instance -> instance.uri == url }
 
         if (result != null)
             return MicrofrontendRegistryResult(RegistryError.duplicate, null, null, null, "microfrontend already registered")
         else {
-            val instance = microfrontendManager.register(manifest)
+            val instance = microfrontedEntityManager.createMicrofrontendInstance(manifest)
+
+            microfrontendHealthCheck.register(instance)
 
             val microfrontendEntity = this.microfrontendRepository.findById(manifest.name).get()
             val microfrontendVersion = microfrontendEntity.versions.find { version -> version.version == manifest.version }

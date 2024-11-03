@@ -32,7 +32,7 @@ typealias ManifestFilter = (context: FilterContext, manifest: Manifest) -> Boole
 typealias FeatureFilter = (context: FilterContext, feature: Feature) -> Boolean
 
 @Component
-class DeploymentManager(@Autowired val manager: ManifestManager) {
+class DeploymentManager() {
     // instance data
 
     private val manifestFilters = mutableListOf<ManifestFilter>()
@@ -224,9 +224,5 @@ class DeploymentManager(@Autowired val manager: ManifestManager) {
         // done
 
         return deployment
-    }
-
-    fun create(session: Boolean) : Deployment {
-        return this.createDeployment(manager.manifests, "{\"type\":\"object\",\"value\": [] }", session)
     }
 }
