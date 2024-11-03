@@ -216,7 +216,7 @@ export class PortalManager {
     // construct lazy routes
 
     const lazyRoutes: Routes = Object.values(modules)
-      .filter((module) => module.remoteEntry !== undefined)
+      .filter((module) => module.type == "microfrontend")
       .map((module) => {
         const key = module.name;
         const feature = this.featureRegistry.getFeature(key);
@@ -375,9 +375,7 @@ export class PortalManager {
 
       this.moduleRegistry.register(module); // will keep original
 
-      if (module.remoteEntry) {
-        module.type = 'microfrontend';
-
+      if (module.type == 'microfrontend') {
         let remoteEntry = module.remoteEntry;
         if ( module.remoteEntryName)
           remoteEntry = remoteEntry + "/" + module.remoteEntryName
