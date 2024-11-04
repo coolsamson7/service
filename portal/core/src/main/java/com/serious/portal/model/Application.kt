@@ -5,8 +5,8 @@ package com.serious.portal.model
  * All rights reserved
  */
 
-data class Application(
-    var name : String,
-    var configuration : String,
-    var versions: List<ApplicationVersion>
-)
+class Application() {
+    var name: String = ""
+    var configuration: String = ""
+    var versions: List<ApplicationVersion> = ArrayList()
+}

@@ -616,11 +616,11 @@ class OperationBuilder(private val matches: MutableCollection<MappingDefinition.
         val sourceTree = SourceTree(definition.sourceClass, matches)
         val targetTree = TargetTree(definition.targetClass, matches)
         val operations = targetTree.makeOperations(sourceTree, mapper, definition)
-        val constructor = if ( targetTree.root.resultDefinition != null ) targetTree.root.resultDefinition?.constructor!! else definition.targetClass.primaryConstructor!!
+        val constructor = if ( targetTree.root.resultDefinition != null ) targetTree.root.resultDefinition?.constructor!! else definition.targetClass.constructors.find { ctr -> ctr.parameters.size == 0 }//primaryConstructor!!
 
         val compiled = operations.size == 1 && operations[0].source is Mapping.CompiledPropertyProperty
 
-        return OperationResult(operations, compiled, constructor, sourceTree.stackSize)
+        return OperationResult(operations, compiled, constructor!!, sourceTree.stackSize)
     }
 
     companion object {
