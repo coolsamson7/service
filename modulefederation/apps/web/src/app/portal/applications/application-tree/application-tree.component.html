@@ -48,6 +48,16 @@
 
     <ng-container *ngIf="node.type === 'microfrontend'">
       <span class="name">{{node.data.name}}</span>
+
+      <!-- menu -->
+
+      <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
+        <mat-icon class="add" matSuffix>more_vert</mat-icon>
+
+        <mat-menu #applicationMenu="matMenu">
+          <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
+        </mat-menu>
+      </button>
     </ng-container>
 
     <!-- microfrontend version  -->
@@ -59,7 +69,7 @@
 
         <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
           <mat-icon class="add" matSuffix>more_vert</mat-icon>
-  
+
           <mat-menu #applicationMenu="matMenu">
             <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
           </mat-menu>
@@ -135,7 +145,7 @@
 
             <button aria-label="Add" [matMenuTriggerFor]="applicationMenu" class="menu" mat-icon-button>
               <mat-icon class="add" matSuffix>more_vert</mat-icon>
-      
+
               <mat-menu #applicationMenu="matMenu">
                 <button mat-menu-item  (click)="triggeredMenu(node, 'delete')">Delete</button>
               </mat-menu>

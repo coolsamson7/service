@@ -49,7 +49,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     treeControl = new NestedTreeControl<Node>(node => node.children);
     dataSource = new MatTreeNestedDataSource<Node>();
 
-    selection?: Node
+    selection?: Node | undefined
 
     // private
 
@@ -142,15 +142,22 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
             const children  = node.parent!.children!
 
             children.splice(index, 1)
-            nextNode = children.length > 0 ? children[Math.max(children.length - 1, index)] : node.parent
+            nextNode = children.length > 0 ? children[Math.min(children.length - 1, index)] : node.parent
         }
         else {
             const children  =  this.dataSource.data
             children.splice(index, 1)
-            nextNode = children.length > 0 ? children[Math.max(children.length - 1, index)] : undefined
+            nextNode = children.length > 0 ? children[Math.min(children.length - 1, index)] : undefined
         }
 
         this.refreshData()
+
+        if ( nextNode )
+            this.treeControl.expansionModel.select(nextNode)
+        else
+            this.treeControl.expansionModel.select()
+
+        this.select(nextNode)
 
         return nextNode
     }
@@ -180,7 +187,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         return node
     }
 
-    select(node: Node) {
+    select(node: Node | undefined) {
         this.selection = node
 
         this.onSelectionChange.emit(node)
