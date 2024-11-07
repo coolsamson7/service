@@ -34,34 +34,7 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         });
     }
 
-    private onResize(resize: ResizeObserverEntry) {
-        this.layout()
-    }
-
     // protected
-
-    ngAfterViewInit() : void {
-        this.loader.isLoaded$.pipe(
-            filter(isLoaded => isLoaded),
-            take(1)
-        ).subscribe(() => {
-            setTimeout(() => this.setupEditor(), 0)
-        })
-
-        this.resizeSubscription = new ResizeObservable(this.el.nativeElement.childNodes[0], this.zone)
-        //TODO .pipe(debounceTime(200))
-        .subscribe((entries: ResizeObserverEntry[]) => this.onResize(entries[0]));
-    }
-
-    ngOnDestroy() {
-        if (this.resizeSubscription) this.resizeSubscription.unsubscribe();
-
-        if (this.editor) {
-            this.editor.getModel()?.dispose()
-            this.editor.dispose();
-            this.editor = undefined;
-        }
-    }
 
     protected setupEditor() {
         if (this.model.schema)
@@ -78,8 +51,6 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         return monaco.editor.getModel(this.uri || '');
     }
 
-    // private
-
     protected createModel() {
         let model = this.getModel();
         if (!model) {
@@ -94,8 +65,6 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         return this.modelInstance = model
     }
 
-    // implement AfterViewInit
-
     protected setSchema() {
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,
@@ -107,11 +76,46 @@ export abstract class AbstractMonacoEditor implements AfterViewInit, OnDestroy {
         })
     }
 
-    // implement OnDestroy
+    // private
+
+    private onResize(resize: ResizeObserverEntry) {
+        this.layout()
+    }
 
     private layout() {
-        if (this.editor)
-            this.editor.layout()
+        if (this.editor) {
+          console.log("layout")
+          this.editor.layout()
+
+          setTimeout(() => this.editor.layout(), 200)
+        }
+    }
+
+    // implement AfterViewInit
+
+    ngAfterViewInit() : void {
+        this.loader.isLoaded$.pipe(
+            filter(isLoaded => isLoaded),
+            take(1)
+        ).subscribe(() => {
+            setTimeout(() => this.setupEditor(), 0)
+        })
+
+        this.resizeSubscription = new ResizeObservable(this.el.nativeElement.childNodes[0], this.zone)
+        //TODO .pipe(debounceTime(200))
+        .subscribe((entries: ResizeObserverEntry[]) => this.onResize(entries[0]));
+    }
+
+    // implement OnDestroy
+
+    ngOnDestroy() {
+        if (this.resizeSubscription) this.resizeSubscription.unsubscribe();
+
+        if (this.editor) {
+            this.editor.getModel()?.dispose()
+            this.editor.dispose();
+            this.editor = undefined;
+        }
     }
 }
 

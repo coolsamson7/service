@@ -9,7 +9,7 @@ export interface PluginInfo {
     description: string
 }
 
-@RegisterPlugin("plugins")
+@RegisterPlugin("plugin-manager")
 @Injectable({providedIn: 'root'})
 export class PluginsPlugin extends AbstractPlugin {
     // constructor

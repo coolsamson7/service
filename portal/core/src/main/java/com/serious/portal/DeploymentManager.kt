@@ -109,22 +109,36 @@ class DeploymentManager() {
     @Autowired
     private lateinit var objectMapper : ObjectMapper
 
-    fun findApplicationVersion(application: String, version: String) : ApplicationVersionEntity? {
+    fun findMicrofrontendVersion(application: String, version: String) : MicrofrontendVersionEntity? {
         val shellVersion =  this.entityManager.createQuery("select m from MicrofrontendVersionEntity m where m.microfrontend.name = :application and m.version =:version", MicrofrontendVersionEntity::class.java)
             .setParameter("version", version)
             .setParameter("application", application)
             .singleResult
 
-        if ( shellVersion !== null)
-            return shellVersion.applicationVersion
+        return shellVersion
+    }
+
+    fun findApplicationVersion(application: String, version: String) : ApplicationVersionEntity? {
+        val shellVersion =  this.findMicrofrontendVersion(application, version)
+
+        return if ( shellVersion !== null)
+            shellVersion.applicationVersion
         else
-            return null
+            null
     }
 
     // TODO: cache Long -> ... ( Deployment )
-    fun create(application: String, version: String, session: Boolean) : Deployment {
+    fun create(request: DeploymentRequest) : Deployment {
+        val application = request.application
+        val version = request.version
+        val session = request.session
+        val uri = request.protocol + "//" + request.host + ":" + request.port
+
         // read version
 
+        val shellVersion = this.findMicrofrontendVersion(application, version)
+        val instance = shellVersion!!.instances.find { instance -> instance.uri == uri}
+        val stage = instance!!.stage
         val applicationVersion : ApplicationVersionEntity = this.findApplicationVersion(application, version)!!
 
         val configurations = ArrayList<String>()
@@ -149,17 +163,24 @@ class DeploymentManager() {
 
         for ( assigned in applicationVersion.assignedMicrofrontends) {
             val match = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
-            if ( match != null) {
+            if ( match != null && match.instances.find { instance -> instance.stage == stage } !== null) {
                 versions.add(match)
                 configurations.add(match.configuration)
-
-                println(match.microfrontend.name + "." + match.version)
             }
         }
 
         // manifests
 
-        val manifests = versions.map { version ->  objectMapper.readValue(version.manifest, Manifest::class.java)}
+        val manifests = versions.map { v ->
+            val manifest = objectMapper.readValue(v.manifest, Manifest::class.java)
+
+            val instance = v.instances.find { instance -> instance.stage == stage }!!
+
+            manifest.remoteEntry = instance.uri
+            manifest.healthCheck =  manifest.remoteEntry // TODO ???
+
+            manifest
+        }
 
         val configuration = merger.mergeConfigurationValues(configurations)
 

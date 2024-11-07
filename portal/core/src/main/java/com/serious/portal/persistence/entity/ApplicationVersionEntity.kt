@@ -27,6 +27,6 @@ class ApplicationVersionEntity {
     @Column(name = "CONFIGURATION", length = 4000)
     lateinit var configuration: String
 
-    @OneToMany(mappedBy = "applicationVersion")
+    @OneToMany(mappedBy = "applicationVersion", orphanRemoval = true)
     lateinit var assignedMicrofrontends: MutableList<AssignedMicrofrontendEntity>
 }

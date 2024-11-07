@@ -269,7 +269,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         applicationEntity.versions.remove(versionEntity)
 
-        this.applicationVersionRepository.delete(versionEntity!!)
+        this.applicationVersionRepository.deleteById(versionEntity!!.id)
     }
 
     // microfrontend
@@ -343,12 +343,14 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
 
         // delete instances
 
-        for ( version in microfrontendEntity.versions)
-            for ( instance in version.instances) {
+        for ( version in microfrontendEntity.versions) {
+            for (instance in version.instances) {
                 microfrontendHealthCheck.remove(instance.uri)
                 microfrontendInstanceRepository.deleteById(instance.uri)
             }
 
+            microfrontendVersionRepository.delete(version)
+        }
         // delete microfrontend
 
         microfrontendRepository.deleteById(microfrontend)
@@ -388,6 +390,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
             microfrontendInstanceRepository.deleteById(instance.uri)
             microfrontendHealthCheck.remove(instance.uri)
         }
+
+        version.instances.clear()
+
+        microfrontend.versions.remove(version)
 
         microfrontendVersionRepository.delete(version)
     }

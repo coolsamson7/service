@@ -44,7 +44,17 @@ declare let monaco : any;
       .editor-container {
           width: 100%;
           height: 98%;
+
+          .monaco-editor {
+          color: red;
+            height: 100%;
+          }
       }
+
+        .monaco-editor {
+                color: red;
+                  height: 100%;
+                }
   `],
     providers: [
         {
@@ -81,6 +91,8 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
     @Input()
     set options(options : any) {
         this.editorOptions = Object.assign({}, this.config.defaultOptions, options);
+
+        this.editorOptions.automaticLayout = true
     }
 
     onChange = (_ : any) => { /** noop */}
@@ -129,7 +141,7 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
             this.onTouched();
         });
 
-        // doesnt't work
+        // doesn't work
 
         editor.onDidChangeModelDecorations(() => {
             // @ts-ignore

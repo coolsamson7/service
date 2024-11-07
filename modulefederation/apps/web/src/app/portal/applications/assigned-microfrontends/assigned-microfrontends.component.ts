@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Directive, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, Directive, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
 import { ApplicationVersion, AssignedMicrofrontend, Microfrontend } from "../../model";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { NG_VALIDATORS, Validator, AbstractControl, NgControl, AbstractControlDirective, FormsModule } from "@angular/forms";
@@ -172,7 +172,7 @@ export const Columns = [
         VersionValidatorDirective
     ]
 })
-export class AssignedMicrofrontendsComponent  implements OnInit {
+export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
    // inputs
 
     @Input() applicationVersion! : ApplicationVersion
@@ -272,6 +272,22 @@ export class AssignedMicrofrontendsComponent  implements OnInit {
      }*/
 
        // NEW TODO
+
+  // implement OnChanges
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.dataSource = new MatTableDataSource<AssignedMicrofrontendRow>(
+      this.applicationVersion.assignedMicrofrontends.map(assigned => {
+          return {
+              isSelected: false,
+              isEdit: false,
+              data: assigned
+          }
+      })
+  )
+
+ this.suggestionProvider = new ArraySuggestionProvider(this.microfrontends.map(microfrontend => microfrontend.name))
+  }
 
    // implement OnInit
 

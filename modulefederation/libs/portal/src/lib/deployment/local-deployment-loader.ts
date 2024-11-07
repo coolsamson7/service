@@ -1,4 +1,4 @@
-import { DeploymentLoader } from "./deployment-loader";
+import { DeploymentLoader, DeploymentRequest } from "./deployment-loader";
 import { Deployment } from "./deployment-model";
 import { ManifestDecorator } from "./manifest-decorator";
 
@@ -16,7 +16,7 @@ export class LocalDeploymentLoader extends DeploymentLoader {
 
     // implement DeploymentLoader
     
-    async load(name: string, version: string) : Promise<Deployment> {
+    async load(request: DeploymentRequest) : Promise<Deployment> {
         const promises = this.urls.map(url => {
             return fetch(url + "/assets/manifest.json")
         })

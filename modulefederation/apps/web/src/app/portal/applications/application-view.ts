@@ -29,7 +29,7 @@ export abstract class ApplicationView extends WithSnackbar(WithCommandToolbar(Wi
          value: []
        }
 
-       // copy all values which either dont't inherit or overwrite
+       // copy all values which either don't inherit or overwrite
 
        const copy = (properties: ConfigurationProperty[], result: ConfigurationProperty[]) => {
          for ( const property of properties) {

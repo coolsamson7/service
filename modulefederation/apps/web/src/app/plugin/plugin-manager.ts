@@ -38,7 +38,7 @@ export class PluginManager extends PluginRegistry {
 
     next = 0 // correlation id
 
-    // construtor
+    // constructor
 
     constructor(private stomp: RxStomp) {
         super()

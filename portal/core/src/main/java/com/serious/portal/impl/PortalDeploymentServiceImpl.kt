@@ -6,6 +6,7 @@ package com.serious.service.administration.portal.impl
  */
 
 import com.serious.portal.DeploymentManager
+import com.serious.portal.DeploymentRequest
 import com.serious.portal.PortalDeploymentService
 import com.serious.portal.model.Deployment
 import jakarta.annotation.PostConstruct
@@ -25,7 +26,7 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
 
     // implement
 
-    override fun computeDeployment(application: String, version : String, session: Boolean) : Deployment {
-        return deploymentManager.create(application, version, session)
+    override fun computeDeployment(request: DeploymentRequest) : Deployment {
+        return deploymentManager.create(request)
     }
 }

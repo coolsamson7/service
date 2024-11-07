@@ -1,9 +1,8 @@
 import { Injectable, Injector } from "@angular/core";
-import { Deployment, DeploymentLoader } from "../deployment";
+import { Deployment, DeploymentLoader, DeploymentRequest } from "../deployment";
 
 import { Observable } from "rxjs";
 import { AbstractHTTPService, Service } from "../common/communication";
-import { SessionManager, Ticket } from "../security";
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "admin", prefix: "/portal-administration"})
@@ -16,13 +15,8 @@ export class PortalDeploymentService extends AbstractHTTPService {
 
     // public
 
-    public getDeployment(name: string, version: string, session : boolean) : Observable<Deployment> {
-        return this.computeDeployment(name, version, session)
-        //return this.get<Deployment>(`/deployment/${session}`);
-    }
-
-    public computeDeployment(application: string, version: string, session : boolean) : Observable<Deployment> {
-        return this.get<Deployment>(`/compute-deployment/${application}/${version}/${session}`)
+    public computeDeployment(request: DeploymentRequest) : Observable<Deployment> {
+        return this.post<Deployment>(`/compute-deployment`, request)
     }
 }
 
@@ -30,14 +24,14 @@ export class PortalDeploymentService extends AbstractHTTPService {
 export class HTTPDeploymentLoader extends DeploymentLoader {
     // constructor
 
-    constructor(private deploymentService : PortalDeploymentService, private sessionManager : SessionManager<any, Ticket>) {
+    constructor(private deploymentService : PortalDeploymentService) {
         super();
     }
 
     // implement DeploymentLoader
 
-    load(name: string, version: string) : Promise<Deployment> {
+    load(request: DeploymentRequest) : Promise<Deployment> {
         // @ts-ignore
-        return this.deploymentService.getDeployment(name, version, this.sessionManager.hasSession()).toPromise()
+        return this.deploymentService.computeDeployment(request).toPromise()
     }
 }

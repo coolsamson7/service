@@ -1,5 +1,14 @@
 import { Deployment } from "../deployment";
 
+export interface DeploymentRequest {
+    application: string
+    version : string
+    session: boolean
+    host: string
+    port: string
+    protocol: string
+}
+
 export abstract class DeploymentLoader {
-    abstract load(name: string, version: string) : Promise<Deployment>
+    abstract load(request: DeploymentRequest) : Promise<Deployment>
 }

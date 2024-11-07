@@ -169,6 +169,9 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
    }
 
     selectNode(node: Node | undefined) {
+        if ( node === this.selectedNode)
+            return
+
         if ( this.dirty) {
             this.confirmationDialog()
                 .title("Dirty")
@@ -179,6 +182,10 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                     if ( result ) {
                         this.save()
                         this.selectNode(node)
+                    }
+                    else {
+                        this.tree.select(this.selectedNode!)
+                       this.tree.treeControl.expansionModel.select(this.selectedNode!)
                     }
                 })
             return
@@ -404,7 +411,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                         const addTree : AddTreeData  = {
                         }
 
-            
+
                         if ( !microfrontend ) {
                             // microfronted was created as well
 
@@ -413,7 +420,7 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
                             addTree.microfrontend = microfrontend
                         }
 
-                        let version = addTree.microfrontend ? null : microfrontend?.versions.find(version => version.version == manifest.version) 
+                        let version = addTree.microfrontend ? null : microfrontend?.versions.find(version => version.version == manifest.version)
 
                         if ( !version ) {
                             // version was created as well

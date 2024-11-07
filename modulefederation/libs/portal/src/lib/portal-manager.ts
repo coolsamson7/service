@@ -19,6 +19,7 @@ import { LocaleManager } from './locale';
 import { DeploymentConfigurationSource } from './deployment/deployment-configuration-source';
 import { ConfigurationManager } from './common';
 import { RouteBuilder, RouteBuilderManager } from './federation';
+import { SessionManager, Ticket } from './security';
 
 /**
  * the runtime data of feature
@@ -68,6 +69,7 @@ export class PortalManager {
     private localeManager: LocaleManager,
     private configurationManager: ConfigurationManager,
     private routeBuilder : RouteBuilderManager,
+    private sessionManager: SessionManager<any,Ticket>,
     private injector: Injector
   ) {}
 
@@ -90,7 +92,14 @@ export class PortalManager {
        throw new Error("you need to specify either a server  or local loader")
 
     return loader
-      .load(this.portalConfig.localManifest.name, this.portalConfig.localManifest.version)
+      .load({
+        application: this.portalConfig.localManifest.name,
+        version: this.portalConfig.localManifest.version,
+        session: this.sessionManager.hasSession(),
+        host: window.location.hostname,
+        port: window.location.port,
+        protocol: window.location.protocol,
+      }, )
       .then((deployment) => this.setupDeployment(deployment, merge));
   }
 

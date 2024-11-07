@@ -8,16 +8,22 @@ package com.serious.portal
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.portal.model.Deployment
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import javax.print.attribute.IntegerSyntax
 
+class DeploymentRequest(
+    val application: String,
+    val version : String,
+    val session: Boolean,
+    val host: String,
+    val port: String,
+    val protocol: String
+)
 
 @ServiceInterface
 @RequestMapping("portal-administration/")
 @RestController
 interface PortalDeploymentService : Service {
-    @GetMapping("compute-deployment/{application}/{version}/{session}")
-    fun computeDeployment(@PathVariable application: String, @PathVariable version : String, @PathVariable session: Boolean) : Deployment
+    @PostMapping("compute-deployment")
+    fun computeDeployment(@RequestBody request: DeploymentRequest) : Deployment
 }
