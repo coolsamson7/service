@@ -8,6 +8,9 @@
 
     <mat-label>Version</mat-label>
     <div>{{version(microfrontendVersion.id)}}</div>
+
+    <mat-label>Enabled</mat-label>
+    <mat-slide-toggle (ngModelChange)="onEnabled(microfrontendVersion)" [disabled]="!microfrontend.enabled" [(ngModel)]="microfrontendVersion.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
   </div>
 
   <mat-divider></mat-divider>
@@ -38,15 +41,21 @@
           <a [routerLinkActive]="['is-active']" class="content" role="listitem">
             <mat-icon>language</mat-icon>
           
-            <span class="bold">URI</span>
+            <!--span class="bold">URI</span-->
             <span>{{instance.uri}}</span>
+
+            <span class="bold">Stage</span>
+            <mat-select [(value)]="instance.stage" (selectionChange)="stageChanged(instance)">
+              <mat-option *ngFor="let stage of stages" [value]="stage">{{stage}}</mat-option>
+            </mat-select>
+
             <span class="bold">Health</span>
             <mat-icon [ngStyle]="{'color':instance.health === 'alive' ? 'green' : 'red' }">
               {{instance.health === "alive" ? "wifi" : "sentiment_very_dissatisfied"}}
             </mat-icon>
           </a>
 
-          <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
+          <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [disabled]="!microfrontendVersion.enabled || !microfrontend.enabled" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
         </mat-list-item>
 
         <mat-divider></mat-divider>

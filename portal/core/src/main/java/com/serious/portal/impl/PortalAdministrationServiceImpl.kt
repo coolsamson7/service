@@ -301,12 +301,16 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
 
     @Transactional
+    override fun readMicrofrontend(microfrontend: String) : Microfrontend {
+        return readMicrofrontendMapper.map(this.microfrontendRepository.findById(microfrontend).get())!!
+    }
+
+    @Transactional
     override fun updateMicrofrontend(@RequestBody microfrontend: Microfrontend) : Microfrontend {
         val entity = this.microfrontendRepository.findById(microfrontend.name).get()
 
         entity.configuration = microfrontend.configuration
-
-        // TODO!!! hmmmm whats up with versions?
+        entity.enabled = microfrontend.enabled
 
         return microfrontend
     }
@@ -366,6 +370,11 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     }
 
     @Transactional
+    override fun readMicrofrontendVersion(microfrontend: String, version: String) : MicrofrontendVersion {
+        return this.readMicrofrontendVersions().find { v -> v.microfrontend == microfrontend && v.version == version }!!
+    }
+
+    @Transactional
     override fun updateMicrofrontendVersion(version: MicrofrontendVersion) : MicrofrontendVersion {
         val entity = this.microfrontendVersionRepository.findById(version.id).get()
 
@@ -376,7 +385,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         else
             entity.applicationVersion = null
 
-        // TODO!!! hmmmm
+        entity.enabled = version.enabled
 
         return version
     }
@@ -415,11 +424,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     override fun updateMicrofrontendInstance(instance: MicrofrontendInstance) : MicrofrontendInstance {
         val entity = this.microfrontendInstanceRepository.findById(instance.uri).get()
 
-        entity.configuration = instance.configuration
-        entity.manifest = objectMapper.writeValueAsString(instance.manifest)
+        //entity.configuration = instance.configuration
+        //entity.manifest = objectMapper.writeValueAsString(instance.manifest)
         entity.stage = instance.stage
-
-        // TODO!!! hmmmm
+        entity.enabled = instance.enabled
 
         return instance
     }

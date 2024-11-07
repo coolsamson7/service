@@ -9,6 +9,8 @@ import { PortalAdministrationService } from "../../service";
 import { ApplicationView } from "../application-view";
 import { CommonModule } from "@angular/common";
 import { ManifestComponent } from "../manifest/manifest.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
 
 @Component({
     standalone: true,
@@ -19,11 +21,13 @@ import { ManifestComponent } from "../manifest/manifest.component";
         // angular
 
         CommonModule,
+        FormsModule,
 
         // material
 
-        MatDividerModule,
+        MatDividerModule, 
         MatFormFieldModule,
+        MatSlideToggleModule,
 
         // components
 
@@ -34,20 +38,19 @@ import { ManifestComponent } from "../manifest/manifest.component";
 export class MicrofrontendComponent extends ApplicationView implements OnInit {
    // inputs
 
-    @Input() microfrontend! : Microfrontend
+   @Input() microfrontend! : Microfrontend
 
-    // outputs
+   // outputs
 
-    @Output() dirty = new EventEmitter<boolean>();
+   @Output() dirty = new EventEmitter<boolean>();
 
-    // instance data
+   // instance data
 
-     configurationData: ConfigurationProperty = {
+   configurationData: ConfigurationProperty = {
          type: "object",
          value: []
-     }
-     inheritedConfigurationData: ConfigurationProperty[] = []
-
+   }
+   inheritedConfigurationData: ConfigurationProperty[] = []
 
    // constructor
 
@@ -67,11 +70,15 @@ export class MicrofrontendComponent extends ApplicationView implements OnInit {
    }
 
    revert() {
-    // TODO
-    }
+      // TODO
+   }
 
    onDirty(dirty: boolean) {
     this.dirty.emit(dirty)
+   }
+
+   onEnabled(microfrontend: Microfrontend) {
+    this.onDirty(true)
    }
 
    // implement OnInit

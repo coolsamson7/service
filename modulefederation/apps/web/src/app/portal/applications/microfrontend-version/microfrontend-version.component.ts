@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 
 
 export class ApplicationVersionSuggestionProvider implements SuggestionProvider {
@@ -73,6 +74,7 @@ export class ApplicationVersionSuggestionProvider implements SuggestionProvider 
         MatSlideToggleModule,
         MatIconModule,
         MatInputModule,
+        MatSelectModule,
         MatSlideToggleModule,
 
         // components
@@ -82,7 +84,7 @@ export class ApplicationVersionSuggestionProvider implements SuggestionProvider 
         ConfigurationTreeComponent
     ]
 })
-export class MicrofrontendVersionComponent extends ApplicationView implements OnChanges {//TODO WithSnackbar(ApplicationView) {
+export class MicrofrontendVersionComponent extends ApplicationView implements OnChanges {
     // inputs
 
     @Input() microfrontend! : Microfrontend
@@ -105,6 +107,8 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
     suggestionProvider : SuggestionProvider
 
     applicationVersion  = ""
+
+    stages = ["", "QA", "PROD"] // TODO
 
     // constructor
 
@@ -132,10 +136,20 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
         this.manifestComponent.revert()
     }
 
-    onChangedEnabled(instance: MicrofrontendInstance) {
-      //this.showSnackbar(instance.uri, instance.enabled ? "disabled" : "enabled")
+    onEnabled(microfrontendVersion: MicrofrontendVersion) {
+        this.onDirty(true)
+    }
 
-      //TODO this.portalAdministrationService.enableMicrofrontend(manifest.name, !manifest.enabled).subscribe(result => console.log(result))
+    onChangedEnabled(instance: MicrofrontendInstance) {
+      this.showSnackbar(instance.uri, instance.enabled ? "disabled" : "enabled")
+
+      this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
+    }
+
+    stageChanged(instance: MicrofrontendInstance) {
+        this.showSnackbar("saved stage")
+
+        this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
     }
 
    // public

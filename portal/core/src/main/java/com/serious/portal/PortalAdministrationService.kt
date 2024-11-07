@@ -79,6 +79,10 @@ interface PortalAdministrationService : Service {
     @ResponseBody
     fun readMicrofrontends() : List<Microfrontend>
 
+    @GetMapping("read-microfrontend/{microfrontend}")
+    @ResponseBody
+    fun readMicrofrontend(@PathVariable microfrontend: String) : Microfrontend
+
     @PostMapping("update-microfrontend")
     @ResponseBody
     fun updateMicrofrontend(@RequestBody version: Microfrontend) : Microfrontend
@@ -91,6 +95,10 @@ interface PortalAdministrationService : Service {
     @GetMapping("read-microfrontend-versions")
     @ResponseBody
     fun readMicrofrontendVersions() : List<MicrofrontendVersion>
+
+    @GetMapping("read-microfrontend-version")
+    @ResponseBody
+    fun readMicrofrontendVersion(microfrontend: String, version: String) : MicrofrontendVersion
 
     @PostMapping("update-microfrontend-version")
     @ResponseBody

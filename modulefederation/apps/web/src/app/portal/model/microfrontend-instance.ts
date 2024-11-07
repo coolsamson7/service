@@ -6,7 +6,5 @@ export interface MicrofrontendInstance {
   version: string,
   enabled : boolean,
   health : string,
-  configuration : string,
-  manifest: Manifest
   stage : string
 }

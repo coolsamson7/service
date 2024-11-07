@@ -2,6 +2,9 @@
   <div class="general">
     <mat-label>Name</mat-label>
     <div>{{microfrontend.name}}</div>
+
+    <mat-label>Enabled</mat-label>
+    <mat-slide-toggle (ngModelChange)="onEnabled(microfrontend)" [(ngModel)]="microfrontend.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
   </div>
 
   <mat-divider></mat-divider>

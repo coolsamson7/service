@@ -38,10 +38,6 @@ export class PortalAdministrationService extends AbstractHTTPService {
         return this.post<Manifest>(`save-manifest`, manifest)
     }
 
-    public enableMicrofrontend(name : string, enabled : boolean) : Observable<Manifest> {
-        return this.get<any>(`enable-microfrontend/${name}/${enabled}`)
-    }
-
     public refresh() : Observable<any> {
         return this.get<any>(`refresh`)
     }
@@ -115,6 +111,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
   // microfrontend
 
+  readMicrofrontend(microfrontend: string) : Observable<Microfrontend> {
+    return this.get<Microfrontend>(`read-microfrontend/${microfrontend}`)
+  }
+
   readMicrofrontends() : Observable<Microfrontend[]> {
     return this.get<Microfrontend[]>(`read-microfrontends`)
   }
@@ -131,6 +131,10 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
   readMicrofrontendVersions() : Observable<MicrofrontendVersion[]>  {
     return this.get<MicrofrontendVersion[]>(`read-microfrontend-versions`)
+  }
+
+  readMicrofrontendVersion(microfrontend: string, version: string) : Observable<MicrofrontendVersion>  {
+    return this.get<MicrofrontendVersion>(`read-microfrontend-version/${microfrontend}/${version}`)
   }
 
   updateMicrofrontendVersion(version : MicrofrontendVersion) : Observable<MicrofrontendVersion>  {
