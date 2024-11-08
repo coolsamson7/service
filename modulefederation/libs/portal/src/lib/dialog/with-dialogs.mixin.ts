@@ -7,6 +7,7 @@ import { Observable } from "rxjs";
 import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { InputDialogBuilder } from "./input-dialog-builder";
 import { GConstructor } from "@modulefederation/common";
+import { DynamicDialogBuilder } from "./dynamic-dialog-builder";
 
 
 export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :GConstructor<Dialogs> &  T  {
@@ -32,6 +33,10 @@ export function WithDialogs<T extends GConstructor<AbstractFeature>>(base: T) :G
 
         confirmationDialog() : ConfirmationDialogBuilder {
             return this.dialogs.confirmationDialog()
+        }
+
+        dynamicDialog() : DynamicDialogBuilder {
+            return this.dialogs.dynamicDialog()
         }
 
         inputDialog() : InputDialogBuilder {

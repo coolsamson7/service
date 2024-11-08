@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Inject, Injector, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
 import { Application, ApplicationVersion, Microfrontend } from "../../model";
 import { ConfigurationProperty } from "../../config/configuration-model";
 import { ConfigurationTreeComponent } from "../../config/configuration-tree.component";
@@ -8,6 +8,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ApplicationFeatureComponent } from "../application.feature";
 import { PortalAdministrationService } from "../../service";
 import { ApplicationView } from "../application-view";
+import { ContentComponent } from "./application-version-dialog";
+
 
 @Component({
     standalone: true,
@@ -59,13 +61,28 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
             this.applicationVersion.assignedMicrofrontends[i].id = version.assignedMicrofrontends[i].id
         }
     })
+
+    this.showSnackbar("saved")
    }
 
-   revert() {
+  revert() {
     // TODO
-    }
+    this.showSnackbar("reverted")
+  }
 
   // callbacks
+
+  open() {
+    this.dynamicDialog()
+      .title(this.applicationVersion.version)
+      .component(ContentComponent)
+      .args({
+        version: this.applicationVersion
+      })
+      .ok()
+      .show().subscribe()
+
+  }
 
   onDirty(dirty: boolean) {
     this.dirty.emit(dirty)

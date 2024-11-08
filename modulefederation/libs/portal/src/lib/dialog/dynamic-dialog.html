@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div class="content" mat-dialog-content>
+  <ng-container *ngComponentOutlet="data.component"></ng-container>
+</div>
+<div align="end" mat-dialog-actions>
+  <button (click)="click(button)" *ngFor="let button of data.buttons"
+          [color]="button.primary === true ? 'primary' : 'basic'"
+          [mat-dialog-close]="button.result"
+          mat-button mat-raised-button>
+    {{button.label || (button.i18n! | translate)}}
+  </button>
+</div>
+
+

@@ -8,6 +8,7 @@ package com.serious.portal
 import com.serious.service.Service
 import com.serious.service.ServiceInterface
 import com.serious.portal.model.Deployment
+import com.serious.portal.model.MicrofrontendInstance
 import org.springframework.web.bind.annotation.*
 import javax.print.attribute.IntegerSyntax
 
@@ -21,9 +22,12 @@ class DeploymentRequest(
 )
 
 @ServiceInterface
-@RequestMapping("portal-administration/")
+@RequestMapping("portal-deployment/")
 @RestController
 interface PortalDeploymentService : Service {
     @PostMapping("compute-deployment")
     fun computeDeployment(@RequestBody request: DeploymentRequest) : Deployment
+
+    @GetMapping("shell-instances/{application}")
+    fun findShellInstances(@PathVariable application: Long) : List<MicrofrontendInstance>
 }

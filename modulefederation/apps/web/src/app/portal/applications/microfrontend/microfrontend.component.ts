@@ -67,10 +67,12 @@ export class MicrofrontendComponent extends ApplicationView implements OnInit {
 
     this.portalAdministrationService.updateMicrofrontend(this.microfrontend).subscribe()
 
+    this.showSnackbar("saved")
    }
 
    revert() {
       // TODO
+      this.showSnackbar("reverted")
    }
 
    onDirty(dirty: boolean) {

@@ -9,6 +9,7 @@ import com.serious.portal.DeploymentManager
 import com.serious.portal.DeploymentRequest
 import com.serious.portal.PortalDeploymentService
 import com.serious.portal.model.Deployment
+import com.serious.portal.model.MicrofrontendInstance
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -28,5 +29,9 @@ class PortalDeploymentServiceImpl : PortalDeploymentService {
 
     override fun computeDeployment(request: DeploymentRequest) : Deployment {
         return deploymentManager.create(request)
+    }
+
+    override fun findShellInstances(application: Long) : List<MicrofrontendInstance> {
+        return deploymentManager.findShellInstances(application)
     }
 }

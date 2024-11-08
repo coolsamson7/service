@@ -6,10 +6,11 @@
 
 import { Injectable, Injector } from "@angular/core"
 import { Observable } from "rxjs"
-import { AbstractHTTPService, Deployment, Service } from "@modulefederation/portal";
+import { AbstractHTTPService, Deployment, DeploymentRequest, Service } from "@modulefederation/portal";
+import { MicrofrontendInstance } from "../model";
 
 @Injectable({providedIn: 'root'})
-@Service({domain: "admin", prefix: "/portal-administration/"})
+@Service({domain: "admin", prefix: "/portal-deployment/"})
 export class PortalDeploymentService extends AbstractHTTPService {
     // constructor
 
@@ -19,11 +20,11 @@ export class PortalDeploymentService extends AbstractHTTPService {
 
     // public methods
 
-    public getDeployment(session : boolean) : Observable<Deployment> {
-        return this.get<Deployment>(`deployment/${session}`)
+    public computeDeployment(request: DeploymentRequest) : Observable<Deployment> {
+        return this.post<Deployment>(`compute-deployment`, request)
     }
 
-    public computeDeployment(application: string, version: string, session : boolean) : Observable<Deployment> {
-        return this.get<Deployment>(`compute-deployment/${application}/${version}/${session}`)
+    public findShellInstances(application: number) : Observable<MicrofrontendInstance[]> {
+        return this.get<MicrofrontendInstance[]>(`shell-instances/${application}`)
     }
 }

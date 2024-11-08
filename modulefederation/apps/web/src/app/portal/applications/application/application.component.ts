@@ -52,10 +52,12 @@ export class ApplicationComponent extends ApplicationView implements OnInit {
 
         this.portalAdministrationService.updateApplication(this.application).subscribe()
 
+        this.showSnackbar("saved")
     }
 
     revert() {
         // TODO
+        this.showSnackbar("reverted")
     }
     
    // callbacks

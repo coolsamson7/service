@@ -130,6 +130,8 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
 
             this.manifestComponent.saved()
         }
+
+        this.showSnackbar("saved")
     }
 
     revert() {

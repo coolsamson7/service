@@ -6,6 +6,7 @@ import { ConfirmationDialogBuilder } from "./confirmation-dialog-builder";
 import { tap } from "rxjs/operators";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Observable } from "rxjs";
+import { DynamicDialogBuilder } from "./dynamic-dialog-builder";
 
 export interface ButtonConfiguration {
     label?: string
@@ -28,6 +29,8 @@ export interface Dialogs {
   confirmationDialog() : ConfirmationDialogBuilder
 
   inputDialog() : InputDialogBuilder
+
+  dynamicDialog() : DynamicDialogBuilder
 }
 
 export interface DialogListener {
@@ -71,5 +74,9 @@ export class DialogService implements Dialogs {
 
     inputDialog() : InputDialogBuilder {
       return new InputDialogBuilder(this)
+    }
+
+    dynamicDialog() : DynamicDialogBuilder {
+      return new DynamicDialogBuilder(this)
     }
 }

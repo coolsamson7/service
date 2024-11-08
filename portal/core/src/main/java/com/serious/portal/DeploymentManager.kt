@@ -7,12 +7,11 @@ package com.serious.portal
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.portal.configuration.ConfigurationMerger
-import com.serious.portal.model.Deployment
-import com.serious.portal.model.Feature
-import com.serious.portal.model.Manifest
-import com.serious.portal.persistence.ApplicationVersionRepository
+import com.serious.portal.mapper.Mapper
+import com.serious.portal.mapper.mapping
+import com.serious.portal.model.*
 import com.serious.portal.persistence.entity.ApplicationVersionEntity
-import com.serious.portal.persistence.entity.MessageEntity
+import com.serious.portal.version.Version
 import com.serious.portal.version.VersionRange
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -41,20 +40,26 @@ class DeploymentManager() {
     // constructor
 
     init {
-        // enabled
+        // manifest enabled
 
-        filterManifest { context, manifest -> true /*manifest.enabled*/ }
+        filterManifest { context, manifest -> manifest.enabled }
+
+        // health
+
         filterManifest { context, manifest -> manifest.health == "alive" }
+
+        // feature enabled
+
         filterFeature { context, feature -> feature.enabled }
 
         // session
 
-        fun specifiedVisibilty(feature: Feature) :Boolean {
+        fun specifiedVisibility(feature: Feature) :Boolean {
             return feature.visibility != null && feature.visibility!!.isNotEmpty()
         }
 
         filterFeature { context, feature ->
-            if ( specifiedVisibilty(feature))
+            if ( specifiedVisibility(feature))
                 if (!context.hasSession)
                     // no session yet, allow public only
                     feature.visibility!!.contains("public")
@@ -104,9 +109,6 @@ class DeploymentManager() {
     private lateinit var merger : ConfigurationMerger
 
     @Autowired
-    private lateinit var applicationVersionRepository : ApplicationVersionRepository
-
-    @Autowired
     private lateinit var objectMapper : ObjectMapper
 
     fun findMicrofrontendVersion(application: String, version: String) : MicrofrontendVersionEntity? {
@@ -127,7 +129,56 @@ class DeploymentManager() {
             null
     }
 
-    // TODO: cache Long -> ... ( Deployment )
+    val instanceMapper = Mapper(
+        mapping(MicrofrontendInstanceEntity::class, MicrofrontendInstance::class) {
+            map { path("microfrontendVersion", "microfrontend", "name") to "microfrontend" }
+            map { path("microfrontendVersion", "version") to "version" }
+            map { matchingProperties("uri", "enabled", "health", "configuration", "stage") }
+            map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
+        })
+
+    fun findShellInstances(application: Long) : List<MicrofrontendInstance> {
+        // local function
+
+        fun matchingVersion(microfrontend: MicrofrontendEntity, range: VersionRange) :MicrofrontendVersionEntity? {
+            val versions = ArrayList(microfrontend.versions)
+            versions.sortByDescending { version -> version.version }
+
+            for ( version in versions)
+                if ( range.matches(Version(version.version)))
+                    return version
+
+            return null
+        }
+
+        //
+
+        val version = this.entityManager.find(ApplicationVersionEntity::class.java, application)
+
+        var shellVersion : MicrofrontendVersionEntity? = null
+        version.assignedMicrofrontends.first { assigned ->
+            var version = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
+
+            if ( version != null) {
+                val manifest = objectMapper.readValue(version.manifest, Manifest::class.java)
+
+                if ( manifest.type == "shell")
+                    shellVersion = version
+                else
+                    version = null
+
+            }
+
+            version != null
+        }
+
+        return if (shellVersion != null)
+            shellVersion!!.instances.map { entity -> instanceMapper.map<MicrofrontendInstance>(entity)!!}
+        else
+            listOf()
+    }
+
+    // TODO: cache
     fun create(request: DeploymentRequest) : Deployment {
         val application = request.application
         val version = request.version
@@ -139,7 +190,7 @@ class DeploymentManager() {
         val shellVersion = this.findMicrofrontendVersion(application, version)
         val instance = shellVersion!!.instances.find { instance -> instance.uri == uri}
         val stage = instance!!.stage
-        val applicationVersion : ApplicationVersionEntity = this.findApplicationVersion(application, version)!!
+        val applicationVersion = this.findApplicationVersion(application, version)!!
 
         val configurations = ArrayList<String>()
 
@@ -153,7 +204,7 @@ class DeploymentManager() {
             versions.sortByDescending { version -> version.version }
 
             for ( version in versions)
-                if ( range.matches(com.serious.portal.version.Version(version.version)))
+                if ( range.matches(Version(version.version)))
                     return version
 
             return null
@@ -176,6 +227,7 @@ class DeploymentManager() {
 
             val instance = v.instances.find { instance -> instance.stage == stage }!!
 
+            manifest.enabled = instance.enabled && instance.microfrontendVersion.enabled && instance.microfrontendVersion.microfrontend.enabled
             manifest.remoteEntry = instance.uri
             manifest.healthCheck =  manifest.remoteEntry // TODO ???
 

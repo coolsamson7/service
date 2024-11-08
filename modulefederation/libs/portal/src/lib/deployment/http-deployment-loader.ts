@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 import { AbstractHTTPService, Service } from "../common/communication";
 
 @Injectable({providedIn: 'root'})
-@Service({domain: "admin", prefix: "/portal-administration"})
+@Service({domain: "admin", prefix: "/portal-deployment"})
 export class PortalDeploymentService extends AbstractHTTPService {
     // constructor
 
