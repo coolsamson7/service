@@ -160,13 +160,10 @@ class DeploymentManager() {
             var version = matchingVersion(assigned.microfrontend, VersionRange(assigned.version))
 
             if ( version != null) {
-                val manifest = objectMapper.readValue(version.manifest, Manifest::class.java)
-
-                if ( manifest.type == "shell")
+                if ( version.type == "shell")
                     shellVersion = version
                 else
                     version = null
-
             }
 
             version != null
@@ -180,23 +177,6 @@ class DeploymentManager() {
 
     // TODO: cache
     fun create(request: DeploymentRequest) : Deployment {
-        val application = request.application
-        val version = request.version
-        val session = request.session
-        val uri = request.protocol + "//" + request.host + ":" + request.port
-
-        // read version
-
-        val shellVersion = this.findMicrofrontendVersion(application, version)
-        val instance = shellVersion!!.instances.find { instance -> instance.uri == uri}
-        val stage = instance!!.stage
-        val applicationVersion = this.findApplicationVersion(application, version)!!
-
-        val configurations = ArrayList<String>()
-
-        configurations.add(applicationVersion.application.configuration)
-        configurations.add(applicationVersion.configuration)
-
         // local function
 
         fun matchingVersion(microfrontend: MicrofrontendEntity, range: VersionRange) :MicrofrontendVersionEntity? {
@@ -209,6 +189,36 @@ class DeploymentManager() {
 
             return null
         }
+
+        // lets go
+
+        val shell = request.application
+        val session = request.session
+        val uri = request.protocol + "//" + request.host + ":" + request.port
+
+        // find instance
+
+        val shellInstance = this.entityManager.createQuery("select m from MicrofrontendInstanceEntity m where m.uri = :uri", MicrofrontendInstanceEntity::class.java)
+            .setParameter("uri", uri)
+            .singleResult
+        val shellVersion = shellInstance.microfrontendVersion
+        val stage = shellInstance.stage
+
+        // find possible application
+
+        val assignedMFEs = this.entityManager.createQuery("select assigned from AssignedMicrofrontendEntity assigned where assigned.microfrontend.name = :name", AssignedMicrofrontendEntity::class.java)
+            .setParameter("name", shell)
+            .resultList
+
+        // check match
+
+        val match = assignedMFEs.first { assigned -> matchingVersion(assigned.microfrontend,  VersionRange(assigned.version)) === shellVersion }
+        val applicationVersion = match.applicationVersion
+
+        val configurations = ArrayList<String>()
+
+        configurations.add(applicationVersion.application.configuration)
+        configurations.add(applicationVersion.configuration)
 
         val versions = ArrayList<MicrofrontendVersionEntity>()
 

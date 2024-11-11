@@ -31,12 +31,6 @@ interface PortalAdministrationService : Service {
 
     // stage
 
-    @PostMapping("create-stage")
-    fun createStage(@RequestBody  stage: String)
-
-    @GetMapping("delete-stage/{stage}")
-    fun deleteStage(@PathVariable stage: String)
-
     @GetMapping("read-stages")
     @ResponseBody
     fun readStages() : List<String>

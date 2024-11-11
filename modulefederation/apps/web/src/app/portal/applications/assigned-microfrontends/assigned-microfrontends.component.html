@@ -23,10 +23,12 @@
 
         <div [ngSwitch]="col.type" *ngIf="!element.isEdit">
           <ng-container *ngSwitchCase="'isSelected'">
-            <mat-checkbox
+            <mat-icon *ngIf="element.data.type === 'shell'">home</mat-icon>
+
+            <!--mat-checkbox
               (change)="element.isSelected = $event.checked"
               [checked]="element.isSelected"
-            ></mat-checkbox>
+            ></mat-checkbox-->
           </ng-container>
 
           <div class="btn-edit" *ngSwitchCase="'isEdit'">
@@ -67,7 +69,7 @@
               type="text"
               [(ngModel)]="element.data[col.key]"
               [suggestionProvider]="suggestionProvider"
-              microfrontendValidator
+              [microfrontendValidator]="microfrontends"
             />
             <mat-error showErrors></mat-error>
           </mat-form-field>
@@ -104,6 +106,10 @@
     </button-->
     <button class="button-add-row" mat-icon-button (click)="addRow()">
       <mat-icon>add_box</mat-icon>
+    </button>
+
+    <button class="button-check" mat-icon-button (click)="showResult()">
+      <mat-icon>settings</mat-icon>
     </button>
   </div>
 </div>

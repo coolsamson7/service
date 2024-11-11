@@ -3,12 +3,13 @@ import { ApplicationVersion, AssignedMicrofrontend, Microfrontend } from "../../
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { NG_VALIDATORS, Validator, AbstractControl, NgControl, AbstractControlDirective, FormsModule } from "@angular/forms";
 import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
-import { ArraySuggestionProvider, NgModelSuggestionsDirective, SuggestionProvider, VersionRange } from "@modulefederation/portal";
+import { ArraySuggestionProvider, Dialogs, DialogService, NgModelSuggestionsDirective, SuggestionProvider, VersionRange } from "@modulefederation/portal";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
+import { ContentComponent } from "../application-version/application-version-dialog";
 
 
 @Directive({
@@ -47,6 +48,9 @@ import { MatInputModule } from "@angular/material/input";
     }]
   })
   export class MicrofrontendValidatorDirective implements Validator {
+    // input
+
+    @Input() microfrontendValidator! : Microfrontend[]
     // constructor
 
     constructor() {
@@ -55,10 +59,10 @@ import { MatInputModule } from "@angular/material/input";
     // implement Validator
 
     validate(control: AbstractControl) : {[key: string]: any} | null {
-     /*TODO if (this.feature!.microfrontends.find(mfe => mfe.name === control.value) === undefined)
+     if (this.microfrontendValidator.find(mfe => mfe.name === control.value) === undefined)
         return {
             'microfrontendInvalid': true
-        };*/
+        };
 
       return null;
     }
@@ -189,6 +193,14 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
     errors : any = {}
     suggestionProvider : SuggestionProvider = new ArraySuggestionProvider([])
 
+    // constructor
+
+    constructor(private dialogService: DialogService) {
+    
+    }
+
+    //
+
    setDirty(dirty = true) {
     this.dirty.emit(dirty)
    }
@@ -212,8 +224,24 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
      finishEdit(row: AssignedMicrofrontendRow) {
        row.isEdit = false
 
+       const mfe = this.microfrontends.find(mfe => mfe.name ==  row.data.microfrontend)
+      
+       row.data.type = mfe!.versions[0].type
+
        this.setDirty()
      }
+
+      showResult() {
+         this.dialogService.dynamicDialog()
+           .title(this.applicationVersion.version)
+           .component(ContentComponent)
+           .args({
+             version: this.applicationVersion
+           })
+           .ok()
+           .show().subscribe()
+
+      }
 
      addRow() {
        const newRow: AssignedMicrofrontendRow = {
@@ -221,7 +249,8 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
          isSelected: false,
          data: {
            microfrontend: "",
-           version: ""
+           version: "",
+           type: ""
          }
        }
        this.applicationVersion?.assignedMicrofrontends.push(newRow.data)

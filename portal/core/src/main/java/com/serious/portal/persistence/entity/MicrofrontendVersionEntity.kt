@@ -16,6 +16,8 @@ class MicrofrontendVersionEntity(
     var id: String,
     @Column(name = "VERSION")
     var version : String,
+    @Column(name = "TYPE")
+    var type : String,
     @Column(name = "ENABLED")
     var enabled : Boolean,
     @Column(name = "CONFIGURATION", length = 4000)

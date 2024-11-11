@@ -15,13 +15,13 @@
 
   <mat-divider></mat-divider>
 
-  <div *ngIf="microfrontendVersion.manifest.type === 'shell'" class="application">
+  <!--div *ngIf="microfrontendVersion.manifest.type === 'shell'" class="application">
     <mat-label>Application</mat-label>
     <mat-form-field>
       <mat-label>Application</mat-label>
       <input type="text" matInput [suggestionProvider]="suggestionProvider" (ngModelChange)="applicationChanged($event)" [(ngModel)]="applicationVersion">
     </mat-form-field>
-  </div>
+  </div-->
 
   <div class="configuration">
     <mat-label>Configuration</mat-label>
@@ -40,22 +40,26 @@
         <mat-list-item class="instance">
           <a [routerLinkActive]="['is-active']" class="content" role="listitem">
             <mat-icon>language</mat-icon>
-          
+
             <!--span class="bold">URI</span-->
             <span>{{instance.uri}}</span>
 
             <span class="bold">Stage</span>
-            <mat-select [(value)]="instance.stage" (selectionChange)="stageChanged(instance)">
+            <!--mat-select [(value)]="instance.stage" (selectionChange)="stageChanged(instance)">
               <mat-option *ngFor="let stage of stages" [value]="stage">{{stage}}</mat-option>
-            </mat-select>
+            </mat-select-->
+
+            <mat-form-field>
+              <input type="text" matInput [suggestionProvider]="stageSuggestionProvider" [(ngModel)]="instance.stage" (ngModelChange)="stageChanged(instance)">
+            </mat-form-field>
 
             <span class="bold">Health</span>
             <mat-icon [ngStyle]="{'color':instance.health === 'alive' ? 'green' : 'red' }">
               {{instance.health === "alive" ? "wifi" : "sentiment_very_dissatisfied"}}
             </mat-icon>
-          </a>
 
-          <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [disabled]="!microfrontendVersion.enabled || !microfrontend.enabled" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
+            <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [disabled]="!microfrontendVersion.enabled || !microfrontend.enabled" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
+          </a>
         </mat-list-item>
 
         <mat-divider></mat-divider>

@@ -60,15 +60,6 @@ export class PortalAdministrationService extends AbstractHTTPService {
 
   // stage
 
-  createStage(stage: string): Observable<any> {
-    return this.post<any>(`create-stage`, stage)
-  }
-
-  deleteStage(stage: String) : Observable<any>{
-    return this.delete<any>(`delete-stage/${stage}`)
-  }
-
-
   readStages() : Observable<string[]>{
     return this.get<any>(`read-stages`)
   }

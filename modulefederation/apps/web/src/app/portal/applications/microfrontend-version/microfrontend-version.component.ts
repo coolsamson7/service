@@ -10,7 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ManifestComponent } from "../manifest/manifest.component";
 import { MatListModule } from "@angular/material/list";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { NgModelSuggestionsDirective, SuggestionProvider, WithDialogs, WithSnackbar } from "@modulefederation/portal";
+import { ArraySuggestionProvider, NgModelSuggestionsDirective, SuggestionProvider, WithDialogs, WithSnackbar } from "@modulefederation/portal";
 import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -105,10 +105,11 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
     inheritedConfigurationData: ConfigurationProperty[] = []
 
     suggestionProvider : SuggestionProvider
+    stageSuggestionProvider : SuggestionProvider
 
     applicationVersion  = ""
 
-    stages = ["", "QA", "PROD"] // TODO
+    stages = [""]
 
     // constructor
 
@@ -117,7 +118,13 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
 
         feature.currentView = this
 
+        this.stageSuggestionProvider = new ArraySuggestionProvider(this.stages)
         this.suggestionProvider = new ApplicationVersionSuggestionProvider(feature.applications)
+
+        this.portalAdministrationService.readStages().subscribe(stages => {
+            this.stages = stages
+            this.stageSuggestionProvider = new ArraySuggestionProvider(this.stages)
+        })
     }
 
     // override ApplicationView

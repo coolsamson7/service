@@ -72,18 +72,6 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
 
   // callbacks
 
-  open() {
-    this.dynamicDialog()
-      .title(this.applicationVersion.version)
-      .component(ContentComponent)
-      .args({
-        version: this.applicationVersion
-      })
-      .ok()
-      .show().subscribe()
-
-  }
-
   onDirty(dirty: boolean) {
     this.dirty.emit(dirty)
   }

@@ -86,6 +86,7 @@ class ManifestEntityManager {
         val versionEntity : MicrofrontendVersionEntity = microfrontendVersionRepository.findById(id).orElse(this.microfrontendVersionRepository.save(MicrofrontendVersionEntity(
             id,
             manifest.version,
+            manifest.type,
             true,
             "{\"type\":\"object\",\"value\": []}",
             manifestEntity.json,

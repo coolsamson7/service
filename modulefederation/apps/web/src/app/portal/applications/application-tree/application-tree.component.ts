@@ -17,7 +17,7 @@ export interface Node {
 }
 
 export interface MenuRequest {
-    node: Node, 
+    node: Node,
     action: string
 }
 
@@ -71,7 +71,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
 
          // new microfrontend?
 
-        if ( treeConfig.microfrontend) { 
+        if ( treeConfig.microfrontend) {
             node =  {
                 type: "microfrontend",
                 data: treeConfig.microfrontend,
@@ -81,7 +81,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
             this.dataSource.data.push(node)
         }
         else node = this.dataSource.data.find(node => node.data.name == mfe)!
-        
+
         // new version?
 
         if (treeConfig.version) {
@@ -95,14 +95,14 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
         else node = node.children!.find(node => node.data.version == version)!
 
          // instance?
-
+/*
         if (treeConfig.instance) {
             node!.children?.push(node =  {
                 type: "microfrontend-instance",
                 parent: node,
-                data:  treeConfig.instance 
+                data:  treeConfig.instance
             })
-        }
+        }*/
 
         this.refreshData()
     }
@@ -137,7 +137,7 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     deletedNode(node: Node) : Node | undefined {
         let nextNode : Node | undefined = undefined
         const index = this.indexOf(node)
-      
+
         if ( node.parent) {
             const children  = node.parent!.children!
 

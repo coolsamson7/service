@@ -34,9 +34,6 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     lateinit var microfrontedEntityManager : MicrofrontendEntityManager
 
     @Autowired
-    lateinit var stageRepository: StageRepository
-
-    @Autowired
     lateinit var applicationRepository: ApplicationRepository
 
     @Autowired
@@ -71,16 +68,10 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     // stage
 
     @Transactional
-    override fun createStage(stage: String) {
-        this.stageRepository.save(StageEntity(stage))
-    }
-    @Transactional
-    override fun deleteStage( stage: String) {
-        this.stageRepository.deleteById(stage)
-    }
-    @Transactional
     override fun readStages() : List<String> {
-        return this.stageRepository.findAll().map { stageEntity ->  stageEntity.name}
+       return this.entityManager
+            .createQuery("select distinct stage from MicrofrontendInstanceEntity", String::class.java)
+            .resultList
     }
 
     // application
@@ -99,7 +90,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         },
 
         mapping(AssignedMicrofrontendEntity::class, AssignedMicrofrontend::class) {
-            map { matchingProperties("id", "version") }
+            map { matchingProperties("id", "version", "type") }
             map { path("microfrontend", "name") to "microfrontend" }
         },
 
@@ -229,6 +220,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
                         entity, // applicationVersion
                         microfrontendRepository.findById(referencedTransportObject.microfrontend).get(), // microfrontend
                         referencedTransportObject.version,
+                        referencedTransportObject.type,
                     )
 
                 entityManager.persist(entity)
@@ -281,7 +273,7 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
         },
 
         mapping(MicrofrontendVersionEntity::class, MicrofrontendVersion::class) {
-            map { matchingProperties("id", "version", "configuration", "enabled") }
+            map { matchingProperties("id", "version", "type", "configuration", "enabled") }
             map { path("microfrontend", "name") to "microfrontend" }
             map { "manifest" to "manifest" convert {manifest: String -> objectMapper.readValue(manifest, Manifest::class.java)}}
             map { "instances" to "instances" deep true }
@@ -435,6 +427,8 @@ class PortalAdministrationServiceImpl : PortalAdministrationService {
     @Transactional
     override fun registerMicrofrontendInstance(manifest: Manifest) : MicrofrontendRegistryResult {
         // go
+
+        manifest.enabled = true
 
         val url = manifest.remoteEntry
 

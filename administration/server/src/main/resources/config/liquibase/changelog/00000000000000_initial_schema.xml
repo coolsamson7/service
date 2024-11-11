@@ -100,6 +100,7 @@
                 <constraints nullable="false" foreignKeyName="assigned_microfrontend_or_micrpfrontend_fk" references="MICROFRONTEND(name)"/>
             </column>
             <column name="VERSION" type="VARCHAR(255)"/>
+            <column name="TYPE" type="VARCHAR(255)"/>
         </createTable>
 
         <createTable tableName="MICROFRONTEND_VERSION">
@@ -111,6 +112,7 @@
                 <constraints nullable="false" foreignKeyName="mirofrontebd_version_or_microfrontend_fk" references="MICROFRONTEND(NAME)"/>
             </column>
             <column name="VERSION" type="VARCHAR(255)"/>
+            <column name="TYPE" type="VARCHAR(255)"/>
             <column name="ENABLED" type="BOOLEAN"/>
             <column name="CONFIGURATION" type="VARCHAR(4000)"/>
             <column name="MANIFEST" type="VARCHAR(5000)"/>

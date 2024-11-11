@@ -23,4 +23,6 @@ class AssignedMicrofrontendEntity(
     var microfrontend : MicrofrontendEntity,
     @Column(name = "VERSION")
     var version : String,
+    @Column(name = "TYPE")
+    var type : String,
 )

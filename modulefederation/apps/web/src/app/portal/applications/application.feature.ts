@@ -371,16 +371,16 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
             let url : URL | undefined = undefined
 
             try {
-            url = new URL(remote)
+              url = new URL(remote)
             }
             catch(error) {
-            this.confirmationDialog()
-                .title("Add Microfrontend")
-                .message("malformed url")
-                .ok()
-                .show()
-                remote == ""
-            return
+              this.confirmationDialog()
+                  .title("Add Microfrontend")
+                  .message("malformed url")
+                  .ok()
+                  .show()
+                  remote == ""
+              return
             }
 
 
