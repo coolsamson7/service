@@ -50,7 +50,7 @@ import { ContentComponent } from "../application-version/application-version-dia
   export class MicrofrontendValidatorDirective implements Validator {
     // input
 
-    @Input() microfrontendValidator! : Microfrontend[]
+    @Input() microfrontendValidator! : AssignedMicrofrontendsComponent
     // constructor
 
     constructor() {
@@ -59,10 +59,16 @@ import { ContentComponent } from "../application-version/application-version-dia
     // implement Validator
 
     validate(control: AbstractControl) : {[key: string]: any} | null {
-     if (this.microfrontendValidator.find(mfe => mfe.name === control.value) === undefined)
+      const mfe = this.microfrontendValidator.microfrontends.find(mfe => mfe.name === control.value)
+      if (mfe === undefined)
         return {
             'microfrontendInvalid': true
         };
+
+      if (this.microfrontendValidator.applicationVersion.assignedMicrofrontends.filter(assigned => assigned.microfrontend == mfe.name).length > 1)
+          return {
+              'microfrontendDuplicate': true
+          };
 
       return null;
     }
@@ -116,6 +122,9 @@ export class MatErrorMessagesComponent implements AfterViewInit {
 
             else if (firstError === 'microfrontendInvalid')
                 this.error = "unknown microfrontend"
+
+            else if (firstError === 'microfrontendDuplicate')
+                this.error = "microfrontend already registered"
         }
     };
 }
@@ -218,8 +227,19 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
        return Object.getOwnPropertyNames(this.errors).length == 0
    }
 
+   assignedMicrofrontendCopy : AssignedMicrofrontend | null = null
+
    displayedColumns: string[] = Columns.map((col) => col.key)
      columnsSchema: any = Columns
+
+     startEdit(row: AssignedMicrofrontendRow) {
+        row.isEdit = true
+
+        if ( row.data.id) {
+          this.assignedMicrofrontendCopy = {...row.data}
+        }
+        console.log("start")
+     }
 
      finishEdit(row: AssignedMicrofrontendRow) {
        row.isEdit = false
@@ -229,6 +249,25 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
        row.data.type = mfe!.versions[0].type
 
        this.setDirty()
+     }
+
+     cancelEdit(row: AssignedMicrofrontendRow) {
+        console.log("kk")
+        
+        if ( this.assignedMicrofrontendCopy) {
+          row.data = this.assignedMicrofrontendCopy
+        }
+        else {
+          console.log("CANCEL")
+          //const index = this.applicationVersion.assignedMicrofrontends.findIndex(assigned => assigned == row.data)
+          //this.applicationVersion.assignedMicrofrontends.splice(index, 1)
+
+          this.removeRow(row)
+        }
+
+        this.assignedMicrofrontendCopy = null
+
+        row.isEdit = false
      }
 
       showResult() {
@@ -255,6 +294,8 @@ export class AssignedMicrofrontendsComponent  implements OnInit, OnChanges {
        }
        this.applicationVersion?.assignedMicrofrontends.push(newRow.data)
        this.dataSource.data = [newRow, ...this.dataSource.data]
+
+       this.startEdit(newRow)
 
        this.setDirty()
      }

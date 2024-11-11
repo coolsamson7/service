@@ -39,25 +39,24 @@
       <ng-container *ngFor="let instance of microfrontendVersion.instances">
         <mat-list-item class="instance">
           <a [routerLinkActive]="['is-active']" class="content" role="listitem">
+            <!-- url -->
             <mat-icon>language</mat-icon>
-
-            <!--span class="bold">URI</span-->
             <span>{{instance.uri}}</span>
 
+            <!-- stage -->      
             <span class="bold">Stage</span>
-            <!--mat-select [(value)]="instance.stage" (selectionChange)="stageChanged(instance)">
-              <mat-option *ngFor="let stage of stages" [value]="stage">{{stage}}</mat-option>
-            </mat-select-->
+            <input type="text" matInput [suggestionProvider]="stageSuggestionProvider" (focus)="focusStage(instance)" (blur)="unfocusStage(instance)" [(ngModel)]="instance.stage" (ngModelChange)="stageChanged(instance)">
+            
+            <span></span>
 
-            <mat-form-field>
-              <input type="text" matInput [suggestionProvider]="stageSuggestionProvider" [(ngModel)]="instance.stage" (ngModelChange)="stageChanged(instance)">
-            </mat-form-field>
-
+            <!-- health -->
             <span class="bold">Health</span>
             <mat-icon [ngStyle]="{'color':instance.health === 'alive' ? 'green' : 'red' }">
               {{instance.health === "alive" ? "wifi" : "sentiment_very_dissatisfied"}}
             </mat-icon>
-
+            
+            <!-- enabled -->
+            <span></span>
             <mat-slide-toggle (ngModelChange)="onChangedEnabled(instance)" [disabled]="!microfrontendVersion.enabled || !microfrontend.enabled" [(ngModel)]="instance.enabled"  class="toggle"  color="primary"></mat-slide-toggle>
           </a>
         </mat-list-item>

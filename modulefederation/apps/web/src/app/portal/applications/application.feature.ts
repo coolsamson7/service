@@ -176,16 +176,33 @@ export class ApplicationFeatureComponent extends WithCommandToolbar(WithCommands
             this.confirmationDialog()
                 .title("Dirty")
                 .message("save?")
-                .okCancel()
+                .button({
+                    i18n: "portal.commands:ok",
+                    primary: true,
+                    result: "save"
+                })
+                .button({
+                    label: "Discard",//i18n: "portal.commands:cancel",
+                    result: "discard"
+                })
+                .button({
+                    i18n: "portal.commands:cancel",
+                    result: undefined
+                })
                 .show()
                 .subscribe(result => {
-                    if ( result ) {
+                    if ( result == "save" ) {
                         this.save()
                         this.selectNode(node)
                     }
+                    else if (result == "discard" ) {
+                        this.dirty = false
+                        this.selectNode(node)
+                    }
                     else {
+                        // revert selection
                         this.tree.select(this.selectedNode!)
-                       this.tree.treeControl.expansionModel.select(this.selectedNode!)
+                        this.tree.treeControl.expansionModel.select(this.selectedNode!)
                     }
                 })
             return

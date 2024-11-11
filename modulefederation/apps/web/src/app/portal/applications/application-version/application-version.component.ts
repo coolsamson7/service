@@ -52,6 +52,17 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
    }
 
    save() {
+    // do some sanity checks
+
+    const shells = this.applicationVersion.assignedMicrofrontends.filter(assigned => assigned.type == "shell")
+
+    if ( shells.length > 1)
+      this.confirmationDialog().title("Save").message("More than one shell!").ok().show().subscribe()
+    else if ( shells.length == 0)
+      this.confirmationDialog().title("Save").message("Missing shell!").ok().show().subscribe()
+
+    // go
+
     this.applicationVersion.configuration = JSON.stringify(this.stripInherited(this.configurationData))
 
     this.portalAdministrationService.updateApplicationVersion(this.applicationVersion).subscribe(version => {
@@ -62,12 +73,12 @@ export class ApplicationVersionComponent extends ApplicationView implements OnIn
         }
     })
 
-    this.showSnackbar("saved")
+    this.showSnackbar(this.applicationVersion.version, "saved")
    }
 
   revert() {
     // TODO
-    this.showSnackbar("reverted")
+    this.showSnackbar(this.applicationVersion.version, "reverted")
   }
 
   // callbacks

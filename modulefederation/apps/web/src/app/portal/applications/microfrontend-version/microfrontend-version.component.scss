@@ -34,7 +34,7 @@
             .content {
                 display: inline-grid;
                 align-items: center;
-                grid-template-columns: 2em 15em 3em 6em 3em 2em 1em 8em;
+                grid-template-columns: 2em 15em 3em 6em 3em 4em 1em 8em min-content;
             }
 
             a {

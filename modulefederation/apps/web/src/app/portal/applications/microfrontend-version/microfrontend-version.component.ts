@@ -138,7 +138,7 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
             this.manifestComponent.saved()
         }
 
-        this.showSnackbar("saved")
+        this.showSnackbar(this.microfrontendVersion.version, "saved")
     }
 
     revert() {
@@ -155,10 +155,23 @@ export class MicrofrontendVersionComponent extends ApplicationView implements On
       this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
     }
 
-    stageChanged(instance: MicrofrontendInstance) {
-        this.showSnackbar("saved stage")
+    focusedStage = ""
 
-        this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
+    focusStage(instance: MicrofrontendInstance) {
+        this.focusedStage = instance.stage
+    }
+
+    unfocusStage(instance: MicrofrontendInstance) {
+        if ( instance.stage !== this.focusedStage) {
+            this.showSnackbar(instance.uri, "saved stage")
+            this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
+        }
+    }
+
+    stageChanged(instance: MicrofrontendInstance) {
+        
+
+        //this.portalAdministrationService.updateMicrofrontendInstance(instance).subscribe(result => console.log(result))
     }
 
    // public
