@@ -43,7 +43,6 @@ export class ApplicationTreeComponent implements OnInit, OnChanges {
     @Output() onSelectionChange = new EventEmitter<Node>();
     @Output() onMenu = new EventEmitter<MenuRequest>();
 
-
     // instance data
 
     treeControl = new NestedTreeControl<Node>(node => node.children);
