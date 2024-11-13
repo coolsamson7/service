@@ -8,8 +8,7 @@ import org.springframework.beans.factory.config.BeanDefinition
 import kotlin.reflect.KClass
 
 data class EventListenerDescriptor(
-    val name: String,
     val beanDefinition : BeanDefinition,
-    val event: KClass<out Any>,
+    val event: EventDescriptor,
     var instance : AbstractEventListener<Any>? = null
 )

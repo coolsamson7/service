@@ -8,19 +8,18 @@ package org.sirius.events
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
-import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.client.*
-import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
+import org.sirius.events.artemis.EmbeddedArtemisEventing
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
@@ -42,7 +41,7 @@ class EventManager() : ApplicationContextAware {
         }
     }
 
-    class ListenerFactory(applicationContext : ConfigurableApplicationContext) : DefaultListableBeanFactory(applicationContext) {
+    class ListenerFactory(applicationContext : ApplicationContext) : DefaultListableBeanFactory(applicationContext) {
         // public
 
         fun make(beanDefinition: BeanDefinition): AbstractEventListener<Any> {
@@ -56,8 +55,8 @@ class EventManager() : ApplicationContextAware {
 
     // instance data
 
-    private final val embedded = EmbeddedActiveMQ()
-    final val session: ClientSession
+    @Value("\${event.root:org.sirius}")
+    lateinit var rootPackage: String
 
     @Autowired
     lateinit var objectMapper : ObjectMapper
@@ -67,14 +66,7 @@ class EventManager() : ApplicationContextAware {
     val events : MutableMap<Class<*>, EventDescriptor> = ConcurrentHashMap()
     val eventListener : MutableMap<Class<out Any>, EventListenerDescriptor> = ConcurrentHashMap()
 
-    // constructor
-
-    init {
-        this.embedded.start()
-        val serverLocator = ActiveMQClient.createServerLocator("vm://0")
-        val sessionFactory = serverLocator.createSessionFactory()
-        session = sessionFactory.createSession()
-    }
+    val eventing = EmbeddedArtemisEventing(this) // TODO
 
     // public
 
@@ -82,21 +74,13 @@ class EventManager() : ApplicationContextAware {
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "send event %s", event.javaClass.name)
 
-        val json = objectMapper.writeValueAsString(event)
-        val message = session.createMessage(true)
-        message.writeBodyBufferString(json)
-
-        producer4(event.javaClass).send(message)
+        eventing.send(event)
     }
 
-    // private
-
-    private fun producer4(clazz: Class<*>) : ClientProducer {
-        return this.findEventDescriptor(clazz).producer
-    }
+    // protected
 
     private fun scanEvents() {
-        val beans = EventProvider().findCandidateComponents("org.sirius") // TODO....where to set that?
+        val beans = EventProvider().findCandidateComponents(rootPackage)
 
         for (bean in beans) {
             if (bean is AnnotatedBeanDefinition) {
@@ -104,19 +88,26 @@ class EventManager() : ApplicationContextAware {
                     .metadata
                     .getAnnotationAttributes(Event::class.java.getCanonicalName())!!
 
-                val name = annotations["name"] as String
+                var name = annotations["name"] as String
+                val broadcast = annotations["broadcast"] as Boolean
                 val clazz = Class.forName(bean.beanClassName)
+
+                if ( name.isBlank())
+                    name = bean.beanClassName!!
 
                 if ( Tracer.ENABLED)
                     Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event %s", name)
 
-                events[clazz] = EventDescriptor(name, clazz, session.createProducer(name)) // address
+                val descriptor = EventDescriptor(name, clazz, broadcast)
+                events[clazz] = descriptor
+
+                eventing.registerEvent(descriptor)
             }
         }
     }
 
     private fun scanEventListener() {
-        val beans = EventListenerProvider().findCandidateComponents("org.sirius") // TODO
+        val beans = EventListenerProvider().findCandidateComponents(rootPackage)
 
         for (bean in beans) {
             val annotations = (bean as AnnotatedBeanDefinition)
@@ -124,35 +115,17 @@ class EventManager() : ApplicationContextAware {
                 .getAnnotationAttributes(EventListener::class.java.getCanonicalName())!!
 
             val eventClass = annotations["event"] as Class<out Any>
-            val name = findEventDescriptor(eventClass).name
+
+            val eventDescriptor = findEventDescriptor(eventClass)
 
             if ( Tracer.ENABLED)
-                Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event listener %s for event %s", bean.beanClassName!!, name)
+                Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event listener %s for event %s", bean.beanClassName!!, eventDescriptor.name)
 
-            eventListener[eventClass] = EventListenerDescriptor(name, bean, eventClass.kotlin)
+            val descriptor = EventListenerDescriptor(bean, eventDescriptor)
 
-            // consumer
+            eventListener[eventClass] = descriptor
 
-            val event = findEventDescriptor(eventClass)
-            val eventName = event.name
-
-            val address = eventName
-            val queueName = eventName
-
-            // create a queue per listener
-
-            session.createQueue(address, RoutingType.ANYCAST, queueName) // address, queue name
-
-            // create the consumer per message
-
-            val consumer = session.createConsumer(queueName) // queue name
-
-            consumer.messageHandler = MessageHandler { message ->
-                if ( Tracer.ENABLED)
-                    Tracer.trace("org.sirius.events", TraceLevel.HIGH, "handle event %s from address %s", eventClass.name, message.address)
-
-                dispatch(createEvent(message, eventClass), eventClass)
-            }
+            eventing.registerEventListener(descriptor)
         }
     }
 
@@ -164,14 +137,8 @@ class EventManager() : ApplicationContextAware {
             throw EventError("no registered event for class ${eventClass.name}")
     }
 
-    private fun dispatch(event: Any, eventClass: Class<out Any>) {
+    public fun dispatch(event: Any, eventClass: Class<out Any>) {
         eventListener(eventClass).on(event)
-    }
-
-    private fun createEvent(message : ClientMessage, eventClass: Class<*>) : Any {
-        val body = message.bodyBuffer.readString()
-
-        return objectMapper.readValue(body, eventClass)
     }
 
     private fun eventListener(event: Class<out Any>) : AbstractEventListener<Any> {
@@ -185,7 +152,7 @@ class EventManager() : ApplicationContextAware {
                         TraceLevel.HIGH,
                         "create listener %s for event %s",
                         descriptor.beanDefinition.beanClassName!!,
-                        descriptor.name
+                        descriptor.event.name
                     )
 
                 descriptor.instance = listenerFactory.make(descriptor.beanDefinition)
@@ -203,7 +170,7 @@ class EventManager() : ApplicationContextAware {
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "startup")
 
-        session.start()
+        eventing.startup()
 
         scanEvents()
         scanEventListener()
@@ -214,14 +181,13 @@ class EventManager() : ApplicationContextAware {
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "shutdown")
 
-        session.stop()
-        this.embedded.stop()
+        eventing.shutdown()
     }
 
     // implement ApplicationContextAware
 
     @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
-        this.listenerFactory = ListenerFactory(applicationContext as ConfigurableApplicationContext)
+        this.listenerFactory = ListenerFactory(applicationContext)
     }
 }
