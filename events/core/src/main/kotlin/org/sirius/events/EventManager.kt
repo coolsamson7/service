@@ -8,10 +8,8 @@ package org.sirius.events
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
-import org.apache.activemq.artemis.api.core.client.*
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
-import org.sirius.events.artemis.EmbeddedArtemisEventing
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,7 +64,8 @@ class EventManager() : ApplicationContextAware {
     val events : MutableMap<Class<*>, EventDescriptor> = ConcurrentHashMap()
     val eventListener : MutableMap<Class<out Any>, EventListenerDescriptor> = ConcurrentHashMap()
 
-    val eventing = EmbeddedArtemisEventing(this) // TODO
+    @Autowired
+    lateinit var eventing : Eventing
 
     // public
 
@@ -74,7 +73,7 @@ class EventManager() : ApplicationContextAware {
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "send event %s", event.javaClass.name)
 
-        eventing.send(event)
+        eventing.send(this, event)
     }
 
     // protected
@@ -101,7 +100,7 @@ class EventManager() : ApplicationContextAware {
                 val descriptor = EventDescriptor(name, clazz, broadcast)
                 events[clazz] = descriptor
 
-                eventing.registerEvent(descriptor)
+                eventing.registerEvent(this, descriptor)
             }
         }
     }
@@ -125,7 +124,7 @@ class EventManager() : ApplicationContextAware {
 
             eventListener[eventClass] = descriptor
 
-            eventing.registerEventListener(descriptor)
+            eventing.registerEventListener(this, descriptor)
         }
     }
 

@@ -1,4 +1,4 @@
-package org.sirius.events
+package org.sirius.events.artemis
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
 import org.sirius.common.tracer.trace.ConsoleTrace
+import org.sirius.events.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean

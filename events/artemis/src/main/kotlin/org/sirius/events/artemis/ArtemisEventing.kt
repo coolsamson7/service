@@ -5,8 +5,7 @@ package org.sirius.events.artemis
  * All rights reserved
  */
 
-import org.sirius.events.EventManager
 import org.sirius.events.Eventing
 
-abstract class ArtemisEventing(eventManager: EventManager) : Eventing(eventManager) {
+abstract class ArtemisEventing() : Eventing {
 }

@@ -14,9 +14,10 @@ import org.sirius.common.tracer.Tracer
 import org.sirius.events.EventDescriptor
 import org.sirius.events.EventListenerDescriptor
 import org.sirius.events.EventManager
+import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
-
-class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(eventManager) {
+@Component
+class EmbeddedArtemisEventing : ArtemisEventing() {
     // instance data
 
     private val embedded = EmbeddedActiveMQ()
@@ -34,7 +35,7 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
 
     // private
 
-    protected fun createMessage(event: Any) : ClientMessage {
+    protected fun createMessage(eventManager: EventManager, event: Any) : ClientMessage {
         val json = eventManager.objectMapper.writeValueAsString(event)
 
         val message = session.createMessage(true)
@@ -44,7 +45,7 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
         return message
     }
 
-    private fun createEvent(message : ClientMessage, eventClass: Class<*>) : Any {
+    private fun createEvent(eventManager: EventManager, message : ClientMessage, eventClass: Class<*>) : Any {
         val body = message.bodyBuffer.readString()
 
         return eventManager.objectMapper.readValue(body, eventClass)
@@ -57,11 +58,11 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
 
     // implement
 
-    override fun registerEvent(eventDescriptor: EventDescriptor) {
+    override fun registerEvent(eventManager: EventManager, eventDescriptor: EventDescriptor) {
         producer[eventDescriptor.clazz] = session.createProducer(eventDescriptor.name)
     }
 
-    override fun registerEventListener(eventListenerDescriptor: EventListenerDescriptor) {
+    override fun registerEventListener(eventManager: EventManager, eventListenerDescriptor: EventListenerDescriptor) {
         // consumer
 
         val eventName = eventListenerDescriptor.event.name
@@ -89,15 +90,15 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
             if ( Tracer.ENABLED)
                 Tracer.trace("org.sirius.events", TraceLevel.HIGH, "handle event %s from address %s", eventClass.name, message.address)
 
-            eventManager.dispatch(createEvent(message, eventClass), eventClass)
+            eventManager.dispatch(createEvent(eventManager, message, eventClass), eventClass)
         }
     }
 
-    override fun send(event: Any) {
+    override fun send(eventManager: EventManager, event: Any) {
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "send event %s", event.javaClass.name)
 
-        producer4(event.javaClass).send(createMessage(event))
+        producer4(event.javaClass).send(createMessage(eventManager, event))
     }
 
     // lifecycle
