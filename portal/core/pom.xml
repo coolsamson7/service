@@ -26,6 +26,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.serious</groupId>
+            <artifactId>service-events-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- dependencies -->
 
         <dependency>

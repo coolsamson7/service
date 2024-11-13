@@ -16,6 +16,9 @@ import com.serious.service.ComponentAdministration
 import com.serious.service.ServiceConfiguration
 import com.serious.service.ServiceManager
 import lombok.extern.slf4j.Slf4j
+import org.sirius.common.tracer.TraceLevel
+import org.sirius.common.tracer.Tracer
+import org.sirius.common.tracer.trace.ConsoleTrace
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -249,6 +252,12 @@ class ServiceAdministrationApplication {
         @JvmStatic
         fun main(args: Array<String>) {
             System.setProperty("java.net.preferIPv4Stack" , "true");
+
+            val tracer = Tracer(ConsoleTrace(), "%d{yyyy-MM-dd HH:mm:ss,SSS} %l{-6s} [%p{-10s}] %m")
+
+            tracer
+                .setTraceLevel("org.sirius", TraceLevel.FULL)
+                .setTraceLevel("com.serious", TraceLevel.FULL)
 
             SpringApplication.run(ServiceAdministrationApplication::class.java, *args)
         }

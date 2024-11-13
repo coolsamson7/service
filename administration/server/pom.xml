@@ -28,6 +28,12 @@
 
         <dependency>
             <groupId>com.serious</groupId>
+            <artifactId>service-events-artemis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.serious</groupId>
             <artifactId>service-administration-core</artifactId>
             <version>${project.version}</version>
         </dependency>

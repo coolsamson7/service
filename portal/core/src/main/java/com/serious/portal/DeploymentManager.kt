@@ -15,10 +15,17 @@ import com.serious.portal.version.Version
 import com.serious.portal.version.VersionRange
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import org.sirius.events.AbstractEventListener
+import org.sirius.events.Event
+import org.sirius.events.EventListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.*
 import kotlin.collections.HashMap
+
+@Event(broadcast = true)
+data class ClearCacheEvent(val name : String = "") // TODO: wohin
+
 
 // types
 
@@ -30,8 +37,9 @@ typealias ManifestFilter = (context: FilterContext, manifest: Manifest) -> Boole
 
 typealias FeatureFilter = (context: FilterContext, feature: Feature) -> Boolean
 
+@EventListener(event = ClearCacheEvent::class)
 @Component
-class DeploymentManager() {
+class DeploymentManager() : AbstractEventListener<ClearCacheEvent>() {
     // instance data
 
     private val manifestFilters = mutableListOf<ManifestFilter>()
@@ -307,5 +315,11 @@ class DeploymentManager() {
         // done
 
         return deployment
+    }
+
+    // implement AbstractEventListener
+
+    override fun on(event: ClearCacheEvent) {
+        // TODO
     }
 }

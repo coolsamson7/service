@@ -33,7 +33,7 @@ class TestConfiguration {
     }
 }
 
-@Event
+@Event(broadcast = true)
 data class HelloEvent(
     val hello : String = ""
 )
@@ -49,6 +49,13 @@ class HelloEventListener : AbstractEventListener<HelloEvent>() {
         EventTests.future.complete(event.hello)
     }
 }
+/*
+@EventListener(event = HelloEvent::class)
+class OtherHelloEventListener : AbstractEventListener<HelloEvent>() {
+    override fun on(event: HelloEvent) {
+        EventTests.future1.complete(event.hello)
+    }
+}*/
 
 @SpringBootTest(classes = [TestConfiguration::class, EventConfiguration::class])
 internal class EventTests {
@@ -61,21 +68,21 @@ internal class EventTests {
 
     @Test
     fun test() {
-        Tracer.trace("org.sirius", TraceLevel.FULL, "test" )
-
         eventManager.send(HelloEvent("world"))
 
         val value = future.get()
+        //val value1 = future1.get()
 
         assertEquals("world", value)
     }
 
     companion object {
         val future = CompletableFuture<String>()
+        val future1 = CompletableFuture<String>()
 
         @JvmStatic
         @BeforeAll
-        fun setupTracer(): Unit {
+        fun setupTracer() {
             val tracer = Tracer(ConsoleTrace(), "%d{yyyy-MM-dd HH:mm:ss,SSS} %l{-6s} [%p{-10s}] %m")
 
             tracer.setTraceLevel("org.sirius", TraceLevel.FULL)

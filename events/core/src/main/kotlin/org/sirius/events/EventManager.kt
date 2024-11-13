@@ -57,7 +57,7 @@ class EventManager() : ApplicationContextAware {
     lateinit var rootPackage: String
 
     @Autowired
-    lateinit var objectMapper : ObjectMapper
+    private lateinit var objectMapper : ObjectMapper
 
     lateinit var listenerFactory : ListenerFactory
 
@@ -70,8 +70,10 @@ class EventManager() : ApplicationContextAware {
     // public
 
     fun send(event: Any) {
+        val eventDescriptor = this.findEventDescriptor(event.javaClass)
+
         if ( Tracer.ENABLED)
-            Tracer.trace("org.sirius.events", TraceLevel.HIGH, "send event %s", event.javaClass.name)
+            Tracer.trace("org.sirius.events", TraceLevel.HIGH, "%s event %s", eventDescriptor.name, if (eventDescriptor.broadcast) "broadcast" else "send")
 
         eventing.send(this, event)
     }
@@ -113,6 +115,10 @@ class EventManager() : ApplicationContextAware {
                 .metadata
                 .getAnnotationAttributes(EventListener::class.java.getCanonicalName())!!
 
+            var name = annotations["name"] as String
+            if ( name.isBlank())
+                name = bean.beanClassName!!
+
             val eventClass = annotations["event"] as Class<out Any>
 
             val eventDescriptor = findEventDescriptor(eventClass)
@@ -120,7 +126,7 @@ class EventManager() : ApplicationContextAware {
             if ( Tracer.ENABLED)
                 Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event listener %s for event %s", bean.beanClassName!!, eventDescriptor.name)
 
-            val descriptor = EventListenerDescriptor(bean, eventDescriptor)
+            val descriptor = EventListenerDescriptor(bean, name, eventDescriptor)
 
             eventListener[eventClass] = descriptor
 
@@ -136,7 +142,7 @@ class EventManager() : ApplicationContextAware {
             throw EventError("no registered event for class ${eventClass.name}")
     }
 
-    public fun dispatch(event: Any, eventClass: Class<out Any>) {
+    fun dispatch(event: Any, eventClass: Class<out Any>) {
         eventListener(eventClass).on(event)
     }
 

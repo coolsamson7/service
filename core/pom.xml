@@ -13,6 +13,16 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- local -->
+
+        <dependency>
+            <groupId>com.serious</groupId>
+            <artifactId>service-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- spring -->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>

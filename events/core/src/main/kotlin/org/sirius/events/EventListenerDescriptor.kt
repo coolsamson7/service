@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 
 data class EventListenerDescriptor(
     val beanDefinition : BeanDefinition,
+    val name: String,
     val event: EventDescriptor,
     var instance : AbstractEventListener<Any>? = null
 )

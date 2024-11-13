@@ -8,11 +8,15 @@ package com.serious.portal
 import com.serious.portal.model.MicrofrontendInstance
 import com.serious.portal.persistence.MicrofrontendEntityManager
 import jakarta.annotation.PostConstruct
+import org.sirius.common.tracer.TraceLevel
+import org.sirius.common.tracer.Tracer
+import org.sirius.events.AbstractEventListener
+import org.sirius.events.Event
+import org.sirius.events.EventListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.net.URL
-
 
 @Component
 class MicrofrontendHealthCheck {
@@ -29,80 +33,69 @@ class MicrofrontendHealthCheck {
     @PostConstruct
     fun loadDatabase() {
         for ( instance in entityManager.readAll()) {
-            //println("loaded " + instance.remoteEntry + ", healthCheck: " + instance.healthCheck)
-            // add to list anyway
+            this.register(instance)
 
-            this.instances.add(instance)
+            // initial check
 
-            try {
-                manifestLoader.load(URL(instance.uri))
-
-                instance.health  = "alive"
-
-                this.entityManager.updateHealth(instance.uri, "alive")
-            }
-            catch(exception : Throwable) {
-                println("och...dead")
-                instance.health  = "dead"
-
-                this.entityManager.updateHealth(instance.uri, "dead")
-            }
+            this.entityManager.updateHealth(instance.uri, if ( check(instance) )"alive" else "dead")
         } // for
     }
 
     fun register(microfrontendInstance: MicrofrontendInstance) {
+        if ( Tracer.ENABLED)
+            Tracer.trace("com.serious.portal", TraceLevel.HIGH, "register microfrontend ${microfrontendInstance.uri}")
+
         this.instances.add(microfrontendInstance)
     }
 
+    fun check(microfrontendInstance: MicrofrontendInstance) : Boolean {
+        if ( Tracer.ENABLED)
+            Tracer.trace("com.serious.portal", TraceLevel.HIGH, "check microfrontend ${microfrontendInstance.uri}")
+
+        return try {
+            manifestLoader.load(URL(microfrontendInstance.uri))
+            true
+        }
+        catch(exception : Throwable) {
+            if ( Tracer.ENABLED)
+                Tracer.trace("com.serious.portal", TraceLevel.HIGH, "caught ${exception.message}")
+
+            false
+        }
+    }
+
     fun remove(url: String) {
+        if ( Tracer.ENABLED)
+            Tracer.trace("com.serious.portal", TraceLevel.HIGH, "deregister microfrontend ${url}")
+
         instances.removeIf { instance -> instance.uri == url}
     }
 
     @Scheduled(fixedRate = 1000 * 10)
     fun checkHealth() {
-        println("check health")
+        if ( Tracer.ENABLED)
+            Tracer.trace("com.serious.portal", TraceLevel.HIGH, "check health")
+
         for (instance in instances) {
-            try {
-                println("try load " + instance.manifest.healthCheck)
-
-                manifestLoader.load(URL(instance.manifest.healthCheck))
-
+            if (check(instance)) {
                 if ( instance.health != "alive") {
-                    //println(manifest.name + "-> alive ")
+                    if ( Tracer.ENABLED)
+                        Tracer.trace("com.serious.portal", TraceLevel.HIGH, "${instance.uri} is alive again")
+
                     instance.health = "alive"
 
                     this.entityManager.updateHealth(instance.uri, "alive")
                 }
             }
-            catch(exception: Throwable) {
-                println("caught " + exception.message)
-                exception.printStackTrace()
-
+            else {
                 if ( instance.health == "alive") {
-                    //println(instance.name + "-> dead ")
+                    if ( Tracer.ENABLED)
+                        Tracer.trace("com.serious.portal", TraceLevel.HIGH, "${instance.uri} is dead")
+
                     instance.health = "dead"
 
                     this.entityManager.updateHealth(instance.uri, "dead")
                 }
-            }
-        }
-    }
-
-    fun refresh() {
-        for (instance in instances) {
-            try {
-                val newManifest = manifestLoader.load(URL(instance.manifest.healthCheck))
-
-                newManifest.remoteEntry = instance.uri
-                newManifest.health = instance.health
-                newManifest.enabled = instance.enabled
-
-                instance.manifest = newManifest
-
-                this.entityManager.saveMicrofrontendInstance(instance)
-            }
-            catch(exception: Throwable) {
-                println(exception.message) // TODO
             }
         }
     }

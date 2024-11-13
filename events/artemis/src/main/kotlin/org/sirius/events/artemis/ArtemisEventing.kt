@@ -7,5 +7,5 @@ package org.sirius.events.artemis
 
 import org.sirius.events.Eventing
 
-abstract class ArtemisEventing() : Eventing {
+abstract class ArtemisEventing() : Eventing() {
 }

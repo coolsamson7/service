@@ -5,18 +5,46 @@ package org.sirius.events
  * All rights reserved
  */
 
-interface Eventing {
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
+
+abstract class Eventing {
+    // instance data
+
+    @Autowired
+    private lateinit var objectMapper : ObjectMapper
+
+    // protected
+
+    protected fun asEvent(json: String, eventDescriptor: EventDescriptor) : Any {
+        try {
+            return objectMapper.readValue(json, eventDescriptor.clazz)
+        }
+        catch(exception: Throwable) {
+            throw EventError(exception.message!!)
+        }
+    }
+
+    protected fun asJSON(event: Any) : String {
+        try {
+            return objectMapper.writeValueAsString(event)
+        }
+        catch(exception: Throwable) {
+            throw EventError(exception.message!!)
+        }
+    }
+
     // public
 
-    fun registerEvent(eventManager: EventManager, eventDescriptor: EventDescriptor)
+    abstract fun registerEvent(eventManager: EventManager, eventDescriptor: EventDescriptor)
 
-    fun registerEventListener(eventManager: EventManager, eventListenerDescriptor: EventListenerDescriptor)
+    abstract fun registerEventListener(eventManager: EventManager, eventListenerDescriptor: EventListenerDescriptor)
 
-    fun send(eventManager: EventManager, event: Any)
+    abstract fun send(eventManager: EventManager, event: Any)
 
     // lifecycle
 
-    fun startup()
+    open fun startup() {}
 
-    fun shutdown()
+    open fun shutdown() {}
 }

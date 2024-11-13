@@ -12,6 +12,6 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS)
 @Component
 annotation class EventListener(
-    //val name: String = "",
+    val name: String = "",
     val event: KClass<out Any>
 )

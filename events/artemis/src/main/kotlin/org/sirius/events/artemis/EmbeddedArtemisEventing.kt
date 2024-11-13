@@ -12,6 +12,7 @@ import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
 import org.sirius.events.EventDescriptor
+import org.sirius.events.EventError
 import org.sirius.events.EventListenerDescriptor
 import org.sirius.events.EventManager
 import org.springframework.stereotype.Component
@@ -29,31 +30,30 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
     init {
         this.embedded.start()
         val serverLocator = ActiveMQClient.createServerLocator("vm://0")
-        val sessionFactory = serverLocator.createSessionFactory()
-        session = sessionFactory.createSession()
+
+        session = serverLocator.createSessionFactory().createSession()
     }
 
     // private
 
     protected fun createMessage(eventManager: EventManager, event: Any) : ClientMessage {
-        val json = eventManager.objectMapper.writeValueAsString(event)
-
         val message = session.createMessage(true)
 
-        message.writeBodyBufferString(json)
+        message.writeBodyBufferString(asJSON(event))
 
         return message
     }
 
-    private fun createEvent(eventManager: EventManager, message : ClientMessage, eventClass: Class<*>) : Any {
-        val body = message.bodyBuffer.readString()
-
-        return eventManager.objectMapper.readValue(body, eventClass)
+    private fun createEvent(message : ClientMessage, eventDescriptor: EventDescriptor) : Any {
+        return asEvent(message.bodyBuffer.readString(), eventDescriptor)
     }
 
-
     private fun producer4(clazz: Class<*>) : ClientProducer {
-        return this.producer[clazz]!!
+        val producer = this.producer[clazz]
+        if ( producer !== null)
+            return producer
+        else
+            throw EventError("unknown producer for class ${clazz.name}")
     }
 
     // implement
@@ -69,7 +69,7 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
         val eventClass =  eventListenerDescriptor.event.clazz
 
         val address = eventName
-        val queueName = eventName
+        val queueName = eventListenerDescriptor.name
 
         // create a queue per listener
 
@@ -90,14 +90,11 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
             if ( Tracer.ENABLED)
                 Tracer.trace("org.sirius.events", TraceLevel.HIGH, "handle event %s from address %s", eventClass.name, message.address)
 
-            eventManager.dispatch(createEvent(eventManager, message, eventClass), eventClass)
+            eventManager.dispatch(createEvent(message, eventListenerDescriptor.event), eventClass)
         }
     }
 
     override fun send(eventManager: EventManager, event: Any) {
-        if ( Tracer.ENABLED)
-            Tracer.trace("org.sirius.events", TraceLevel.HIGH, "send event %s", event.javaClass.name)
-
         producer4(event.javaClass).send(createMessage(eventManager, event))
     }
 
