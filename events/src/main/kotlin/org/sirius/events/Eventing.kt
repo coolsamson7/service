@@ -8,9 +8,9 @@ package org.sirius.events
 abstract class Eventing(val eventManager: EventManager) {
     // public
 
-    abstract fun registerEvent(event: EventDescriptor)
+    abstract fun registerEvent(eventDescriptor: EventDescriptor)
 
-    abstract fun registerEventListener(event: EventListenerDescriptor)
+    abstract fun registerEventListener(eventListenerDescriptor: EventListenerDescriptor)
 
     abstract fun send(event: Any)
 

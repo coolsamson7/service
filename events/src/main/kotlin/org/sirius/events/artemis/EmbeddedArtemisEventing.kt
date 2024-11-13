@@ -57,15 +57,15 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
 
     // implement
 
-    override fun registerEvent(event: EventDescriptor) {
-        producer[event.clazz] = session.createProducer(event.name)
+    override fun registerEvent(eventDescriptor: EventDescriptor) {
+        producer[eventDescriptor.clazz] = session.createProducer(eventDescriptor.name)
     }
 
-    override fun registerEventListener(eventDescriptor: EventListenerDescriptor) {
+    override fun registerEventListener(eventListenerDescriptor: EventListenerDescriptor) {
         // consumer
 
-        val eventName = eventDescriptor.event.name
-        val eventClass =  eventDescriptor.event.clazz
+        val eventName = eventListenerDescriptor.event.name
+        val eventClass =  eventListenerDescriptor.event.clazz
 
         val address = eventName
         val queueName = eventName
@@ -75,7 +75,7 @@ class EmbeddedArtemisEventing(eventManager: EventManager) : ArtemisEventing(even
         val configuration = QueueConfiguration()
 
         configuration.setAddress(address)
-        configuration.setRoutingType(if ( eventDescriptor.event.broadcast ) RoutingType.MULTICAST else RoutingType.ANYCAST)
+        configuration.setRoutingType(if ( eventListenerDescriptor.event.broadcast ) RoutingType.MULTICAST else RoutingType.ANYCAST)
         configuration.setName(queueName)
         configuration.setDurable(true) // ?
 

@@ -5,7 +5,6 @@ package org.sirius.events.artemis
  * All rights reserved
  */
 
-import org.apache.activemq.artemis.api.core.client.ClientMessage
 import org.sirius.events.EventManager
 import org.sirius.events.Eventing
 

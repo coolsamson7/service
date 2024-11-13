@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.stereotype.Component
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
 
@@ -33,20 +32,24 @@ class TestConfiguration {
     }
 }
 
-@Event(name = "hello")
+@Event
 data class HelloEvent(
     val hello : String = ""
 )
 
+@Event(name = "other")
+data class OtherEvent(
+    val hello : String = ""
+)
+
 @EventListener(event = HelloEvent::class)
-@Component
 class HelloEventListener : AbstractEventListener<HelloEvent>() {
     override fun on(event: HelloEvent) {
         EventTests.future.complete(event.hello)
     }
 }
 
-@SpringBootTest(classes = [TestConfiguration::class])
+@SpringBootTest(classes = [TestConfiguration::class, EventConfiguration::class])
 internal class EventTests {
     // instance data
 
