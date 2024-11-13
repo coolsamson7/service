@@ -5,27 +5,21 @@ package com.serious.service.administration
 * All rights reserved
 */
 
-//import org.springframework.boot.autoconfigure.security.reactive.PathRequest
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.serious.plugin.PluginMetadata
 import com.serious.plugin.provider.DirectoryPluginProvider
-import com.serious.plugin.storage.PluginFileStorage
 import com.serious.portal.PortalConfiguration
-import com.serious.service.ComponentAdministration
 import com.serious.service.ServiceConfiguration
-import com.serious.service.ServiceManager
 import lombok.extern.slf4j.Slf4j
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
 import org.sirius.common.tracer.trace.ConsoleTrace
+import org.sirius.events.EventConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
 import org.springframework.context.annotation.*
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
@@ -96,7 +90,7 @@ class JWTSecurityConfig {
 @EnableJpaRepositories(basePackages = ["com.serious"])
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@Import(ServiceConfiguration::class, PortalConfiguration::class)
+@Import(ServiceConfiguration::class, PortalConfiguration::class, EventConfiguration::class)
 @EnableScheduling
 class RootConfig
 
@@ -186,59 +180,6 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*");
     }
 }
-
-//
-
-/* TODO
-
-
-@RegisterPlugin("foo")
-@Component
-class FooPlugin(val registry: PluginRegistry) : AbstractPlugin(registry), ApplicationContextAware {
-
-    lateinit var context: ApplicationContext
-
-
-    // methods
-
-
-    @Public()
-    fun nix() {
-
-    }
-
-    @Public("foo")
-    fun foo(msg: String, times: Int) : String {
-        println(msg)
-
-        val p = this.context.getBean(FooPlugin::class.java)
-        for ( i in 0..times)
-            p.bar(msg)
-
-        return "ok"
-    }
-
-    @Callback
-    fun bar(msg: String) {
-    }
-
-    // lifecycle
-
-    override fun startup() {
-        println("startup")
-    }
-
-    override fun shutdown() {
-        println("shutdown")
-    }
-
-
-    override fun setApplicationContext(applicationContext: ApplicationContext) {
-        this.context = applicationContext
-    }
-}*/
-
-// TODO TEST
 
 // main application
 

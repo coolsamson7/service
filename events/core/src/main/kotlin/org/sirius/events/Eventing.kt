@@ -16,9 +16,9 @@ abstract class Eventing {
 
     // protected
 
-    protected fun asEvent(json: String, eventDescriptor: EventDescriptor) : Any {
+    protected fun asEvent(json: String, clazz: Class<*>) : Any {
         try {
-            return objectMapper.readValue(json, eventDescriptor.clazz)
+            return objectMapper.readValue(json, clazz)
         }
         catch(exception: Throwable) {
             throw EventError(exception.message!!)

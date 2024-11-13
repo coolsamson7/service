@@ -28,8 +28,6 @@ class TestConfiguration {
     @Primary
     fun objectMapper(): ObjectMapper {
         return ObjectMapper()
-        //setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        //.registerModule(ObjectDescriptorModule())
     }
 }
 
@@ -49,13 +47,13 @@ class HelloEventListener : AbstractEventListener<HelloEvent>() {
         EventTests.future.complete(event.hello)
     }
 }
-/*
+
 @EventListener(event = HelloEvent::class)
 class OtherHelloEventListener : AbstractEventListener<HelloEvent>() {
     override fun on(event: HelloEvent) {
         EventTests.future1.complete(event.hello)
     }
-}*/
+}
 
 @SpringBootTest(classes = [TestConfiguration::class, EventConfiguration::class])
 internal class EventTests {
@@ -71,7 +69,7 @@ internal class EventTests {
         eventManager.send(HelloEvent("world"))
 
         val value = future.get()
-        //val value1 = future1.get()
+        val value1 = future1.get()
 
         assertEquals("world", value)
     }

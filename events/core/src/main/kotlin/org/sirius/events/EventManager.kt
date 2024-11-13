@@ -142,30 +142,22 @@ class EventManager() : ApplicationContextAware {
             throw EventError("no registered event for class ${eventClass.name}")
     }
 
-    fun dispatch(event: Any, eventClass: Class<out Any>) {
-        eventListener(eventClass).on(event)
+    fun dispatch(event: Any, eventListenerDescriptor: EventListenerDescriptor) {
+        if (Tracer.ENABLED)
+            Tracer.trace("org.sirius.events",  TraceLevel.HIGH,"dispatch event ${event.javaClass.name} to listener ${eventListenerDescriptor.name}")
+
+        eventListener(eventListenerDescriptor).on(event)
     }
 
-    private fun eventListener(event: Class<out Any>) : AbstractEventListener<Any> {
-        val descriptor = eventListener[event]
+    private fun eventListener(descriptor: EventListenerDescriptor) : AbstractEventListener<Any> {
+        if (descriptor.instance == null) {
+            if (Tracer.ENABLED)
+                Tracer.trace("org.sirius.events",  TraceLevel.HIGH,"create listener %s for event %s", descriptor.beanDefinition.beanClassName!!, descriptor.event.name)
 
-        if ( descriptor != null) {
-            if (descriptor.instance == null) {
-                if (Tracer.ENABLED)
-                    Tracer.trace(
-                        "org.sirius.events",
-                        TraceLevel.HIGH,
-                        "create listener %s for event %s",
-                        descriptor.beanDefinition.beanClassName!!,
-                        descriptor.event.name
-                    )
-
-                descriptor.instance = listenerFactory.make(descriptor.beanDefinition)
-            }
-
-            return descriptor.instance!!
+            descriptor.instance = listenerFactory.make(descriptor.beanDefinition)
         }
-        else throw EventError("unknown listener for event ${event.name}")
+
+        return descriptor.instance!!
     }
 
     // lifecycle

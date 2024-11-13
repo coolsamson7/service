@@ -45,7 +45,7 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
     }
 
     private fun createEvent(message : ClientMessage, eventDescriptor: EventDescriptor) : Any {
-        return asEvent(message.bodyBuffer.readString(), eventDescriptor)
+        return asEvent(message.bodyBuffer.readString(), eventDescriptor.clazz)
     }
 
     private fun producer4(clazz: Class<*>) : ClientProducer {
@@ -84,13 +84,16 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
 
         // create the consumer per message
 
+        if ( Tracer.ENABLED)
+            Tracer.trace("org.sirius.events.artemis", TraceLevel.FULL, "create queue ${queueName} for address ${address}")
+
         val consumer = session.createConsumer(queueName) // queue name
 
         consumer.messageHandler = MessageHandler { message ->
             if ( Tracer.ENABLED)
-                Tracer.trace("org.sirius.events", TraceLevel.HIGH, "handle event %s from address %s", eventClass.name, message.address)
+                Tracer.trace("org.sirius.events.artemis", TraceLevel.HIGH, "handle event ${eventName} from address ${address} delivered to queue ${queueName}")
 
-            eventManager.dispatch(createEvent(message, eventListenerDescriptor.event), eventClass)
+            eventManager.dispatch(createEvent(message, eventListenerDescriptor.event), eventListenerDescriptor)
         }
     }
 
