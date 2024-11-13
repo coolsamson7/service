@@ -1,4 +1,9 @@
 package org.sirius.events
+/*
+ * @COPYRIGHT (C) 2023 Andreas Ernst
+ *
+ * All rights reserved
+ */
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeAll
@@ -13,6 +18,8 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
+import java.util.concurrent.CompletableFuture
+import kotlin.test.assertEquals
 
 @Configuration
 @ComponentScan(basePackages = ["org.sirius.events"])
@@ -35,9 +42,7 @@ data class HelloEvent(
 @Component
 class HelloEventListener : AbstractEventListener<HelloEvent>() {
     override fun on(event: HelloEvent) {
-        println("##### on " + event.hello)
-
-        System.exit(0)
+        EventTests.future.complete(event.hello)
     }
 }
 
@@ -55,9 +60,15 @@ internal class EventTests {
         Tracer.trace("org.sirius", TraceLevel.FULL, "test" )
 
         eventManager.send(HelloEvent("world"))
+
+        val value = future.get()
+
+        assertEquals("world", value)
     }
 
     companion object {
+        val future = CompletableFuture<String>()
+
         @JvmStatic
         @BeforeAll
         fun setupTracer(): Unit {

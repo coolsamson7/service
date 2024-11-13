@@ -1,4 +1,9 @@
 package org.sirius.events
+/*
+ * @COPYRIGHT (C) 2023 Andreas Ernst
+ *
+ * All rights reserved
+ */
 
 import org.apache.activemq.artemis.api.core.client.ClientProducer
 
