@@ -7,5 +7,5 @@ package org.sirius.common.tracer
 abstract class Trace {
     // abstract
 
-    abstract fun trace(entry: org.sirius.common.tracer.TraceEntry, format: org.sirius.common.tracer.TraceFormatter)
+    abstract fun trace(entry: TraceEntry, format: TraceFormatter)
 }

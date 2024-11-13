@@ -9,10 +9,10 @@ import org.sirius.common.tracer.Trace
 import org.sirius.common.tracer.TraceEntry
 import org.sirius.common.tracer.TraceFormatter
 
-class ConsoleTrace : org.sirius.common.tracer.Trace() {
+class ConsoleTrace : Trace() {
     // override
 
-    override fun trace(entry: org.sirius.common.tracer.TraceEntry, format: org.sirius.common.tracer.TraceFormatter) {
+    override fun trace(entry: TraceEntry, format: TraceFormatter) {
         println(format.format(entry))
     }
 }

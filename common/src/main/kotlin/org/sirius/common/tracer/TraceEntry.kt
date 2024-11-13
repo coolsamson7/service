@@ -16,7 +16,7 @@ class TraceEntry(
     /**
      * the level
      */
-    val level: org.sirius.common.tracer.TraceLevel,
+    val level: TraceLevel,
     /**
      * the formatted message
      */

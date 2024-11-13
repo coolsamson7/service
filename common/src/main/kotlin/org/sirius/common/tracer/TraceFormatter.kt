@@ -10,26 +10,26 @@ import java.text.SimpleDateFormat
 abstract class Format() {
     open fun setup(parameters: String) {}
 
-    abstract fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder)
+    abstract fun format(entry: TraceEntry, builder: StringBuilder)
 }
 
-class FormatString(val string: String) : org.sirius.common.tracer.Format() {
+class FormatString(val string: String) : Format() {
     // implement
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         builder.append(string)
     }
 }
 
-class FormatMessage() : org.sirius.common.tracer.Format() {
+class FormatMessage() : Format() {
     // implement
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         builder.append(entry.message)
     }
 }
 
-class FormatLevel() : org.sirius.common.tracer.Format() {
+class FormatLevel() : Format() {
     // instance data
 
     var format : String? = null
@@ -40,7 +40,7 @@ class FormatLevel() : org.sirius.common.tracer.Format() {
         this.format = parameters
     }
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         if ( format != null)
             builder.append(String.format("%" + this.format!!, entry.level))
         else
@@ -48,7 +48,7 @@ class FormatLevel() : org.sirius.common.tracer.Format() {
     }
 }
 
-class FormatPath() : org.sirius.common.tracer.Format() {
+class FormatPath() : Format() {
     // instance data
 
     var format : String? = null
@@ -59,7 +59,7 @@ class FormatPath() : org.sirius.common.tracer.Format() {
         this.format = parameters
     }
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         if ( format != null)
             builder.append(String.format("%" + this.format!!, entry.path))
         else
@@ -67,7 +67,7 @@ class FormatPath() : org.sirius.common.tracer.Format() {
     }
 }
 
-class FormatTimestamp() : org.sirius.common.tracer.Format() {
+class FormatTimestamp() : Format() {
     // instance data
 
     var format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS")
@@ -79,15 +79,15 @@ class FormatTimestamp() : org.sirius.common.tracer.Format() {
         format = SimpleDateFormat(parameters)
     }
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         builder.append(format.format(entry.timestamp))
     }
 }
 
-class FormatThread() : org.sirius.common.tracer.Format() {
+class FormatThread() : Format() {
     // implement
 
-    override fun format(entry: org.sirius.common.tracer.TraceEntry, builder: StringBuilder) {
+    override fun format(entry: TraceEntry, builder: StringBuilder) {
         builder.append(Thread.currentThread().name)
     }
 }
@@ -102,14 +102,14 @@ class TraceFormatter(layout: String) {
 
     // private
 
-    private fun parse(layout: String) : Array<org.sirius.common.tracer.Format>{
-        val result = ArrayList<org.sirius.common.tracer.Format>()
+    private fun parse(layout: String) : Array<Format>{
+        val result = ArrayList<Format>()
 
         var start = 0
         var pos = start
 
         var parameter = false
-        var lastFormat : org.sirius.common.tracer.Format? = null
+        var lastFormat : Format? = null
         var inParameter = false
 
         while ( pos < layout.length) {
@@ -136,11 +136,11 @@ class TraceFormatter(layout: String) {
                 val element =  layout[pos]
 
                 lastFormat = when ( element ) {
-                    'p' -> org.sirius.common.tracer.FormatPath()
-                    'l' -> org.sirius.common.tracer.FormatLevel()
-                    'd' -> org.sirius.common.tracer.FormatTimestamp()
-                    't' -> org.sirius.common.tracer.FormatThread()
-                    'm' -> org.sirius.common.tracer.FormatMessage()
+                    'p' -> FormatPath()
+                    'l' -> FormatLevel()
+                    'd' -> FormatTimestamp()
+                    't' -> FormatThread()
+                    'm' -> FormatMessage()
                         else -> {
                             throw Error("unknown placeholder ${element}")
                         }
@@ -155,7 +155,7 @@ class TraceFormatter(layout: String) {
 
             else if ( layout[pos] == '%') {
                 if ( pos - start > 0) {
-                    result.add(org.sirius.common.tracer.FormatString(layout.substring(start, pos)))
+                    result.add(FormatString(layout.substring(start, pos)))
                 }
                 parameter = true
             }
@@ -164,7 +164,7 @@ class TraceFormatter(layout: String) {
         } // while
 
         if ( pos - start > 0)
-            result.add(org.sirius.common.tracer.FormatString(layout.substring(start, pos)))
+            result.add(FormatString(layout.substring(start, pos)))
 
         // done
 
@@ -173,7 +173,7 @@ class TraceFormatter(layout: String) {
 
     // public
 
-    fun format(entry: org.sirius.common.tracer.TraceEntry) : String {
+    fun format(entry: TraceEntry) : String {
         val builder = StringBuilder()
 
         for ( format in this.formatter)

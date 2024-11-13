@@ -1,5 +1,4 @@
 package org.sirius.common.tracer
-
 /*
  * @COPYRIGHT (C) 2023 Andreas Ernst
  *
