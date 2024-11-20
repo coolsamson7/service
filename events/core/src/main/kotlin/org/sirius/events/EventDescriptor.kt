@@ -8,5 +8,6 @@ package org.sirius.events
 data class EventDescriptor(
     val name: String,
     val clazz :  Class<out Any>,
-    val broadcast: Boolean
+    val broadcast: Boolean,
+    val durable: Boolean
 )

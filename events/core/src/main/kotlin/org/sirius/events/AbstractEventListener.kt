@@ -4,6 +4,6 @@ package org.sirius.events
  *
  * All rights reserved
  */
-abstract class AbstractEventListener<T> {
-    abstract fun on(event: T)
+interface AbstractEventListener<T> {
+    fun on(event: T)
 }

@@ -4,12 +4,11 @@ package org.sirius.events
  *
  * All rights reserved
  */
-import org.springframework.beans.factory.config.BeanDefinition
-import kotlin.reflect.KClass
 
 data class EventListenerDescriptor(
-    val beanDefinition : BeanDefinition,
     val name: String,
+    val group: String,
     val event: EventDescriptor,
-    var instance : AbstractEventListener<Any>? = null
+    val instance : AbstractEventListener<Any>
 )
+

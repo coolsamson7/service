@@ -10,5 +10,6 @@ package org.sirius.events
 @Target(AnnotationTarget.CLASS)
 annotation class Event(
     val name: String = "",
-    val broadcast : Boolean = false
+    val broadcast : Boolean = false,
+    val durable : Boolean = false
 )

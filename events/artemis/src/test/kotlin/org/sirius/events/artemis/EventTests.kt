@@ -41,15 +41,15 @@ data class OtherEvent(
     val hello : String = ""
 )
 
-@EventListener(event = HelloEvent::class)
-class HelloEventListener : AbstractEventListener<HelloEvent>() {
+@EventListener(event = HelloEvent::class, group = "hello-group")
+class HelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
         EventTests.future.complete(event.hello)
     }
 }
 
-@EventListener(event = HelloEvent::class)
-class OtherHelloEventListener : AbstractEventListener<HelloEvent>() {
+@EventListener(event = HelloEvent::class, group = "hello-group")
+class OtherHelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
         EventTests.future1.complete(event.hello)
     }

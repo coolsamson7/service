@@ -13,5 +13,6 @@ import kotlin.reflect.KClass
 @Component
 annotation class EventListener(
     val name: String = "",
+    val group: String = "",
     val event: KClass<out Any>
 )

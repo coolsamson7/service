@@ -30,6 +30,7 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
     init {
         this.embedded.start()
         val serverLocator = ActiveMQClient.createServerLocator("vm://0")
+        //val serverLocator = ActiveMQClient.createServerLocator("tcp://localhost:61616")//"vm://0")
 
         session = serverLocator.createSessionFactory().createSession()
     }
@@ -69,7 +70,7 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
         val eventClass =  eventListenerDescriptor.event.clazz
 
         val address = eventName
-        val queueName = eventListenerDescriptor.name
+        val queueName = if ( eventListenerDescriptor.group.isNotEmpty()) eventListenerDescriptor.group else eventListenerDescriptor.name
 
         // create a queue per listener
 
@@ -78,7 +79,7 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
         configuration.setAddress(address)
         configuration.setRoutingType(if ( eventListenerDescriptor.event.broadcast ) RoutingType.MULTICAST else RoutingType.ANYCAST)
         configuration.setName(queueName)
-        configuration.setDurable(true) // ?
+        configuration.setDurable(eventListenerDescriptor.event.durable) // ?
 
         session.createQueue(configuration)
 
@@ -109,6 +110,6 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
 
     override fun shutdown() {
         session.stop()
-        this.embedded.stop()
+        //this.embedded.stop()
     }
 }

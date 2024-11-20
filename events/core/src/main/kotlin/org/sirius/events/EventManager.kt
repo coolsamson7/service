@@ -5,7 +5,6 @@ package org.sirius.events
  * All rights reserved
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.sirius.common.tracer.TraceLevel
@@ -21,6 +20,7 @@ import org.springframework.context.ApplicationContextAware
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
+import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
@@ -42,12 +42,12 @@ class EventManager() : ApplicationContextAware {
     class ListenerFactory(applicationContext : ApplicationContext) : DefaultListableBeanFactory(applicationContext) {
         // public
 
-        fun make(beanDefinition: BeanDefinition): AbstractEventListener<Any> {
+        fun <T>make(beanDefinition: BeanDefinition): AbstractEventListener<T> {
             val name = beanDefinition.beanClassName!!
 
             registerBeanDefinition(name, beanDefinition)
 
-            return getBean(name) as AbstractEventListener<Any>
+            return getBean(name) as AbstractEventListener<T>
         }
     }
 
@@ -56,13 +56,9 @@ class EventManager() : ApplicationContextAware {
     @Value("\${event.root:org.sirius}")
     lateinit var rootPackage: String
 
-    @Autowired
-    private lateinit var objectMapper : ObjectMapper
-
     lateinit var listenerFactory : ListenerFactory
 
     val events : MutableMap<Class<*>, EventDescriptor> = ConcurrentHashMap()
-    val eventListener : MutableMap<Class<out Any>, EventListenerDescriptor> = ConcurrentHashMap()
 
     @Autowired
     lateinit var eventing : Eventing
@@ -81,9 +77,7 @@ class EventManager() : ApplicationContextAware {
     // protected
 
     private fun scanEvents() {
-        val beans = EventProvider().findCandidateComponents(rootPackage)
-
-        for (bean in beans) {
+        for (bean in EventProvider().findCandidateComponents(rootPackage)) {
             if (bean is AnnotatedBeanDefinition) {
                 val annotations = bean
                     .metadata
@@ -91,6 +85,7 @@ class EventManager() : ApplicationContextAware {
 
                 var name = annotations["name"] as String
                 val broadcast = annotations["broadcast"] as Boolean
+                val durable = annotations["durable"] as Boolean
                 val clazz = Class.forName(bean.beanClassName)
 
                 if ( name.isBlank())
@@ -99,7 +94,7 @@ class EventManager() : ApplicationContextAware {
                 if ( Tracer.ENABLED)
                     Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event %s", name)
 
-                val descriptor = EventDescriptor(name, clazz, broadcast)
+                val descriptor = EventDescriptor(name, clazz, broadcast, durable)
                 events[clazz] = descriptor
 
                 eventing.registerEvent(this, descriptor)
@@ -108,13 +103,14 @@ class EventManager() : ApplicationContextAware {
     }
 
     private fun scanEventListener() {
-        val beans = EventListenerProvider().findCandidateComponents(rootPackage)
+        val groupEventListener = HashMap<Class<out Any>, EventListenerDescriptor>()
 
-        for (bean in beans) {
+        for (bean in EventListenerProvider().findCandidateComponents(rootPackage)) {
             val annotations = (bean as AnnotatedBeanDefinition)
                 .metadata
                 .getAnnotationAttributes(EventListener::class.java.getCanonicalName())!!
 
+            val group = annotations["group"] as String
             var name = annotations["name"] as String
             if ( name.isBlank())
                 name = bean.beanClassName!!
@@ -126,11 +122,26 @@ class EventManager() : ApplicationContextAware {
             if ( Tracer.ENABLED)
                 Tracer.trace("org.sirius.events", TraceLevel.HIGH, "register event listener %s for event %s", bean.beanClassName!!, eventDescriptor.name)
 
-            val descriptor = EventListenerDescriptor(bean, name, eventDescriptor)
+            var descriptor = groupEventListener[eventClass]
+            if ( descriptor !== null) {
+                if ( group.isNotEmpty()) {
+                    (descriptor.instance as GroupEventListener<Any>).list.add(BeanEventListener(listenerFactory, bean))
+                    descriptor = null
+                }
+            }
+            else {
+                if ( group.isNotEmpty()) {
+                    val listener = mutableListOf<AbstractEventListener<Any>>(BeanEventListener(listenerFactory, bean))
+                    descriptor = EventListenerDescriptor(name, group, eventDescriptor, GroupEventListener(listener))
+                    groupEventListener[eventClass] = descriptor
+                }
+                else {
+                    descriptor = EventListenerDescriptor(name, group, eventDescriptor, BeanEventListener(listenerFactory, bean))
+                }
+            }
 
-            eventListener[eventClass] = descriptor
-
-            eventing.registerEventListener(this, descriptor)
+            if ( descriptor != null)
+                eventing.registerEventListener(this, descriptor)
         }
     }
 
@@ -146,18 +157,7 @@ class EventManager() : ApplicationContextAware {
         if (Tracer.ENABLED)
             Tracer.trace("org.sirius.events",  TraceLevel.HIGH,"dispatch event ${event.javaClass.name} to listener ${eventListenerDescriptor.name}")
 
-        eventListener(eventListenerDescriptor).on(event)
-    }
-
-    private fun eventListener(descriptor: EventListenerDescriptor) : AbstractEventListener<Any> {
-        if (descriptor.instance == null) {
-            if (Tracer.ENABLED)
-                Tracer.trace("org.sirius.events",  TraceLevel.HIGH,"create listener %s for event %s", descriptor.beanDefinition.beanClassName!!, descriptor.event.name)
-
-            descriptor.instance = listenerFactory.make(descriptor.beanDefinition)
-        }
-
-        return descriptor.instance!!
+        eventListenerDescriptor.instance.on(event)
     }
 
     // lifecycle
