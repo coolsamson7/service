@@ -20,16 +20,21 @@ import org.springframework.context.ApplicationContextAware
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
-import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
-class EventManager() : ApplicationContextAware {
+class EventManager() : ApplicationContextAware, EnvelopeHandler {
     // local classes
 
     internal class EventProvider : ClassPathScanningCandidateComponentProvider(false) {
         init {
             addIncludeFilter(AnnotationTypeFilter(Event::class.java, false))
+        }
+    }
+
+    internal class EnvelopePipelineProvider : ClassPathScanningCandidateComponentProvider(false) {
+        init {
+            addIncludeFilter(AnnotationTypeFilter(EnvelopePipeline::class.java, false))
         }
     }
 
@@ -39,42 +44,85 @@ class EventManager() : ApplicationContextAware {
         }
     }
 
-    class ListenerFactory(applicationContext : ApplicationContext) : DefaultListableBeanFactory(applicationContext) {
+    class BeanFactory(applicationContext : ApplicationContext) : DefaultListableBeanFactory(applicationContext) {
         // public
 
-        fun <T>make(beanDefinition: BeanDefinition): AbstractEventListener<T> {
+        fun <T>make(beanDefinition: BeanDefinition, clazz: Class<*>): T {
             val name = beanDefinition.beanClassName!!
 
             registerBeanDefinition(name, beanDefinition)
 
-            return getBean(name) as AbstractEventListener<T>
+            return getBean(name, clazz) as T
         }
     }
+
+
 
     // instance data
 
     @Value("\${event.root:org.sirius}")
     lateinit var rootPackage: String
 
-    lateinit var listenerFactory : ListenerFactory
+    @JvmField
+    final var applicationContext: ApplicationContext? = null
+    lateinit var beanFactory : BeanFactory
 
     val events : MutableMap<Class<*>, EventDescriptor> = ConcurrentHashMap()
 
     @Autowired
     lateinit var eventing : Eventing
 
+    lateinit var envelopeHandler : EnvelopeHandler
+
     // public
 
-    fun send(event: Any) {
+    fun sendEvent(event: Any) {
         val eventDescriptor = this.findEventDescriptor(event.javaClass)
 
         if ( Tracer.ENABLED)
             Tracer.trace("org.sirius.events", TraceLevel.HIGH, "%s event %s", eventDescriptor.name, if (eventDescriptor.broadcast) "broadcast" else "send")
 
-        eventing.send(this, event)
+        val envelope = eventing.create(event)
+
+         envelopeHandler.send(envelope)
+    }
+
+    fun handleEvent(envelope: Envelope, eventDescriptor: EventListenerDescriptor) {
+        // run handler
+
+        envelopeHandler.handle(envelope, eventDescriptor)
     }
 
     // protected
+
+    private fun scanEnvelopePipelines() {
+        // i am the last handler
+
+        this.envelopeHandler = this
+
+        for (bean in EnvelopePipelineProvider().findCandidateComponents(rootPackage)) {
+            if (bean is AnnotatedBeanDefinition) {
+                if (Tracer.ENABLED)
+                    Tracer.trace(
+                        "org.sirius.events",
+                        TraceLevel.HIGH,
+                        "register envelope pipeline %s",
+                        bean.beanClassName!!
+                    )
+
+                val pipeline : EnvelopeHandler = this.beanFactory.make(bean, EnvelopeHandler::class.java)
+
+                if ( pipeline is AbstractEnvelopeHandler)
+                    pipeline.next = this.envelopeHandler
+
+                envelopeHandler = pipeline
+            }
+        } // for
+
+        // last handler is me
+
+
+    }
 
     private fun scanEvents() {
         for (bean in EventProvider().findCandidateComponents(rootPackage)) {
@@ -111,6 +159,7 @@ class EventManager() : ApplicationContextAware {
                 .getAnnotationAttributes(EventListener::class.java.getCanonicalName())!!
 
             val group = annotations["group"] as String
+            val perProcess = annotations["perProcess"] as Boolean
             var name = annotations["name"] as String
             if ( name.isBlank())
                 name = bean.beanClassName!!
@@ -125,18 +174,18 @@ class EventManager() : ApplicationContextAware {
             var descriptor = groupEventListener[eventClass]
             if ( descriptor !== null) {
                 if ( group.isNotEmpty()) {
-                    (descriptor.instance as GroupEventListener<Any>).list.add(BeanEventListener(listenerFactory, bean))
+                    (descriptor.instance as GroupEventListener<Any>).list.add(BeanEventListener(beanFactory, bean))
                     descriptor = null
                 }
             }
             else {
                 if ( group.isNotEmpty()) {
-                    val listener = mutableListOf<AbstractEventListener<Any>>(BeanEventListener(listenerFactory, bean))
-                    descriptor = EventListenerDescriptor(name, group, eventDescriptor, GroupEventListener(listener))
+                    val listener = mutableListOf<AbstractEventListener<Any>>(BeanEventListener(beanFactory, bean))
+                    descriptor = EventListenerDescriptor(name, group, perProcess, eventDescriptor, GroupEventListener(listener))
                     groupEventListener[eventClass] = descriptor
                 }
                 else {
-                    descriptor = EventListenerDescriptor(name, group, eventDescriptor, BeanEventListener(listenerFactory, bean))
+                    descriptor = EventListenerDescriptor(name, group, perProcess, eventDescriptor, BeanEventListener(beanFactory, bean))
                 }
             }
 
@@ -171,6 +220,7 @@ class EventManager() : ApplicationContextAware {
 
         scanEvents()
         scanEventListener()
+        scanEnvelopePipelines()
     }
 
     @PreDestroy
@@ -185,6 +235,16 @@ class EventManager() : ApplicationContextAware {
 
     @Throws(BeansException::class)
     override fun setApplicationContext(applicationContext: ApplicationContext) {
-        this.listenerFactory = ListenerFactory(applicationContext)
+        this.beanFactory = BeanFactory(applicationContext)
+    }
+
+    // implement EnvelopeHandler
+
+    override fun send(envelope: Envelope) {
+        eventing.send(this, envelope)
+    }
+
+    override fun handle(envelope: Envelope, eventDescriptor: EventListenerDescriptor) {
+        dispatch(envelope.event, eventDescriptor)
     }
 }

@@ -8,6 +8,9 @@ package org.sirius.events
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 
+
+// TODO: maybe a pipeline if we need try/finally logic...
+
 abstract class Eventing {
     // instance data
 
@@ -40,7 +43,9 @@ abstract class Eventing {
 
     abstract fun registerEventListener(eventManager: EventManager, eventListenerDescriptor: EventListenerDescriptor)
 
-    abstract fun send(eventManager: EventManager, event: Any)
+    abstract fun create(event: Any) : Envelope
+
+    abstract fun send(eventManager: EventManager, envelope: Envelope)
 
     // lifecycle
 

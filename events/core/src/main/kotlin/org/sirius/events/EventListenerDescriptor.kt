@@ -8,6 +8,7 @@ package org.sirius.events
 data class EventListenerDescriptor(
     val name: String,
     val group: String,
+    val perProcess: Boolean,
     val event: EventDescriptor,
     val instance : AbstractEventListener<Any>
 )

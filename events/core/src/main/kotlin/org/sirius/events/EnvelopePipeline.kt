@@ -4,16 +4,12 @@ package org.sirius.events
  *
  * All rights reserved
  */
+
 import org.springframework.stereotype.Component
-import kotlin.reflect.KClass
+
 
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Component
-annotation class EventListener(
-    val name: String = "",
-    val group: String = "",
-    val perProcess: Boolean = false,
-    val event: KClass<out Any>
-)
+annotation class EnvelopePipeline()

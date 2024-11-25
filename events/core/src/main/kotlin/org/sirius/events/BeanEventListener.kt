@@ -7,7 +7,7 @@ package org.sirius.events
 
 import org.springframework.beans.factory.config.BeanDefinition
 
-class BeanEventListener<T>(private val factory: EventManager.ListenerFactory, private val beanDefinition: BeanDefinition) :
+class BeanEventListener<T>(private val factory: EventManager.BeanFactory, private val beanDefinition: BeanDefinition) :
     AbstractEventListener<T> {
     // instance data
 
@@ -18,12 +18,13 @@ class BeanEventListener<T>(private val factory: EventManager.ListenerFactory, pr
 
     private fun getInstance() : AbstractEventListener<T> {
         if ( instance == null )
-            instance = factory.make(beanDefinition)
+            instance = factory.make(beanDefinition, AbstractEventListener::class.java)
 
         return instance!!
     }
 
     // implement AbstractEventListener
+
     override fun on(event: T) {
         getInstance().on(event)
     }
