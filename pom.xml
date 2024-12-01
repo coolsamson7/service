@@ -211,6 +211,8 @@
         <module>demo</module>
         <module>plugin</module>
         <module>test</module>
+        <module>springcommon</module>
+        <module>persistence</module>
         <!--module>docker</module-->
     </modules>
 </project>

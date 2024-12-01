@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class LongType : Type<Long>(Long::class.javaObjectType) {
+open class LongType : Type<Long>(Long::class.javaObjectType) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<Long> {
-        return { -> 0L }
+    override fun computeDefaultValue() : Long {
+        return 0L
     }
 
 

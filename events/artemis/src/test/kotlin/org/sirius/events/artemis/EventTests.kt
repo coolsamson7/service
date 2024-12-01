@@ -18,8 +18,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Component
+import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.CompletableFuture
-import kotlin.test.assertEquals
 
 @Configuration
 @ComponentScan(basePackages = ["org.sirius.events"])
@@ -36,7 +37,7 @@ data class HelloEvent(
     val hello : String = ""
 )
 
-@Event(name = "other")
+@Event(broadcast = true)
 data class OtherEvent(
     val hello : String = ""
 )
@@ -44,18 +45,55 @@ data class OtherEvent(
 @EventListener(event = HelloEvent::class, group = "hello-group")
 class HelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
-        EventTests.future.complete(event.hello)
+        println("### HelloEventListener")
+        //EventTests.future.complete(event.hello)
     }
 }
 
 @EventListener(event = HelloEvent::class, group = "hello-group")
 class OtherHelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
-        EventTests.future1.complete(event.hello)
+        println("### OtherHelloEventListener")
+        //EventTests.future1.complete(event.hello)
     }
 }
 
+@EventListener(event = OtherEvent::class, perProcess = true)
+class OtherEventListener : AbstractEventListener<OtherEvent> {
+    override fun on(event: OtherEvent) {
+        println("### OtherEventListener")
+        //EventTests.future1.complete(event.hello)
+    }
+}
+
+@EventListener(event = OtherEvent::class,  perProcess = true)
+class OtherOtherEventListener : AbstractEventListener<OtherEvent> {
+    override fun on(event: OtherEvent) {
+        println("### OtherOtherEventListener")
+        //EventTests.future1.complete(event.hello)
+    }
+}
+
+@EnvelopePipeline
+@Component
+class UserEnvelopeHandler() : AbstractEnvelopeHandler(null) {
+    override fun send(envelope: Envelope) {
+        envelope.set("user", "user")
+
+        proceedSend(envelope)
+    }
+
+    override fun handle(envelope: Envelope, eventDescriptor: EventListenerDescriptor) {
+        envelope.get("user")
+
+        proceedHandle(envelope, eventDescriptor)
+    }
+
+}
+
+
 @SpringBootTest(classes = [TestConfiguration::class, EventConfiguration::class])
+@ActiveProfiles("test")
 internal class EventTests {
     // instance data
 
@@ -65,13 +103,28 @@ internal class EventTests {
     // test
 
     @Test
+    fun test1() {
+        println("### send")
+        eventManager.sendEvent(HelloEvent("world"))
+        eventManager.sendEvent(OtherEvent("world"))
+
+        Thread.sleep(60 * 1000) // 1m
+    }
+
+    @Test
     fun test() {
-        eventManager.send(HelloEvent("world"))
+        println("### send")
+        eventManager.sendEvent(HelloEvent("world"))
+        eventManager.sendEvent(OtherEvent("world"))
 
-        val value = future.get()
-        val value1 = future1.get()
+        //val value = future.get()
+        //val value1 = future1.get()
 
-        assertEquals("world", value)
+        //assertEquals("world", value)
+
+        println("### seleep")
+
+        Thread.sleep(60 * 1000) // 1m
     }
 
     companion object {

@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class DoubleType : Type<Double>(Double::class.javaObjectType) {
+open class DoubleType : Type<Double>(Double::class.javaObjectType) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<Double> {
-        return { -> 0.0 }
+    override fun computeDefaultValue() : Double {
+        return 0.0
     }
 
     fun min(min: Double) : DoubleType {

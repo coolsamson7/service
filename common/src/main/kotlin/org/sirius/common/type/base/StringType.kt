@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class StringType : Type<String>(String::class.java) {
+open class StringType : Type<String>(String::class.java) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<String> {
-        return { -> "" }
+    override fun computeDefaultValue() : String {
+        return ""
     }
 
     // fluent

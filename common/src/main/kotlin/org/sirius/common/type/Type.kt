@@ -7,17 +7,11 @@ package org.sirius.common.type
 
 typealias Check<T> = (obj: T) -> Boolean
 
-typealias DefaultValue<T> = () -> T
-
-abstract class Type<T:Any>(val baseType: Class<T>) {
+open class Type<T:Any>(val baseType: Class<T>) {
     // instance data
 
     val tests = ArrayList<Test<Any>>()
     var sealed = false
-
-    val defaultValue : DefaultValue<T> = computeDefaultValue()
-
-     abstract fun computeDefaultValue() : DefaultValue<T>
 
     // init
 
@@ -32,6 +26,11 @@ abstract class Type<T:Any>(val baseType: Class<T>) {
     }
 
     // public
+
+
+    open fun computeDefaultValue() : T {
+        throw Error("not implemented")
+    }
 
     fun seal() : Type<T> {
         this.sealed = true

@@ -7,47 +7,70 @@ package org.sirius.events.artemis
 
 import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
+import org.apache.activemq.artemis.api.core.SimpleString
 import org.apache.activemq.artemis.api.core.client.*
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ
 import org.sirius.common.tracer.TraceLevel
 import org.sirius.common.tracer.Tracer
-import org.sirius.events.EventDescriptor
-import org.sirius.events.EventError
-import org.sirius.events.EventListenerDescriptor
-import org.sirius.events.EventManager
+import org.sirius.events.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+
+
+class ArtemisEnvelope(event: Any, val message: ClientMessage) : Envelope(event) {
+    // implement
+
+    override fun setBody(body: String) {
+        message.writeBodyBufferString(body)
+    }
+
+    override fun get(key: String): String {
+        return message.getStringProperty(key)
+    }
+
+    override fun set(key: String, value: String) {
+        message.putStringProperty(key, value)
+    }
+
+}
+
+
 @Component
-class EmbeddedArtemisEventing : ArtemisEventing() {
+class EmbeddedArtemisEventing : Eventing() {
     // instance data
 
-    private val embedded = EmbeddedActiveMQ()
-    val session: ClientSession
+    private var embedded : EmbeddedActiveMQ? = null
+    lateinit var session: ClientSession
     val producer : MutableMap<Class<*>, ClientProducer> = ConcurrentHashMap()
+
+    @Value("\${events.artemis.server:vm://0}")
+    lateinit var server: String
+    @Value("\${events.artemis.user:artemis}")
+    lateinit var user: String
+    @Value("\${events.artemis.password:artemis}")
+    lateinit var password: String
+    @Value("\${events.artemis.xa:false}")
+    lateinit var xa: String
 
     // init
 
-    init {
-        this.embedded.start()
-        val serverLocator = ActiveMQClient.createServerLocator("vm://0")
-        //val serverLocator = ActiveMQClient.createServerLocator("tcp://localhost:61616")//"vm://0")
+    fun init() {
+        if ( this.server.startsWith("vm:")) {
+            this.embedded = EmbeddedActiveMQ()
+            this.embedded!!.start()
+        }
 
-        session = serverLocator.createSessionFactory().createSession()
+        val serverLocator = ActiveMQClient.createServerLocator(this.server)
+
+        if ( embedded == null)
+            session = serverLocator.createSessionFactory().createSession(this.user, this.password, xa.lowercase().equals("true"), true,true, true, -1)
+        else
+            session = serverLocator.createSessionFactory().createSession()
     }
 
     // private
-
-    protected fun createMessage(eventManager: EventManager, event: Any) : ClientMessage {
-        val message = session.createMessage(true)
-
-        message.writeBodyBufferString(asJSON(event))
-
-        return message
-    }
-
-    private fun createEvent(message : ClientMessage, eventDescriptor: EventDescriptor) : Any {
-        return asEvent(message.bodyBuffer.readString(), eventDescriptor.clazz)
-    }
 
     private fun producer4(clazz: Class<*>) : ClientProducer {
         val producer = this.producer[clazz]
@@ -70,7 +93,10 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
         val eventClass =  eventListenerDescriptor.event.clazz
 
         val address = eventName
-        val queueName = if ( eventListenerDescriptor.group.isNotEmpty()) eventListenerDescriptor.group else eventListenerDescriptor.name
+        var queueName = if ( eventListenerDescriptor.group.isNotEmpty()) eventListenerDescriptor.group else eventListenerDescriptor.name
+
+        if ( eventListenerDescriptor.perProcess)
+            queueName = queueName + "-" + UUID.randomUUID()
 
         // create a queue per listener
 
@@ -79,14 +105,26 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
         configuration.setAddress(address)
         configuration.setRoutingType(if ( eventListenerDescriptor.event.broadcast ) RoutingType.MULTICAST else RoutingType.ANYCAST)
         configuration.setName(queueName)
-        configuration.setDurable(eventListenerDescriptor.event.durable) // ?
+        configuration.setTemporary(eventListenerDescriptor.perProcess)
+        configuration.setDurable(eventListenerDescriptor.event.durable)
 
-        session.createQueue(configuration)
+        val query = session.queueQuery(SimpleString(queueName))
+        if ( !query.isExists) {
+            if ( Tracer.ENABLED)
+                Tracer.trace("org.sirius.events.artemis", TraceLevel.FULL, "create queue ${queueName}")
+
+            session.createQueue(configuration)
+        }
+        else {
+            // TODO : check if queue parameters have changed???
+            if ( Tracer.ENABLED)
+                Tracer.trace("org.sirius.events.artemis", TraceLevel.FULL, "detected existing queue ${queueName}")
+        }
 
         // create the consumer per message
 
         if ( Tracer.ENABLED)
-            Tracer.trace("org.sirius.events.artemis", TraceLevel.FULL, "create queue ${queueName} for address ${address}")
+            Tracer.trace("org.sirius.events.artemis", TraceLevel.FULL, "create consumer for queue ${queueName}")
 
         val consumer = session.createConsumer(queueName) // queue name
 
@@ -94,22 +132,36 @@ class EmbeddedArtemisEventing : ArtemisEventing() {
             if ( Tracer.ENABLED)
                 Tracer.trace("org.sirius.events.artemis", TraceLevel.HIGH, "handle event ${eventName} from address ${address} delivered to queue ${queueName}")
 
-            eventManager.dispatch(createEvent(message, eventListenerDescriptor.event), eventListenerDescriptor)
+            val event = asEvent(message.bodyBuffer.readString(), eventListenerDescriptor.event.clazz)
+
+            val envelope = ArtemisEnvelope(event, message)
+            eventManager.handleEvent(envelope, eventListenerDescriptor)
         }
     }
 
-    override fun send(eventManager: EventManager, event: Any) {
-        producer4(event.javaClass).send(createMessage(eventManager, event))
+    override fun create(event: Any) : Envelope {
+        val envelope = ArtemisEnvelope(event, session.createMessage(true)) // durabke ?
+
+        envelope.setBody(asJSON(event))
+
+        return envelope
+    }
+
+    override fun send(eventManager: EventManager, envelope: Envelope) {
+        producer4(envelope.event.javaClass).send((envelope as ArtemisEnvelope).message)
     }
 
     // lifecycle
 
     override fun startup() {
+        init()
+
         session.start()
     }
 
     override fun shutdown() {
         session.stop()
-        //this.embedded.stop()
+
+        this.embedded?.stop()
     }
 }

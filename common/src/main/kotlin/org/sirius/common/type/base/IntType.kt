@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class IntType : Type<Int>(Int::class.javaObjectType) {
+open class IntType : Type<Int>(Int::class.javaObjectType) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<Int> {
-        return { -> 0 }
+    override fun computeDefaultValue() : Int {
+        return 0
     }
 
     // fluent

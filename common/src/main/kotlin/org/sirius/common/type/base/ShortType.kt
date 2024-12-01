@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class ShortType : Type<Short>(Short::class.javaObjectType) {
+open class ShortType : Type<Short>(Short::class.javaObjectType) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<Short> {
-        return { -> 0 }
+    override fun computeDefaultValue() : Short {
+        return 0
     }
 
     fun min(min: Short) : ShortType {

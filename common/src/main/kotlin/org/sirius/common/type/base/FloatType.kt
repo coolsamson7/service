@@ -4,14 +4,13 @@ package org.sirius.common.type.base
  *
  * All rights reserved
  */
-import org.sirius.common.type.DefaultValue
 import org.sirius.common.type.Type
 
-class FloatType : Type<Float>(Float::class.javaObjectType) {
+open class FloatType : Type<Float>(Float::class.javaObjectType) {
     // override Type
 
-    override fun computeDefaultValue() : DefaultValue<Float> {
-        return { -> 0.0f }
+    override fun computeDefaultValue() : Float {
+        return 0.0f
     }
 
     fun min(min: Float) : FloatType {
