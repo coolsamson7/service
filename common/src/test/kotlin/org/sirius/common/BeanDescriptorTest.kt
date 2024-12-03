@@ -22,7 +22,8 @@ class Bean(
     @Attribute(primaryKey = true)
     var id: String = "",
     @Attribute(type = Str10::class)
-    var name : String = ""
+    var name : String = "",
+    val foo : Number = 1
 )
 
 class BeanDescriptorTest {

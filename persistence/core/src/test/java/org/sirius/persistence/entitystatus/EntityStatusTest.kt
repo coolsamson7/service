@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.sirius.common.SpringCommonConfiguration
 import org.sirius.common.beans.BeanObserver
 import org.sirius.common.bean.Attribute
+import org.sirius.common.bean.BeanDescriptor
 import org.sirius.common.type.base.StringType
 import org.sirius.persistence.EntityStatusListener
 import org.sirius.persistence.configuration.AtomikosConfiguration
@@ -57,23 +58,21 @@ class Str10 : StringType() {
 @EntityListeners(value = [EntityStatusListener::class])
 class EntityStatusEntity(
     @Id
-    @Attribute(primaryKey = true, type = Str10::class)
+    @Attribute(type = Str10::class)
     @Column var id: String = "",
 
     @Attribute
     @Column var name: String = "Andi",
 
-    @Attribute(primaryKey = true)
+    @Attribute()
     @Column var number: Long = 0L,
 
-    @Attribute(version = true)
-    @Type(VersionCounterUserType::class)
-    @Version
-    var version: VersionCounter? = VersionCounter(),
-
     @Attribute
-    @Embedded var entityStatus: EntityStatus? = null
-)
+    @Embedded
+    var entityStatus: EntityStatus? = null
+) {
+    fun foo() {}
+}
 
 @Component
 class TestSessionContext : EntityStatusListener.SessionContext {
@@ -94,10 +93,6 @@ class Service {
 
     @Transactional()
     fun writeEntity(entity: EntityStatusEntity) : EntityStatusEntity {
-        //STATUS_ACTIVE = 0;
-        //STATUS_NO_TRANSACTION = 6
-        var status = userTransaction.status
-
         entityManager.persist(entity)
 
         return entity
@@ -130,8 +125,21 @@ class EntityStatusTest {
     // test
 
     @Test
+    fun testAnnotations() {
+        val bean = BeanDescriptor.ofClass(EntityStatusEntity::class)
+
+        println(bean.report())
+    }
+
+    @Test
     fun testAudit() {
-        var entity = service.writeEntity(EntityStatusEntity("id", "Andi", 0, VersionCounter()))
+        var entity = service.writeEntity(EntityStatusEntity("id", "Andi", 0))
+
+        assertEquals(true, entity.entityStatus != null )
+        assertEquals("user", entity.entityStatus!!.creatingUser)
+        assertEquals("user", entity.entityStatus!!.updatingUser)
+
+        assertEquals(true, entity.entityStatus!!.creatingDate!!.equals( entity.entityStatus!!.updatingDate))
 
         entity = service.readEntity("id")
 
@@ -139,10 +147,6 @@ class EntityStatusTest {
 
         entity = service.changeEntity("id")
 
-        entity = service.readEntity("id")
-
-        assertEquals(1L, entity.version!!.counter )
-
-        assertEquals(true, entity.entityStatus != null )
+        assertEquals(true, !entity.entityStatus!!.creatingDate!!.equals( entity.entityStatus!!.updatingDate))
     }
 }

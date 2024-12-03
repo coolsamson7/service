@@ -39,7 +39,7 @@ typealias FeatureFilter = (context: FilterContext, feature: Feature) -> Boolean
 
 @EventListener(event = ClearCacheEvent::class)
 @Component
-class DeploymentManager() : AbstractEventListener<ClearCacheEvent>() {
+class DeploymentManager() : AbstractEventListener<ClearCacheEvent> {
     // instance data
 
     private val manifestFilters = mutableListOf<ManifestFilter>()

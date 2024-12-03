@@ -50,8 +50,8 @@ class ConversionTest {
                 map { "double" to "int" }
                 map { "float" to "short" }
 
-                map { path("price", "currency") to  path("price", "currency") }
-                map { "longN" to  path("price", "value") }
+                map { path("price", "currency") to path("price", "currency") }
+                map { "longN" to path("price", "value") }
                 }
         }
 

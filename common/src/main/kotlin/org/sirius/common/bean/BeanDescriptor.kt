@@ -6,42 +6,78 @@ package org.sirius.common.bean
  */
 
 import org.sirius.common.type.Type
+import java.lang.StringBuilder
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.findAnnotations
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 
 class BeanDescriptor(val clazz: KClass<*>) {
     // internal classes
 
-    open class Property(val name: String, val property: KProperty1<Any, *>) {
+    open class Property<C:Any>(val name: String, val property: KProperty1<C, Any>) {
+        // instance data
+
+        private val getter = property.getter
+        private val setter : KMutableProperty1.Setter<C,Any>?
+
+        init {
+            setter = if ( property is KMutableProperty1<C, Any> ) property.setter else null
+        }
         // public
 
-        open fun <T:Any?> set(instance: Any, value: T) {
-            (property as KMutableProperty1<Any, T>).set(instance, value)
+        open fun <V:Any> set(instance: C, value: V) {
+            setter!!(instance, value)
         }
 
-        fun <T:Any?> get(instance: Any) : T {
-            return property.get(instance) as T
+        fun <T:Any?> get(instance: C) : T {
+            return getter(instance) as T
+        }
+
+        open fun report(builder: StringBuilder) {
+            builder.append(name)
         }
     }
 
-    class AttributeProperty(name: String, property: KProperty1<Any, *>, val type: Type<*>, val primaryKey: Boolean,
-                            val required : Boolean, val version : Boolean) : Property(name, property) {
-        override fun <T:Any?> set(instance: Any, value: T) {
-            type.validate(value!!)
+    class AttributeProperty<C:Any>(name: String, property: KProperty1<C, Any>, val type: Type<*>, val primaryKey: Boolean,
+                            val mutable : Boolean, val nullable : Boolean, val version : Boolean) : Property<C>(name, property) {
+        override fun <V:Any> set(instance: C, value: V) {
+            type.validate(value)
 
             super.set(instance, value)
+        }
+
+        override fun report(builder: StringBuilder) {
+            super.report(builder)
+
+            builder
+                .append(" : ")
+                .append(type.baseType.name)
+
+            if ( primaryKey )
+                builder.append(" primary-key")
+
+            if ( mutable )
+                builder.append(" mutable")
+
+            if ( nullable )
+                builder.append(" nullable")
+
+            if ( version )
+                builder.append(" version")
         }
     }
 
     // instance data
 
     var superClass : BeanDescriptor? = null
-    var properties : Array<Property>
+    var properties : Array<Property<Any>>
 
     // constructor
 
@@ -55,24 +91,62 @@ class BeanDescriptor(val clazz: KClass<*>) {
         }*/
 
 
-        this.properties = computeProperties(clazz)
+        this.properties = computeProperties(clazz) as Array<Property<Any>>
+
+        println(report())
     }
 
     // private
 
-    private fun computeProperties(clazz: KClass<*>) : Array<Property> {
-        val properties = ArrayList<Property>()
-        for ( member in clazz.memberProperties /*members .filterIsInstance<KProperty<*>>()*/) {
-            val attribute : Attribute? = member.annotations.firstOrNull { annotation -> annotation is Attribute } as Attribute?
+    private fun hasAnnotation(property:  KProperty1<*, *>, clazz: String) : Boolean {
+        var result = property.annotations.firstOrNull { annotation ->
+            annotation.annotationClass.qualifiedName == clazz
+        } !== null
+
+        if ( !result )
+            result = property.javaField?.annotations?.firstOrNull { annotation ->
+            annotation.annotationClass.qualifiedName == clazz
+        } !== null
+
+        return result
+    }
+
+    private fun <T:Any> getAnnotation(property:  KProperty1<*, *>, clazz: KClass<T>) : T? {
+        var annotation = property.annotations.firstOrNull { ann ->
+            ann.annotationClass.isSubclassOf(clazz)
+        }
+
+        if ( annotation == null) {
+            annotation = property.javaField?.annotations?.firstOrNull { ann ->
+                ann.annotationClass.isSubclassOf(clazz)
+            }
+        }
+
+        return annotation as T?
+    }
+
+    private fun isMutable(property: KProperty1<*, *>) : Boolean {
+        return property is  KMutableProperty1<*, *>
+    }
+
+    private fun isNullable(property: KProperty1<*, *>) : Boolean {
+        return property.returnType.isMarkedNullable
+    }
+
+    private fun <T:Any> computeProperties(clazz: KClass<T>) : Array<Property<T>> {
+        val properties = ArrayList<Property<T>>()
+        for ( member in clazz.memberProperties) {
+            val attribute = getAnnotation(member, Attribute::class)
 
             if (attribute != null) {
                 properties.add(AttributeProperty(
                     member.name,
-                    member as KProperty1<Any, *>,
+                    member as KProperty1<T, Any>,
                     type(attribute.type, member.returnType.jvmErasure),
-                    attribute.primaryKey,
-                    attribute.required,
-                    attribute.version
+                    attribute.primaryKey || hasAnnotation(member,"jakarta.persistence.Id"),
+                    attribute.mutable || isMutable(member),
+                    isNullable(member),
+                    attribute.version || hasAnnotation(member,"jakarta.persistence.Version")
                 ))
             }
         }
@@ -82,7 +156,7 @@ class BeanDescriptor(val clazz: KClass<*>) {
 
     // public
 
-    fun property(property: String) : Property? {
+    fun property(property: String) : Property<Any>? {
         return properties.find { prop -> prop.name == property }
     }
 
@@ -92,6 +166,25 @@ class BeanDescriptor(val clazz: KClass<*>) {
 
     fun <T:Any> set(instance: Any, name: String, value: T)  {
         return property(name)!!.set(instance, value)
+    }
+
+    // public
+
+    fun report() : String {
+        val builder = StringBuilder()
+
+        builder
+            .append(clazz.qualifiedName).append(" {\n")
+
+        for ( property in properties) {
+            builder.append("\t")
+            property.report(builder)
+            builder.append("\n")
+        }
+
+        builder.append("}")
+
+        return builder.toString()
     }
 
     // companion
@@ -117,7 +210,7 @@ class BeanDescriptor(val clazz: KClass<*>) {
         }
 
         fun ofClass(clazz: KClass<*>) : BeanDescriptor {
-            return beans.getOrPut(clazz, { BeanDescriptor(clazz) })
+            return beans.getOrPut(clazz) { BeanDescriptor(clazz) }
         }
     }
 }

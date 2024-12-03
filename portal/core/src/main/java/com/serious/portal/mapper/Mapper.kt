@@ -700,7 +700,7 @@ class MappingDefinition<S : Any, T : Any>(val sourceClass: KClass<S>, val target
              */
             infix fun String.to(target: Array<String>) :MapBuilder<S,T> {
                 sourceAccessor = arrayOf(PropertyAccessor(this))
-                targetAccessor = target.map {PropertyAccessor(it) }.toTypedArray()
+                targetAccessor = target.map { PropertyAccessor(it) }.toTypedArray()
 
                 return This
             }

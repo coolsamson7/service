@@ -35,7 +35,7 @@ class EntityStatusListener {
         open fun update(entity: Any, user: String, time: LocalDateTime) {}
     }
 
-    class BeanSetter(private val property: BeanDescriptor.Property) : Setter() {
+    class BeanSetter(private val property: BeanDescriptor.Property<Any>) : Setter() {
         // override Setter
 
         override fun create(entity: Any, user: String, time: LocalDateTime) {
@@ -49,12 +49,8 @@ class EntityStatusListener {
                 ))
             }
             else {
-                property.set(entity, EntityStatus(
-                    time,
-                    user,
-                    time,
-                    user
-                ))
+                CREATING_USER.set(status, user)
+                CREATING_DATE.set(status, time)
             }
         }
 
@@ -69,16 +65,8 @@ class EntityStatusListener {
                 ))
             }
             else {
-                // set in place!!
                 UPDATING_USER.set(status, user)
                 UPDATING_DATE.set(status, time)
-                /*property.set(entity, EntityStatus(
-                    status.creatingDate,
-                    status.creatingUser,
-                    time,
-                    user
-                )
-                )*/
             }
         }
     }
@@ -140,6 +128,9 @@ class EntityStatusListener {
         private const val ENTITY_STATUS = "entityStatus"
 
         private val NOOP_SETTER = Setter()
+
+        private val CREATING_USER = BeanDescriptor.ofClass(EntityStatus::class).property("creatingUser")!!
+        private val CREATING_DATE = BeanDescriptor.ofClass(EntityStatus::class).property("creatingDate")!!
 
         private val UPDATING_USER = BeanDescriptor.ofClass(EntityStatus::class).property("updatingUser")!!
         private val UPDATING_DATE = BeanDescriptor.ofClass(EntityStatus::class).property("updatingDate")!!

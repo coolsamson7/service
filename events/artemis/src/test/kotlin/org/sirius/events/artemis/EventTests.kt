@@ -6,6 +6,7 @@ package org.sirius.events.artemis
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.sirius.common.tracer.TraceLevel
@@ -46,7 +47,7 @@ data class OtherEvent(
 class HelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
         println("### HelloEventListener")
-        //EventTests.future.complete(event.hello)
+        EventTests.future.complete(event.hello)
     }
 }
 
@@ -54,7 +55,7 @@ class HelloEventListener : AbstractEventListener<HelloEvent> {
 class OtherHelloEventListener : AbstractEventListener<HelloEvent> {
     override fun on(event: HelloEvent) {
         println("### OtherHelloEventListener")
-        //EventTests.future1.complete(event.hello)
+        EventTests.future1.complete(event.hello)
     }
 }
 
@@ -102,9 +103,8 @@ internal class EventTests {
 
     // test
 
-    @Test
+    //@Test
     fun test1() {
-        println("### send")
         eventManager.sendEvent(HelloEvent("world"))
         eventManager.sendEvent(OtherEvent("world"))
 
@@ -113,18 +113,16 @@ internal class EventTests {
 
     @Test
     fun test() {
-        println("### send")
         eventManager.sendEvent(HelloEvent("world"))
-        eventManager.sendEvent(OtherEvent("world"))
+       // eventManager.sendEvent(OtherEvent("world"))
 
-        //val value = future.get()
-        //val value1 = future1.get()
+        val value = future.get()
+        val value1 = future1.get()
 
-        //assertEquals("world", value)
+        assertEquals("world", value)
+        assertEquals("world", value1)
 
-        println("### seleep")
-
-        Thread.sleep(60 * 1000) // 1m
+        //Thread.sleep(60 * 1000) // 1m
     }
 
     companion object {

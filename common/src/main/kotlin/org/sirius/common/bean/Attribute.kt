@@ -23,11 +23,11 @@ annotation class Attribute(
      */
     val index: Int = -1,
     /**
-     * return `true`, if this attribute is required, `false` otherwise.
+     * return `true`, if this attribute is mutable, `false` otherwise.
      *
      * @return the required property
      */
-    val required: Boolean = false,
+    val mutable: Boolean = false,
     /**
      * return `true`, if this attribute is the primary key, `false` otherwise.
      *
