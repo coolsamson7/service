@@ -1,0 +1,63 @@
+=== TODO
+
+- extension
+-  -> module federation
+-
+
+=== FOO
+
+- translate?
+- history?
+- user task
+- user task liste
+
+=== LATER
+
+svg-icon -> px 32/16
+
+=== NOW
+
+- direkt starten
+- komische sache task?
+- task list
+
+=== DONE
+
+- task filter
+- aufräumen tasks...
+- komische sache documentation ("bpmn:documentation")
+- runtime service!
+- task service
+- user-task properties
+- js service
+- test call! + js
+- get all deployments
+- load process
+- create/save process
+- delete
+- execution listener class
+- hover fertig
+- vline
+- hover icon
+- kopfzeiule
+- error?? ( execution listener, etc. )
+- id validierung
+- no selection -> process?
+- extensions
+- module
+- documentation
+- svg + hover
+- id
+- rotate90
+- konfig druchschkleusen
+- zahl direkt / Update
+- curos
+- scss
+- registratur für editoren?
+- check react app?
+- moddle arrays
+- moddle unterscuht
+- beosipel extension
+
+
+== DENK NACH

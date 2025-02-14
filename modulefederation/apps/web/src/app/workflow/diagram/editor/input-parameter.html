@@ -1,0 +1,6 @@
+<ng-container  *ngFor="let property of properties">
+  <div class="property">{{property.name}}</div>
+
+  <ng-container [property-editor] [element]="element" [property]="property"></ng-container>
+
+</ng-container>

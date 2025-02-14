@@ -1,0 +1,30 @@
+.property-panel {
+  margin: 0px 0px 0px 0px;
+
+  .header {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+
+    background-color: rgb(241, 242, 244);
+
+    padding: 4px 4px 4px 4px;
+
+    display: flex;
+
+    .icon {
+
+    }
+
+    .labels {
+      margin-left: 10px;
+
+      .type {
+        font-weight: 600;
+      }
+
+      .name {
+
+      }
+    }
+  }
+}

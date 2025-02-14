@@ -1,0 +1,91 @@
+:host {
+  width: 100%;
+
+}
+
+.inputoutput {
+  width: 100%;
+
+  .inputs {
+    .delete {
+      visibility: hidden;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+
+      .label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+
+
+    .left {
+      display: flex;
+      flex-direction: column;
+
+      .line {
+        height: 100%;
+        background-color: black;
+        color: black;
+        width: 2px;
+        align-self: center;
+      }
+    }
+
+    .input {
+        display: flex;
+        font-size: 14px;
+
+        .body {
+          display: flex;
+        }
+    }
+
+    .input:hover svg-icon {
+      visibility: visible;
+    }
+  }
+
+  .outputs {
+    .delete {
+      visibility: hidden;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+
+      .label {
+          font-weight: 600;
+          font-size: 14px;
+        }
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+
+      .line {
+        height: 100%;
+        background-color: black;
+        color: black;
+        width: 2px;
+        align-self: center;
+      }
+    }
+
+    .output {
+      display: flex;
+      font-size: 14px;
+
+      .body {
+        display: flex;
+      }
+    }
+
+    .output:hover svg-icon {
+      visibility: visible;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+.extensions {
+  width: 100%;
+
+  .extension {
+    display: flex;
+
+    .delete {
+      visibility: hidden;
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+
+      .line {
+        height: 100%;
+        background-color: black;
+        color: black;
+        width: 2px;
+        align-self: center;
+      }
+    }
+  }
+
+  .extension:hover svg-icon {
+    visibility: visible;
+  }
+}
