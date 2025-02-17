@@ -31,6 +31,7 @@ import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.confi
   ],
   exports: [
     DiagramComponent,
+    PropertyPanelModule,
 
     SvgIconComponent,
   ]

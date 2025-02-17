@@ -5,7 +5,7 @@
     </div>
     <div class="labels">
       <div class="type">{{element!.$type}}</div>
-      <!-- TODO div class="name">{{element!['name']}}</div-->
+      <div class="name">{{element!['name']}}</div>
     </div>
   </div>
   <property-group *ngFor="let group of currentConfig.groups" [group]="group" [element]="element"></property-group>

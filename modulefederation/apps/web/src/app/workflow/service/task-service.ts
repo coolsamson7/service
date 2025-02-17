@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { Observable } from 'rxjs';
+import { AbstractHTTPService, Service } from "@modulefederation/portal";
 
 export interface Task {
   name: string,
@@ -12,17 +13,18 @@ export interface TaskFilter {
   user?: string
 }
 
-@Injectable({providedIn: "root"})
-export class BPMNTaskService  {
+@Injectable({providedIn: 'root'})
+@Service({domain: "workflow", prefix: "/bpmn/task"})
+export class TaskService extends AbstractHTTPService {
   // constructor
 
-  public constructor(private http: HttpClient) {}
+  constructor(injector : Injector) {
+      super(injector);
+  }
 
   // methods
 
   getTasks(filter: TaskFilter) : Observable<Task[]> {
-    const base = "http://localhost:8080/bpmn/task/tasks"
-
-    return this.http.post<Task[]>(base, filter)
+    return this.post<Task[]>("/tasks", filter)
   }
 }

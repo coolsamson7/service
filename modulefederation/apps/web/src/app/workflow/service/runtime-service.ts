@@ -1,19 +1,20 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
+import { AbstractHTTPService, Service } from "@modulefederation/portal";
 import { Observable } from 'rxjs';
 
+@Injectable({providedIn: 'root'})
+@Service({domain: "workflow", prefix: "/bpmn/runtime/"})
+export class RuntimeService extends AbstractHTTPService {
+    // constructor
 
-@Injectable({providedIn: "root"})
-export class BPMNRuntimeService  {
-  // constructor
+    constructor(injector : Injector) {
+        super(injector);
+    }
 
-  public constructor(private http: HttpClient) {}
+    // methods
 
-  // methods
-
-  startProcess(processDefinitionKey: string) : Observable<void> {
-    const base = `http://localhost:8080/bpmn/runtime/start/${processDefinitionKey}`
-
-    return this.http.get<void>(base)
-  }
-}
+    startProcess(processDefinitionKey: string) : Observable<void> {
+      return this.get<void>(`start/${processDefinitionKey}`)
+    }
+} 

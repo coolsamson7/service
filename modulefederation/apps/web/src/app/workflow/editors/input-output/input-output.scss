@@ -4,6 +4,7 @@
 }
 
 .inputoutput {
+  font-family: "Roboto", sans-serif;
   width: 100%;
 
   .inputs {
@@ -16,7 +17,9 @@
 
       .label {
         font-weight: 600;
-        font-size: 14px;
+        font-size: 12px;
+        color: white;
+        fill: white;
       }
     }
 
@@ -36,7 +39,8 @@
 
     .input {
         display: flex;
-        font-size: 14px;
+        font-size: 12px;
+        fill: white;
 
         .body {
           display: flex;
@@ -57,8 +61,8 @@
       justify-content: space-between;
 
       .label {
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: 400;
+          font-size: 12px;
         }
     }
 
@@ -78,6 +82,7 @@
     .output {
       display: flex;
       font-size: 14px;
+      fill: white
 
       .body {
         display: flex;

@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
+import { AbstractHTTPService, Service } from "@modulefederation/portal";
 import { Observable } from 'rxjs';
 
 export interface ProcessDescriptor {
@@ -14,31 +15,30 @@ export interface ProcessDefinitionXML {
   xml: string
  }
 
-@Injectable({providedIn: "root"})
-export class BPMNAdministrationService  {
-  // constructor
 
-  public constructor(private http: HttpClient) {}
 
-  // methods
 
-  getProcessDefinitions() : Observable<ProcessDescriptor[]> {
-    const base = "http://localhost:8080/bpmn/administration/processes"
-    return this.http.get<ProcessDescriptor[]>(base)
-  }
+ @Injectable({providedIn: 'root'})
+ @Service({domain: "workflow", prefix: "/bpmn/administration"})
+ export class AdministrationService extends AbstractHTTPService {
+     // constructor
+ 
+     constructor(injector : Injector) {
+         super(injector);
+     }
+ 
+     // methods
+ 
+     getProcessDefinitions() : Observable<ProcessDescriptor[]> {
+      return this.get<ProcessDescriptor[]>(`/processes`)
+    }
+  
+    readProcessDefinition(descriptor: ProcessDescriptor) : Observable<ProcessDefinitionXML> {
+      return this.get<ProcessDefinitionXML>(`/read-process-definition/${descriptor.deployment}/${descriptor.resourceName}`)
+    }
+  
+    updateProcessDefinition(descriptor: ProcessDescriptor, xml: string) : Observable<void> {
+      return this.post<void>(`/update-process-definition/${descriptor.deployment}/${descriptor.resourceName}`, { xml: xml })
+    }
+ } 
 
-  readProcessDefinition(descriptor: ProcessDescriptor) : Observable<ProcessDefinitionXML> {
-    const base = `http://localhost:8080/bpmn/administration/read-process-definition/${descriptor.deployment}/${descriptor.resourceName}`
-
-    return this.http.get<ProcessDefinitionXML>(base)
-  }
-
-  //@PostMapping("update-process-definition/{deployment}/{resourceName}")
-  //fun updateProcessDefinition(@PathVariable  deployment: String, @PathVariable resourceName: String, @RequestBody xml: String) {
-
-  updateProcessDefinition(descriptor: ProcessDescriptor, xml: string) : Observable<void> {
-    const base = `http://localhost:8080/bpmn/administration/update-process-definition/${descriptor.deployment}/${descriptor.resourceName}`
-
-    return this.http.post<void>(base, { xml: xml })
-  }
-}

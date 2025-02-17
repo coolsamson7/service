@@ -17,13 +17,14 @@ svg-icon -> px 32/16
 
 === NOW
 
-- feature ( home ) einbinden
-- panel -> overlay
-- linkes overlay?
-
+- links tree + click()
+- Tracer integrieren
+- Farben & Fonts anpassen
 
 === DONE
 
+- panel -> overlay
+- feature ( home ) einbinden
 - code -> modulefederation
 - task filter
 - aufräumen tasks...
@@ -59,7 +60,6 @@ svg-icon -> px 32/16
 - check react app?
 - moddle arrays
 - moddle unterscuht
-- beosipel extension
-
+- beisipel extension
 
 == DENK NACH

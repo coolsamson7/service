@@ -35,7 +35,7 @@ import { Shape } from 'bpmn-js/lib/model/Types';
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
 //import { DiagramModule } from './diagram.module';
-import { BPMNAdministrationService } from '../service/administration-service';
+import { AdministrationService } from '../service/administration-service';
 import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
 
 @Component({
@@ -48,19 +48,20 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   @Input() url?: string;
   @Output() importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
+  @Output() selectionChanged = new EventEmitter< Element | undefined>();
 
   // instance data
 
   @ViewChild('ref', { static: true }) private el!: ElementRef;
 
-  bpmnJS: BpmnJS
+  modeler: BpmnJS
 
   currentElement : Element | undefined = undefined
 
   // constructor
 
-  constructor(private http: HttpClient, private administrationService: BPMNAdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
-    this.bpmnJS = new BpmnJS({
+  constructor(private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
+    this.modeler = new BpmnJS({
       moddleExtensions: configuration.extensions
     });
   
@@ -77,9 +78,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     })
 
     //
-    this.bpmnJS.on<ImportDoneEvent>('import.done', ({ error }) => {
+    this.modeler.on<ImportDoneEvent>('import.done', ({ error }) => {
       if (!error) {
-        this.bpmnJS.get<Canvas>('canvas').zoom('fit-viewport');
+        this.modeler.get<Canvas>('canvas').zoom('fit-viewport');
       }
 
 
@@ -89,7 +90,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   // private
 
   private getProcess() {
-    const canvas : Canvas = this.bpmnJS.get('canvas');
+    const canvas : Canvas = this.modeler.get('canvas');
 
     const root = canvas.getRootElement();
 
@@ -125,7 +126,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   computeXML() : Promise<SaveXMLResult> {
-    return this.bpmnJS.saveXML({format: true})
+    return this.modeler.saveXML({format: true})
   }
 
   /**
@@ -135,13 +136,13 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
    * @see https://github.com/bpmn-io/bpmn-js-callbacks-to-promises#importxml
    */
  importDiagram(xml: string): Observable<ImportXMLResult> {
-    return from(this.bpmnJS.importXML(xml));
+    return from(this.modeler.importXML(xml));
   }
 
   // implement AfterContentInit
 
   ngAfterContentInit(): void {
-    this.bpmnJS.attachTo(this.el.nativeElement);
+    this.modeler.attachTo(this.el.nativeElement);
   }
 
    // implement OnInit
@@ -153,7 +154,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     // add listeners
 
-    this.bpmnJS.on('selection.changed', (ev) => {
+    this.modeler.on('selection.changed', (ev) => {
       console.log("selection.changed")
 
       const e : any = ev
@@ -168,15 +169,16 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       else {
         let process : any  = this.getProcess()
         this.currentElement = process//this.getProcess()
-
       }
+
+      this.selectionChanged.emit(this.currentElement)
 
       // TEST
 
-      this.bpmnJS.saveXML({format: true}).then((result => console.log(result.xml)))
+      this.modeler.saveXML({format: true}).then((result => console.log(result.xml)))
     });
 
-    this.bpmnJS.on('element.changed', (e) => {
+    this.modeler.on('element.changed', (e) => {
       console.log("element.changed")
     });
 
@@ -194,6 +196,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
    // implement OnDestroy
 
   ngOnDestroy(): void {
-    this.bpmnJS.destroy();
+    this.modeler.destroy();
   }
 }
