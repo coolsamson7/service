@@ -7,7 +7,7 @@
     </div>
 
     <div *ngIf="config.multiple && !open[i]">{{extension.$type}}</div>
-    <div *ngIf="open[i]" [property-editor] [element]="extension" [config]="config"></div>
+    <div *ngIf="open[i]" [property-editor]="extension" [config]="config"></div>
     <svg-icon *ngIf="config.multiple" (click)="delete(extension)" name="delete" class="delete"></svg-icon>
-  </div>
+  </div> 
 </div>

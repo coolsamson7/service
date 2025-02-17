@@ -1,5 +1,5 @@
 <input id="input" name="input" #input="ngModel" type="text" [(ngModel)]="value" (ngModelChange)="onChange($event)" required [uniqueId]="element"/>
 <div *ngIf="input.invalid && input.touched" class="error">
-  <div *ngIf="input.errors.uniqueId">id is not unique.</div>
-  <div *ngIf="input.errors.required">id isrequired.</div>
+  <div *ngIf="input.errors!['uniqueId']">id is not unique.</div>
+  <div *ngIf="input.errors!['required']">id isrequired.</div>
 </div>

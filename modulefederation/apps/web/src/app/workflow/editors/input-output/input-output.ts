@@ -1,12 +1,11 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, NgModule } from '@angular/core';
-import { RegisterPropertyEditor } from '../property-editor.decorator';
+
+
+import { AbstractExtensionEditor, AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+
 import { FormsModule } from '@angular/forms';
-import { AbstractExtensionEditor } from '../abstract-extension-editor';
 import { CommonModule } from '@angular/common';
-import { PropertyEditorDirective } from '../property.editor.directive';
-import { PropertyEditorModule } from '../property-editor.module';
-import { SvgIconComponent } from 'src/app/svg.icon';
-import { map } from 'rxjs/operators';
 
 
 //width: 100%;
@@ -16,7 +15,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './input-output.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorDirective, SvgIconComponent]
+  imports: [FormsModule, CommonModule, PropertyEditorModule]
 })
 export class InputOutputEditor extends AbstractExtensionEditor {
   // instance data
@@ -28,17 +27,17 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   // private
 
   private create(type: string) {
-    return this.element.$model.create(type)
+    return this.element['$model'].create(type)
   }
 
   // callbacks
 
   deleteInput(i: number) {
-    this.element.inputParameters.splice(i, 1)
+    this.element['inputParameters'].splice(i, 1)
   }
 
   deleteOutput(i: number) {
-    this.element.outputParameters.splice(i, 1)
+    this.element['outputParameters'].splice(i, 1)
   }
 
   toggleInput(i : number) {
@@ -52,7 +51,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   addInput() : Element {
     const parameter = this.create("camunda:InputParameter")
 
-    this.element.inputParameters.push(parameter)
+    this.element['inputParameters'].push(parameter)
 
     return parameter
   }
@@ -60,25 +59,25 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   addOutput() : Element {
     const parameter =  this.create("camunda:OutputParameter")
 
-    this.element.outputParameters.push(parameter)
+    this.element['outputParameters'].push(parameter)
 
     return parameter
   }
 
   // override OnInit
 
-  ngOnInit() : void {
+  override ngOnInit() : void {
       super.ngOnInit()
 
-      if (!this.element.inputParameters)
-        this.element.inputParameters = []
+      if (!this.element['inputParameters'])
+        this.element['inputParameters'] = []
 
-      this.openInputs = this.element.inputParameters.map((param) => false)
+      this.openInputs = this.element['inputParameters'].map((param: any) => false)
 
-      if (!this.element.outputParameters)
-        this.element.outputParameters = []
+      if (!this.element['outputParameters'])
+        this.element['outputParameters'] = []
 
-      this.openOutputs = this.element.inputParameters.map((param) => false)
+      this.openOutputs = this.element['inputParameters'].map((param: any) => false)
 
       this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
@@ -92,7 +91,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   templateUrl: './input-parameter.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
   // instance data
@@ -101,7 +100,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
   // override OnInit
 
-  ngOnInit() : void {
+  override ngOnInit() : void {
       super.ngOnInit()
 
       console.log("'###### new inut")
@@ -118,7 +117,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   templateUrl: './output-parameter.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule]//PropertyEditorModule
 })
 export class OutputParameterEditor extends AbstractExtensionEditor {
   // instance data
@@ -127,7 +126,7 @@ export class OutputParameterEditor extends AbstractExtensionEditor {
 
   // override OnInit
 
-  ngOnInit() : void {
+  override ngOnInit() : void {
       super.ngOnInit()
 
       console.log("'###### new inut")

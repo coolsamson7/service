@@ -6,7 +6,7 @@
       <svg-icon (click)="addInput()" name="plus"/>
     </div>
 
-    <div *ngFor="let input of element.inputParameters; index as i" class="input">
+    <div *ngFor="let input of element['inputParameters']; index as i" class="input">
       <div class="left">
         <svg-icon (click)="toggleInput(i)" [name]="openInputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
         <div class="line"></div>
@@ -14,7 +14,7 @@
 
       <!--div class="body"-->
         <div *ngIf="!openInputs[i]">{{input.name}}</div>
-        <div *ngIf="openInputs[i]"[property-editor] [element]="input" class="input"></div>
+        <div *ngIf="openInputs[i]"[property-editor]="input" class="input"></div>
         <svg-icon name="delete" class="delete" (click)="deleteInput(i)"></svg-icon>
       <!--/!--div-->
     </div>
@@ -26,7 +26,7 @@
       <svg-icon (click)="addOutput()" name="plus"/>
     </div>
 
-    <div *ngFor="let output of element.outputParameters; index as i" class="output">
+    <div *ngFor="let output of element['outputParameters']; index as i" class="output">
       <div class="left">
         <svg-icon  (click)="toggleOutput(i)" [name]="openOutputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
         <div class="line"></div>
@@ -34,7 +34,7 @@
 
       <!--div class="body"-->
         <div *ngIf="!openOutputs[i]">{{output.name}}</div>
-        <div *ngIf="openOutputs[i]" [property-editor] [element]="output" class="output"></div>
+        <div *ngIf="openOutputs[i]" [property-editor]="output" class="output"></div>
         <svg-icon name="delete" class="delete" (click)="deleteOutput(i)"></svg-icon>
       <!--/!--div-->
     </div>

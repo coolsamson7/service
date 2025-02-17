@@ -1,31 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFactory, ComponentFactoryResolver, ComponentRef, Directive, Injector, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewContainerRef } from "@angular/core";
-import { PropertyEditorRegistry } from "./property-editor.module";
+import { PropertyEditorRegistry } from "./property-editor-registry";
 import { PropertyEditor } from "./property-editor";
 import { Element, PropertyDescriptor } from "moddle";
-import { Group } from "./property-group";
+import { BaseElement } from "bpmn-moddle";
+import { Group } from "../property-panel.model";
+
 
 
 @Directive({
   selector: "[property-editor]",
-  standalone: true
+  //standalone: true
 })
 export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   // input
 
-  @Input() element: Element
-  @Input() extension: string
-  @Input() config: Group
-  @Input() property: PropertyDescriptor
+  @Input('property-editor') element!: Element
+  @Input() extension!: string
+  @Input() config!: Group // TODO
+  @Input() property?: PropertyDescriptor | undefined
 
   // instance data
 
-  componentFactory: ComponentFactory<any>
-  component: ComponentRef<any>
-  instance: PropertyEditor
+  componentFactory!: ComponentFactory<any>
+  component!: ComponentRef<any>
+  instance!: PropertyEditor
 
-  // construcrtor
+  // constructor
 
   constructor(private injector: Injector, private container: ViewContainerRef, private resolver: ComponentFactoryResolver, private registry: PropertyEditorRegistry) {
   }

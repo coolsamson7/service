@@ -3,9 +3,10 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Input } from "@angular/core";
 import { PropertyEditor } from "./property-editor";
-import { PropertyEditorDirective } from "./property.editor.directive";
+//import { PropertyEditorDirective } from "./property.editor.directive";
 
 import  {Element, PropertyDescriptor  } from "moddle"
+import { BaseElement } from "bpmn-moddle";
 
 
 @Component({
@@ -14,9 +15,9 @@ import  {Element, PropertyDescriptor  } from "moddle"
 export abstract class AbstractPropertyEditor implements PropertyEditor {
   // input
 
-  @Input() element: Element
-  @Input() property: PropertyDescriptor
-  @Input() component : PropertyEditorDirective
+  @Input() element!: Element
+  @Input() property!: PropertyDescriptor
+  @Input() component!: any//PropertyEditorDirective
 
   // getter & setter
 

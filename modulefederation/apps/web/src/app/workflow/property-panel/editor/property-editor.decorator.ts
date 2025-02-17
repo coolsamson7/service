@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PropertyEditorRegistry } from './property-editor.module'
+import { PropertyEditorRegistry } from './property-editor-registry'
 
 export const RegisterPropertyEditor = (type: string) : ClassDecorator => {
   return (clazz: any) => {

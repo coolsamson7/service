@@ -1,10 +1,10 @@
 === TODO
 
 - extension
--  -> module federation
--
 
-=== FOO
+- direkt starten
+- komische sache task?
+- task list
 
 - translate?
 - history?
@@ -17,12 +17,14 @@ svg-icon -> px 32/16
 
 === NOW
 
-- direkt starten
-- komische sache task?
-- task list
+- feature ( home ) einbinden
+- panel -> overlay
+- linkes overlay?
+
 
 === DONE
 
+- code -> modulefederation
 - task filter
 - aufräumen tasks...
 - komische sache documentation ("bpmn:documentation")

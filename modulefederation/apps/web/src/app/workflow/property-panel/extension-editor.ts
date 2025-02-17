@@ -1,26 +1,25 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, Input } from "@angular/core"
-import  { Element } from "moddle"
-import { Group, PropertyGroupComponent } from "./property-group"
-import { PropertyEditorDirective } from "./property.editor.directive"
-import { CommonModule } from "@angular/common"
-
+import { Element } from "moddle"
+import { PropertyGroupComponent } from "./property-group"
+import { BaseElement, ExtensionElements } from "bpmn-moddle"
+import { Group } from "./property-panel.model"
 
 @Component({
-  selector: 'extension-editor',
+  selector: 'extension-editor', 
   templateUrl: './extension-editor.html',
   styleUrl: "./extension-editor.scss"
   //standalone: true,
   //imports: [CommonModule, PropertyEditorDirective]
 })
-export class ExtensionEditor implements OnInit {
+export class ExtensionEditor implements OnInit {  
   // input
 
-  @Input() element: Element
-  @Input() extension: string
-  @Input() config: Group
+  @Input() element!: Element
+  @Input() extension!: string
+  @Input() config!: Group
 
-  extensionElement : Element
+  extensionElement! : ExtensionElements
 
   extensions : Element[] = []
   open : boolean[] = []
@@ -38,8 +37,8 @@ export class ExtensionEditor implements OnInit {
   }
 
   delete(extension: Element) {
-    const values = this.extensionElement.get('values')
-    const index = this.extensionElement.get('values').indexOf(extension)
+    const values : any[] = this.extensionElement.values
+    const index = values.indexOf(extension)
 
     values.splice(index, 1);
 
@@ -50,11 +49,11 @@ export class ExtensionEditor implements OnInit {
 
   // private
 
-  add() {
-    const newExtension = this.element.$model.create(this.extension)
+  add() { 
+    const newExtension : BaseElement = (<any>this.element)['$model'].create(this.extension)
 
-    this.extensionElement.get('values').push(newExtension);
-    this.extensions.push(newExtension)
+    this.extensionElement.values.push(newExtension);
+    this.extensions.push(<Element><any>newExtension)
 
     newExtension.$parent = this.extensionElement
 
@@ -64,9 +63,9 @@ export class ExtensionEditor implements OnInit {
   }
 
 
-  protected getExtensionElements(type) : Element[] {
-    if ( this.element.extensionElements.values)
-      return this.element.extensionElements.values.filter((extensionElement) => extensionElement.$instanceOf(type));
+  protected getExtensionElements(type: string) : Element[] {
+    if ( this.element["extensionElements"]?.values)
+      return this.element["extensionElements"].values.filter((extensionElement: any) => extensionElement.$instanceOf(type));
     else
       return []
   }
@@ -74,10 +73,11 @@ export class ExtensionEditor implements OnInit {
   // implement OnInit
 
   ngOnInit(): void {
-    const extensionElement = this.element.extensionElements || this.element.$model.create('bpmn:ExtensionElements');
+    const extensionElement = this.element["extensionElements"] || (<any>this.element)['$model'].create('bpmn:ExtensionElements');
 
     if ( extensionElement.$parent == undefined) {
-      this.element.extensionElements = extensionElement
+      (this.element)["extensionElements"] = extensionElement
+
       extensionElement.$parent = this.element
     }
 
@@ -87,7 +87,8 @@ export class ExtensionEditor implements OnInit {
 
     this.open = this.extensions.map((ext) => true)
 
+    // avoid angualr digest error
+    
     setTimeout(() => { this.group.children = this.extensions.length}, 0)
-
   }
 }

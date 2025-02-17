@@ -1,0 +1,66 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractExtensionEditor, AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {Directive} from '@angular/core';
+import { NG_VALIDATORS, Validator} from '@angular/forms';
+import { ModdleElement } from 'bpmn-js/lib/model/Types';
+
+export function createUniqueIdValidator(element: ModdleElement): ValidatorFn {
+  let process = element
+
+  while (process.$type !== "bpmn:Process")
+    process = process.$parent;
+
+  const ids : string[] = []
+  for ( const child of process.flowElements)
+    if ( child !== element)
+      ids.push(child.id)
+
+  return (control:AbstractControl) : ValidationErrors | null => {
+    const value = control.value;
+    if (!value)
+      return null;
+
+    const duplicate = ids.includes(value)
+
+    return duplicate ? {uniqueId:true}: null;
+    }
+}
+
+@Directive({
+  selector: "[uniqueId]",
+  providers: [{
+    useExisting: UniqueIdDirective,
+    provide: NG_VALIDATORS,
+    multi: true
+  }],
+  standalone: true
+})
+export class UniqueIdDirective implements Validator {
+  @Input("uniqueId") element : ModdleElement
+
+  // implement Validator
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return createUniqueIdValidator(this.element)(control);
+  }
+}
+
+// TEST
+
+@RegisterPropertyEditor("bpmn:id")
+@Component({
+  selector: "id-editor",
+  templateUrl: './id-editor.html',
+  styleUrl: "./id-editor.scss",
+  standalone: true,
+  imports: [FormsModule, CommonModule, UniqueIdDirective]
+})
+export class IdPropertyEditor extends AbstractPropertyEditor {
+}

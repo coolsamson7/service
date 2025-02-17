@@ -13,7 +13,8 @@ import {
   Output,
   ViewChild,
   SimpleChanges,
-  EventEmitter
+  EventEmitter,
+  Inject
 } from '@angular/core';
 
 
@@ -33,8 +34,9 @@ import { Shape } from 'bpmn-js/lib/model/Types';
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
-import { DiagramModule } from './diagram.module';
+//import { DiagramModule } from './diagram.module';
 import { BPMNAdministrationService } from '../service/administration-service';
+import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
 
 @Component({
   selector: 'diagram',
@@ -44,22 +46,25 @@ import { BPMNAdministrationService } from '../service/administration-service';
 export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy, OnInit {
   // input & output
 
-  @Input() private url?: string;
-  @Output() private importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
+  @Input() url?: string;
+  @Output() importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
 
   // instance data
 
-  @ViewChild('ref', { static: true }) private el: ElementRef;
+  @ViewChild('ref', { static: true }) private el!: ElementRef;
 
-  bpmnJS: BpmnJS = new BpmnJS({
-    moddleExtensions: DiagramModule.configuration.extensions
-  });
+  bpmnJS: BpmnJS
 
   currentElement : Element | undefined = undefined
 
   // constructor
 
-  constructor(private http: HttpClient, private administrationService: BPMNAdministrationService) {
+  constructor(private http: HttpClient, private administrationService: BPMNAdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
+    this.bpmnJS = new BpmnJS({
+      moddleExtensions: configuration.extensions
+    });
+  
+    
     // test
 
 
@@ -88,8 +93,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     const root = canvas.getRootElement();
 
-    if ( root.di?.bpmnElement)
-      return root.di?.bpmnElement
+    if ( root['di']?.bpmnElement)
+      return root['di']?.bpmnElement
     else
       return undefined
   }
@@ -181,8 +186,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   ngOnChanges(changes: SimpleChanges) {
     // re-import whenever the url changes
-    if (changes.url) {
-      this.loadUrl(changes.url.currentValue);
+    if (changes['url']) {
+      this.loadUrl(changes['url'].currentValue);
     }
   }
 

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-extra-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import  {Element, Descriptor, Moddle  } from "moddle"
-import { PropertyGroupComponent, PropertyPanel, PropertyPanelConfig } from "./property-group";
-
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Element, Moddle } from "moddle"
 import BpmnJS from 'bpmn-js/lib/Modeler';
-import { CommonModule } from "@angular/common";
-import { DiagramComponent } from "./diagram.component";
-import { DiagramModule } from "./diagram.module";
+import { PropertyPanel } from "./property-panel.model";
+//import { PropertyPanelModule } from "./property-panel.module";
+import { BaseElement } from "bpmn-moddle";
+import { GroupConfig, PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
+//import { BaseElement } from "bpmn-moddle";
 
 
 
@@ -21,18 +21,24 @@ import { DiagramModule } from "./diagram.module";
 export class PropertyPanelComponent implements OnInit, OnChanges {
   // input
 
-  @Input() modeler: BpmnJS
+  @Input() modeler!: BpmnJS
   @Input() element : Element | undefined;
 
   // instance data
 
-  model: Moddle;
+  model!: Moddle;
 
   currentConfig!: PropertyPanel
 
   extensions :  Moddle.TypeDefinition[] = []
 
   allowedExtensions : Moddle.TypeDefinition[] = []
+
+
+  // constructor
+
+  constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig) {
+  }
 
   // private
 
@@ -44,7 +50,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
       for ( const typeName in this.model.registry.typeMap) {
         const type =  this.model.registry.typeMap[typeName]
 
-        if ( type.meta  && type.superClass?.includes("Element") && type.meta.allowedIn) {
+        if ( type.meta  && type.superClass?.includes("Element") && type.meta["allowedIn"]) {
           this.extensions.push(this.model.getTypeDescriptor(typeName))
         }
       }
@@ -57,7 +63,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
 
 
     for ( const extension of this.extensions) {
-        for ( const allowedIn of extension.meta!.allowedIn) {
+        for ( const allowedIn of extension.meta!["allowedIn"]) {
             if ( element.$instanceOf(allowedIn)) {
               result.push(extension);
               console.log("### allowed extension: " + extension.name)
@@ -84,7 +90,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
 
       // collect groups
 
-      for (const group of DiagramModule.configuration.properties.groups) {
+      for (const group of this.configuration.groups) {
         if (group.extension) {
           if (descriptor.name !== "bpmn:Process")
           if (this.allowedExtensions.find((extension) => extension.name == group.extension)) {

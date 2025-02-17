@@ -9,7 +9,7 @@
 
       <!-- plus -->
 
-      <svg-icon *ngIf="plus && children === 0 || group.multiple" (click)="plus()" name="plus"/>
+      <svg-icon *ngIf="plus && children === 0 || group.multiple" (click)="plus!()" name="plus"/>
 
       <!-- open / close -->
 
@@ -19,12 +19,12 @@
 
   <div *ngIf="open" class="body">
 
-    <extension-editor  *ngIf="group.extension" [element]="element" [extension]="group.extension" [config]="group"></extension-editor>
+    <extension-editor  *ngIf="group.extension" [element]="element!" [extension]="group.extension" [config]="group"></extension-editor>
 
     <ng-container *ngIf="!group.extension">
       <ng-container *ngFor="let property of group.properties">
         <div class="property">{{property.name}}</div>
-        <div [property-editor] [element]="element" [property]="property"></div>
+        <div [property-editor]="element!" [property]="property"></div>
       </ng-container>
     </ng-container>
   </div>

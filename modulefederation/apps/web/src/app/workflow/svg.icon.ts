@@ -20,7 +20,7 @@ export class SvgIconComponent implements OnChanges {
 
   // input
 
-  @Input() name?: string;
+  @Input() name!: string;
 
   public svgIcon : SafeHtml = "";
 

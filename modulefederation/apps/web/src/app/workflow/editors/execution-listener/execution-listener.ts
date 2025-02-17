@@ -1,13 +1,11 @@
 /* eslint-disable @angular-eslint/use-lifecycle-interface */
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, NgModule } from '@angular/core';
-import { RegisterPropertyEditor } from '../property-editor.decorator';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AbstractExtensionEditor } from '../abstract-extension-editor';
 import { CommonModule } from '@angular/common';
-import { PropertyEditorDirective } from '../property.editor.directive';
-import { PropertyEditorModule } from '../property-editor.module';
+
+import { AbstractExtensionEditor, AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
 
 
@@ -17,7 +15,7 @@ import { PropertyEditorModule } from '../property-editor.module';
   templateUrl: './execution-listener.html',
   styleUrl: './execution-listener.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule]
 })
 export class ExecutionListenerEditor extends AbstractExtensionEditor {
   // instance data
@@ -26,10 +24,8 @@ export class ExecutionListenerEditor extends AbstractExtensionEditor {
 
   // override OnInit
 
-  ngOnInit() : void {
+  override ngOnInit() : void {
       super.ngOnInit()
-
-      console.log("'###### new execution listener")
 
       this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
