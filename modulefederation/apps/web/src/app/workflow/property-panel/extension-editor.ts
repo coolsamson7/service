@@ -24,6 +24,8 @@ export class ExtensionEditor implements OnInit {
   extensions : Element[] = []
   open : boolean[] = []
 
+  computeLabel = (element: Element) => {return element.$type}
+
   // constructor
 
   constructor(private group: PropertyGroupComponent) {
@@ -51,6 +53,9 @@ export class ExtensionEditor implements OnInit {
 
   add() { 
     const newExtension : BaseElement = (<any>this.element)['$model'].create(this.extension)
+
+    if (!this.extensionElement.values)
+      this.extensionElement.values = []
 
     this.extensionElement.values.push(newExtension);
     this.extensions.push(<Element><any>newExtension)

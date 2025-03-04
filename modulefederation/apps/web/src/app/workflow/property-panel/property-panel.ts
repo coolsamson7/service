@@ -50,7 +50,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
       for ( const typeName in this.model.registry.typeMap) {
         const type =  this.model.registry.typeMap[typeName]
 
-        if ( type.meta  && type.superClass?.includes("Element") && type.meta["allowedIn"]) {
+        if ( type.meta  && /*type.superClass?.includes("Element") &&*/ type.meta["allowedIn"]) { // TODO
           this.extensions.push(this.model.getTypeDescriptor(typeName))
         }
       }
@@ -92,15 +92,17 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
 
       for (const group of this.configuration.groups) {
         if (group.extension) {
-          if (descriptor.name !== "bpmn:Process")
-          if (this.allowedExtensions.find((extension) => extension.name == group.extension)) {
+          const extension = this.allowedExtensions.find((extension) => extension.name == group.extension)
+          if (extension) {
+            const properties : Moddle.PropertyDescriptor[] = <any>extension.properties?.filter(prop => group.properties.includes(prop.name))
+
             let target = this.currentConfig.groups.find((g) => g.name == group.name)
             if ( !target )
               this.currentConfig.groups.push(target = {
                 name: group.name,
                 extension: group.extension,
                 multiple: group.multiple,
-                properties: group.properties.map(name => descriptor.properties.find((prop) => prop.name == name)!!)
+                properties: properties//group.properties.map(name => descriptor.properties.find((prop) => prop.name == name)!!)
             })
           }
         }

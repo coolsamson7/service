@@ -1,6 +1,36 @@
 <ng-container  *ngFor="let property of properties">
   <div class="property">{{property.name}}</div>
 
-  <div [property-editor]="element" [property]="property"></div>
+  <div *ngIf="property.name === 'name'" [property-editor]="element" [property]="property"></div>
+
+  <!-- value -->
+
+  <mat-form-field  *ngIf="property.name === 'value'">
+    <mat-label>Value</mat-label>
+  
+    <!-- todo: type=value, process, output -->
+
+    <input type="text" [suggestionProvider]="suggestionProvider!" (ngModelChange)="onValueChange($event)" [(ngModel)]="value" matInput name="value"/>
+
+
+    <!-- menu -->
+    
+    <span [matMenuTriggerFor]="menu" class="change-type-menu" matSuffix>
+      <mat-icon>{{icons[type]}}</mat-icon>
+    </span>
+
+  </mat-form-field>
+
+  <!-- error -->
+
+
+<!-- the combo thing -->
+
+<mat-menu #menu="matMenu" class="change-type-menu-panel">
+  <div (click)="changeType('process')" mat-menu-item> <mat-icon>{{icons["process"]}}</mat-icon></div>
+  <div (click)="changeType('output')" mat-menu-item> <mat-icon>{{icons["output"]}}</mat-icon></div>
+  <div (click)="changeType('value')" mat-menu-item> <mat-icon>{{icons["value"]}}</mat-icon></div>
+  <div (click)="changeType('expression')" mat-menu-item> <mat-icon>{{icons["expression"]}}</mat-icon></div>
+</mat-menu>
 
 </ng-container>

@@ -23,10 +23,9 @@
 
     <ng-container *ngIf="!group.extension">
       <ng-container *ngFor="let property of group.properties">
-        <div class="property">{{property.name}}</div>
+        <!--div class="property">{{property.name}}</div-->
         <div [property-editor]="element!" [property]="property"></div>
       </ng-container>
     </ng-container>
   </div>
-
 </div>

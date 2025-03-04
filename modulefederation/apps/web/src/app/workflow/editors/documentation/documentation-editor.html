@@ -1,1 +1,4 @@
-<textarea [(ngModel)]="value" (ngModelChange)="onChange($event)"></textarea>
+<mat-form-field>
+    <mat-label>{{property.name}}</mat-label>
+    <textarea matInput [(ngModel)]="value" (ngModelChange)="onChange($event)"></textarea>
+</mat-form-field>

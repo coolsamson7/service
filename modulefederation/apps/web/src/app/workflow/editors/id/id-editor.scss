@@ -6,12 +6,13 @@ textarea.ng-invalid.ng-touched:not(:focus) {
 }
 
 .error {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: small;
   color: rgb(230, 0, 0)
 }
 
 input {
+  font-family: "Roboto", sans-serif;
   padding: 3px 6px 2px;
   border: 1px solid rgb(185, 188, 198);
   border-radius: 2px;

@@ -10,6 +10,8 @@ import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 import {Directive} from '@angular/core';
 import { NG_VALIDATORS, Validator} from '@angular/forms';
 import { ModdleElement } from 'bpmn-js/lib/model/Types';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 export function createUniqueIdValidator(element: ModdleElement): ValidatorFn {
   let process = element
@@ -52,15 +54,13 @@ export class UniqueIdDirective implements Validator {
   }
 }
 
-// TEST
-
 @RegisterPropertyEditor("bpmn:id")
 @Component({
   selector: "id-editor",
   templateUrl: './id-editor.html',
   styleUrl: "./id-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, UniqueIdDirective]
+  imports: [FormsModule, CommonModule, UniqueIdDirective,  MatInputModule, MatFormFieldModule]
 })
 export class IdPropertyEditor extends AbstractPropertyEditor {
 }

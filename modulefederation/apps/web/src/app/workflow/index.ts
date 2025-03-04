@@ -1,3 +1,5 @@
 export * from "./service"
 export * from "./property-panel"
 export * from "./diagram"
+export * from "./process-tree/process-tree.component"
+export * from "./task/task-form.component"

@@ -32,10 +32,3 @@ export class ExecutionListenerEditor extends AbstractExtensionEditor {
       console.log()
   }
 }
-
-/*@NgModule({
-  //imports: [FormsModule, CommonModule],
-  declarations: [ExecutionListenerEditor],
-  exports: [ExecutionListenerEditor]
-})
-export class ExecutionListenerEditorModule {}*/

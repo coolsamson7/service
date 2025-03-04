@@ -34,6 +34,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
      * the feature id
      */
     @Input() feature = ""
+    @Input() input : any = {}
 
     // instance data
 
@@ -48,7 +49,7 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
     // private
 
     ngOnChanges(changes : SimpleChanges) : void {
-        if (changes['feature'] && !changes['feature'].isFirstChange())
+        if (changes['feature'] && !changes['feature'].isFirstChange() || changes['input'] && !changes['input'].isFirstChange())
             this.setFeature(this.feature)
     }
 
@@ -113,5 +114,12 @@ export class FeatureOutletDirective implements OnInit, OnChanges, OnDestroy {
         }
 
         this.component = this.container.createComponent(this.featureData?.ngComponent);
+
+        // set input
+
+        for ( const key in this.input) {
+            const value = this.input[key]
+            this.component.setInput(key, value)
+        }
     }
 }

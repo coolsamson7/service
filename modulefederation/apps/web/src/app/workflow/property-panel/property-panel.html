@@ -3,10 +3,13 @@
     <div class="icon">
       <svg-icon name="element"></svg-icon>
     </div>
-    <div class="labels">
+    <div *ngIf="element" class="labels">
       <div class="type">{{element!.$type}}</div>
       <div class="name">{{element!['name']}}</div>
     </div>
   </div>
-  <property-group *ngFor="let group of currentConfig.groups" [group]="group" [element]="element"></property-group>
+  <ng-container *ngIf="element">
+    <property-group *ngFor="let group of currentConfig.groups" [group]="group" [element]="element"></property-group>
+  </ng-container>
 </div>
+  

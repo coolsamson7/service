@@ -1,1 +1,4 @@
-<input type="text" [(ngModel)]="value" (ngModelChange)="onChange($event)"/>
+<mat-form-field>
+    <mat-label>{{property.name}}</mat-label>
+    <input matInput type="text" [(ngModel)]="value" (ngModelChange)="onChange($event)"/>
+</mat-form-field>

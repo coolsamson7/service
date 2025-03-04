@@ -1,4 +1,4 @@
 <button [matTooltip]="tooltip" (click)="click()" [disabled]="!descriptor.enabled" mat-button class="button" #button>
     <icon [name]="descriptor.icon!"></icon>
-    <!-- {{descriptor.label}} -->
+    <div class="label">{{descriptor.label}}</div>
 </button>

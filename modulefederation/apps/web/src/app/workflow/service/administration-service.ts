@@ -3,6 +3,12 @@ import { Injectable, Injector } from "@angular/core";
 import { AbstractHTTPService, Service } from "@modulefederation/portal";
 import { Observable } from 'rxjs';
 
+export interface DeploymentDescriptor {
+  id: string,
+  name: string,
+  source: string
+}
+
 export interface ProcessDescriptor {
  deployment: string,
  id: string,
@@ -15,7 +21,15 @@ export interface ProcessDefinitionXML {
   xml: string
  }
 
+ export interface PropertyDescriptor {
+  name: string,
+  type: string,
+  value: any
+ }
 
+ export interface SchemaDescriptor {
+  properties: PropertyDescriptor[]
+ }
 
 
  @Injectable({providedIn: 'root'})
@@ -37,8 +51,18 @@ export interface ProcessDefinitionXML {
       return this.get<ProcessDefinitionXML>(`/read-process-definition/${descriptor.deployment}/${descriptor.resourceName}`)
     }
   
-    updateProcessDefinition(descriptor: ProcessDescriptor, xml: string) : Observable<void> {
-      return this.post<void>(`/update-process-definition/${descriptor.deployment}/${descriptor.resourceName}`, { xml: xml })
+    updateProcessDefinition(resource: String, xml: string) : Observable<ProcessDescriptor> {
+      return this.post<ProcessDescriptor>(`/update-process-definition/${resource}`, { xml: xml })
+    }
+
+    //
+
+    processSchema(process: String) : Observable<SchemaDescriptor> {
+        return this.get<SchemaDescriptor>(`/process-schema/${process}`)
+    }
+
+    taskSchema(process: String, task: String) : Observable<SchemaDescriptor> {
+      return this.get<SchemaDescriptor>(`/task-schema/${process}/${task}`)
     }
  } 
 

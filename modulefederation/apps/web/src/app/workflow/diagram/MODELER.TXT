@@ -1,28 +1,36 @@
 === TODO
 
+
+
 - extension
 
 - direkt starten
 - komische sache task?
-- task list
 
 - translate?
 - history?
-- user task
-- user task liste
+
+- xml editor?
+
+- switch process / form ui überlegen
+- tree mit process & form
+- Tracer integrieren
 
 === LATER
 
 svg-icon -> px 32/16
 
-=== NOW
 
-- links tree + click()
-- Tracer integrieren
-- Farben & Fonts anpassen
+
 
 === DONE
 
+- id übergeben?????
+- Farben & Fonts anpassen
+- run einbauen
+- task list einbauen
+- user task einbauen
+- task list in pane
 - panel -> overlay
 - feature ( home ) einbinden
 - code -> modulefederation

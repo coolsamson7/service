@@ -1,0 +1,34 @@
+{
+  "name": "Schema",
+  "uri": "http://camunda.org/bpmn/examples",
+  "prefix": "schema",
+
+  "types": [
+    {
+      "name": "schema",
+      "superClass": [ "Element" ],
+      "meta": {
+        "allowedIn": [
+          "bpmn:Process"
+        ]
+      },
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "value",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+    ]
+}

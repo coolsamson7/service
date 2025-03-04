@@ -19,7 +19,6 @@ import {
 
 
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
 
 import type Canvas from 'diagram-js/lib/core/Canvas';
 import type { ImportDoneEvent, ImportXMLResult, SaveXMLResult } from 'bpmn-js/lib/BaseViewer';
@@ -27,14 +26,13 @@ import type { ImportDoneEvent, ImportXMLResult, SaveXMLResult } from 'bpmn-js/li
 
 import BpmnJS from 'bpmn-js/lib/Modeler';
 
-import { from, Observable, Subscription } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { Shape } from 'bpmn-js/lib/model/Types';
 //import Modeling from 'bpmn-js/lib/features/modeling/Modeling';
 
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
-//import { DiagramModule } from './diagram.module';
 import { AdministrationService } from '../service/administration-service';
 import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
 
@@ -46,7 +44,8 @@ import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.confi
 export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy, OnInit {
   // input & output
 
-  @Input() url?: string;
+  @Input() process?: string;
+
   @Output() importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
   @Output() selectionChanged = new EventEmitter< Element | undefined>();
 
@@ -66,7 +65,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     });
   
     
-    // test
+    /* test
 
 
     administrationService.getProcessDefinitions().subscribe(descriptors => {
@@ -75,9 +74,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       administrationService.readProcessDefinition(descriptor).subscribe(xml => {
         console.log(xml)
       })
-    })
+    })*/
 
-    //
+    // TODO
+
     this.modeler.on<ImportDoneEvent>('import.done', ({ error }) => {
       if (!error) {
         this.modeler.get<Canvas>('canvas').zoom('fit-viewport');
@@ -100,42 +100,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       return undefined
   }
 
-   /**
-   * Load diagram from URL and emit completion event
-   */
-   loadUrl(url: string): Subscription {
-
-    return (
-      this.http.get(url, { responseType: 'text' }).pipe(
-        switchMap((xml: string) => this.importDiagram(xml)),
-        map(result => result.warnings),
-      ).subscribe(
-        (warnings) => {
-          this.importDone.emit({
-            warnings
-          });
-        },
-        (err) => {
-          this.importDone.emit({
-            error: err,
-            warnings: []
-          });
-        }
-      )
-    );
-  }
-
   computeXML() : Promise<SaveXMLResult> {
     return this.modeler.saveXML({format: true})
   }
 
-  /**
-   * Creates a Promise to import the given XML into the current
-   * BpmnJS instance, then returns it as an Observable.
-   *
-   * @see https://github.com/bpmn-io/bpmn-js-callbacks-to-promises#importxml
-   */
- importDiagram(xml: string): Observable<ImportXMLResult> {
+ setProcess(xml: string): Observable<ImportXMLResult> {
     return from(this.modeler.importXML(xml));
   }
 
@@ -148,15 +117,14 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
    // implement OnInit
 
   ngOnInit(): void {
-    if (this.url) {
-      this.loadUrl(this.url);
-    }
+    // set xml
+
+    if ( this.process)
+      this.setProcess(this.process)
 
     // add listeners
 
     this.modeler.on('selection.changed', (ev) => {
-      console.log("selection.changed")
-
       const e : any = ev
 
       if ( e.newSelection != undefined &&  e.newSelection.length == 1) {
@@ -172,10 +140,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       }
 
       this.selectionChanged.emit(this.currentElement)
-
-      // TEST
-
-      this.modeler.saveXML({format: true}).then((result => console.log(result.xml)))
     });
 
     this.modeler.on('element.changed', (e) => {
@@ -188,8 +152,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   ngOnChanges(changes: SimpleChanges) {
     // re-import whenever the url changes
-    if (changes['url']) {
-      this.loadUrl(changes['url'].currentValue);
+    if (changes['process']) {
+      let process = changes['process'].currentValue
+
+      this.setProcess(process);
     }
   }
 

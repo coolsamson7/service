@@ -18,6 +18,8 @@
       display: flex;
       align-items: center;
 
+      margin-top: 4px;
+
       .badge {
         cursor: default;
 
@@ -38,6 +40,10 @@
 
     .label {
       cursor: default;
+
+      padding-left: 4px;
+      padding-top: 2px;
+      padding-bottom: 2px;
 
       font-weight: 600;
     }

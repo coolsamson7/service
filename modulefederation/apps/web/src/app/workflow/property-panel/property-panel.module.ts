@@ -16,17 +16,24 @@ import { IdPropertyEditor } from '../editors/id/id-editor';
 import { InputOutputEditor } from '../editors/input-output/input-output';
 import { IntegerPropertyEditor } from '../editors/integer/integer-editor';
 import { StringPropertyEditor } from '../editors/string/string-editor';
-
+import { SchemaPropertyEditor } from '../editors/schema/schema-editor';
+import { FormPropertyEditor } from '../editors/form/form-editor';
+import { ServiceTaskEditor } from '../editors/service-task/service-task';
 
 const EDITORS = [
   StringPropertyEditor,
   IntegerPropertyEditor,
   BooleanPropertyEditor,
   DocumentationPropertyEditor,
+  FormPropertyEditor,
   IdPropertyEditor,
   InputOutputEditor,
-  ExecutionListenerEditor
+  ExecutionListenerEditor,
+  SchemaPropertyEditor,
+  ServiceTaskEditor
 ]
+
+console.log(FormPropertyEditor)
 
 @NgModule({
   imports: [
