@@ -1,0 +1,77 @@
+=== TODO
+
+- startup thingy, that analyzes the model?
+- editor
+- read custom extension
+
+=== NOW
+
+- property editor dummy -> $descriptor $properties -> print()
+- gruppe + config attributes
+- sample mit call setter? ( artificial property defineProperty?)
+
+== DONE
+
+- initial input / output concept
+- angular project
+- singleton vs call
+- an instanz drankleben
+- paramater descriptor...
+- execution nach oben
+- ActivityImpl finden
+- holder
+
+== DENK NACH
+
+- ActivityImpl hat Kanten...wie komme ich dran?
+- TransitionImpl
+
+im modell sage ich:
+activity = dummy
+input mapping
+output mapping
+
+=== DOCS
+
+Rest complete
+
+https://docs.camunda.org/rest/camunda-bpm-platform/7.23-SNAPSHOT/#tag/Task/operation/complete
+
+
+== OTHER
+
+
+- bild cv
+
+- status linkedin / xing
+- remove obi
+- check pw
+
+=== NOW
+
+freitag hautarzt 13:00
+
+=== DONE
+
+- eurowings
+- vodafone
+- DKV
+
+Sehr geehrte Damen und Herren,
+
+ich habe am 25.11. einen Klarmobil Vertrag - Kundennummer 1055931950  - verlängern wollen, und habe dazu auf ein Angebot zurückgegriffen, das mit einem IPhone verbunden war.
+Laut Aussage des entsprechenden Kollegen galt das Angebot nur  für Fremdkunden, weshalb er den "Trick" vorschlug, temporär einen Freenet-Vertrag - MC 1209322019 - abzuschliessen.
+
+Nach heutiger Rücksprache ergab sich folgendes Bild:
+- der ursprüngliche Vertrag wurde - entgegen der damaligen Aussage - zu diesem Zeitpunkt _nicht_ gekündigt, womit nun 2 Verträge aktiv sind
+- die Kündigung erfolgte erst jetzt nachträglich zum 3.3.
+- eine Rufnummermitnahme der ursprünglichen Nummer ist nicht möglich, da beides Klarmobil-Verträge sind.
+
+Das ist alles mehr als ärgerlich, da genau zu diesem Zwecke der Freenet-Vertrag abgeschlossen wurde, und mir nicht
+mitgeteilt wurde, dass ich möglicherweise noch eine zusätzliche Rufnummermitnahme hätte veranlassen müssen ( ? ).
+
+Können Sie bitte helfen, dieses Dilemma aufzulösen, indem Sie die Rufnummermitnahme veranlassen und zusätzlich evtl. doppelte Abbuchungen rückgängig machen.
+
+Vielen Dank und beste Grüße,
+
+Andreas Ernst

@@ -1,0 +1,15 @@
+server:
+  port : 8088
+camunda:
+  bpm:
+    history-leveL: full
+    admin-user:
+      id: demo
+      password: demo
+      firstName: Demo
+    filter:
+      create: All tasks
+logging:
+  level:
+    org:
+      camunda: TRACE
