@@ -29,6 +29,5 @@ export class ExecutionListenerEditor extends AbstractExtensionEditor {
 
       this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
-      console.log()
   }
 }

@@ -4,11 +4,14 @@ import { AbstractHTTPService, Service } from "@modulefederation/portal";
 
 
 export interface ServiceTaskParameter {
-  name: string
+  name: string,
+  type: string,
+  description: string
 }
 
 export interface ServiceTaskDescriptor {
   name: string,
+  description: string,
   input: ServiceTaskParameter[], 
   output:  ServiceTaskParameter[],
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, NgModule } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 
 import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
@@ -87,7 +87,6 @@ export class InputOutputEditor extends AbstractExtensionEditor {
 
       this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
-      console.log(this.element)
   }
 }
 
@@ -100,12 +99,16 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
+  // input
+
+  //@Input() readOnly = false
+
   // instance data
 
   properties: Moddle.PropertyDescriptor[] = []
 
-  type: string = "value"
-  value: string = ""
+  type = "value"
+  value : any = ""
   icons : {[type: string] : string } = {
     process: "link",
     output: "create",
@@ -145,7 +148,6 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
     const extensions : Element[] = process['extensionElements']?.values || []
 
-    console.log(extensions)
 
     return extensions.filter((extension: Element) => extension.$type == "schema:schema").map(schema => schema["name"])
   }
@@ -160,10 +162,8 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     else if ( this.type == "output") {
       const suggestions : string[] = []
 
-      
-
       this.backward(((<any>this.element.$parent.$parent.$parent)["incoming"] || []).map((flow : any) => flow.sourceRef as Element), (element: Element) => {
-        const inputOutput = (element['extensionElements'].values || []).find((element : any) => 
+        const inputOutput = (element['extensionElements'].values || []).find((element : any) =>
           element.$type == "camunda:InputOutput"
         )
 
@@ -175,8 +175,6 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       this.suggestionProvider = new ArraySuggestionProvider(suggestions)
     }
   }
-
-  // TEST
 
   backward(elements: Element[], handler : (element: Element) => void) {
     const visited : any = {}
@@ -210,16 +208,12 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     }
   }
 
-  // TEST
-
   // override OnInit
 
   override ngOnInit() : void {
       super.ngOnInit()
 
-      console.log("'###### new inut")
-
-      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "name" ||prop.name == "value" ) // TODO
+      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "name" || prop.name == "value" )
 
       const value = this.element.get("value") || ""
 
@@ -235,8 +229,6 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       }
 
       this.changeType(this.type)
-
-      console.log(this.element)
   }
 }
 
@@ -258,10 +250,7 @@ export class OutputParameterEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      console.log("'###### new inut")
-
       this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "name" || prop.name == "value" ) // TODO
 
-      console.log(this.element)
   }
 }

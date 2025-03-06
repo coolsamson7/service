@@ -63,8 +63,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.modeler = new BpmnJS({
       moddleExtensions: configuration.extensions
     });
-  
-    
+
+
     /* test
 
 
@@ -142,9 +142,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       this.selectionChanged.emit(this.currentElement)
     });
 
-    this.modeler.on('element.changed', (e) => {
-      console.log("element.changed")
-    });
+    //this.modeler.on('element.changed', (e) => {
+    //
+    //});
 
   }
 

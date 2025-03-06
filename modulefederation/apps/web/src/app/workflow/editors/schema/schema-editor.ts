@@ -30,7 +30,7 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
 
   constructor(extensionEditor: ExtensionEditor) {
     super()
-    
+
     extensionEditor.computeLabel = (element: Element) => element.get("name")
   }
 
@@ -41,6 +41,5 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
 
       this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
-      console.log()
   }
 }

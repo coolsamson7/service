@@ -33,7 +33,7 @@ const EDITORS = [
   ServiceTaskEditor
 ]
 
-console.log(FormPropertyEditor)
+
 
 @NgModule({
   imports: [

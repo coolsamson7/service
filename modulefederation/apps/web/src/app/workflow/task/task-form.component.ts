@@ -7,7 +7,7 @@ import { WorkflowFunctions } from "../functions/workflow-functions";
 
 const a = WorkflowFunctions
 
-console.log(a)
+
 
 @Component( {
   selector: 'task-form',
@@ -57,9 +57,7 @@ export class TaskFormComponent implements OnInit {
   ngOnInit(): void {
     const result = this.parse(this.task)
 
-  
     this.formService.find4Process(result.id, result.revision, result.form).subscribe(form => {
-
         this.taskService.taskVariables(this.task).subscribe(variables => {
             this.form = JSON.parse(form.xml)
 
@@ -68,23 +66,23 @@ export class TaskFormComponent implements OnInit {
                 input: {},
                 process: {}
             }
-    
+
             // input
-    
+
             for ( const prop of variables.input.properties)
                 model.input[prop.name] = prop.value
-    
+
             // process
-    
+
             for ( const prop of variables.process.properties)
                 model.process[prop.name] = prop.value
-    
-    
+
+
             // done
-    
+
             this.model = model
         })
-    
+
     })
   }
 }

@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
   standalone: true,
   imports: [FormsModule, CommonModule,  MatInputModule, MatFormFieldModule]
 })
-export class DocumentationPropertyEditor extends AbstractPropertyEditor implements OnInit {
+export class DocumentationPropertyEditor extends AbstractPropertyEditor {
   override get value() : any {
     const values = this.element.get(this.property.name)
     if ( !values )
@@ -43,7 +43,4 @@ export class DocumentationPropertyEditor extends AbstractPropertyEditor implemen
     values[0].text = value
   }
 
-  ngOnInit(): void {
-    console.log("k")
-  }
 }

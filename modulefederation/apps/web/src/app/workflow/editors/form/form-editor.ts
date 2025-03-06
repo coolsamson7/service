@@ -35,10 +35,10 @@ import { MatButtonModule } from "@angular/material/button";
 
   constructor(featureRegistry : FeatureRegistry, private messageBus: MessageBus) {
     super()
-    
+
     this.featureSuggestionProvider = new ArraySuggestionProvider(featureRegistry.finder().withTag("task").find().map(feature => feature.path!))
-    
-  
+
+
     this.formSuggestionProvider = new ArraySuggestionProvider(this.formNames)
 
     this.messageBus.broadcast({
@@ -73,9 +73,6 @@ import { MatButtonModule } from "@angular/material/button";
   // override
 
   override onChange(event: any) {
-    // TODO???
-    console.log(event)
-
     this.value = this.type + ":" + event
   }
 

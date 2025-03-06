@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Type } from '@angular/core';
 import { PropertyEditor } from './property-editor';
+import { TraceLevel, Tracer } from '@modulefederation/common';
 
 // the registry
 
@@ -14,12 +15,17 @@ export class PropertyEditorRegistry {
   // public
 
   register(type: string, component: Type<PropertyEditor>) {
-    console.log("### register " + type)
+    if ( Tracer.ENABLED)
+      Tracer.Trace("workflow", TraceLevel.FULL, "register editor {0}", type)
+
+
     this.registry[type] = component
   }
 
   get(type: string) : Type<PropertyEditor> {
-    console.log("### fetch " + type)
+     if ( Tracer.ENABLED)
+        Tracer.Trace("workflow", TraceLevel.FULL, "fetch editor for {0}", type) 
+
     const result = this.registry[type]
 
     return result

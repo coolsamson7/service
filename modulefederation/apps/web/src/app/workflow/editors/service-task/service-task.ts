@@ -97,7 +97,6 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
     this.openOutputs[i] = ! this.openOutputs[i]
   }
 
-
   // override OnInit
 
  ngOnInit() : void {
@@ -155,6 +154,5 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
           this.setService(descriptors[0])
 
       })
-
   }
 }

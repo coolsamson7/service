@@ -11,8 +11,9 @@ export class WorkflowFunctions {
     // constructor
 
     constructor(private taskService: TaskService) {
-        console.log(this)
+
     }
+
     // the functions
 
   /**
@@ -29,8 +30,6 @@ export class WorkflowFunctions {
     ]
   })
   finishTask(id: string): void {
-    console.log(id);
-
     this.taskService.completeTask(id).subscribe()
   }
 }

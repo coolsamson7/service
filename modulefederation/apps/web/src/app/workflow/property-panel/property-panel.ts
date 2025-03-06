@@ -119,7 +119,6 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
         }
       }
 
-      console.log(this.currentConfig)
     } // if
   }
 
