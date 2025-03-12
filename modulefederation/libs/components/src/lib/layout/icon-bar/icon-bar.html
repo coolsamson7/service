@@ -1,0 +1,10 @@
+<mat-tab-group [class]="orientation">
+    <mat-tab *ngFor="let element of elements">
+        <ng-template mat-tab-label>
+            <div (click)="clicked(element)" [title]="element.title">
+                {{ iconsOnly ? null : element.title }}
+                <icon [name]="element.icon"></icon>
+            </div>
+        </ng-template>
+  </mat-tab>
+</mat-tab-group>

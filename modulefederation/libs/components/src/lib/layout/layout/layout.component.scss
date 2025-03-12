@@ -1,5 +1,4 @@
 @use './styles/panes' as panes;
-@use './styles/tabs' as tabs;
 
 :host {
   display: flex;
@@ -13,8 +12,6 @@
   flex-direction: column;
   height: 100%;
 }
-
-@include tabs.tab-group;
 
 :host ::ng-deep,
 ::ng-deep .g3-dialog.g3-dockable-pane {

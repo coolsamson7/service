@@ -161,7 +161,7 @@
 <!-- tabs -->
 
 <ng-template #paneTabsTpl let-class="class" let-pane="pane" let-paneContainer="paneContainer">
-  <mat-tab-group
+  <!--mat-tab-group
     (selectedTabChange)="
       pane.selectedTabIndex = $event.index;
       paneContainer.nativeElement.style.flexBasis = pane.sizes[pane.selectedTabIndex] || pane.initialSize
@@ -183,7 +183,9 @@
         </div>
       </ng-template>
     </mat-tab>
-  </mat-tab-group>
+  </mat-tab-group-->
+
+  <icon-bar [elements]="pane.tabs" [iconsOnly]="true" [orientation]="'vertical'" (onClick)="selected($event)"></icon-bar>
 </ng-template>
 
 <!--  content -->

@@ -4,8 +4,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DockablePaneModule } from '../dockable-pane/dockable-pane.module';
 import { ResizableContainerModule } from '../resizable-container/resizable-container.module';
-import { BottomPane, LayoutComponent, LayoutTab, LeftPane, RightPane, TopPane } from './layout.component';
+import {  LayoutComponent } from './layout.component';
 import { IconComponent } from '../../ui/icon.component';
+import { IconBarComponent } from '../icon-bar/icon-bar';
+import { TopPane, BottomPane, LeftPane, RightPane } from './pane.component';
+import { LayoutTab } from './tab.component';
 
 /**
  * @ignore
@@ -19,7 +22,6 @@ const declarables = [
   LayoutTab
 ];
 
-//@Library(packageJson)
 @NgModule({
   imports: [
     CommonModule,
@@ -27,7 +29,8 @@ const declarables = [
     MatIconModule,
     DockablePaneModule,
     ResizableContainerModule,
-    IconComponent
+    IconComponent,
+    IconBarComponent
   ],
   declarations: [...declarables],
   exports: [...declarables]
