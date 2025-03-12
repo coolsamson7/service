@@ -4,9 +4,8 @@ import { ComponentFactory, ComponentFactoryResolver, ComponentRef, Directive, In
 import { PropertyEditorRegistry } from "./property-editor-registry";
 import { PropertyEditor } from "./property-editor";
 import { Element, PropertyDescriptor } from "moddle";
-import { BaseElement } from "bpmn-moddle";
 import { Group } from "../property-panel.model";
-
+import { Shape } from "bpmn-js/lib/model/Types";
 
 
 @Directive({
@@ -17,7 +16,9 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   // input
 
   @Input('property-editor') element!: Element
+  @Input() shape!: Shape
   @Input() extension!: string
+  @Input() readOnly = false
   @Input() config!: Group // TODO
   @Input() property?: PropertyDescriptor | undefined
 
@@ -37,9 +38,11 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   updateComponent(instance: PropertyEditor) {
     Object.assign(instance, {
       element: this.element,
+      shape: this.shape,
       extension: this.extension,
       config: this.config,
       property: this.property,
+      readOnly: this.readOnly,
       component: this,
     })
   }
@@ -48,6 +51,8 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     let type = undefined
+
+   
 
     if ( this.property) {
       type = this.registry.get(this.property.ns.name)
@@ -58,6 +63,9 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
     if ( !type )
       throw Error("missing type")
+
+    if ( this.readOnly)
+      console.log("### RO " + type)
 
 
     this.componentFactory = this.resolver.resolveComponentFactory<PropertyEditor>(type)

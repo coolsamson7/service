@@ -9,15 +9,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective } from '../../validation';
 
-@RegisterPropertyEditor("Integer")
+@RegisterPropertyEditor("Double")
 @Component({
-  selector: "integer-editor",
-  templateUrl: './integer-editor.html',
+  selector: "double-editor",
+  templateUrl: './double-editor.html',
   //styleUrl: "./string-editor.scss",
   standalone: true,
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
 })
-export class IntegerPropertyEditor extends AbstractPropertyEditor {
+export class DoublePropertyEditor extends AbstractPropertyEditor {
   describe(error: any) {
     return error["model"]
   } 

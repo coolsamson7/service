@@ -2,14 +2,50 @@
     width: 100%;
   }
   
-  .listener {
-    width: 100%;
-    font-size: 12px;
-    font-family: "Roboto", sans-serif;
-    fill: white;
-  
+ 
+  .schema {
+
+    .name {
+      display: flex;
+
+      .add {
+        visibility: hidden;
+        margin-left: auto
+      }
+    }
+
+    .name:hover svg-icon {
+      visibility: visible;
+    }
+    
+   
     .property {
-      cursor: default;
+      display: flex;
+
+      .left {
+        display: flex;
+        flex-direction: column;
+
+        .line {
+          height: 100%;
+          background-color: black;
+          color: black;
+          width: 2px;
+          align-self: center;
+        }
+      }
+
+      .delete {
+        visibility: hidden;
+        margin-left: auto
     }
   }
+  
+  .property:hover svg-icon {
+    visibility: visible;
+  }
+  }
+
+ 
+
   

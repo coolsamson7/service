@@ -21,21 +21,28 @@ import {
 import { HttpClient } from '@angular/common/http';
 
 import type Canvas from 'diagram-js/lib/core/Canvas';
+import type Overlays from 'diagram-js/lib/features/overlays/Overlays';
 import type { ImportDoneEvent, ImportXMLResult, SaveXMLResult } from 'bpmn-js/lib/BaseViewer';
 
 
 import BpmnJS from 'bpmn-js/lib/Modeler';
 
-import { from, Observable } from 'rxjs';
+import { from, Observable, tap } from 'rxjs';
 import { Shape } from 'bpmn-js/lib/model/Types';
-//import Modeling from 'bpmn-js/lib/features/modeling/Modeling';
-
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
 import { AdministrationService } from '../service/administration-service';
 import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
+import ElementRegistry from 'diagram-js/lib/core/ElementRegistry';
+import { ModelValidation, ValidationError } from '../validation';
+import { OverlayAttrs, OverlaysFilter } from 'diagram-js/lib/features/overlays/Overlays';
+import { Root, RootLike } from 'diagram-js/lib/model/Types';
 
+
+//
+
+//
 @Component({
   selector: 'diagram',
   templateUrl: "./diagram.component.html",
@@ -47,7 +54,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   @Input() process?: string;
 
   @Output() importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
-  @Output() selectionChanged = new EventEmitter< Element | undefined>();
+  @Output() selectionChanged = new EventEmitter< Shape | undefined>();
 
   // instance data
 
@@ -55,49 +62,75 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   modeler: BpmnJS
 
+  currentShape : Shape | undefined = undefined
   currentElement : Element | undefined = undefined
+
+  overlays!: Overlays;
+
+  errors : ValidationError[] = []
+
+  canvas: Canvas | undefined
+  elementRegistry : ElementRegistry | undefined
+
+  selection: any
 
   // constructor
 
-  constructor(private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
+  constructor(private modelValidation: ModelValidation, private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
     this.modeler = new BpmnJS({
       moddleExtensions: configuration.extensions
     });
 
+    this.overlays = this.modeler.get("overlays")
+    this.selection = this.modeler.get("selection");
 
-    /* test
+    this.modeler.on('import.done', (data) => {
+      const { error, warnings } = data;
 
-
-    administrationService.getProcessDefinitions().subscribe(descriptors => {
-      let descriptor = descriptors[0]
-
-      administrationService.readProcessDefinition(descriptor).subscribe(xml => {
-        console.log(xml)
-      })
-    })*/
-
-    // TODO
-
-    this.modeler.on<ImportDoneEvent>('import.done', ({ error }) => {
-      if (!error) {
-        this.modeler.get<Canvas>('canvas').zoom('fit-viewport');
-      }
-
-
-    });
+      this.canvas = this.modeler.get<Canvas>('canvas')
+      this.canvas!.zoom('fit-viewport')
+      this.elementRegistry = this.modeler.get("elementRegistry")
+      this.validateModel()
+    })
   }
 
   // private
 
-  private getProcess() {
-    const canvas : Canvas = this.modeler.get('canvas');
+  private select(shape: Shape) {
+    this.selection.select(shape)
+  }
 
-    const root = canvas.getRootElement();
+  private addOverlay(shape: Shape | string, attributes: OverlayAttrs): string {
+    return this.overlays.add(shape as string, "error", attributes)
+  }
 
+  private removeOverlay(filter: OverlaysFilter) {
+    this.overlays.remove(filter)
+  }
+
+  private addMarker(shape: Shape) {
+    const BASIC_WARN_HTML =
+    '<div class="sgv-warn-container">' +
+        '<img class="sgv-warn-icon" src="assets/svg/warning.svg"></img>' +
+    '<div class="sgv-tooltip-content">'
+
+
+     this.addOverlay(shape.id, {
+          position: {
+            bottom: 10,
+            left: 10
+          },
+          html: BASIC_WARN_HTML
+        });
+  }
+
+  private getProcess() : RootLike | undefined {
+    return this.canvas?.getRootElement();
+/*
     if ( root['di']?.bpmnElement)
       return root['di']?.bpmnElement
     else
-      return undefined
+      return undefined*/
   }
 
   computeXML() : Promise<SaveXMLResult> {
@@ -105,7 +138,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
  setProcess(xml: string): Observable<ImportXMLResult> {
-    return from(this.modeler.importXML(xml));
+    return from(this.modeler.importXML(xml))
+  }
+
+  selectError(error: ValidationError) {
+    this.select(error.shape)
   }
 
   // implement AfterContentInit
@@ -132,20 +169,48 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
          const di : BaseElement = selection.di
 
+        this.currentShape = (di as any);
         this.currentElement = (di as any).bpmnElement;
       }
       else {
-        let process : any  = this.getProcess()
-        this.currentElement = process//this.getProcess()
+        this.currentShape = this.getProcess() as Shape
+        this.currentElement = this.currentShape?.businessObject
       }
 
-      this.selectionChanged.emit(this.currentElement)
+      this.selectionChanged.emit(this.currentShape)
     });
 
     //this.modeler.on('element.changed', (e) => {
     //
     //});
+  }
 
+  type(error: ValidationError) {
+    let type = error.shape.type
+
+    let colon = type.indexOf(":")
+
+    return type.substring(colon + 1)
+  }
+
+  validateModel() : boolean {
+    this.removeOverlay({
+      type: "error"
+    })
+    this.errors = []
+    if ( this.getProcess()?.businessObject)
+     this.errors = this.modelValidation.validate(this.getProcess()!.businessObject, this.elementRegistry!)
+
+    let lastShape = undefined
+    for ( let error of this.errors) {
+      if ( error.shape !== lastShape) {
+        this.addMarker(error.shape)
+
+        lastShape = error.shape
+      }
+    }
+
+    return this. errors.length > 0
   }
 
    // implement OnChanges
@@ -155,7 +220,12 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     if (changes['process']) {
       let process = changes['process'].currentValue
 
-      this.setProcess(process);
+      this.setProcess(process).subscribe(result => {
+        this.elementRegistry = this.modeler.get("elementRegistry");
+
+        this.validateModel()
+      }
+      );
     }
   }
 

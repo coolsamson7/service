@@ -6,8 +6,7 @@ import { PropertyEditor } from "./property-editor";
 //import { PropertyEditorDirective } from "./property.editor.directive";
 
 import  {Element, PropertyDescriptor  } from "moddle"
-import { BaseElement } from "bpmn-moddle";
-
+import { Shape } from "bpmn-js/lib/model/Types";
 
 @Component({
   template: '<div></div>'
@@ -15,7 +14,9 @@ import { BaseElement } from "bpmn-moddle";
 export abstract class AbstractPropertyEditor implements PropertyEditor {
   // input
 
+  @Input() shape!: Shape
   @Input() element!: Element
+  @Input() readOnly = false
   @Input() property!: PropertyDescriptor
   @Input() component!: any//PropertyEditorDirective
 

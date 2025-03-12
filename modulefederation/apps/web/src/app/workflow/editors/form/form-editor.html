@@ -5,33 +5,45 @@
   
       <!-- feature -->
   
-      <input *ngIf="type === 'feature'" type="text" (ngModelChange)="onChange($event)" [(ngModel)]="name" matInput name="feature"
-      [suggestionProvider]="featureSuggestionProvider"
-      />
+      <ng-container *ngIf="type === 'feature'">
+        <input #feature="ngModel"  type="text" (ngModelChange)="onChange($event)" [(ngModel)]="name" matInput name="feature"
+        [suggestionProvider]="featureSuggestionProvider"
+  
+        [check]="element" [shape]="shape" [property]="property.name"
+        />
+  
+        <mat-error *ngIf="feature.invalid && feature.touched">
+          {{feature.errors!["model"]}}
+        </mat-error>
+      </ng-container>
+    
   
       <!-- form -->
   
-      <input *ngIf="type === 'form'"
-        type="text"
-        (ngModelChange)="onChange($event)"
-        [(ngModel)]="name"
-        matInput
+      <ng-container  *ngIf="type === 'form'">
+        <input #f="ngModel"
+          type="text"
+          (ngModelChange)="onChange($event)"
+          [(ngModel)]="name"
+          matInput
 
-        [suggestionProvider]="formSuggestionProvider"
+          [suggestionProvider]="formSuggestionProvider"
 
-        name="form"
-      />
+          [check]="element" [shape]="shape" [property]="property.name"
+
+          name="form"
+        />
+
+        <mat-error *ngIf="f.invalid && f.touched">
+          {{f.errors!["model"]}}
+        </mat-error>
+      </ng-container>
 
       <!-- menu -->
       
       <span [matMenuTriggerFor]="menu" class="change-type-menu" matSuffix>
         <mat-icon>{{icons[type]}}</mat-icon>
-      </span>
-  
-      <!-- error -->
-  
-      <!--mat-error *showErrors></mat-error-->
-    
+      </span>  
     </mat-form-field>
   
     <button *ngIf="type === 'form' && formNames.includes(name) " mat-icon-button (click)="editForm()"> 
@@ -41,16 +53,10 @@
     <button *ngIf="type === 'form' && !formNames.includes(name)" mat-icon-button (click)="addForm()"> 
       <mat-icon *ngIf="!formNames.includes(name)" >add_box</mat-icon>
     </button>
-
-
   
     <!-- the combo thing -->
   
     <mat-menu #menu="matMenu" class="change-type-menu-panel">
-      <!--icon (click)="changeType('binding')" mat-menu-item [styles]="{'font-size': '16px'}" [name]="icons['binding']"/>
-      <icon (click)="changeType('binding')" mat-menu-item [styles]="{'font-size': '16px'}" [name]="icons['binding']"/>
-      <icon (click)="changeType('binding')" mat-menu-item [styles]="{'font-size': '16px'}" [name]="icons['binding']"/-->
-
       <div (click)="changeType('form')" mat-menu-item> <mat-icon>{{icons["form"]}}</mat-icon></div>
       <div (click)="changeType('feature')" mat-menu-item> <mat-icon>{{icons["feature"]}}</mat-icon></div>
     </mat-menu>

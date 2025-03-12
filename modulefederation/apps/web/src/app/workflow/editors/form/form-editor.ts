@@ -8,6 +8,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
+import { ModelValidationDirective } from "../../validation";
 
 
  @RegisterPropertyEditor("camunda:formKey")
@@ -16,7 +17,7 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrl: "./form-editor.scss",
   templateUrl: "./form-editor.html",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective]
+  imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective]
  })
  export class FormPropertyEditor extends AbstractPropertyEditor implements OnInit {
   // instance data

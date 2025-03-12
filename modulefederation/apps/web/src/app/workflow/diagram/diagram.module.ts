@@ -7,6 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { SvgIconComponent } from '../svg.icon';
 import { PropertyPanelModule } from '../property-panel/property-panel.module';
 import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
+import { LayoutModule } from '@modulefederation/components';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -17,6 +20,15 @@ import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.confi
 
     CommonModule,
     FormsModule,
+
+    // material
+
+    MatListModule,
+    MatIconModule,
+
+    // portal
+
+    LayoutModule,
 
     // property panel
 

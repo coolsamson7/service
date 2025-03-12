@@ -1,14 +1,22 @@
-<div class="listener">
-    <ng-container  *ngFor="let property of properties">
-        <!--div class="property">{{property.name}}</div-->
-  
-        <div *ngIf="property.name !== 'schema:type'" [property-editor]="element" [property]="property"></div>
+<div class="schema">
+    <div class="name">
+        <div [property-editor]="element" [property]="nameProperty"></div>
+        <svg-icon (click)="add()" name="plus" class="add"></svg-icon>
+    </div>
 
-        <mat-form-field *ngIf="property.name === 'schema:type'" >
-            <mat-label>{{property.name}}</mat-label>
-            <mat-select required [(value)]="element['type']">
-                <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </ng-container>
+    <div>
+        <div *ngFor="let property of element['properties']; index as i" class="property">
+            <div class="left">
+                <svg-icon (click)="toggle(i)" [name]="open[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
+                <div *ngIf="true" class="line"></div>
+            </div>
+        
+            <div *ngIf="!open[i]">{{name(property)}}</div>
+            <div *ngIf="open[i]" [property-editor]="property"></div>
+                
+            <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
+            <svg-icon (click)="delete(property)" name="delete" class="delete"></svg-icon>
+        </div> 
+    </div>
   </div>
+  

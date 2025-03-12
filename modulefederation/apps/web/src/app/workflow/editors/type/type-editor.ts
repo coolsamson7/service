@@ -7,19 +7,17 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ModelValidationDirective } from '../../validation';
+import { MatSelectModule } from '@angular/material/select';
 
 
-@RegisterPropertyEditor("String")
+@RegisterPropertyEditor("schema:type")
 @Component({
-  selector: "string-editor",
-  templateUrl: './string-editor.html',
-  styleUrl: "./string-editor.scss",
+  selector: "type-editor",
+  templateUrl: './type-editor.html',
+  styleUrl: "./type-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, MatSelectModule]
 })
-export class StringPropertyEditor extends AbstractPropertyEditor {
-  describe(error: any) {
-    return error["model"]
-  } 
+export class TypePropertyEditor extends AbstractPropertyEditor {
+  types = ["String", "Boolean"]
 }

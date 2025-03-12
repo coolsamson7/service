@@ -9,7 +9,7 @@
     </div>
   </div>
   <ng-container *ngIf="element">
-    <property-group *ngFor="let group of currentConfig.groups" [group]="group" [element]="element"></property-group>
+    <property-group *ngFor="let group of currentConfig.groups" [group]="group" [shape]="shape" [element]="element"></property-group>
   </ng-container>
 </div>
   

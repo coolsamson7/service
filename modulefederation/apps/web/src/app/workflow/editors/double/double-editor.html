@@ -1,6 +1,6 @@
 <mat-form-field>
     <mat-label>{{property.name}}</mat-label>
-    <input matInput #input="ngModel" type="number" [(ngModel)]="value" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
+    <input matInput #input="ngModel" type="number" [(ngModel)]="value" (ngModelChange)="onChange($event)"/>
     <mat-error *ngIf="input.invalid && input.touched">
         {{describe(input.errors)}}
       </mat-error>

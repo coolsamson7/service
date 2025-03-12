@@ -1,5 +1,5 @@
 import { Injectable, Injector } from "@angular/core";
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { AbstractHTTPService, Service } from "@modulefederation/portal";
 
 
@@ -19,7 +19,7 @@ export interface ServiceTaskDescriptor {
 
 @Injectable({providedIn: 'root'})
 @Service({domain: "workflow", prefix: "/bpmn/service-task"})
-export class TaskDescriptorService extends AbstractHTTPService {
+export class TaskDescriptorInventoryService extends AbstractHTTPService {
   // constructor
 
   constructor(injector : Injector) {
@@ -30,5 +30,29 @@ export class TaskDescriptorService extends AbstractHTTPService {
 
   getTasks() : Observable<ServiceTaskDescriptor[]> {
     return this.get<ServiceTaskDescriptor[]>(`/service-tasks`)
+  }
+}
+
+@Injectable({providedIn: 'root'})
+export class TaskDescriptorService {
+  // instance data
+
+  private services : ServiceTaskDescriptor[] | undefined
+
+  // constructor
+
+  constructor(private service : TaskDescriptorInventoryService) {
+  }
+
+  // methods
+
+  getTasks() : ServiceTaskDescriptor[] {
+    if (!this.services) {
+      this.services = []
+      this.service.getTasks().subscribe(services => this.services = services)
+    }
+
+   
+    return this.services
   }
 }

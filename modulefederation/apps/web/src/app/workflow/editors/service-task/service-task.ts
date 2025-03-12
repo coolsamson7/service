@@ -1,26 +1,57 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, NgModule , OnInit} from '@angular/core';
+import { Component, Directive, Input, NgModule , OnInit} from '@angular/core';
 
 
-import { AbstractExtensionEditor, AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
-import { ArraySuggestionProvider, FeatureRegistry, MessageBus, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
-import { FormsModule } from '@angular/forms';
+import { ArraySuggestionProvider, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
+import { AbstractControl, FormsModule, NG_VALIDATORS, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ServiceTaskDescriptor, TaskDescriptorService } from '../../service/task-service-descriptor';
+import { ServiceTaskDescriptor, TaskDescriptorInventoryService, TaskDescriptorService } from '../../service/task-service-descriptor';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Element } from 'moddle';
+import { ModelValidationDirective } from '../../validation';
+
+export function memberOfValidator(elements: string[]): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+    const value = control.value;
+    if (!value)
+      return null;
+
+    const result = elements.includes(value)
+
+    return !result ? {memberOf:true}: null;
+    }
+}
 
 
-//width: 100%;
+@Directive({
+  selector: "[member]",
+  providers: [{
+    useExisting: MemberDirective,
+    provide: NG_VALIDATORS,
+    multi: true
+  }],
+  standalone: true
+})
+export class MemberDirective implements Validator {
+  @Input("member") elements! : string[]
+
+  // implement Validator
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return memberOfValidator(this.elements)(control);
+  }
+}
+
 @RegisterPropertyEditor("bpmn:implementation")
 @Component({
   selector: "service-task",
   templateUrl: './service-task.html',
   styleUrl: './service-task.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, MemberDirective, ModelValidationDirective]
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit {
   // instance data
@@ -31,19 +62,20 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   descriptors : ServiceTaskDescriptor[] = []
   selectedService!: ServiceTaskDescriptor
-  suggestionProvider : SuggestionProvider = new ArraySuggestionProvider([])
+  suggestionProvider : ArraySuggestionProvider = new ArraySuggestionProvider([])
 
   inputOutputElement!: Element
 
   // constructor
 
-  constructor(private taskDescriptorService: TaskDescriptorService) {
+  constructor(private taskDescriptorService: TaskDescriptorInventoryService) { // TODO
     super()
   }
 
   // private
 
   private rememberDescriptors(descriptors: ServiceTaskDescriptor[]) {
+    this.descriptors = descriptors
    this.suggestionProvider = new ArraySuggestionProvider(descriptors.map(descriptor => descriptor.name))
   }
 
@@ -63,9 +95,10 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
       (<any>this.inputOutputElement)["inputParameters"] = []
       for ( const input of descriptor.input) {
-        const inputParameter =  this.create("camunda:InputParameter");
+        const inputParameter =  this.create("schema:inputParameter");
 
         inputParameter["name"] = input.name;
+        inputParameter["type"] = input.type;
 
         inputParameter.$parent = this.inputOutputElement;
 
@@ -76,9 +109,10 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
       (<any>this.inputOutputElement)["outputParameters"] = []
       for ( const input of descriptor.output) {
-        const outputParameter =  this.create("camunda:OutputParameter");
+        const outputParameter =  this.create("schema:outputParameter");
 
         outputParameter["name"] = input.name;
+        outputParameter["type"] = input.type;
 
         outputParameter.$parent = this.inputOutputElement;
 
@@ -97,6 +131,12 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
     this.openOutputs[i] = ! this.openOutputs[i]
   }
 
+  override onChange(serviceName: any) {
+    const service = this.descriptors.find(descriptor => descriptor.name == serviceName);
+    if ( service )
+      this.setService(service)
+  }
+
   // override OnInit
 
  ngOnInit() : void {
@@ -106,20 +146,20 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
       if ( extensionElement.$parent == undefined) {
         (this.element)["extensionElements"] = extensionElement
-  
+
         extensionElement.$parent = this.element
 
         extensionElement.values = []
       }
 
-      if ( !extensionElement.values ) 
+      if ( !extensionElement.values )
         extensionElement.values = []
 
       // input & putput
 
       const inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput")) || (<any>this.element)['$model'].create("camunda:InputOutput");
 
-      if ( inputOutputElement.$parent == undefined) {  
+      if ( inputOutputElement.$parent == undefined) {
         inputOutputElement.$parent = extensionElement
 
         extensionElement.values.push(inputOutputElement)
@@ -138,7 +178,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
         inputOutputElement['outputParameters'] = []
 
       // lets check the current service
-  
+
       this.taskDescriptorService.getTasks().subscribe(descriptors => {
          this.rememberDescriptors(descriptors)
 

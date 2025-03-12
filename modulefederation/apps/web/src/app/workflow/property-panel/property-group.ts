@@ -1,8 +1,8 @@
 import { Component, Directive, Input } from "@angular/core"
 import  {Element } from "moddle"
 import { Group } from "./property-panel.model";
-import { BaseElement } from "bpmn-moddle";
 
+import { Shape } from "bpmn-js/lib/model/Types";
 export type Plus = () => void
 
 @Component( {
@@ -15,6 +15,7 @@ export type Plus = () => void
 export class PropertyGroupComponent {
   // input
 
+  @Input() shape : Shape | undefined;
   @Input() element : Element | undefined;
   @Input() group!: Group
 

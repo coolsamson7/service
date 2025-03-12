@@ -1,10 +1,10 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Input } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 
 import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -13,8 +13,10 @@ import { ArraySuggestionProvider, SuggestionProvider, NgModelSuggestionsDirectiv
 
 import { Element } from "moddle"
 import { MatInputModule } from '@angular/material/input';
+import { ModelValidationDirective } from '../../validation';
 
-//width: 100%;
+import { Shape } from "bpmn-js/lib/model/Types";
+
 @RegisterPropertyEditor("camunda:InputOutput")
 @Component({
   selector: "input-output-editor",
@@ -55,7 +57,10 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   }
 
   addInput() : Element {
-    const parameter = this.create("camunda:InputParameter")
+    const parameter = this.create("schema:inputParameter")
+
+    parameter.$parent = this.element
+    parameter.type = "String"
 
     this.element['inputParameters'].push(parameter)
 
@@ -63,7 +68,10 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   }
 
   addOutput() : Element {
-    const parameter =  this.create("camunda:OutputParameter")
+    const parameter =  this.create("schema:outputParameter")
+
+    parameter.$parent = this.element
+    parameter.type = "String"
 
     this.element['outputParameters'].push(parameter)
 
@@ -90,24 +98,25 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   }
 }
 
-@RegisterPropertyEditor("camunda:InputParameter")
+@RegisterPropertyEditor("schema:inputParameter")
 @Component({
   selector: "input-parameter",
   templateUrl: './input-parameter.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
-  // input
+  //
 
-  //@Input() readOnly = false
+  @ViewChild('form') form!: NgForm; 
 
   // instance data
 
   properties: Moddle.PropertyDescriptor[] = []
 
-  type = "value"
+  inputType = ""
+  type = "value" // process,value
   value : any = ""
   icons : {[type: string] : string } = {
     process: "link",
@@ -115,6 +124,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     value: "link",
     expression: "create"
   }
+  readOnly = false
 
    suggestionProvider : SuggestionProvider | undefined = undefined
 
@@ -126,6 +136,8 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     this.value = event
 
     this.writeValue()
+
+    this.form.controls['value'].updateValueAndValidity()
   }
 
   changeType(type: string) {
@@ -148,8 +160,11 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
     const extensions : Element[] = process['extensionElements']?.values || []
 
-
-    return extensions.filter((extension: Element) => extension.$type == "schema:schema").map(schema => schema["name"])
+    const schema = extensions.find((extension: Element) => extension.$type == "schema:schema")
+    if ( schema )
+      return schema['properties'].filter((extension: Element) => extension.$type == "schema:property").map((property: any) => property["name"])
+    else
+      return []
   }
 
   setSuggestionProvider() {
@@ -213,7 +228,10 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "name" || prop.name == "value" )
+      //this.readOnly = this.element.$parent.$parent.$parent.$type == "bpmn:ServiceTask"
+
+      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "value"].includes(prop.name))
+
 
       const value = this.element.get("value") || ""
 
@@ -232,7 +250,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
 }
 
-@RegisterPropertyEditor("camunda:OutputParameter")
+@RegisterPropertyEditor("schema:outputParameter")
 @Component({
   selector: "output-parameter",
   templateUrl: './output-parameter.html',
@@ -250,7 +268,7 @@ export class OutputParameterEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "name" || prop.name == "value" ) // TODO
+      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type"].includes(prop.name))
 
   }
 }

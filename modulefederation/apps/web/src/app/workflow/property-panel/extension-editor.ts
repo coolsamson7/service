@@ -4,6 +4,7 @@ import { Element } from "moddle"
 import { PropertyGroupComponent } from "./property-group"
 import { BaseElement, ExtensionElements } from "bpmn-moddle"
 import { Group } from "./property-panel.model"
+import { Shape } from "bpmn-js/lib/model/Types";
 
 @Component({
   selector: 'extension-editor', 
@@ -16,6 +17,7 @@ export class ExtensionEditor implements OnInit {
   // input
 
   @Input() element!: Element
+  @Input() shape!: Shape
   @Input() extension!: string
   @Input() config!: Group
 

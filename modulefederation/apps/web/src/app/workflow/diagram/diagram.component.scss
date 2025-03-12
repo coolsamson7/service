@@ -9,3 +9,16 @@
       width: 100%;
     }
 }
+
+.errors {
+  font-size: small;
+
+  .error {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      color: red
+    }
+  }
+}

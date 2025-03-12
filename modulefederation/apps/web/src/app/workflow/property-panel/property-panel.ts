@@ -4,10 +4,8 @@ import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from "@ang
 import { Element, Moddle } from "moddle"
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
-//import { PropertyPanelModule } from "./property-panel.module";
-import { BaseElement } from "bpmn-moddle";
-import { GroupConfig, PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
-//import { BaseElement } from "bpmn-moddle";
+import { PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
+import { Shape } from "bpmn-js/lib/model/Types";
 
 
 
@@ -22,9 +20,11 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
   // input
 
   @Input() modeler!: BpmnJS
-  @Input() element : Element | undefined;
+  @Input() shape : Shape | undefined;
 
   // instance data
+
+  @Input() element : Element| undefined; 
 
   model!: Moddle;
 
@@ -74,12 +74,20 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
       return result;
   }
 
-  private setElement(element: Element | undefined) : void {
+  private setElement(shape: Shape | undefined) : void {
     this.currentConfig = {
       groups: []
     }
 
     this.allowedExtensions = []
+
+    let element : Element | undefined = undefined
+    if ( shape)
+      element = shape["bpmnElement"] || shape["businessObject"] ||  //  shape["bpmnObject"] // ??
+
+    console.log(shape)
+
+    this.element = element
 
     if ( element ) {
       const descriptor : Moddle.Descriptor = element.$descriptor;
@@ -131,8 +139,8 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["element"]) {//} && !changes["element"].firstChange) {
-      this.setElement(changes["element"].currentValue as Element)
+    if (changes["shape"]) {//} && !changes["element"].firstChange) {
+      this.setElement(changes["shape"].currentValue as Shape)
     }
   }
 }
