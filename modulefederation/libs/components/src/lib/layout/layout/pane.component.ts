@@ -25,22 +25,15 @@ import { TabComponent, Tab } from "./tab.component";
      * initial size
      */
     @Input() initialSize = '120px';
-    /**
-     * the opened state of a tab.
-     */
-    @Input() open = true;
 
     // instance data
-  
+
     @ContentChildren(TabComponent) tabsQuery!: QueryList<TabComponent>;
     tabs!: TabComponent[];
     selectedTab! : TabComponent
-    
-    sizes : any = {};
-    private dialogRef: any;
 
     // constructor
-  
+
     constructor(private el: ElementRef, private dialog: MatDialog) {
     }
 
@@ -53,7 +46,7 @@ import { TabComponent, Tab } from "./tab.component";
     // public
 
     rememberSize(data: any) {
-        this.sizes[this.indexOf(this.selectedTab)] = data
+        this.selectedTab.dockSize = data
     }
 
     indexOf(tab: TabComponent) {
@@ -61,44 +54,51 @@ import { TabComponent, Tab } from "./tab.component";
     }
 
     toggleTab(tab: TabComponent) {
-        this.open = ! this.open
+        if ( tab.state == "docked")
+            tab.state = "closed"
+        else
+            tab.state = "docked"
     }
 
     selectTab(tab: TabComponent) {
-        this.open = true
-        this.selectedTab = tab
+        if (tab.state == "floating") {
+            console.log("?")
+        }
+        else {
+            tab.state = "docked"
+            this.selectedTab = tab
+        }
     }
 
     removeTab(tab: TabComponent) {
         const index = this.tabs.indexOf(tab)
         this.tabs.splice(index, 1)
-    } 
+    }
 
-    close() {
-        this.open = false
+    isOpen() : boolean {
+        return this.selectedTab?.state == "docked"
     }
 
     //@RestoreState()
     restoreState(state: any) {
-        // @ts-ignore
-        this.el.nativeElement.parentElement.parentElement.querySelector(
-          `resizable-container.cell.pane-container.${this.getTagName()}`
-          // @ts-ignore
-        ).style.flexBasis = this.sizeOf(this.selectedTab) 
+        this.el.nativeElement.parentElement.parentElement.querySelector(`resizable-container.cell.pane-container.${this.getTagName()}`).style.flexBasis = this.sizeOf(this.selectedTab)
     }
 
     sizeOf(tab: TabComponent) {
-        return this.sizes[this.indexOf(tab)] || this.initialSize;
+        return tab.dockSize || this.initialSize;
     }
 
     undock() {
-        const pane = document.querySelector(`.cell.${this.getTagName()}`);
-        // @ts-ignore
-        const rect = pane.getBoundingClientRect();
+        const pane = document.querySelector(`.cell.${this.getTagName()}`)!
+     
+        const tab = this.selectedTab
+        const rect = tab.floatSize || pane.getBoundingClientRect();
 
-        this.dialogRef = this.dialog.open(DockablePaneComponent, {
+        // TODO: es können viel offen sein???
+
+        tab.dialogRef = this.dialog.open(DockablePaneComponent, {
             data: this.selectedTab,
-            panelClass: ['g3-dialog', 'g3-dockable-pane', this.selectedTab.class],
+            panelClass: ['g3-dialog', 'g3-dockable-pane', tab.class],
             position: {left: `${rect.left}px`, top: `${rect.top}px`},
             width: `${rect.width}px`,
             height: `${rect.height}px`,
@@ -106,27 +106,35 @@ import { TabComponent, Tab } from "./tab.component";
             autoFocus: false
         });
 
-        this.dialogRef.afterClosed().subscribe((result: { andCollapse: boolean }) => {
-            !result?.andCollapse && (this.open = true);
-            this.selectedTab.state = "docked"
+        tab.dialogRef.afterClosed().subscribe((result: any) => {
+            const collapse = result.andCollapse == true
+            const clientRect = result.clientRect
+
+            tab.dialogRef = undefined
+           
+            tab.floatSize = clientRect
+            if (collapse)
+                tab.state = "closed"
+            else
+                this.selectTab(tab) // TODO: icon bar aktualisiert sich nicht?????
         });
 
-        this.selectedTab.state = "floating"
-
-        this.open = false;
+        tab.state = "floating"
     }
-   
+
     // implement AfterContentInit
 
     ngAfterContentInit() {
       this.tabs = this.tabsQuery.toArray();
       this.selectedTab = this.tabs[0]
+      this.selectedTab.state = "docked"
     }
 
     // implement OnDestroy
-  
+
     ngOnDestroy() {
-      this.dialogRef?.close();
+        for ( let tab of this.tabs)
+            tab.dialogRef?.close();
     }
   }
 
@@ -140,7 +148,7 @@ import { TabComponent, Tab } from "./tab.component";
   })
 export class TopPaneComponent extends AbstractPaneComponent {
 }
-  
+
 /**
  * the pane at the bottom
  */
@@ -151,7 +159,7 @@ export class TopPaneComponent extends AbstractPaneComponent {
 })
 export class BottomPaneComponent extends AbstractPaneComponent {
 }
-  
+
 /**
  * the pane at the left side
  */
@@ -162,7 +170,7 @@ export class BottomPaneComponent extends AbstractPaneComponent {
 })
 export class LeftPaneComponent extends AbstractPaneComponent {
 }
-  
+
 /**
  * the pane at the right side
  */

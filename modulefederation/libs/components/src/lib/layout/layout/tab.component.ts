@@ -2,7 +2,7 @@
 
 import { Component, Input, TemplateRef, ViewChild } from "@angular/core";
 
-export type TabState = "docked" | "floating"
+export type TabState =  "closed" | "docked" | "floating"
 
 export interface Tab {
     title: string;
@@ -37,4 +37,13 @@ export class TabComponent implements Tab {
     @ViewChild(TemplateRef, {static: true}) template!: TemplateRef<any>;
 
     state : TabState = "docked"
+    dockSize : any = undefined
+    floatSize: any = undefined
+    dialogRef: any = undefined;
+
+    // public
+
+    close() {
+        this.state = "closed"
+    }
 }

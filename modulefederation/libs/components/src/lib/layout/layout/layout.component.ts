@@ -51,9 +51,6 @@ export class LayoutComponent {
   }
 
   computeStyle(pane: any): any {
-    const result = (!pane.open || !pane.tabs.length) && {display: 'none'}
-
-
-    return result
+    return !pane.isOpen() && {display: 'none'}
   }
 }
