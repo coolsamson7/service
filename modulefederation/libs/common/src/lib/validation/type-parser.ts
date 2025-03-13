@@ -261,7 +261,7 @@ export class TypeParser {
         return Type.get(type)!
     }
 
-    public static parse(type: string, constraintSpec: string | undefined): Type<any> {
+    public static parse(type: string, constraintSpec: string | undefined): any{
         // create base constraint class
 
         const constraint = this.constraint4(type)
