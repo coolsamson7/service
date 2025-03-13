@@ -63,6 +63,10 @@ import { LayoutTab, TabConfig } from "./tab.component";
         return this.tabs.indexOf(tab)
     }
 
+    toggleTab(tab: LayoutTab) {
+        this.opened = ! this.opened
+    }
+
     selectTab(tab: LayoutTab) {
         this.opened = true
         this.selectedTab = tab

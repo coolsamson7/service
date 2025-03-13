@@ -54,6 +54,6 @@ export class DockablePaneComponent {
 
   private getDialogWrapper(dialog: MatDialogRef<DockablePaneComponent> = this.dialog): any {
     // @ts-ignore
-    return dialog['_overlayRef']._host;
+    return dialog['_ref']['overlayRef']._host;
   }
 }

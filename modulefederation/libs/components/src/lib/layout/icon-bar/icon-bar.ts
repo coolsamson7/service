@@ -32,6 +32,7 @@ export class IconBarComponent implements OnChanges {
     // output
 
     @Output() selectionChange = new EventEmitter<IconBarElement>();
+    @Output() toggled = new EventEmitter<IconBarElement>();
 
     // constructor
 
@@ -45,8 +46,21 @@ export class IconBarComponent implements OnChanges {
 
     // callbacks
 
+    toggle(element: IconBarElement) {
+        if ( !this.selection) {
+            this.selection = element
+
+            this.selectionChange.emit(this.selection)
+        }
+        
+        if ( element == this.selection)
+            this.toggled.emit(element)
+    }
+
     selectionChanged(event: MatTabChangeEvent) {
         this.selection = this.elements[event.index]
+console.log("new selection")
+        console.log(this.selection)
 
         this.selectionChange.emit(this.selection)
     }

@@ -163,7 +163,7 @@
 <!-- tabs -->
 
 <ng-template #paneTabsTpl let-class="class" let-pane="pane" let-paneContainer="paneContainer">
-  <icon-bar [elements]="pane.tabs" [selection]="pane.selected" [iconsOnly]="pane.iconTabs" [orientation]="class" (selectionChange)="pane.selectTab($event);  paneContainer.nativeElement.style.flexBasis = pane.sizeOf($event)"></icon-bar>
+  <icon-bar [elements]="pane.tabs" [selection]="pane.selected" [iconsOnly]="pane.iconTabs" [orientation]="class"  (toggled)="pane.toggleTab($event)" (selectionChange)="pane.selectTab($event);  paneContainer.nativeElement.style.flexBasis = pane.sizeOf($event)"></icon-bar>
 </ng-template>
 
 <!--  content -->
