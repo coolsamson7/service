@@ -1,9 +1,9 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 
-import { AfterContentInit, Component, ContentChildren, ElementRef, Input, OnDestroy, OnInit, QueryList } from "@angular/core";
+import { AfterContentInit, Component, ContentChildren, ElementRef, Input, OnDestroy, QueryList } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { DockablePaneComponent } from "../dockable-pane/dockable-pane.component";
-import { TabComponent, Tab } from "./tab.component";
+import { TabComponent } from "./tab.component";
 
 
 /**
@@ -54,20 +54,26 @@ import { TabComponent, Tab } from "./tab.component";
     }
 
     toggleTab(tab: TabComponent) {
-        if ( tab.state == "docked")
-            tab.state = "closed"
-        else
-            tab.state = "docked"
+        if ( tab.state == "floating") {
+            if ( tab.isOpen()) 
+                tab.dialogRef.componentInstance.close(true)
+        
+            else 
+                this.undock()
+        } // if
+        else tab.toggle()
     }
 
-    selectTab(tab: TabComponent) {
-        if (tab.state == "floating") {
-            console.log("?")
-        }
-        else {
-            tab.state = "docked"
-            this.selectedTab = tab
-        }
+    selectTab(tab: TabComponent) { 
+        this.selectedTab = tab
+
+        if ( !tab.isOpen()) {
+            tab.open(tab.state)
+
+            if (tab.state == "floating") {
+                this.undock()
+            }
+        } // if
     }
 
     removeTab(tab: TabComponent) {
@@ -76,7 +82,7 @@ import { TabComponent, Tab } from "./tab.component";
     }
 
     isOpen() : boolean {
-        return this.selectedTab?.state == "docked"
+        return this.selectedTab?.isDocked()
     }
 
     //@RestoreState()
@@ -93,8 +99,6 @@ import { TabComponent, Tab } from "./tab.component";
      
         const tab = this.selectedTab
         const rect = tab.floatSize || pane.getBoundingClientRect();
-
-        // TODO: es können viel offen sein???
 
         tab.dialogRef = this.dialog.open(DockablePaneComponent, {
             data: this.selectedTab,
@@ -114,12 +118,14 @@ import { TabComponent, Tab } from "./tab.component";
            
             tab.floatSize = clientRect
             if (collapse)
-                tab.state = "closed"
-            else
-                this.selectTab(tab) // TODO: icon bar aktualisiert sich nicht?????
+                tab.close(tab.state)
+            else {
+                tab.state = "docked"
+                this.selectTab(tab)
+            }
         });
 
-        tab.state = "floating"
+        tab.open("floating")
     }
 
     // implement AfterContentInit
@@ -133,7 +139,7 @@ import { TabComponent, Tab } from "./tab.component";
     // implement OnDestroy
 
     ngOnDestroy() {
-        for ( let tab of this.tabs)
+        for ( const tab of this.tabs)
             tab.dialogRef?.close();
     }
   }
