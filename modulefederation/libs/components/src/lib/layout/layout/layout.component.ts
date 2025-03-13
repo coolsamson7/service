@@ -7,10 +7,7 @@ import {
   SkipSelf
 } from '@angular/core';
 
-import { TopPane, BottomPane, LeftPane, RightPane } from './pane.component';
-import { TabConfig } from './tab.component';
-import { IconBarElement } from '../icon-bar/icon-bar';
-
+import { TopPaneComponent, BottomPaneComponent, LeftPaneComponent, RightPaneComponent } from './pane.component';
 
 /**
  * the main layout component which is able to show panes on the different sides and projects the content inside.
@@ -25,17 +22,15 @@ export class LayoutComponent {
   // input
 
   // TODO: it should be like this: !this.parent?.horizontal;
-  /**
-   * @ignore
-   */
+
   @Input() horizontal = true;
 
   // instance data
 
-  @ContentChild(TopPane) topPane?: TopPane;
-  @ContentChild(BottomPane) bottomPane?: BottomPane;
-  @ContentChild(LeftPane) leftPane?: LeftPane;
-  @ContentChild(RightPane) rightPane?: RightPane;
+  @ContentChild(TopPaneComponent) topPane?: TopPaneComponent;
+  @ContentChild(BottomPaneComponent) bottomPane?: BottomPaneComponent;
+  @ContentChild(LeftPaneComponent) leftPane?: LeftPaneComponent;
+  @ContentChild(RightPaneComponent) rightPane?: RightPaneComponent;
 
   // constructor
 
@@ -45,7 +40,7 @@ export class LayoutComponent {
   // public
 
   directionsFor(clazz: string): string[] {
-    let mapping: any = {
+    const mapping: any = {
       left: 'right',
       right: 'left',
       top: 'bottom',
@@ -56,9 +51,9 @@ export class LayoutComponent {
   }
 
   computeStyle(pane: any): any {
-    let result = (!pane.opened || !pane.tabs.length) && {display: 'none'}
+    const result = (!pane.open || !pane.tabs.length) && {display: 'none'}
 
-    //console.log(result)
+
     return result
   }
 }

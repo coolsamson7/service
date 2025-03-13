@@ -2,11 +2,14 @@
 
 import { Component, Input, TemplateRef, ViewChild } from "@angular/core";
 
-export interface TabConfig {
+export type TabState = "docked" | "floating"
+
+export interface Tab {
     title: string;
     icon: string;
-    //template: TemplateRef<any>;
+    template: TemplateRef<any>;
     class: string;
+    state: TabState
   }
 
 /**
@@ -21,7 +24,7 @@ export interface TabConfig {
     </ng-template>
   `
 })
-export class LayoutTab implements TabConfig {
+export class TabComponent implements Tab {
     // input
 
     @Input() id!: string
@@ -32,4 +35,6 @@ export class LayoutTab implements TabConfig {
     // instacne data
 
     @ViewChild(TemplateRef, {static: true}) template!: TemplateRef<any>;
+
+    state : TabState = "docked"
 }

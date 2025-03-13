@@ -1,3 +1,5 @@
+<!-- horizontal -->
+
 <resizable-container *ngIf="horizontal; else vertical" [directions]="['none']" class="row">
   <!-- left -->
 
@@ -33,8 +35,6 @@
     ></ng-container>
   </ng-container>
 </resizable-container>
-
-<!-- templates -->
 
 <!-- vertical alignment -->
 
@@ -78,21 +78,21 @@
   </section>
 </ng-template>
 
-<!-- pane container  -->
+<!-- pane container is a header and the content  -->
 
 <ng-template #paneContainerTpl let-contentTpl="contentTpl" let-icon="icon" let-pane="pane" let-title="title">
   <section [ngClass]="pane.selectedTab.class" class="pane-container">
+    <!-- header -->
+
     <section class="header">
       <icon [name]="icon"></icon>
       <div class="title">{{ title }}</div>
       <div class="spacer"></div>
       <icon (click)="pane.undock()" name="font:si-moredata"></icon>
-      <icon
-
-        (click)="$event.stopPropagation(); pane.opened = false"
-        name="font:pi-low"
-      ></icon>
+      <icon (click)="$event.stopPropagation(); pane.close()" name="font:pi-low"></icon>
     </section>
+
+    <!-- content -->
 
     <section class="content">
       <ng-container [ngTemplateOutlet]="contentTpl"></ng-container>
@@ -100,7 +100,7 @@
   </section>
 </ng-template>
 
-<!-- pane -->
+<!-- pane consists of the tabs and a resizable container containing the content, which in turn is a header and the tab content-->
 
 <ng-template #paneTpl let-class="class" let-pane="pane">
   <!-- Place tabs before the content, if it's left or top pane -->
@@ -118,8 +118,6 @@
     ></ng-container>
   </ng-container>
 
-  <!-- TODO  [ngStyle]="(!pane.opened || !pane.tabs.length) && { display: 'none' }"-->
-
   <resizable-container #paneContainer
                        (resizeEnd)="pane.rememberSize($event.data[['left', 'right'].includes(class) ? 'width' : 'height'])"
                        [directions]="directionsFor(class)"
@@ -129,14 +127,14 @@
                        [ngStyle]="computeStyle(pane)"
                        class="cell pane-container"
   >
-    <ng-container *ngIf="pane.selectedTab as selectedTab">
+    <ng-container *ngIf="pane.open && pane.selectedTab.state === 'docked'">
       <ng-container
         *ngTemplateOutlet="
           paneContainerTpl;
           context: {
-            title: selectedTab.title,
-            icon: selectedTab.icon,
-            contentTpl: selectedTab.template,
+            title: pane.selectedTab.title,
+            icon: pane.selectedTab.icon,
+            contentTpl: pane.selectedTab.template,
             pane: pane
           }
         "
@@ -166,7 +164,7 @@
   <icon-bar [elements]="pane.tabs" [selection]="pane.selected" [iconsOnly]="pane.iconTabs" [orientation]="class"  (toggled)="pane.toggleTab($event)" (selectionChange)="pane.selectTab($event);  paneContainer.nativeElement.style.flexBasis = pane.sizeOf($event)"></icon-bar>
 </ng-template>
 
-<!--  content -->
+<!-- layout content -->
 
 <ng-template #content>
   <ng-content></ng-content>

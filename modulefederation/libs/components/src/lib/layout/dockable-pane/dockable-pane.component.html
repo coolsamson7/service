@@ -1,4 +1,6 @@
 <section class="pane-container" matResizableDialog>
+  <!-- header -->
+
   <section cdkDrag cdkDragHandle cdkDragRootElement=".cdk-overlay-pane" class="header">
     <icon [name]="'svg:' + data.icon"></icon>
     <div class="title">{{ data.title }}</div>
@@ -6,6 +8,9 @@
     <icon (click)="dialog.close()" name="font:tb-viewverticalgridandform"></icon>
     <icon (click)="dialog.close({ andCollapse: true })" name="font:co-close"></icon>
   </section>
+
+  <!-- content -->
+
   <section cdkScrollable class="content">
     <ng-container [ngTemplateOutlet]="data.template"></ng-container>
   </section>

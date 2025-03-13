@@ -3,16 +3,14 @@
 import { AfterContentInit, Component, ContentChildren, ElementRef, Input, OnDestroy, OnInit, QueryList } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { DockablePaneComponent } from "../dockable-pane/dockable-pane.component";
-import { LayoutTab, TabConfig } from "./tab.component";
+import { TabComponent, Tab } from "./tab.component";
 
 
 /**
  * Base class for the different panes at the different sides of the layout.
  */
-@Component({
-    template: ``
-  })
-  export abstract class Pane implements  AfterContentInit, OnDestroy {
+@Component({template: ``})
+ export abstract class AbstractPaneComponent implements  AfterContentInit, OnDestroy {
     // input
 
     /**
@@ -30,13 +28,13 @@ import { LayoutTab, TabConfig } from "./tab.component";
     /**
      * the opened state of a tab.
      */
-    @Input() opened = true;
+    @Input() open = true;
 
     // instance data
   
-    @ContentChildren(LayoutTab) tabsQuery!: QueryList<LayoutTab>;
-    tabs!: LayoutTab[];
-    selectedTab! : LayoutTab
+    @ContentChildren(TabComponent) tabsQuery!: QueryList<TabComponent>;
+    tabs!: TabComponent[];
+    selectedTab! : TabComponent
     
     sizes : any = {};
     private dialogRef: any;
@@ -55,27 +53,30 @@ import { LayoutTab, TabConfig } from "./tab.component";
     // public
 
     rememberSize(data: any) {
-        console.log(data)
         this.sizes[this.indexOf(this.selectedTab)] = data
     }
 
-    indexOf(tab: LayoutTab) {
+    indexOf(tab: TabComponent) {
         return this.tabs.indexOf(tab)
     }
 
-    toggleTab(tab: LayoutTab) {
-        this.opened = ! this.opened
+    toggleTab(tab: TabComponent) {
+        this.open = ! this.open
     }
 
-    selectTab(tab: LayoutTab) {
-        this.opened = true
+    selectTab(tab: TabComponent) {
+        this.open = true
         this.selectedTab = tab
     }
 
-    removeTab(tab: LayoutTab) {
+    removeTab(tab: TabComponent) {
         const index = this.tabs.indexOf(tab)
         this.tabs.splice(index, 1)
     } 
+
+    close() {
+        this.open = false
+    }
 
     //@RestoreState()
     restoreState(state: any) {
@@ -86,7 +87,7 @@ import { LayoutTab, TabConfig } from "./tab.component";
         ).style.flexBasis = this.sizeOf(this.selectedTab) 
     }
 
-    sizeOf(tab: LayoutTab) {
+    sizeOf(tab: TabComponent) {
         return this.sizes[this.indexOf(tab)] || this.initialSize;
     }
 
@@ -106,10 +107,13 @@ import { LayoutTab, TabConfig } from "./tab.component";
         });
 
         this.dialogRef.afterClosed().subscribe((result: { andCollapse: boolean }) => {
-            !result?.andCollapse && (this.opened = true);
+            !result?.andCollapse && (this.open = true);
+            this.selectedTab.state = "docked"
         });
 
-        this.opened = false;
+        this.selectedTab.state = "floating"
+
+        this.open = false;
     }
    
     // implement AfterContentInit
@@ -134,7 +138,7 @@ import { LayoutTab, TabConfig } from "./tab.component";
   selector: 'top',
     template: ``
   })
-export class TopPane extends Pane {
+export class TopPaneComponent extends AbstractPaneComponent {
 }
   
 /**
@@ -145,7 +149,7 @@ export class TopPane extends Pane {
     selector: 'bottom',
     template: ``
 })
-export class BottomPane extends Pane {
+export class BottomPaneComponent extends AbstractPaneComponent {
 }
   
 /**
@@ -156,7 +160,7 @@ export class BottomPane extends Pane {
     selector: 'left',
     template: ``
 })
-export class LeftPane extends Pane {
+export class LeftPaneComponent extends AbstractPaneComponent {
 }
   
 /**
@@ -167,5 +171,5 @@ export class LeftPane extends Pane {
     selector: 'right',
     template: ``
 })
-export class RightPane extends Pane {
+export class RightPaneComponent extends AbstractPaneComponent {
 }

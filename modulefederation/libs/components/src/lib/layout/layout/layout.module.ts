@@ -7,19 +7,19 @@ import { ResizableContainerModule } from '../resizable-container/resizable-conta
 import {  LayoutComponent } from './layout.component';
 import { IconComponent } from '../../ui/icon.component';
 import { IconBarComponent } from '../icon-bar/icon-bar';
-import { TopPane, BottomPane, LeftPane, RightPane } from './pane.component';
-import { LayoutTab } from './tab.component';
+import { TopPaneComponent, BottomPaneComponent, LeftPaneComponent, RightPaneComponent } from './pane.component';
+import { TabComponent } from './tab.component';
 
 /**
  * @ignore
  */
 const declarables = [
   LayoutComponent,
-  TopPane,
-  BottomPane,
-  LeftPane,
-  RightPane,
-  LayoutTab
+  TopPaneComponent,
+  BottomPaneComponent,
+  LeftPaneComponent,
+  RightPaneComponent,
+  TabComponent
 ];
 
 @NgModule({
