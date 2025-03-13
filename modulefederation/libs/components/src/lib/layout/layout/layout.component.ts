@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 
 import { TopPane, BottomPane, LeftPane, RightPane } from './pane.component';
+import { TabConfig } from './tab.component';
+import { IconBarElement } from '../icon-bar/icon-bar';
 
 
 /**
@@ -51,10 +53,6 @@ export class LayoutComponent {
     }
 
     return [mapping[clazz]]
-  }
-
-  selected(element: any) {
-    element.opened = true
   }
 
   computeStyle(pane: any): any {

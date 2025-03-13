@@ -28,18 +28,17 @@ import { LayoutTab, TabConfig } from "./tab.component";
      */
     @Input() initialSize = '120px';
     /**
-     * the opened staten of a tab.
+     * the opened state of a tab.
      */
     @Input() opened = true;
 
-    // instane data
+    // instance data
   
-    @ContentChildren(LayoutTab) tabsConfig!: QueryList<LayoutTab>;
-    tabs!: TabConfig[];
-  
-    selectedTabIndex = 0;
-  
-    sizes = {};
+    @ContentChildren(LayoutTab) tabsQuery!: QueryList<LayoutTab>;
+    tabs!: LayoutTab[];
+    selectedTab! : LayoutTab
+    
+    sizes : any = {};
     private dialogRef: any;
 
     // constructor
@@ -55,13 +54,36 @@ import { LayoutTab, TabConfig } from "./tab.component";
 
     // public
 
+    rememberSize(data: any) {
+        console.log(data)
+        this.sizes[this.indexOf(this.selectedTab)] = data
+    }
+
+    indexOf(tab: LayoutTab) {
+        return this.tabs.indexOf(tab)
+    }
+
+    selectTab(tab: LayoutTab) {
+        this.opened = true
+        this.selectedTab = tab
+    }
+
+    removeTab(tab: LayoutTab) {
+        const index = this.tabs.indexOf(tab)
+        this.tabs.splice(index, 1)
+    } 
+
     //@RestoreState()
     restoreState(state: any) {
         // @ts-ignore
         this.el.nativeElement.parentElement.parentElement.querySelector(
           `resizable-container.cell.pane-container.${this.getTagName()}`
           // @ts-ignore
-        ).style.flexBasis = this.sizes[this.selectedTabIndex] || this.initialSize;
+        ).style.flexBasis = this.sizeOf(this.selectedTab) 
+    }
+
+    sizeOf(tab: LayoutTab) {
+        return this.sizes[this.indexOf(tab)] || this.initialSize;
     }
 
     undock() {
@@ -69,12 +91,9 @@ import { LayoutTab, TabConfig } from "./tab.component";
         // @ts-ignore
         const rect = pane.getBoundingClientRect();
 
-        const undockIndex = this.selectedTabIndex;
-        const undockedTab = this.tabs[undockIndex];
-
         this.dialogRef = this.dialog.open(DockablePaneComponent, {
-            data: undockedTab,
-            panelClass: ['g3-dialog', 'g3-dockable-pane', undockedTab.class],
+            data: this.selectedTab,
+            panelClass: ['g3-dialog', 'g3-dockable-pane', this.selectedTab.class],
             position: {left: `${rect.left}px`, top: `${rect.top}px`},
             width: `${rect.width}px`,
             height: `${rect.height}px`,
@@ -84,23 +103,16 @@ import { LayoutTab, TabConfig } from "./tab.component";
 
         this.dialogRef.afterClosed().subscribe((result: { andCollapse: boolean }) => {
             !result?.andCollapse && (this.opened = true);
-            this.tabs.splice(undockIndex, 0, undockedTab);
         });
 
-        this.tabs.splice(this.selectedTabIndex, 1);
         this.opened = false;
-
-        if (this.selectedTabIndex && this.selectedTabIndex >= this.tabs.length) {
-            this.selectedTabIndex--;
-        }
     }
    
     // implement AfterContentInit
 
     ngAfterContentInit() {
-      // TODO WTF
-      // @ts-ignore
-      this.tabs = this.tabsConfig.toArray();
+      this.tabs = this.tabsQuery.toArray();
+      this.selectedTab = this.tabs[0]
     }
 
     // implement OnDestroy
@@ -111,20 +123,20 @@ import { LayoutTab, TabConfig } from "./tab.component";
   }
 
 /**
-   * the pane at the top
-   */
-    //@Stateful()
+ * the pane at the top
+ */
+//@Stateful()
 @Component({
   selector: 'top',
     template: ``
   })
-  export class TopPane extends Pane {
+export class TopPane extends Pane {
 }
   
-  /**
-   * the pane at the bottom
-   */
-    //@Stateful()
+/**
+ * the pane at the bottom
+ */
+//@Stateful()
 @Component({
     selector: 'bottom',
     template: ``
@@ -132,10 +144,10 @@ import { LayoutTab, TabConfig } from "./tab.component";
 export class BottomPane extends Pane {
 }
   
-  /**
-   * the pane at the left side
-   */
-    //@Stateful()
+/**
+ * the pane at the left side
+ */
+//@Stateful()
 @Component({
     selector: 'left',
     template: ``
@@ -143,10 +155,10 @@ export class BottomPane extends Pane {
 export class LeftPane extends Pane {
 }
   
-  /**
-   * the pane at the right side
-   */
-    //@Stateful()
+/**
+ * the pane at the right side
+ */
+//@Stateful()
 @Component({
     selector: 'right',
     template: ``
