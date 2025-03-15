@@ -2,11 +2,13 @@
     <ng-container  *ngFor="let property of properties">
         <!--div class="property">{{property.name}}</div-->
   
-        <div *ngIf="property.name !== 'schema:type'" [property-editor]="element" [property]="property"></div>
+        <div *ngIf="property.name.endsWith('name')" [property-editor]="element" [property]="property"></div>
 
-        <mat-form-field *ngIf="property.name === 'schema:type'" >
+        <div *ngIf="property.name.endsWith('value')" [property-editor]="element" [property]="typedProperty"></div>
+
+        <mat-form-field *ngIf="property.name.endsWith('type')" >
             <mat-label>{{property.name}}</mat-label>
-            <mat-select required [(value)]="element['type']">
+            <mat-select required [(value)]="element['type']" (selectionChange)="typeChange($event)">
                 <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
             </mat-select>
         </mat-form-field>

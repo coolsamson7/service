@@ -6,7 +6,9 @@ import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
 import { PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
 import { Shape } from "bpmn-js/lib/model/Types";
-
+import { PropertyEditorDirective } from "./editor";
+import { MessageBus } from "@modulefederation/portal";
+import { ValidationError } from "../validation";
 
 
 @Component( {
@@ -37,7 +39,27 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
 
   // constructor
 
-  constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig) {
+  constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig, private messageBus: MessageBus) {
+    messageBus.listenFor("model-validation").subscribe(message => {
+      if ( message.message == "error") {
+        this.highlightErrors(message.arguments as ValidationError[])
+      }
+    })
+  }
+
+  editors: PropertyEditorDirective[] = []
+    
+  addEditor(editor: PropertyEditorDirective) {
+      this.editors.push(editor)
+  }
+
+  highlightErrors(errors: ValidationError[]) {
+    // TODO: clumsy
+    for (const error of errors) {
+      for ( const editor of this.editors)
+        if ( error.element == editor.element)
+          editor.showError(error)
+    }
   }
 
   // private
@@ -75,6 +97,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
   }
 
   private setElement(shape: Shape | undefined) : void {
+    this.editors = []
     this.currentConfig = {
       groups: []
     }

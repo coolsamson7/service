@@ -6,6 +6,9 @@ import { PropertyEditor } from "./property-editor";
 import { Element, PropertyDescriptor } from "moddle";
 import { Group } from "../property-panel.model";
 import { Shape } from "bpmn-js/lib/model/Types";
+import { PropertyPanelComponent } from "../property-panel";
+import { ValidationError } from "../../validation";
+import { EditorHints } from "./abstract-property-editor";
 
 
 @Directive({
@@ -22,6 +25,8 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   @Input() config!: Group // TODO
   @Input() property?: PropertyDescriptor | undefined
 
+  @Input() hints: EditorHints<any> = {}
+
   // instance data
 
   componentFactory!: ComponentFactory<any>
@@ -30,29 +35,25 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
   // constructor
 
-  constructor(private injector: Injector, private container: ViewContainerRef, private resolver: ComponentFactoryResolver, private registry: PropertyEditorRegistry) {
+  constructor(private panel: PropertyPanelComponent, private injector: Injector, private container: ViewContainerRef, private resolver: ComponentFactoryResolver, private registry: PropertyEditorRegistry) {
+    panel.addEditor(this)
   }
 
-  // public
-
-  updateComponent(instance: PropertyEditor) {
-    Object.assign(instance, {
-      element: this.element,
-      shape: this.shape,
-      extension: this.extension,
-      config: this.config,
-      property: this.property,
-      readOnly: this.readOnly,
-      component: this,
-    })
+  showError(error: ValidationError) {
+    (this.instance as any).showError(error)
   }
 
-  // implement OnInit
+  // private
 
-  ngOnInit(): void {
+  private deleteComponent() {
+    this.component?.destroy()
+    this.container.clear()
+  }
+
+  private createComponent() {
+    // create
+    
     let type = undefined
-
-   
 
     if ( this.property) {
       type = this.registry.get(this.property.ns.name)
@@ -64,10 +65,6 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     if ( !type )
       throw Error("missing type")
 
-    if ( this.readOnly)
-      console.log("### RO " + type)
-
-
     this.componentFactory = this.resolver.resolveComponentFactory<PropertyEditor>(type)
     this.component = this.container.createComponent(this.componentFactory, 0, this.injector)
 
@@ -76,23 +73,38 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     this.component.changeDetectorRef.markForCheck
   }
 
+  private updateComponent(instance: PropertyEditor<any>) {
+    Object.assign(instance, {
+      element: this.element,
+      shape: this.shape,
+      extension: this.extension,
+      config: this.config,
+      property: this.property,
+      readOnly: this.readOnly,
+      hints: this.hints,
+      component: this,
+    })
+  }
+
+  // implement OnInit
+
+  ngOnInit(): void {
+    this.createComponent()
+  }
+
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.component && this.updateComponent(this.instance)
-
-    if ( this.component) {
-      this.updateComponent(this.instance)
-
-       // TODO inouts, etc.
+    if (changes["property"] && !changes["property"].firstChange) {
+      this.deleteComponent()
+      this.createComponent()
     }
   }
 
   // implement OnDestroy
 
   ngOnDestroy(): void {
-    this.component?.destroy()
-    this.container.clear()
+    this.deleteComponent()
   }
 }
 

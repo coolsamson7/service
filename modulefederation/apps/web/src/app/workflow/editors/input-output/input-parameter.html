@@ -1,40 +1,17 @@
 <form #form="ngForm">
-<ng-container  *ngFor="let property of properties">
-  <!--div class="property">{{property.name}}</di-->
+  <ng-container  *ngFor="let property of properties">
+    <div *ngIf="property.name === 'name'"  [property-editor]="element" [property]="property" [readOnly]="readOnly"></div>
 
-  <div *ngIf="property.name === 'name' || property.name === 'type'" [property-editor]="element" [property]="property" [readOnly]="readOnly"></div>
+    <!-- type -->
 
-  <!-- value -->
+    <div *ngIf="property.name === 'type'"  [property-editor]="element" [property]="property" [hints]="typeHints" [readOnly]="readOnly"></div>
 
-  <mat-form-field  *ngIf="property.name === 'value'">
-    <mat-label>Value</mat-label>
-  
-    <!-- todo: type=value, process, output, expression -->
+    <!-- source -->
 
-    <input name="value" #input="ngModel" type="text" [suggestionProvider]="suggestionProvider!" (ngModelChange)="onValueChange($event)" [(ngModel)]="value" matInput name="value" [check]="element" [shape]="shape" [property]="property.name"/>
-    <mat-error *ngIf="input.invalid && input.touched">
-      {{input.errors!["model"]}}
-    </mat-error>
+    <div *ngIf="property.name === 'source'"  [property-editor]="element" [property]="property" [hints]="sourceHints" [readOnly]="readOnly"></div>
 
-    <!-- menu -->
-    
-    <span [matMenuTriggerFor]="menu" class="change-type-menu" matSuffix>
-      <mat-icon>{{icons[type]}}</mat-icon>
-    </span>
-
-  </mat-form-field>
-
-  <!-- error -->
-
-
-<!-- the combo thing -->
-
-<mat-menu #menu="matMenu" class="change-type-menu-panel">
-  <div (click)="changeType('process')" mat-menu-item> <mat-icon>P</mat-icon></div>
-  <div (click)="changeType('output')" mat-menu-item> <mat-icon>O</mat-icon></div>
-  <div (click)="changeType('value')" mat-menu-item> <mat-icon>V</mat-icon></div>
-  <div (click)="changeType('expression')" mat-menu-item> <mat-icon>E</mat-icon></div>
-</mat-menu>
-
-</ng-container>
+    <!-- value -->
+      
+    <div *ngIf="property.name.endsWith('value')" [property-editor]="element" [property]="typedProperty" [hints]="valueHints"></div>
+  </ng-container>
 </form>

@@ -1,7 +1,29 @@
 <mat-form-field>
     <mat-label>{{property.name}}</mat-label>
-    <input matInput  #input="ngModel" type="text" [(ngModel)]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
-    <mat-error *ngIf="input.invalid && input.touched">
-      {{describe(input.errors)}}
-    </mat-error>
+
+    <!-- input with suggestion provider -->
+
+    <ng-container *ngIf="inputType === 'suggestionInput'">
+      <input matInput  #input="ngModel" type="text" [suggestionProvider]="hints.suggestionProvider!" [(ngModel)]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
+      <mat-error *ngIf="input.invalid && input.touched">
+        {{describe(input.errors)}}
+      </mat-error>
+    </ng-container>
+
+     <!-- plain input -->
+
+    <ng-container *ngIf="inputType === 'input'">
+      <input matInput  #input="ngModel" type="text" [(ngModel)]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
+      <mat-error *ngIf="input.invalid && input.touched">
+        {{describe(input.errors)}}
+      </mat-error>
+    </ng-container>
+
+     <!-- select -->
+
+    <ng-container *ngIf="inputType === 'select'">
+      <mat-select required [(value)]="value">
+        <mat-option *ngFor="let value of hints.oneOf" [value]="value">{{value}}</mat-option>
+      </mat-select>
+    </ng-container>
 </mat-form-field>

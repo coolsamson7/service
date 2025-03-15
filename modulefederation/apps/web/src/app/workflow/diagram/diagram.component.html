@@ -1,23 +1,20 @@
-<layout>
-  <left initialSize="244px" [iconTabs]="true">
-    <!-- messages -->
-
-    <tab title="Errors" icon="font:error">
+<layout #layout [horizontal]="false">
+  <bottom #errorPane initialSize="244px" [iconTabs]="true">
+    <tab title="Errors" icon="font:tb-settings">
       <mat-nav-list class="errors" dense>
 
         <mat-list-item *ngFor="let error of errors" (click)="selectError(error)">
-          <a matListItemTitle class="error">
+          <!--a matListItemTitle class="error"-->
             <mat-icon matListIcon class="icon">error</mat-icon>
-            <span>{{type(error)}}</span>
-            <span>  </span>
-            <span>{{error.error}}</span>
-          </a>
+            <div matListItemTitleh>{{type(error)}}</div>
+            <div matListItemLine>{{error.error}}</div>
+          <!--/a-->
         </mat-list-item>
       </mat-nav-list>
     </tab>
-  </left>
+  </bottom>
 
-    <!-- middle -->
+  <!-- middle -->
 
   <div class="diagram">
     <div #ref class="diagram-container"></div>

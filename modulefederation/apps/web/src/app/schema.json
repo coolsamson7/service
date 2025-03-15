@@ -6,7 +6,9 @@
   "types": [
     {
       "name": "schema",
-      "superClass": [ "Element" ],
+      "superClass": [
+        "Element"
+      ],
       "meta": {
         "allowedIn": [
           "bpmn:Process"
@@ -19,6 +21,28 @@
           "type": "String"
         },
         {
+          "name": "properties",
+          "type": "property",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "property",
+      "superClass": [ "Element" ],
+      "meta": {
+        "allowedIn": [
+          "bpmn:Process"
+        ]
+      },
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+
+        {
           "name": "type",
           "isAttr": true,
           "type": "String"
@@ -29,6 +53,36 @@
           "type": "String"
         }
       ]
+    },
+
+    {
+      "name": "inputParameter",
+      "superClass": [
+        "camunda:InputParameter"
+      ],
+      "properties": [  {
+        "name": "type",
+        "isAttr": true,
+        "type": "String"
+      },
+      {
+        "name": "source",
+        "isAttr": true,
+        "type": "String"
+      }]
+    },
+    {
+      "name": "outputParameter",
+      "superClass": [
+        "camunda:OutputParameter"
+      ],
+      "properties": [  {
+        "name": "type",
+        "isAttr": true,
+        "type": "String"
+      }]
     }
+
+
     ]
 }

@@ -88,15 +88,15 @@ export class InputParameterValidator extends AbstractModelValidator {
     const property = this.findProperties(context).find(prop => this.get(prop, "name") == variable)
 
     if (!property)
-      context.error(shape, element, "value", "unknown process variable")
+      context.error(shape, element, "value", `unknown process variable ${variable}`)
     else if (!this.isAssignableFrom(type, this.get(property, "type")))
-      context.error(shape, element, "value", "type mismatch")
+      context.error(shape, element, "value", `type mismatch`)
   }
 
   private checkOutputVariable(shape: Shape, element: Element, variable: string, type: string, context: ValidationContext) {
     const output = this.findOutput(element, variable)
     if ( !output )
-      context.error(shape, element, "value", "unknown output parameter")
+      context.error(shape, element, "value", `unknown output parameter ${variable}`)
     else if (!this.isAssignableFrom(type, this.get<string>(output, "type")))
       context.error(shape, element, "value", "type mismatch")
   }
@@ -104,13 +104,14 @@ export class InputParameterValidator extends AbstractModelValidator {
 
   private checkValue(shape: Shape, element: Element, context: ValidationContext) : void {
     const type  = this.get<string>(element, "type") // string
-    const value = this.get<string>(element, "value") // process:....
+    const source  = this.get<string>(element, "source") // process...
+    const value = this.get<string>(element, "value") // 
 
-    if (value.startsWith("process:"))
-      this.checkProcessVariable(shape, element, value.substring("process:".length), type, context)
+    if (source == "process")
+      this.checkProcessVariable(shape, element, value, type, context)
        
-    else if (value.startsWith("output:"))
-      this.checkOutputVariable(shape, element, value.substring("output:".length), type, context)
+    else if (source == "output")
+      this.checkOutputVariable(shape, element, value, type, context)
 
     // TODO: expression, value?
   }
@@ -119,6 +120,7 @@ export class InputParameterValidator extends AbstractModelValidator {
 
   override validate(shape: Shape, element: Element, context: ValidationContext) : void {
     this.checkRequired(shape, element, "type", context)
+    this.checkRequired(shape, element, "source", context)
     this.checkRequired(shape, element, "name", context)
 
     if (this.checkNonEmpty(shape, element, "value", context))

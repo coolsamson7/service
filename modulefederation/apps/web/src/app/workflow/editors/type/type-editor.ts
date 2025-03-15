@@ -18,6 +18,6 @@ import { MatSelectModule } from '@angular/material/select';
   standalone: true,
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, MatSelectModule]
 })
-export class TypePropertyEditor extends AbstractPropertyEditor {
+export class TypePropertyEditor extends AbstractPropertyEditor<string> {
   types = ["String", "Boolean"]
 }

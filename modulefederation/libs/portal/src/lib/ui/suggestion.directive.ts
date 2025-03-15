@@ -249,7 +249,7 @@ export interface SuggestionProvider {
 export class ArraySuggestionProvider implements SuggestionProvider {
   // constructor
 
-  constructor(private suggestions: string[]) {
+  constructor(public suggestions: string[]) {
   }
 
   // implement SuggestionProvider

@@ -8,6 +8,7 @@ import  {Element, PropertyDescriptor, Moddle } from "moddle"
 import { Group } from "../property-panel.model"
 
 import { Shape } from "bpmn-js/lib/model/Types";
+import { ValidationError } from "../../validation";
 
 @Component({
   template: '<div></div>'
@@ -23,6 +24,8 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
 
   model!: Moddle
 
+   showError(error: ValidationError) {}
+   
   // callback
 
   onChange(event: any) {

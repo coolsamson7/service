@@ -29,6 +29,7 @@ import BpmnJS from 'bpmn-js/lib/Modeler';
 
 import { from, Observable, tap } from 'rxjs';
 import { Shape } from 'bpmn-js/lib/model/Types';
+import CommandStack from 'diagram-js/lib/command/CommandStack';
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
@@ -37,12 +38,16 @@ import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.confi
 import ElementRegistry from 'diagram-js/lib/core/ElementRegistry';
 import { ModelValidation, ValidationError } from '../validation';
 import { OverlayAttrs, OverlaysFilter } from 'diagram-js/lib/features/overlays/Overlays';
-import { Root, RootLike } from 'diagram-js/lib/model/Types';
+import { RootLike } from 'diagram-js/lib/model/Types';
+import { AbstractPaneComponent, LayoutComponent } from '@modulefederation/components';
+import { RestoreState, State, Stateful } from '@modulefederation/common';
+import { MessageBus } from '@modulefederation/portal';
 
 
 //
 
 //
+@Stateful()
 @Component({
   selector: 'diagram',
   templateUrl: "./diagram.component.html",
@@ -58,6 +63,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   // instance data
 
+  @State({recursive: true})
+  @ViewChild('layout', { static: true }) private layout!: LayoutComponent;
+
+  @ViewChild('errorPane', { static: true }) private errorPane!: AbstractPaneComponent
+
   @ViewChild('ref', { static: true }) private el!: ElementRef;
 
   modeler: BpmnJS
@@ -71,12 +81,13 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   canvas: Canvas | undefined
   elementRegistry : ElementRegistry | undefined
+  commandStack : CommandStack | undefined
 
   selection: any
 
   // constructor
 
-  constructor(private modelValidation: ModelValidation, private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
+  constructor(private messageBus: MessageBus, private modelValidation: ModelValidation, private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
     this.modeler = new BpmnJS({
       moddleExtensions: configuration.extensions
     });
@@ -95,6 +106,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   // private
+
+  @RestoreState()
+  restoreState(state: any) {
+    // TODO
+  }
 
   private select(shape: Shape) {
     this.selection.select(shape)
@@ -201,6 +217,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     if ( this.getProcess()?.businessObject)
      this.errors = this.modelValidation.validate(this.getProcess()!.businessObject, this.elementRegistry!)
 
+   
+    // add markers
+
     let lastShape = undefined
     for ( let error of this.errors) {
       if ( error.shape !== lastShape) {
@@ -210,18 +229,49 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       }
     }
 
-    return this. errors.length > 0
+    if (this.errors.length > 0) {
+      this.messageBus.broadcast({
+        topic: "model-validation",
+        message: "error",
+        arguments: this.errors
+      })
+
+      
+      // make sure the error tab is open
+
+      this.errorPane.selectTab(this.errorPane.tabs[0]) // ther only is one pane ( TODO: id? ) 
+    }
+
+    return this. errors.length == 0
+  }
+
+  undo() {
+    this.commandStack?.undo()
+  }
+
+  redo() {
+    this.commandStack?.redo()
+  }
+
+  clearHistory() {
+    this.commandStack?.clear()
+  }
+
+  canUndo() {
+    this.commandStack?.canUndo()
   }
 
    // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges) {
     // re-import whenever the url changes
+
     if (changes['process']) {
       let process = changes['process'].currentValue
 
       this.setProcess(process).subscribe(result => {
         this.elementRegistry = this.modeler.get("elementRegistry");
+        this.commandStack = this.modeler.get("commandStack");
 
         this.validateModel()
       }

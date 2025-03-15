@@ -2,7 +2,7 @@
 import { Component, ViewChild } from '@angular/core';
 
 
-import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, EditorHints, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective } from '../../validation';
 
 import { Shape } from "bpmn-js/lib/model/Types";
+import { DataTypes } from '../../util/data-types';
+import { MatSelectModule } from '@angular/material/select';
 
 @RegisterPropertyEditor("camunda:InputOutput")
 @Component({
@@ -61,6 +63,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
 
     parameter.$parent = this.element
     parameter.type = "String"
+    parameter.source = "value"
 
     this.element['inputParameters'].push(parameter)
 
@@ -104,7 +107,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   templateUrl: './input-parameter.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, ModelValidationDirective]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
   //
@@ -114,10 +117,10 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   // instance data
 
   properties: Moddle.PropertyDescriptor[] = []
+  typedProperty!:  Moddle.PropertyDescriptor
 
   inputType = ""
-  type = "value" // process,value
-  value : any = ""
+
   icons : {[type: string] : string } = {
     process: "link",
     output: "create",
@@ -126,26 +129,69 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
   readOnly = false
 
-   suggestionProvider : SuggestionProvider | undefined = undefined
+  valueHints: EditorHints<string> = {}
 
-   writeValue() {
-    this.element.set("value", this.type + ":" + this.value)
-   }
-
-  onValueChange(event: any) {
-    this.value = event
-
-    this.writeValue()
-
-    this.form.controls['value'].updateValueAndValidity()
+  typeHints: EditorHints<string> = {
+    oneOf: DataTypes.types
   }
 
-  changeType(type: string) {
-    this.type = type
+  sourceHints: EditorHints<string> = {
+    oneOf: ["value", "process", "output", "expression"]
+  }
 
-    this.writeValue()
+   suggestionProvider : SuggestionProvider | undefined = undefined
+
+   typeChange(event: any) {
+    this.typedProperty = this.createProperty(this.element["type"])
+
+    this.convertType()
+  }
+
+  override onChange(event: any) {
+    console.log(event)
+  }
+
+  convertType() {
+    let targetType = this.element["type"]
+    if ( this.element["source"] == "process" || this.element["source"] == "expression")
+      targetType = "String"
+
+    let value  = this.element["value"]
+
+    if ( targetType == "Boolean")
+      value = value == "true"
+    else if ( ["Integer", "Short", "Long"].includes(targetType)) {
+      value = parseInt(value)
+    }
+    else if ( ["Double"].includes(targetType))
+      value = parseFloat(value)
+    else
+      value = value.toString()
+
+    this.element["value"] = value
+  }
+
+  createProperty(type: string) : Moddle.PropertyDescriptor {
+    return {
+      name: "value",
+      type: type,
+      ns: {
+        localName: "value",
+        name: "schema:value",
+        prefix: "value"
+      }
+    }
+  }
+
+  changeSource(source: any) {
+    //this.element["source"] = source
 
     this.setSuggestionProvider()
+
+    if ( source == "value")
+      this.typedProperty = this.createProperty(this.element["type"])
+    else
+      this.typedProperty = this.createProperty("String")
   }
 
   findProcess(element: Element) : Element {
@@ -168,13 +214,14 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
 
   setSuggestionProvider() {
+    this.valueHints.suggestionProvider = undefined
     this.suggestionProvider  = undefined
 
-    if ( this.type == "process") {
+    if ( this.element["source"] == "process") {
       this.suggestionProvider = new ArraySuggestionProvider(this.findProcessVariables(this.element))
     }
 
-    else if ( this.type == "output") {
+    else if ( this.element["source"] == "output") {
       const suggestions : string[] = []
 
       this.backward(((<any>this.element.$parent.$parent.$parent)["incoming"] || []).map((flow : any) => flow.sourceRef as Element), (element: Element) => {
@@ -189,6 +236,8 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       })
       this.suggestionProvider = new ArraySuggestionProvider(suggestions)
     }
+
+   this.valueHints.suggestionProvider = this.suggestionProvider
   }
 
   backward(elements: Element[], handler : (element: Element) => void) {
@@ -230,23 +279,11 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
       //this.readOnly = this.element.$parent.$parent.$parent.$type == "bpmn:ServiceTask"
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "value"].includes(prop.name))
+      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "source", "value"].includes(prop.name))
 
+      this.changeSource(this.element["source"])
 
-      const value = this.element.get("value") || ""
-
-      const colon = value.indexOf(":")
-
-      if ( colon > 0) {
-        this.type = value.substring(0, colon)
-        this.value =  value.substring(colon + 1)
-      }
-      else {
-        this.type = "value"
-        this.value = value
-      }
-
-      this.changeType(this.type)
+      this.typedProperty = this.createProperty(this.element["type"])
   }
 }
 

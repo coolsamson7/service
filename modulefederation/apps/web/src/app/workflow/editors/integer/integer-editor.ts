@@ -17,7 +17,7 @@ import { ModelValidationDirective } from '../../validation';
   standalone: true,
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
 })
-export class IntegerPropertyEditor extends AbstractPropertyEditor {
+export class IntegerPropertyEditor extends AbstractPropertyEditor<number> {
   describe(error: any) {
     return error["model"]
   } 

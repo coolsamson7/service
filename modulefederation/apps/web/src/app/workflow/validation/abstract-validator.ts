@@ -32,7 +32,7 @@ export abstract class AbstractModelValidator implements ModelValidator {
 
   checkNonEmpty(shape: Shape, element: Element, property: string,  context: ValidationContext): boolean {
     if ( !element[property] || element[property].trim().length == 0) {
-      context.error(shape, element, property, `${property} must ne non empty`)
+      context.error(shape, element, property, `${property} must be non empty`)
       return false
     }
 

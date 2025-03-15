@@ -13,37 +13,6 @@ import { MatInputModule } from '@angular/material/input';
 import { Element } from 'moddle';
 import { ModelValidationDirective } from '../../validation';
 
-export function memberOfValidator(elements: string[]): ValidatorFn {
-  return (control:AbstractControl) : ValidationErrors | null => {
-    const value = control.value;
-    if (!value)
-      return null;
-
-    const result = elements.includes(value)
-
-    return !result ? {memberOf:true}: null;
-    }
-}
-
-
-@Directive({
-  selector: "[member]",
-  providers: [{
-    useExisting: MemberDirective,
-    provide: NG_VALIDATORS,
-    multi: true
-  }],
-  standalone: true
-})
-export class MemberDirective implements Validator {
-  @Input("member") elements! : string[]
-
-  // implement Validator
-
-  validate(control: AbstractControl): ValidationErrors | null {
-    return memberOfValidator(this.elements)(control);
-  }
-}
 
 @RegisterPropertyEditor("bpmn:implementation")
 @Component({
@@ -51,7 +20,7 @@ export class MemberDirective implements Validator {
   templateUrl: './service-task.html',
   styleUrl: './service-task.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, MemberDirective, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective]
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit {
   // instance data
@@ -61,7 +30,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
   openOutputs: boolean[] = []
 
   descriptors : ServiceTaskDescriptor[] = []
-  selectedService!: ServiceTaskDescriptor
+  selectedService!: ServiceTaskDescriptor | undefined
   suggestionProvider : ArraySuggestionProvider = new ArraySuggestionProvider([])
 
   inputOutputElement!: Element
@@ -83,40 +52,43 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
     return this.element['$model'].create(type)
   }
 
-  private setService(descriptor : ServiceTaskDescriptor) {
+  private setService(descriptor : ServiceTaskDescriptor | undefined) {
     if ( descriptor !== this.selectedService) {
-      this.selectedService = descriptor ;
+      this.selectedService = descriptor;
 
-      // expression
+      (<any>this.inputOutputElement)["inputParameters"] = [];
+      (<any>this.inputOutputElement)["outputParameters"] = [];
 
-      this.element["expression"] = `\${${descriptor.name}.execute(execution)}`;
+      if ( descriptor ) {
+        // expression
 
-      // input
+        this.element["expression"] = `\${${descriptor.name}.execute(execution)}`;
 
-      (<any>this.inputOutputElement)["inputParameters"] = []
-      for ( const input of descriptor.input) {
-        const inputParameter =  this.create("schema:inputParameter");
+        // input
 
-        inputParameter["name"] = input.name;
-        inputParameter["type"] = input.type;
+        for ( const input of descriptor.input) {
+          const inputParameter =  this.create("schema:inputParameter");
 
-        inputParameter.$parent = this.inputOutputElement;
+          inputParameter["name"] = input.name;
+          inputParameter["type"] = input.type;
 
-        (<any>this.inputOutputElement)["inputParameters"].push(inputParameter);
-      }
+          inputParameter.$parent = this.inputOutputElement;
 
-      // output
+          (<any>this.inputOutputElement)["inputParameters"].push(inputParameter);
+        }
 
-      (<any>this.inputOutputElement)["outputParameters"] = []
-      for ( const input of descriptor.output) {
-        const outputParameter =  this.create("schema:outputParameter");
+        // output
 
-        outputParameter["name"] = input.name;
-        outputParameter["type"] = input.type;
+        for ( const input of descriptor.output) {
+          const outputParameter =  this.create("schema:outputParameter");
 
-        outputParameter.$parent = this.inputOutputElement;
+          outputParameter["name"] = input.name;
+          outputParameter["type"] = input.type;
 
-        (<any>this.inputOutputElement)["outputParameters"].push(outputParameter);
+          outputParameter.$parent = this.inputOutputElement;
+
+          (<any>this.inputOutputElement)["outputParameters"].push(outputParameter);
+        }
       }
     }
   }
@@ -133,8 +105,8 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   override onChange(serviceName: any) {
     const service = this.descriptors.find(descriptor => descriptor.name == serviceName);
-    if ( service )
-      this.setService(service)
+    
+    this.setService(service)
   }
 
   // override OnInit
@@ -188,11 +160,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
          const service = expression.substring(2, expression.indexOf("."))
 
-         if ( service.length > 0)
-          this.selectedService = descriptors.find(descriptor => descriptor.name == service)!;
-        else
-          this.setService(descriptors[0])
-
+         this.setService(descriptors.find(descriptor => descriptor.name == service))
       })
   }
 }
