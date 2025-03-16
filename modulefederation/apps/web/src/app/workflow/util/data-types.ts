@@ -8,6 +8,7 @@ export class DataTypes {
         "Short",
         "Integer",
         "Long",
+        "Double",
         //"date"
     ]
 }

@@ -2,15 +2,15 @@
   <mat-form-field>
     <mat-label>{{property.name}}</mat-label>
 
-    <!-- feature -->
+    <!-- feature TODO -> property -->
 
     <input type="text" [check]="element" [shape]="shape" [property]="property.name" (ngModelChange)="onChange($event)" [(ngModel)]="value" matInput name="implementation" [suggestionProvider]="suggestionProvider"  #service="ngModel"/>
    
-    <mat-error *ngIf="service.errors?.['model']">Unknown service.</mat-error>
+    <mat-error *ngIf="service.errors?.['model']">{{service.errors?.['model']}}</mat-error>
   </mat-form-field>
 </div>
 
-<div class="inputoutput">
+<!--div class="inputoutput">
   <div class="inputs">
     <div class="header">
       <div class="label">Input</div>
@@ -45,4 +45,4 @@
         <div *ngIf="openOutputs[i]" [property-editor]="output" class="output"></div>
     </div>
   </div>
-</div>
+</div-->

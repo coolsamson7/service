@@ -5,14 +5,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel/editor';
-import { ModelValidationDirective } from '../../validation';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @RegisterPropertyEditor("Boolean")
 @Component({
   selector: "boolean-editor",
   templateUrl: './boolean-editor.html',
   standalone: true,
-  imports: [FormsModule, CommonModule, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, MatCheckboxModule]
 })
 export class BooleanPropertyEditor extends AbstractPropertyEditor {
   describe(error: any) {

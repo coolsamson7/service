@@ -42,6 +42,10 @@ export class InputOutputEditor extends AbstractExtensionEditor {
 
   // callbacks
 
+  parameterName(element: Element) {
+    return (element["name"] || "<name>") + " : " +  (element["type"] || "<type>" )
+  }
+
   deleteInput(i: number) {
     this.element['inputParameters'].splice(i, 1)
   }
@@ -142,7 +146,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
    suggestionProvider : SuggestionProvider | undefined = undefined
 
    typeChange(event: any) {
-    this.typedProperty = this.createProperty(this.element["type"])
+    this.typedProperty = this.createProperty(this.get("type"))
 
     this.convertType()
   }
@@ -152,7 +156,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
 
   convertType() {
-    let targetType = this.element["type"]
+    let targetType = this.get<string>("type")
     if ( this.element["source"] == "process" || this.element["source"] == "expression")
       targetType = "String"
 
@@ -168,7 +172,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     else
       value = value.toString()
 
-    this.element["value"] = value
+    this.set("value", value)
   }
 
   createProperty(type: string) : Moddle.PropertyDescriptor {
@@ -276,8 +280,6 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
   override ngOnInit() : void {
       super.ngOnInit()
-
-      //this.readOnly = this.element.$parent.$parent.$parent.$type == "bpmn:ServiceTask"
 
       this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "source", "value"].includes(prop.name))
 

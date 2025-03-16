@@ -22,7 +22,7 @@ export abstract class AbstractModelValidator implements ModelValidator {
   }
 
   checkRequired(shape: Shape, element: Element, property: string,  context: ValidationContext) : boolean {
-    if ( !element[property]) {
+    if ( element[property] == undefined) {
       context.error(shape, element, property, `${property} is required`)
       return false
     }

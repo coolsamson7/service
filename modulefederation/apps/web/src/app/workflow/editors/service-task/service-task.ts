@@ -1,13 +1,13 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Directive, Input, NgModule , OnInit} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 
 
 import { AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
-import { ArraySuggestionProvider, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
-import { AbstractControl, FormsModule, NG_VALIDATORS, ValidationErrors, Validator, ValidatorFn } from '@angular/forms';
+import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ServiceTaskDescriptor, TaskDescriptorInventoryService, TaskDescriptorService } from '../../service/task-service-descriptor';
+import { ServiceTaskDescriptor, TaskDescriptorInventoryService } from '../../service/task-service-descriptor';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Element } from 'moddle';
@@ -37,7 +37,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   // constructor
 
-  constructor(private taskDescriptorService: TaskDescriptorInventoryService) { // TODO
+  constructor(private taskDescriptorService: TaskDescriptorInventoryService) {
     super()
   }
 
@@ -69,8 +69,10 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
         for ( const input of descriptor.input) {
           const inputParameter =  this.create("schema:inputParameter");
 
-          inputParameter["name"] = input.name;
-          inputParameter["type"] = input.type;
+          inputParameter["name"]   = input.name;
+          inputParameter["source"]  ="value";
+          inputParameter["type"]   = input.type;
+          inputParameter["value"]   = "";
 
           inputParameter.$parent = this.inputOutputElement;
 

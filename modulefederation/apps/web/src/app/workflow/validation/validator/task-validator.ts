@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core"
 import { Shape } from "bpmn-js/lib/model/Types";
 import { TaskDescriptorService } from "../../service/task-service-descriptor";
 import { AbstractModelValidator } from "../abstract-validator";
-import { ArraySuggestionProvider, FeatureRegistry, MessageBus, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
+import { FeatureRegistry, MessageBus } from "@modulefederation/portal";
 
 
 @RegisterValidation("bpmn:ServiceTask")
@@ -29,7 +29,7 @@ export class TaskValidator extends AbstractModelValidator {
     const implementation : string = element["implementation"]
 
     if (!this.getServiceNames().includes(implementation) )
-      context.error(shape, element, "implementation", `implementation must reference a service`)
+      context.error(shape, element, "implementation", `unknown service ${implementation}`)
   }
 
   // implement
@@ -49,8 +49,6 @@ export class UserTaskValidator extends AbstractModelValidator {
 
   constructor(private messageBus: MessageBus, private featureRegistry: FeatureRegistry, private taskService : TaskDescriptorService) {
     super()
-
-
   }
 
   // private
@@ -59,7 +57,7 @@ export class UserTaskValidator extends AbstractModelValidator {
     const features = this.featureRegistry.finder().withTag("task").find().map(feature => feature.path!)
 
     if ( !features.includes(feature))
-      context.error(shape, element, "formKey", "unnown feature")
+      context.error(shape, element, "formKey", `unknown feature ${feature}`)
   }
 
   private checkForm(shape: Shape, element: Element, form: string, context: ValidationContext) {
@@ -71,7 +69,7 @@ export class UserTaskValidator extends AbstractModelValidator {
     })
 
     if ( !formNames.includes(form))
-      context.error(shape, element, "formKey", "unnown form")
+      context.error(shape, element, "formKey", `unknown form ${form}`)
   }
 
   // implement

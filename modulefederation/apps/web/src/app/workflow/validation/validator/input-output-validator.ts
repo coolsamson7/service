@@ -123,7 +123,7 @@ export class InputParameterValidator extends AbstractModelValidator {
     this.checkRequired(shape, element, "source", context)
     this.checkRequired(shape, element, "name", context)
 
-    if (this.checkNonEmpty(shape, element, "value", context))
+    if (this.checkRequired(shape, element, "value", context))
       this.checkValue(shape, element, context)
   }
 }

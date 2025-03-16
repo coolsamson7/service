@@ -43,6 +43,7 @@ export class ModelValidationDirective implements Validator {
   // implement Validator
 
   validate(control: AbstractControl): ValidationErrors | null {
+    //this.element[this.property] = control.value // WHAT THE FUCK
     return createModelValidator(this.modelValidation, this.shape, this.element, this.property)(control);
   }
 }

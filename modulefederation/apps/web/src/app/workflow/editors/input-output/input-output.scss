@@ -26,9 +26,13 @@
         padding-top: 2px;
         padding-bottom: 2px;
 
-        .plus {
-          fill: white;
-        }
+     
+      }
+      .plus {
+        fill: white;
+      }
+      .name {
+        cursor: pointer;
       }
     }
 
@@ -51,8 +55,8 @@
         font-size: 12px;
         fill: black;
 
-        .body {
-          display: flex;
+        .name {
+          cursor: pointer;
         }
     }
 
@@ -77,10 +81,9 @@
           padding-left: 4px;
           padding-top: 2px;
           padding-bottom: 2px;
-
-          .plus {
-            fill: white;
-          }
+        }
+        .plus {
+          fill: white;
         }
     }
 
@@ -95,15 +98,18 @@
         width: 2px;
         align-self: center;
       }
+      .name {
+        cursor: pointer;
+      }
     }
 
     .output {
       display: flex;
-      font-size: 14px;
+      font-size: 12px;
       fill: black;
 
-      .body {
-        display: flex;
+      .name {
+        cursor: pointer;
       }
     }
 

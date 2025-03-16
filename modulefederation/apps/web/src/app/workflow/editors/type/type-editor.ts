@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { DataTypes } from '../../util/data-types';
 
 
 @RegisterPropertyEditor("schema:type")
@@ -19,5 +20,5 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, MatSelectModule]
 })
 export class TypePropertyEditor extends AbstractPropertyEditor<string> {
-  types = ["String", "Boolean"]
+  types = DataTypes.types
 }

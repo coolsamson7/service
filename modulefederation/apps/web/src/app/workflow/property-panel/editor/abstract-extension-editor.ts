@@ -24,7 +24,17 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
 
   model!: Moddle
 
-   showError(error: ValidationError) {}
+  // public
+
+  get<T>(property: string) : T {
+    return this.element[property] as T
+  }
+
+  set<T>(property: string, value: T) : void {
+     this.element[property] = value
+  }
+
+  showError(error: ValidationError) {}
    
   // callback
 
