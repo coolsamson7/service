@@ -1,7 +1,8 @@
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Subscription } from 'rxjs';
-import { AfterViewInit, Directive, OnDestroy } from '@angular/core';
+import { AfterViewInit, Directive, Input, OnDestroy } from '@angular/core';
 import { MatDialogContainer } from '@angular/material/dialog';
+import { DockablePaneComponent } from './dockable-pane.component';
 
 /**
  * @ignore
@@ -15,6 +16,12 @@ type Direction = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
   selector: '[matResizableDialog]'
 })
 export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
+  // input
+
+  @Input('matResizableDialog') pane!: DockablePaneComponent 
+  
+  // instance data
+
   private readonly directions: Direction[] = ['se', 'sw'];
   private resizingDirection: Direction | null = null;
   private element!: HTMLElement;
@@ -29,9 +36,13 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
   private minHeight!: number;
   private maxHeight!: number;
 
+  // constructor
+
   constructor(private container: MatDialogContainer) {
     !container && console.error(`MatResizableDialogDirective should be used only inside of the MatDialogContainer`);
   }
+
+  // implement AfterViewInit
 
   ngAfterViewInit(): void {
     this.element = this.container['_elementRef'].nativeElement;
@@ -136,6 +147,8 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
   endResize(event: MouseEvent | TouchEvent): void {
     this.resizingDirection = null;
     this.element.classList.remove('resizing');
+
+    this.pane.resized()
   }
 
   resizeWidth(event: MouseEvent | Touch): void {
@@ -173,6 +186,8 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
       }
     }
   }
+
+  // implement OnDestroy
 
   ngOnDestroy(): void {
     this.destroySubscription();

@@ -88,7 +88,7 @@
       <icon [name]="icon"></icon>
       <div class="title">{{ title }}</div>
       <div class="spacer"></div>
-      <icon (click)="pane.undock()" name="font:si-moredata"></icon>
+      <icon (click)="pane.float(pane.selectedTab)" name="font:si-moredata"></icon>
       <icon (click)="$event.stopPropagation(); pane.selectedTab.close()" name="font:pi-low"></icon>
     </section>
 

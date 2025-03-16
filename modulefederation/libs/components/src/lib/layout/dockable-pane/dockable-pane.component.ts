@@ -1,26 +1,9 @@
-import { Component, HostListener, Inject, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, TemplateRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Tab } from '../layout';
 
 /**
- * the dialog config object
- */
-type DialogConfig = {
-  /**
-   * the title
-   */
-  title: string;
-  /**
-   * the icon
-   */
-  icon: string;
-  /**
-   * a template
-   */
-  template: TemplateRef<any>;
-};
-
-/**
- * a floating pane with resize handles
+ * a floating pane - actually a dialog - with resize handles
  */
 @Component({
   selector: 'dockable-pane',
@@ -28,14 +11,32 @@ type DialogConfig = {
   styleUrls: ['./dockable-pane.component.scss']
 })
 export class DockablePaneComponent {
+  // constants
+
   private readonly DEFAULT_Z_INDEX = 900;
   private readonly FOCUSED_Z_INDEX = 901;
 
+  // constructor
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DialogConfig,
-    public dialog: MatDialogRef<DockablePaneComponent>,
-    private dialogService: MatDialog
+    @Inject(MAT_DIALOG_DATA) public tab: Tab,
+    private dialog: MatDialogRef<DockablePaneComponent>,
+    private dialogService: MatDialog,
+    private elementRef: ElementRef
   ) {
+  }
+
+  // callbacks
+
+  resized() {
+    (<any> this.tab)["floatingSize"] = this.elementRef.nativeElement.getBoundingClientRect()
+  }
+
+  close(collapse: boolean) {
+    this.resized()
+  
+  
+    this.dialog.close({andCollapse: collapse})
   }
 
   @HostListener('mousedown')

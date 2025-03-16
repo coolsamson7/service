@@ -8,11 +8,12 @@ import {
 } from '@angular/core';
 
 import { TopPaneComponent, BottomPaneComponent, LeftPaneComponent, RightPaneComponent } from './pane.component';
+import { State, Stateful } from '@modulefederation/common';
 
 /**
  * the main layout component which is able to show panes on the different sides and projects the content inside.
  */
-  //@Stateful()
+@Stateful()
 @Component({
   selector: 'layout',
   templateUrl: 'layout.component.html',
@@ -27,9 +28,13 @@ export class LayoutComponent {
 
   // instance data
 
+  @State({recursive: true})
   @ContentChild(TopPaneComponent) topPane?: TopPaneComponent;
+  @State({recursive: true})
   @ContentChild(BottomPaneComponent) bottomPane?: BottomPaneComponent;
+  @State({recursive: true})
   @ContentChild(LeftPaneComponent) leftPane?: LeftPaneComponent;
+  @State({recursive: true})
   @ContentChild(RightPaneComponent) rightPane?: RightPaneComponent;
 
   // constructor

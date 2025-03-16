@@ -4,6 +4,7 @@ import { AfterContentInit, Component, ContentChildren, ElementRef, Input, OnDest
 import { MatDialog } from "@angular/material/dialog";
 import { DockablePaneComponent } from "../dockable-pane/dockable-pane.component";
 import { TabComponent } from "./tab.component";
+import { RestoreState, State, Stateful } from "@modulefederation/common";
 
 
 /**
@@ -29,6 +30,7 @@ import { TabComponent } from "./tab.component";
     // instance data
 
     @ContentChildren(TabComponent) tabsQuery!: QueryList<TabComponent>;
+    @State({recursive: true})
     tabs!: TabComponent[];
     selectedTab! : TabComponent
 
@@ -59,19 +61,22 @@ import { TabComponent } from "./tab.component";
                 tab.dialogRef.componentInstance.close(true)
         
             else 
-                this.undock()
+                this.float(tab)
         } // if
         else tab.toggle()
     }
 
     selectTab(tab: TabComponent) { 
+        if ( this.selectedTab)
+            this.selectedTab.close()
+        
         this.selectedTab = tab
 
         if ( !tab.isOpen()) {
             tab.open(tab.state)
 
             if (tab.state == "floating") {
-                this.undock()
+                this.float(tab)
             }
         } // if
     }
@@ -85,8 +90,17 @@ import { TabComponent } from "./tab.component";
         return this.selectedTab?.isDocked()
     }
 
-    //@RestoreState()
+    @RestoreState()
     restoreState(state: any) {
+        this.tabs.forEach(tab => {
+            if (tab.isOpen()) {
+                if (tab.isFloating())
+                    this.float(tab)
+                else
+                    this.selectedTab = tab
+            }
+        })
+
         this.el.nativeElement.parentElement.parentElement.querySelector(`resizable-container.cell.pane-container.${this.getTagName()}`).style.flexBasis = this.sizeOf(this.selectedTab)
     }
 
@@ -94,14 +108,13 @@ import { TabComponent } from "./tab.component";
         return tab.dockSize || this.initialSize;
     }
 
-    undock() {
+    float(tab: TabComponent) {
         const pane = document.querySelector(`.cell.${this.getTagName()}`)!
      
-        const tab = this.selectedTab
         const rect = tab.floatSize || pane.getBoundingClientRect();
 
         tab.dialogRef = this.dialog.open(DockablePaneComponent, {
-            data: this.selectedTab,
+            data: tab,
             panelClass: ['g3-dialog', 'g3-dockable-pane', tab.class],
             position: {left: `${rect.left}px`, top: `${rect.top}px`},
             width: `${rect.width}px`,
@@ -112,11 +125,9 @@ import { TabComponent } from "./tab.component";
 
         tab.dialogRef.afterClosed().subscribe((result: any) => {
             const collapse = result.andCollapse == true
-            const clientRect = result.clientRect
-
+         
             tab.dialogRef = undefined
            
-            tab.floatSize = clientRect
             if (collapse)
                 tab.close(tab.state)
             else {
@@ -147,7 +158,7 @@ import { TabComponent } from "./tab.component";
 /**
  * the pane at the top
  */
-//@Stateful()
+@Stateful()
 @Component({
   selector: 'top',
     template: ``
@@ -158,7 +169,7 @@ export class TopPaneComponent extends AbstractPaneComponent {
 /**
  * the pane at the bottom
  */
-//@Stateful()
+@Stateful()
 @Component({
     selector: 'bottom',
     template: ``
@@ -169,7 +180,7 @@ export class BottomPaneComponent extends AbstractPaneComponent {
 /**
  * the pane at the left side
  */
-//@Stateful()
+@Stateful()
 @Component({
     selector: 'left',
     template: ``
@@ -180,7 +191,7 @@ export class LeftPaneComponent extends AbstractPaneComponent {
 /**
  * the pane at the right side
  */
-//@Stateful()
+@Stateful()
 @Component({
     selector: 'right',
     template: ``

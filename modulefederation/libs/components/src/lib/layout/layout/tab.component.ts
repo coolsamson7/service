@@ -1,6 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 
 import { Component, Input, TemplateRef, ViewChild } from "@angular/core";
+import { State, Stateful } from "@modulefederation/common";
 
 export type TabState = "docked" | "floating"
 
@@ -12,9 +13,7 @@ export interface Tab {
     state: TabState
   }
 
-/**
- * @ignore
- */
+@Stateful()
 @Component({ 
   selector: 'tab',
   //standalone: true,
@@ -36,11 +35,15 @@ export class TabComponent implements Tab {
 
     @ViewChild(TemplateRef, {static: true}) template!: TemplateRef<any>;
 
+    @State()
     state : TabState = "docked"
+    @State()
     dockSize : any = undefined
+    @State()
     floatSize: any = undefined
     dialogRef: any = undefined;
     
+    @State()
     opened = false
 
     // public
