@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
+import java.lang.reflect.Field
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -45,8 +46,9 @@ class TaskRegistry : ApplicationContextAware, BeanFactoryPostProcessor {
 
     val serviceTasks = LinkedHashMap<String, ServiceTaskDescriptor<AbstractServiceTask>>()
 
-    fun createParameter(attributes: AnnotationAttributes) : ParameterDescriptor{
+    fun createParameter(field: Field, attributes: AnnotationAttributes) : ParameterDescriptor{
         return ParameterDescriptor(
+            field,
             attributes["name"] as String,
             attributes["type"] as Class<*>,
             attributes["description"] as String
@@ -64,20 +66,54 @@ class TaskRegistry : ApplicationContextAware, BeanFactoryPostProcessor {
 
             val clazz : Class<AbstractServiceTask> = Class.forName(bean.beanClassName) as Class<AbstractServiceTask>
             var name = annotations["name"] as String
-            var description = annotations["description"] as String
+            val description = annotations["description"] as String
             if (name.isBlank())
                 name = bean.beanClassName!!
 
-            val input : Array<ParameterDescriptor> =  (annotations["input"] as Array<AnnotationAttributes>)
-                .map { attributes -> createParameter(attributes) }.toTypedArray()
-            val output : Array<ParameterDescriptor> =  (annotations["output"] as Array<AnnotationAttributes>)
-                .map { attributes -> createParameter(attributes) }.toTypedArray()
+            val inputs = ArrayList<ParameterDescriptor>()
+            val outputs = ArrayList<ParameterDescriptor>()
+
+            for ( field in clazz.declaredFields) {
+                field.isAccessible = true
+
+                // input?
+
+                val inputAnnotations = field.getAnnotationsByType(Input::class.java)
+                if (inputAnnotations.isNotEmpty()) {
+                    val inputAnnotation = inputAnnotations[0]
+
+
+                    val name = inputAnnotation.name.ifBlank { field.name }
+
+                    println("### add " + name + " : " + field.type.name)
+
+                    inputs.add(ParameterDescriptor(
+                        field,
+                        name,
+                        field.type,
+                        inputAnnotation.description
+                    ))
+                } // if
+
+                // output
+
+                val outputAnnotations = field.getAnnotationsByType(Output::class.java)
+                if (outputAnnotations.isNotEmpty()) {
+                    val outputAnnotation = outputAnnotations[0]
+                    outputs.add(ParameterDescriptor(
+                        field,
+                        outputAnnotation.name.ifBlank { field.name },
+                        field.type,
+                        outputAnnotation.description
+                    ))
+                }
+            }
 
             // create
 
             bean.scope = ConfigurableBeanFactory.SCOPE_PROTOTYPE
 
-            val descriptor = ServiceTaskDescriptor(name, description, clazz, bean, input, output)
+            val descriptor = ServiceTaskDescriptor(name, description, clazz, bean, inputs.toTypedArray(), outputs.toTypedArray())
 
             serviceTasks[name] = descriptor
 

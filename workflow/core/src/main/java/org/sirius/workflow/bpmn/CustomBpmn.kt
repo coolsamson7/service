@@ -11,12 +11,19 @@ class CustomBpmn : Bpmn() {
 
         super.doRegisterTypes(modelBuilder)
 
-        // register the Schema element type so that XML elements are parsed to instances of KPIElement
+        // schema
 
+        SchemaPropertyElementImpl.registerType(modelBuilder)
         SchemaElementImpl.registerType(modelBuilder)
+
+        // input / output
+
+        //InputOutputImpl.registerType(modelBuilder)
+        InputParameterImpl.registerType(modelBuilder)
+        OutputParameterImpl.registerType(modelBuilder)
     }
 
     companion object {
-        const val CUSTOM_NAMESPACE: String = "http://camunda.org/bpmn/examples"
+        const val NAMESPACE: String = "http://camunda.org/bpmn/examples"
     }
 }

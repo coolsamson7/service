@@ -1,32 +1,16 @@
 package org.sirius.workflow.application
 
-import org.camunda.bpm.engine.impl.cfg.TransactionState
-import org.camunda.bpm.engine.impl.context.Context
 import org.sirius.workflow.*
 
-
-// TEST
-
-@ServiceTask(
-    name="second",
-    description = "bla",
-    input  = [
-        Parameter("i1", String::class, "i1 description"),
-        Parameter("i2", String::class, "i2 description")
-    ],
-    output = [
-        Parameter("o1", String::class, "o1 description"),
-        Parameter("o2", String::class, "o2 description")
-    ]
-)
+@ServiceTask(name="second", description = "bla")
 class SecondTask : AbstractServiceTask() {
     // instance data
 
-    @Input lateinit var i1: String
-    @Input lateinit var i2: String
+    @Input(description = "i1...") lateinit var i1: String
+    @Input(description = "i2...") lateinit var i2: String
 
-    @Output var o1: String = ""
-    @Output var o2: String = ""
+    @Output(description = "o1...") var o1: String = ""
+    @Output(description = "o2...") var o2: String = ""
 
     // override
 

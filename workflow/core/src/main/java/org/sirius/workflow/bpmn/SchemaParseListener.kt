@@ -1,6 +1,5 @@
 package org.sirius.workflow.bpmn
 
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener
 import org.camunda.bpm.engine.impl.persistence.entity.ProcessDefinitionEntity
@@ -8,53 +7,102 @@ import org.camunda.bpm.engine.impl.pvm.process.ActivityImpl
 import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl
 import org.camunda.bpm.engine.impl.util.xml.Attribute
 import org.camunda.bpm.engine.impl.util.xml.Element
-import org.camunda.bpm.engine.variable.Variables
-import org.camunda.bpm.engine.variable.Variables.SerializationDataFormats
-import org.camunda.bpm.engine.variable.value.ObjectValue
-import org.camunda.spin.impl.json.jackson.JacksonJsonNode
 import org.camunda.spin.plugin.variable.SpinValues
-import org.camunda.spin.plugin.variable.value.JsonValue
-import org.camunda.spin.plugin.variable.value.impl.JsonValueImpl
 import java.lang.reflect.Field
 import java.util.*
-import kotlin.collections.HashMap
 
-class Variable(val name: String, val type: String, val value: String)
+class Variable(val name: String, val type: String, val value: Any)
 
 class SchemaParseListener : AbstractBpmnParseListener() {
+    // private
 
-    override fun parseServiceTask(taskElement: Element, scope: ScopeImpl, activity: ActivityImpl) {
-        val attributes  = getAttributeMap(taskElement)
+    private val outputTypes = HashMap<String,String>()
 
-        if ( attributes.containsKey("http://camunda.org/schema/1.0/bpmn:class")) {
-            val implementation = attributes["http://camunda.org/schema/1.0/bpmn:class"]?.value
+    private val pending = HashMap<String,LinkedList<StringBuilder>>()
 
-            attributes.put("expression", Attribute("expression", "\${${implementation}.execute(execution)}"))
+    private fun addPending(input: String, builder: StringBuilder) {
+        if ( !this.pending.containsKey(input))
+            this.pending[input] = LinkedList<StringBuilder>()
 
-            attributes.remove("http://camunda.org/schema/1.0/bpmn:class")
+        this.pending[input]!!.add(builder)
+    }
+
+    private fun rememberOutput(output: String, type: String) {
+        outputTypes[output] = type
+
+        if ( this.pending.containsKey(output)) {
+            for (pending in this.pending.get(output)!!) {
+                when ( type ) {
+                    "String" -> pending.append(".stringValue()")
+                    "Boolean" -> pending.append(".boolValue()")
+                    "Short" -> pending.append(".numberValue()")
+                    "Integer" -> pending.append(".numberValue()")
+                    "Long" -> pending.append(".numberValue()")
+                    "Double" -> pending.append(".numberValue()")
+                }
+
+                pending.append("}")
+            }
+
+            this.pending.clear()
         }
+    }
+
+    private fun rememberOutputs(taskElement: Element) {
+        val extensions = taskElement.elements("extensionElements")
+
+        val taskName = taskElement.attribute("name")
+
+        if (extensions.isNotEmpty()) {
+            val inputOutputs = extensions[0].elements("inputOutput")
+
+            if (inputOutputs.isNotEmpty()) {
+                val inputOutputParameter = inputOutputs[0]
+
+                val outputs = inputOutputParameter.elements("outputParameter")
+
+                for (output in outputs) {
+                    val name = output.attribute("name")
+                    val type = output.attribute("type")
+
+                    rememberOutput("$taskName.$name", type)
+                } // for
+            }
+        }
+    }
+
+    private fun patchInputs(taskElement: Element) {
+        val uri = fetchField(Element::class.java, "uri")
 
         val extensions = taskElement.elements("extensionElements")
 
-        if (!extensions.isEmpty()) {
-            val inputOutput = extensions[0].elements("inputOutput")
+        if (extensions.isNotEmpty()) {
+            val inputOutputs = extensions[0].elements("inputOutput")
 
-            if ( !inputOutput.isEmpty()) {
-                val inputParameter =  inputOutput[0]
+            if (inputOutputs.isNotEmpty()) {
+                val inputOutputParameter = inputOutputs[0]
 
-                val inputs = inputParameter.elements("inputParameter")
+                val inputs = inputOutputParameter.elements("inputParameter")
 
-                for ( input in inputs) {
+                for (input in inputs) {
+                    uri.set(input, CAMUNDA_NS ) // :-)
+
                     val builder = getText(input)
 
-                    if ( builder.startsWith("process:")) {
-                        val variable = builder.toString().substring("process:".length)
+                    val source = input.attribute("source")
+
+                    // process
+
+                    if (source == "process") {
+                        val variable = builder.toString()
 
                         builder.clear().append("\${execution.getVariable(\"${variable}\")}")
                     }
 
-                    else if ( builder.startsWith("output:")) {
-                        val variable = builder.toString().substring("output:".length)
+                    // output
+
+                    else if (source == "output") {
+                        val variable = builder.toString()
 
                         val expression = StringBuilder()
 
@@ -64,7 +112,7 @@ class SchemaParseListener : AbstractBpmnParseListener() {
 
                         val tokenizer = StringTokenizer(variable, ".")
                         var more = tokenizer.hasMoreTokens()
-                        while ( more ) {
+                        while (more) {
                             val next = tokenizer.nextToken()
 
                             expression
@@ -75,17 +123,53 @@ class SchemaParseListener : AbstractBpmnParseListener() {
                             more = tokenizer.hasMoreTokens()
                         }
 
-                        expression
-                            .append(".stringValue()")
-                            .append("}")
+                        if (outputTypes.containsKey(variable)) {
+                            val type = outputTypes[variable]
+
+                            when ( type ) {
+                                "String" -> expression.append(".stringValue()")
+                                "Boolean" -> expression.append(".boolValue()")
+                                "Short" -> expression.append(".numberValue()")
+                                "Integer" -> expression.append(".numberValue()")
+                                "Long" -> expression.append(".numberValue()")
+                                "Double" -> expression.append(".numberValue()")
+                            }
+
+                            expression.append("}")
+                        }
+                        else {
+                            addPending(variable, builder)
+                        }
 
                         builder.clear().append(expression.toString())
                     }
-
                     else println("### unknown input parameter type for " + builder)
-                }
-            }
+                } // for
+            } // if
         }
+    }
+
+    // override AbstractBpmnParseListener
+
+    override fun parseUserTask(userTaskElement: Element, scope: ScopeImpl, activity: ActivityImpl) {
+        this.rememberOutputs(userTaskElement)
+        this.patchInputs(userTaskElement)
+    }
+
+    override fun parseServiceTask(taskElement: Element, scope: ScopeImpl, activity: ActivityImpl) {
+        this.rememberOutputs(taskElement)
+
+        val attributes  = getAttributeMap(taskElement)
+
+        if ( attributes.containsKey(CAMUNDA_NS + ":class")) {
+            val implementation = attributes[CAMUNDA_NS + ":class"]?.value
+
+            attributes.put("expression", Attribute("expression", "\${${implementation}.execute(execution)}"))
+
+            attributes.remove(CAMUNDA_NS + ":class")
+        }
+
+        this.patchInputs(taskElement)
     }
 
     override fun parseProcess(processElement: Element, processDefinition: ProcessDefinitionEntity) {
@@ -96,28 +180,34 @@ class SchemaParseListener : AbstractBpmnParseListener() {
             val schemas = extensions[0].elements("schema")
 
             for ( schema in schemas) {
-                variables.add(
-                    Variable(
-                    schema.attribute("name"),
-                    schema.attribute("type"),
-                    schema.attribute("value")
-                )
-                )
+                for ( property in schema.elements()) {
+                    val type = property.attribute("type")
+                    val stringValue = property.attribute("value")
+                    var value : Any = stringValue
+
+                    value = when (type) {
+                        "Short" -> java.lang.Short.valueOf(stringValue)
+                        "Integer" -> java.lang.Integer.valueOf(stringValue)
+                        "Long" -> java.lang.Long.valueOf(stringValue)
+                        "Double" -> java.lang.Double.valueOf(stringValue)
+                        "Boolean" -> java.lang.Boolean.valueOf(value == "true")
+                        else -> value
+                    }
+
+                    variables.add(Variable(property.attribute("name"), type, value))
+                }
             }
         }
 
-        val listener = object: ExecutionListener {
-            override fun notify(execution: DelegateExecution) {
-                // the output object
+        val listener = ExecutionListener { execution ->
+            val value = SpinValues.jsonValue("{}").create()
 
-                val value = SpinValues.jsonValue("{}").create()
+            execution.setVariable("output", value)
 
-                execution.setVariable("output", value)
+            // set global variables
 
-                // set global variables
-
-                for ( variable in variables)
-                    execution.setVariable(variable.name, variable.value)
+            for ( variable in variables) {
+                execution.setVariable(variable.name, variable.value)
             }
         }
 
@@ -125,6 +215,7 @@ class SchemaParseListener : AbstractBpmnParseListener() {
     }
 
     companion object {
+        const val CAMUNDA_NS = "http://camunda.org/schema/1.0/bpmn"
         private fun fetchField(clazz: Class<Element>, name: String) : Field {
             val field = clazz.getDeclaredField(name)
 
@@ -133,8 +224,8 @@ class SchemaParseListener : AbstractBpmnParseListener() {
             return field
         }
 
-        val attributeMap = fetchField(Element::class.java,"attributeMap")
-        val text =  fetchField(Element::class.java,"text")
+        private val attributeMap = fetchField(Element::class.java,"attributeMap")
+        private val text =  fetchField(Element::class.java,"text")
 
         fun getAttributeMap(element: Element) :  MutableMap<String, Attribute> {
             return attributeMap.get(element) as  MutableMap<String, Attribute>

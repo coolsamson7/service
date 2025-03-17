@@ -1,32 +1,19 @@
 package org.sirius.workflow.application
 
-import org.camunda.bpm.engine.impl.cfg.TransactionState
-import org.camunda.bpm.engine.impl.context.Context
 import org.sirius.workflow.*
 
 
-// TEST
-
-@ServiceTask(
-    name="dummy",
-    description = "bla",
-    input  = [
-        Parameter("i1", String::class, "i1 description"),
-        Parameter("i2", String::class, "i2 description")
-    ],
-    output = [
-        Parameter("o1", String::class, "o1 description"),
-        Parameter("o2", String::class, "o2 description")
-    ]
-)
+@ServiceTask(name="dummy", description = "bla")
 class DummyTask : AbstractServiceTask() {
     // instance data
 
-    @Input lateinit var i1: String
-    @Input("i2") lateinit var i2: String
+    @Input(description = "i1...") lateinit var i1: String
+    @Input(description = "i2...")  var i2 : Boolean = false //lateinit var i2: java.lang.Boolean
+    @Input(description = "i3...") var i3: Int = 0 //java.lang.Integer
 
-    @Output var o1: String = ""
-    @Output var o2: String = ""
+    @Output(description = "o1...") var o1: String = ""
+    @Output(description = "o2...") var o2: Boolean = false//java.lang.Boolean
+    @Output(description = "o3...") var o3: Int = 0//java.lang.Integer
 
     // override
 
@@ -34,9 +21,7 @@ class DummyTask : AbstractServiceTask() {
         println("## ${descriptor.name}(i1: ${i1}, i2: ${i2})")
 
         o1 = i1 + "x"
-        o2 = i2 + "x"
-
-        //setOutput("o1", i1 + "x")
-        //setOutput("o2", getVariable<String>("i2") + "x")
+        o2 = i2//java.lang.Boolean.valueOf(i2.booleanValue())
+        o3 = i3// java.lang.Integer.valueOf(i3.toInt() + 1)
     }
 }

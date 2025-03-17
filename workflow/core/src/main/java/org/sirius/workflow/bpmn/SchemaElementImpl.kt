@@ -1,9 +1,11 @@
 package org.sirius.workflow.bpmn
 
+
 import org.camunda.bpm.model.xml.ModelBuilder
 import org.camunda.bpm.model.xml.impl.instance.ModelElementInstanceImpl
 import org.camunda.bpm.model.xml.impl.instance.ModelTypeInstanceContext
 import org.camunda.bpm.model.xml.type.attribute.Attribute
+import org.camunda.bpm.model.xml.type.child.ChildElementCollection
 
 
 class SchemaElementImpl(instanceContext: ModelTypeInstanceContext?) : ModelElementInstanceImpl(instanceContext),
@@ -12,28 +14,25 @@ class SchemaElementImpl(instanceContext: ModelTypeInstanceContext?) : ModelEleme
     override val name: String
         get() = nameAttribute!!.getValue(this)
 
-    override val type: String
-        get() = typeAttribute!!.getValue(this)
+    override val properties: Collection<SchemaPropertyElement>
+        get() = propertiesAttribute!!.get(this)
 
-    override val value: String
-        get() = valueAttribute!!.getValue(this)
 
     // companion
 
     companion object {
-        const val ELEMENT_SCHEMA: String = "schema"
+        const val ELEMENT: String = "schema"
 
         protected var nameAttribute: Attribute<String>? = null
-        protected var typeAttribute: Attribute<String>? = null
-        protected var valueAttribute: Attribute<String>? = null
+        protected var propertiesAttribute: ChildElementCollection<SchemaPropertyElement>? = null
 
         fun registerType(modelBuilder: ModelBuilder) {
             // declare a new element type
 
             val typeBuilder =
                 modelBuilder
-                    .defineType(SchemaElement::class.java, ELEMENT_SCHEMA)
-                    .namespaceUri(CustomBpmn.CUSTOM_NAMESPACE)
+                    .defineType(SchemaElement::class.java, ELEMENT)
+                    .namespaceUri(CustomBpmn.NAMESPACE)
                     .instanceProvider<SchemaElement> { instanceContext ->
                         SchemaElementImpl(instanceContext)
                     }
@@ -41,16 +40,13 @@ class SchemaElementImpl(instanceContext: ModelTypeInstanceContext?) : ModelEleme
             // declare attributes
 
             nameAttribute = typeBuilder.stringAttribute("name")
-                .namespace(CustomBpmn.CUSTOM_NAMESPACE)
+                .namespace(CustomBpmn.NAMESPACE)
                 .build()
 
-            typeAttribute = typeBuilder.stringAttribute("type")
-                .namespace(CustomBpmn.CUSTOM_NAMESPACE)
-                .build()
-
-            valueAttribute = typeBuilder.stringAttribute("value")
-                .namespace(CustomBpmn.CUSTOM_NAMESPACE)
-                .build()
+            propertiesAttribute =
+                typeBuilder
+                    .sequence().elementCollection(SchemaPropertyElement::class.java)
+                    .build()
 
             typeBuilder.build()
         }

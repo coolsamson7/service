@@ -24,6 +24,6 @@ public class WorkflowApplication {
   @EventListener
   private void processPostDeploy(PostDeployEvent event) {
 
-    runtimeService.startProcessInstanceByKey("loanApproval");
+    runtimeService.startProcessInstanceByKey("process");
   }
 }

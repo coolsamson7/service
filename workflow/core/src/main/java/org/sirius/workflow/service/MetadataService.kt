@@ -10,6 +10,7 @@ import org.camunda.bpm.engine.TaskService
 import org.camunda.bpm.engine.task.Task
 import org.camunda.bpm.model.bpmn.instance.UserTask
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaInputOutput
+import org.sirius.workflow.bpmn.InputParameter
 import org.sirius.workflow.bpmn.SchemaElement
 import org.springframework.stereotype.Component
 import javax.inject.Inject
@@ -52,21 +53,22 @@ class MetadataService {
     fun taskInputSchema(processDefinitionId: String, taskName: String) : SchemaDescriptor {
         val modelInstance = this.repositoryService.getBpmnModelInstance(processDefinitionId);
 
-        val userTaskType = modelInstance.model.getType(UserTask::class.java)
-        val inputOutputType = modelInstance.model.getType(CamundaInputOutput::class.java)
-
-        val userTasks : Collection<UserTask> = modelInstance.getModelElementsByType(userTaskType) as Collection<UserTask>
+        val userTasks : Collection<UserTask> = modelInstance.getModelElementsByType(UserTask::class.java) as Collection<UserTask>
 
         val userTask = userTasks.first { task ->  task.name == taskName}
 
-        val inputOutputs = userTask.getChildElementsByType(CamundaInputOutput::class.java)
+        val inputOutputs = userTask.extensionElements.getChildElementsByType(CamundaInputOutput::class.java)
 
         if  (!inputOutputs.isEmpty()) {
-            return SchemaDescriptor( inputOutputs.first().camundaInputParameters.map { inputParameter -> PropertyDescriptor(
-                inputParameter.camundaName,
-                "string", // TODO
-                null
-            ) })
+            val inputOutput = inputOutputs.first()
+
+            return SchemaDescriptor(inputOutput.getChildElementsByType(InputParameter::class.java).map { inputParameter ->
+                PropertyDescriptor(
+                    inputParameter.camundaName,
+                    inputParameter.type,
+                    null
+                )
+            })
         }
         else {
             return SchemaDescriptor(emptyList())
@@ -78,8 +80,12 @@ class MetadataService {
 
         val schemas = modelInstance.getModelElementsByType(SchemaElement::class.java)
 
-        return SchemaDescriptor(
-            schemas.map { property -> PropertyDescriptor(
+
+        if ( schemas.isEmpty())
+            return SchemaDescriptor(emptyList())
+        else
+            return SchemaDescriptor(
+            schemas.first().properties.map { property -> PropertyDescriptor(
                 property.name,
                 property.type, // TODO: + constraint
                 null

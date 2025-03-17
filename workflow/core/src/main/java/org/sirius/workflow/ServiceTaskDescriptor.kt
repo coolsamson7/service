@@ -2,10 +2,11 @@ package org.sirius.workflow
 
 import org.camunda.bpm.model.bpmn.instance.Activity
 import org.springframework.beans.factory.config.BeanDefinition
+import java.lang.Error
 import java.lang.reflect.Field
 import java.util.*
 
-class ParameterDescriptor(val name: String, val type: Class<*>, val description: String)
+class ParameterDescriptor(val field: Field, val name: String, val type: Class<*>, val description: String)
 
 interface Initializer {
     fun initialize(serviceTask: AbstractServiceTask)
@@ -23,12 +24,20 @@ class InputInitializer(val field: Field, val name: String) : Initializer {
     // implement
 
     override fun initialize(serviceTask: AbstractServiceTask) {
-        field.set(serviceTask,  serviceTask.getVariable<Any>(name))
+        try {
+            field.set(serviceTask, serviceTask.getVariable<Any>(name))
+        }
+        catch(e: Error) {
+            print("### tried to set a field of type " + field.type.name + " to a " +  serviceTask.getVariable<Any>(name).javaClass.name)
+            println()
+        }
     }
 }
 
 class OutputValue(val descriptor: ParameterDescriptor, val field: Field) {
-
+    fun get(instance: Any) : Any {
+        return this.field.get(instance)
+    }
 }
 
 
@@ -44,42 +53,11 @@ class ServiceTaskDescriptor<T:AbstractServiceTask>(name: String, description: St
     init {
         initializer.add(DescriptorInitializer(this))
 
-        for ( field in clazz.declaredFields) {
-            // find inputs
+        for ( input in inputs)
+             initializer.add(InputInitializer(input.field, input.name))
 
-            val inputs = field.getAnnotationsByType(Input::class.java)
-            if ( inputs.size == 1) {
-                val input = inputs[0]
-
-                val inputDescriptor = input(if ( input.value.isEmpty()) field.name else input.value)
-
-                if ( field.type.isAssignableFrom(inputDescriptor.type))
-                    initializer.add(InputInitializer(field, inputDescriptor.name))
-                else
-                    throw RuntimeException("input ${inputDescriptor.name} expected to be a ${inputDescriptor.type}") // TODO
-            } // if
-
-            // outputs
-
-            val outputs = field.getAnnotationsByType(Output::class.java)
-            if ( outputs.size == 1) {
-                val output = outputs[0]
-
-                val descriptor = output(if ( output.value.isEmpty()) field.name else output.value)
-
-                if ( !descriptor.type.isAssignableFrom(field.type))
-                    throw RuntimeException("type mismatch in output")
-
-                field.isAccessible = true
-
-                this.outputValues.add(OutputValue(descriptor, field))
-            } // if
-        } // for
-
-        // anything missing
-
-        if ( outputValues.size < outputs.size)
-            throw RuntimeException("missing @Output")
+        for ( output in outputs)
+            outputValues.add(OutputValue(output, output.field))
     }
 
     // public

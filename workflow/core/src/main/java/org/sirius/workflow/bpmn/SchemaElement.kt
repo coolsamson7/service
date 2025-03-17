@@ -5,6 +5,5 @@ import org.camunda.bpm.model.xml.instance.ModelElementInstance
 
 interface SchemaElement : ModelElementInstance {
     val name: String
-    val type: String
-    val value: String
+    val properties: Collection<SchemaPropertyElement>
 }

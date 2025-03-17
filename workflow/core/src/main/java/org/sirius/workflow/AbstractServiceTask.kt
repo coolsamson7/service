@@ -15,7 +15,7 @@ import java.util.*
     AnnotationRetention.RUNTIME
 )
 @MustBeDocumented
-annotation class Input(val value: String = "")
+annotation class Input(val name: String = "", val description: String)
 
 @Target(
     AnnotationTarget.PROPERTY_GETTER,
@@ -26,7 +26,7 @@ annotation class Input(val value: String = "")
     AnnotationRetention.RUNTIME
 )
 @MustBeDocumented
-annotation class Output(val value: String = "")
+annotation class Output(val name: String = "",  val description: String)
 
 abstract class AbstractServiceTask : JavaDelegate {
     // instance data
@@ -55,12 +55,15 @@ abstract class AbstractServiceTask : JavaDelegate {
 
         for ( outputValue in descriptor.outputValues) {
             val name = outputValue.descriptor.name
-            val value = outputValue.field.get(this)
+            val value = outputValue.get(this)
 
             when (outputValue.descriptor.type) {
                 String::class.java -> node.prop(name, value as String)
                 Boolean::class.java -> node.prop(name, value as Boolean)
-                //String::class.java -> node.prop(name, value as String)
+                Short::class.java -> node.prop(name, value as Number)
+                Long::class.java -> node.prop(name, value as Number)
+                Int::class.java -> node.prop(name, value as Number)
+                Double::class.java -> node.prop(name, (value as Double).toFloat())
 
                 else -> {
                     throw RuntimeException("bad type")
@@ -122,7 +125,7 @@ abstract class AbstractServiceTask : JavaDelegate {
     }
 
     fun <T> getVariable(name: String) : T {
-        return execution().getVariable(name) as T // TODO...ich muss wissen, was es ist...prozess, input, etc. + type check
+        return execution().getVariable(name) as T
     }
 
     // abstract
