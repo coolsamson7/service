@@ -1,0 +1,23 @@
+<div (click)="undo()" class="property">
+    <div class="name">{{property.name}}</div>
+    <span *ngIf="isDirty()" class="dirty">
+        <svg
+      aria-hidden="true"
+      class="bem-Svg"
+      data-icon="DotMedium"
+      focusable="false"
+      height="7"
+      style="
+        display: block;
+        color: rgb(107, 176, 255);
+        align-self: center;
+        transition: opacity 100ms ease 0s;
+        opacity: 1;
+      "
+      viewBox="0 0 7 7"
+      width="7"
+    >
+      <circle cx="3.5" cy="3.5" fill="blue" r="2.5"></circle>
+    </svg>
+    </span>
+</div>

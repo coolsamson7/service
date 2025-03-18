@@ -4,9 +4,8 @@
       <mat-nav-list class="errors" dense>
 
         <mat-list-item *ngFor="let error of errors" (click)="selectError(error)">
-          <!--a matListItemTitle class="error"-->
-            <mat-icon matListIcon class="icon">error</mat-icon>
-            <div matListItemTitleh>{{type(error)}}</div>
+            <mat-icon matListItemIcon class="icon">error</mat-icon>
+            <div matListItemTitle>{{type(error)}}</div>
             <div matListItemLine>{{error.error}}</div>
           <!--/a-->
         </mat-list-item>

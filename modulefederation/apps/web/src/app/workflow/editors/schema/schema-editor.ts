@@ -92,7 +92,7 @@ export class SchemaEditor extends AbstractExtensionEditor {
   templateUrl: './property-editor.html',
   styleUrl: './schema-editor.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyEditorModule, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyEditorModule]
 })
 export class SchemaPropertyEditor extends AbstractExtensionEditor {
   // instance data

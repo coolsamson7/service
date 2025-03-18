@@ -9,14 +9,13 @@ import { Shape } from "bpmn-js/lib/model/Types";
 import { PropertyEditorDirective } from "./editor";
 import { MessageBus } from "@modulefederation/portal";
 import { ValidationError } from "../validation";
-
+import { PropertyGroupComponent } from "./property-group";
+import CommandStack from 'diagram-js/lib/command/CommandStack';
 
 @Component( {
   selector: 'property-panel',
   templateUrl: "./property-panel.html",
-  styleUrl: "./property-panel.scss",
-  //standalone: true,
-  //imports: [CommonModule, PropertyGroupComponent]
+  styleUrl: "./property-panel.scss"
 })
 export class PropertyPanelComponent implements OnInit, OnChanges {
   // input
@@ -36,29 +35,38 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
 
   allowedExtensions : Moddle.TypeDefinition[] = []
 
+  groups: PropertyGroupComponent[] = []
+  editors: PropertyEditorDirective[] = []
+
+
+  commandStack! : CommandStack
 
   // constructor
 
   constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig, private messageBus: MessageBus) {
     messageBus.listenFor("model-validation").subscribe(message => {
       if ( message.message == "error") {
-        this.highlightErrors(message.arguments as ValidationError[])
+        this.highlightErrors(message.arguments as ValidationError[], false)
+      }
+      else if (message.message == "select-error") {
+        this.highlightErrors([message.arguments as ValidationError], true)
       }
     })
   }
 
-  editors: PropertyEditorDirective[] = []
-    
+  addGroup(group: PropertyGroupComponent) {
+    this.groups.push(group)
+  }
+
   addEditor(editor: PropertyEditorDirective) {
       this.editors.push(editor)
   }
 
-  highlightErrors(errors: ValidationError[]) {
-    // TODO: clumsy
+  highlightErrors(errors: ValidationError[], select: boolean) {
     for (const error of errors) {
       for ( const editor of this.editors)
-        if ( error.element == editor.element)
-          editor.showError(error)
+        if ( error.element == editor.element && editor.property?.name == error.property)
+          editor.showError(error, select)
     }
   }
 
@@ -156,6 +164,8 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
   // implement OnInit
 
   ngOnInit(): void {
+    this.commandStack = this.modeler.get("commandStack");
+
     this.checkModel()
   }
 

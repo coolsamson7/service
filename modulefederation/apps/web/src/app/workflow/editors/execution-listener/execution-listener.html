@@ -2,7 +2,7 @@
   <ng-container  *ngFor="let property of properties">
     <div class="property">{{property.name}}</div>
 
-    <div [property-editor]="element" [property]="property"></div>
+    <div [property-editor]="element" [group]="group" [property]="property"></div>
 
   </ng-container>
 </div>

@@ -10,8 +10,6 @@ import { Shape } from "bpmn-js/lib/model/Types";
   selector: 'extension-editor', 
   templateUrl: './extension-editor.html',
   styleUrl: "./extension-editor.scss"
-  //standalone: true,
-  //imports: [CommonModule, PropertyEditorDirective]
 })
 export class ExtensionEditor implements OnInit {  
   // input
@@ -20,6 +18,7 @@ export class ExtensionEditor implements OnInit {
   @Input() shape!: Shape
   @Input() extension!: string
   @Input() config!: Group
+  //@Input() group!: PropertyGroupComponent
 
   extensionElement! : ExtensionElements
 
@@ -30,7 +29,7 @@ export class ExtensionEditor implements OnInit {
 
   // constructor
 
-  constructor(private group: PropertyGroupComponent) {
+  constructor(public group: PropertyGroupComponent) {
      group.plus = () => this.add()
   }
 

@@ -26,7 +26,9 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   @Input() readOnly = false
   @Input() property!: PropertyDescriptor
   @Input() hints : EditorHints<T> = {}
-  @Input() component!: any//PropertyEditorDirective
+  @Input() group!: any//PropertyEditorDirective
+  @Input() editor!: any//PropertyEditorDirective
+  @Input() v!: any//PropertyEditorDirective
 
   // getter & setter
 
@@ -38,12 +40,17 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     this.element.set(this.property.name, value)
   }
 
-  showError(error: ValidationError) {}
+  // abstract
+
+  isDirty() : boolean  {
+    return false
+  }
+
+  undo() : void {}
+
+  showError(error: ValidationError, select: boolean) {}
 
   // callback
 
-  onChange(event: any) {
-    // TODO???
-    console.log(event)
-  }
+  onChange(event: any) {}
 }

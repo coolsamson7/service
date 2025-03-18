@@ -9,6 +9,7 @@ import { Group } from "../property-panel.model"
 
 import { Shape } from "bpmn-js/lib/model/Types";
 import { ValidationError } from "../../validation";
+import { PropertyGroupComponent } from "../property-group";
 
 @Component({
   template: '<div></div>'
@@ -19,8 +20,8 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
   @Input() shape!: Shape
   @Input() element!: Element
   @Input() property!: PropertyDescriptor // TODO unused
-  @Input() component! : any//PropertyEditorDirective
-  @Input() config!: Group
+  @Input() group!: PropertyGroupComponent
+  @Input() editor!: any//PropertyGroupComponent
 
   model!: Moddle
 
@@ -33,6 +34,14 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
   set<T>(property: string, value: T) : void {
      this.element[property] = value
   }
+
+  // abstract
+
+  isDirty() : boolean  {
+    return false
+  }
+
+  undo() : void {}
 
   showError(error: ValidationError) {}
    

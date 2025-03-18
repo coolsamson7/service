@@ -43,7 +43,12 @@ export class ModelValidationDirective implements Validator {
   // implement Validator
 
   validate(control: AbstractControl): ValidationErrors | null {
-    //this.element[this.property] = control.value // WHAT THE FUCK
-    return createModelValidator(this.modelValidation, this.shape, this.element, this.property)(control);
+    // for whatever reason the validator is sometimes called before the model has been updated
+
+    if ( control.value !== this.element[this.property]) {
+      setTimeout(() => control.updateValueAndValidity(), 0)
+      return null
+    }
+    else return createModelValidator(this.modelValidation, this.shape, this.element, this.property)(control);
   }
 }

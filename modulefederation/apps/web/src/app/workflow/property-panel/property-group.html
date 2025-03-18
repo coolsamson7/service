@@ -23,8 +23,8 @@
 
     <ng-container *ngIf="!group.extension">
       <ng-container *ngFor="let property of group.properties">
-        <!--div class="property">{{property.name}}</div-->
-        <div [property-editor]="element!"  [shape]="shape!" [property]="property"></div>
+        <property-name [property]="property"  [group]="this"/>
+        <div  [property-editor]="element!" [group]="this"  [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></div>
       </ng-container>
     </ng-container>
   </div>

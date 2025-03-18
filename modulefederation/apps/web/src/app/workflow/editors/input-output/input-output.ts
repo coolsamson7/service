@@ -100,7 +100,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
 
       this.openOutputs = this.element['inputParameters'].map((param: any) => false)
 
-      this.properties = this.config.properties//this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
+      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
 
   }
 }
@@ -111,7 +111,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   templateUrl: './input-parameter.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
   //

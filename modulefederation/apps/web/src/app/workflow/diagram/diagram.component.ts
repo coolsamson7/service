@@ -42,6 +42,7 @@ import { RootLike } from 'diagram-js/lib/model/Types';
 import { AbstractPaneComponent, LayoutComponent } from '@modulefederation/components';
 import { RestoreState, State, Stateful } from '@modulefederation/common';
 import { MessageBus } from '@modulefederation/portal';
+import EventBus from 'diagram-js/lib/core/EventBus';
 
 
 //
@@ -60,6 +61,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   @Output() importDone: EventEmitter<ImportDoneEvent> = new EventEmitter();
   @Output() selectionChanged = new EventEmitter< Shape | undefined>();
+  @Output() event = new EventEmitter<any>();
 
   // instance data
 
@@ -82,6 +84,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   canvas: Canvas | undefined
   elementRegistry : ElementRegistry | undefined
   commandStack : CommandStack | undefined
+  eventBus : EventBus | undefined
 
   selection: any
 
@@ -159,6 +162,12 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   selectError(error: ValidationError) {
     this.select(error.shape)
+
+    this.messageBus.broadcast({
+      topic: "model-validation",
+      message: "select-error",
+      arguments: error
+    })
   }
 
   // implement AfterContentInit
@@ -174,6 +183,14 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     if ( this.process)
       this.setProcess(this.process)
+
+    // events
+
+    this.eventBus = this.modeler.get('eventBus')
+    
+    this.eventBus!.on("commandStack.changed", (event) => {
+      this.event.emit(event)
+    });
 
     // add listeners
 
@@ -257,8 +274,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.commandStack?.clear()
   }
 
-  canUndo() {
-    this.commandStack?.canUndo()
+  canUndo() : boolean {
+    return this.commandStack?.canUndo() || false
   }
 
    // implement OnChanges
@@ -272,6 +289,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       this.setProcess(process).subscribe(result => {
         this.elementRegistry = this.modeler.get("elementRegistry");
         this.commandStack = this.modeler.get("commandStack");
+        this.eventBus = this.modeler.get("eventBus");
 
         this.validateModel()
       }

@@ -51,6 +51,10 @@
 
   .body {
     margin: 4px 4px 4px 4px;
+
+    display: grid;
+    grid-template-columns: min-content min-content auto;
+    align-items: baseline;
   }
 
   .property {

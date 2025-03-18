@@ -21,6 +21,7 @@ import { SchemaPropertyEditor, SchemaEditor } from '../editors/schema/schema-edi
 import { FormPropertyEditor } from '../editors/form/form-editor';
 import { ServiceTaskEditor } from '../editors/service-task/service-task';
 import { TypePropertyEditor } from '../editors/type/type-editor';
+import { PropertyNameComponent } from './property-name';
 
 const EDITORS = [
   TypePropertyEditor,
@@ -61,6 +62,7 @@ const EDITORS = [
   ],
   declarations: [
       PropertyGroupComponent,
+      PropertyNameComponent,
       PropertyPanelComponent,
       ExtensionEditor,
   ],

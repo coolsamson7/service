@@ -1,6 +1,6 @@
 <div class="schema">
     <div class="name">
-        <div [property-editor]="element" [property]="nameProperty"></div>
+        <div [property-editor]="element" [shape]="shape" [group]="group" [property]="nameProperty"></div>
         <svg-icon (click)="add()" name="plus" class="add"></svg-icon>
     </div>
 
@@ -12,7 +12,7 @@
             </div>
         
             <div *ngIf="!open[i]">{{name(property)}}</div>
-            <div *ngIf="open[i]" [property-editor]="property"></div>
+            <div *ngIf="open[i]" [property-editor]="property" [shape]="shape" [group]="group" ></div>
                 
             <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
             <svg-icon (click)="delete(property)" name="delete" class="delete"></svg-icon>

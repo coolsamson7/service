@@ -1,17 +1,17 @@
 <form #form="ngForm">
   <ng-container  *ngFor="let property of properties">
-    <div *ngIf="property.name === 'name'"  [property-editor]="element" [property]="property" [readOnly]="readOnly"></div>
+    <div *ngIf="property.name === 'name'"  [property-editor]="element" [group]="group"  [shape]="shape" [property]="property" [readOnly]="readOnly"></div>
 
     <!-- type -->
 
-    <div *ngIf="property.name === 'type'"  [property-editor]="element" [property]="property" [hints]="typeHints" [readOnly]="readOnly"></div>
+    <div *ngIf="property.name === 'type'"  [property-editor]="element" [group]="group"  [shape]="shape"  [property]="property" [hints]="typeHints" [readOnly]="readOnly"></div>
 
     <!-- source -->
 
-    <div *ngIf="property.name === 'source'"  [property-editor]="element" [property]="property" [hints]="sourceHints" [readOnly]="readOnly"></div>
+    <div *ngIf="property.name === 'source'"  [property-editor]="element" [group]="group"  [shape]="shape"  [property]="property" [hints]="sourceHints" [readOnly]="readOnly"></div>
 
     <!-- value -->
       
-    <div *ngIf="property.name.endsWith('value')" [property-editor]="element" [property]="typedProperty" [hints]="valueHints"></div>
+    <div *ngIf="property.name.endsWith('value')" [property-editor]="element" [group]="group"  [shape]="shape"  [property]="typedProperty" [hints]="valueHints"></div>
   </ng-container>
 </form>
