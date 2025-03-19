@@ -5,6 +5,7 @@ import { PropertyGroupComponent } from "./property-group"
 import { BaseElement, ExtensionElements } from "bpmn-moddle"
 import { Group } from "./property-panel.model"
 import { Shape } from "bpmn-js/lib/model/Types";
+import { ActionHistory } from "../bpmn"
 
 @Component({
   selector: 'extension-editor', 
@@ -22,8 +23,15 @@ export class ExtensionEditor implements OnInit {
 
   extensionElement! : ExtensionElements
 
-  extensions : Element[] = []
   open : boolean[] = []
+
+  get actionHistory() : ActionHistory {
+    return this.group.panel.actionHistory
+  }
+
+  get extensions() : Element[] {
+    return this.element["extensionElements"].values.filter((extensionElement: any) => extensionElement.$instanceOf(this.extension));
+  }
 
   computeLabel = (element: Element) => {return element.$type}
 
@@ -40,34 +48,47 @@ export class ExtensionEditor implements OnInit {
   }
 
   delete(extension: Element) {
-    const values : any[] = this.extensionElement.values
+    const values : any[] = [...this.extensionElement.values]
     const index = values.indexOf(extension)
 
     values.splice(index, 1);
 
-    this.extensions = this.getExtensionElements(this.extension)
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.extensionElement as any as Element,
+      properties: {
+        values: values
+      }
+    })
 
     this.group.children--
   }
 
   // private
 
-  add() { 
-    const newExtension : BaseElement = (<any>this.element)['$model'].create(this.extension)
-
-    if (!this.extensionElement.values)
-      this.extensionElement.values = []
-
-    this.extensionElement.values.push(newExtension);
-    this.extensions.push(<Element><any>newExtension)
+  create(extension: string) : Element {
+    const newExtension : BaseElement = (<any>this.element)['$model'].create(extension)
 
     newExtension.$parent = this.extensionElement
 
-    this.open.push(false)
-
-    this.group.children++// = this.getExtensionElements().get('values').length
+    return newExtension as any as Element
   }
 
+  add() { 
+    const newExtension = this.create(this.extension)
+
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.extensionElement as any as Element,
+      properties: {
+        values: [...this.extensionElement.values, newExtension]
+      }
+    })
+
+    this.open.push(false)
+
+    this.group.children++
+  }
 
   protected getExtensionElements(type: string) : Element[] {
     if ( this.element["extensionElements"]?.values)
@@ -89,11 +110,12 @@ export class ExtensionEditor implements OnInit {
 
     this.extensionElement = extensionElement
 
-    this.extensions = this.getExtensionElements(this.extension)
+    if (!this.extensionElement.values)
+      this.extensionElement.values = []
 
     this.open = this.extensions.map((ext) => true)
 
-    // avoid angualr digest error
+    // avoid angular digest error
     
     setTimeout(() => { this.group.children = this.extensions.length}, 0)
   }

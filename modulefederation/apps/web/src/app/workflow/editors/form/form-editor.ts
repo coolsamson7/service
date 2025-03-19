@@ -52,7 +52,7 @@ import { ModelValidationDirective } from "../../validation";
   // public
 
   changeType(type: string) {
-    this.type = type
+    this.baseType = type
   }
 
   addForm() {
@@ -74,7 +74,7 @@ import { ModelValidationDirective } from "../../validation";
   // override
 
   override onChange(event: any) {
-    this.value = this.type + ":" + event
+    this.value = this.baseType + ":" + event
   }
 
   // implement onInit
@@ -90,14 +90,14 @@ import { ModelValidationDirective } from "../../validation";
 
       if ( colon > 0) {
         if (value.startsWith("feature:"))
-          this.type = "feature"
+          this.baseType = "feature"
         else if (value.startsWith("form:"))
-          this.type = "form"
+          this.baseType = "form"
 
         this.name = value.substring(colon + 1)
       }
       else {
-        this.type = "feature"
+        this.baseType = "feature"
         this.name = value
       }
   }

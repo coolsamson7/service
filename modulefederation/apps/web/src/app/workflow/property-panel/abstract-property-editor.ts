@@ -10,38 +10,84 @@ import { Shape } from "bpmn-js/lib/model/Types";
 import { ValidationError } from "../validation";
 import { SuggestionProvider } from "@modulefederation/portal";
 import { ActionHistory } from "../bpmn"
+import { PropertyGroupComponent } from "./property-group";
 
 export interface EditorHints<T> {
   suggestionProvider?: SuggestionProvider
   oneOf?: T[]
 }
 
+export type Conversion = (i: any) => any
+
 @Component({
   template: '<div></div>'
 })
 export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>, OnInit, OnChanges {
+  // static stuff
+
+  static conversions : {[key: string] : Conversion} = {}
+
+  static registerConversion(source: string, target: string, conversion: Conversion) {
+    AbstractPropertyEditor.conversions[source + ":" + target] = conversion
+  }
+
+  static getConversion(source: string, target: string) : Conversion {
+    return AbstractPropertyEditor.conversions[source + ":" + target]
+  }
+
+  static {
+    // target string
+
+    AbstractPropertyEditor.registerConversion("boolean", "string", (value: any) => value.toString())
+    AbstractPropertyEditor.registerConversion("number", "string", (value: any) => value.toString())
+    AbstractPropertyEditor.registerConversion("string", "string", (value: any) => value)
+
+    // target boolean
+
+    AbstractPropertyEditor.registerConversion("boolean", "boolean", (value: any) => value)
+    AbstractPropertyEditor.registerConversion("number", "boolean", (value: any) => value == 1)
+    AbstractPropertyEditor.registerConversion("string", "boolean", (value: any) => value == "true")
+
+    // target number
+
+    AbstractPropertyEditor.registerConversion("boolean", "number", (value: any) => value == true ? 1 : 0 )
+    AbstractPropertyEditor.registerConversion("number", "number", (value: any) => value)
+    AbstractPropertyEditor.registerConversion("string", "number", (value: any) => parseInt(value))
+  }
+
   // input
 
   @Input() shape!: Shape
   @Input() element!: Element
-  @Input() readOnly = false
+  @Input() readOnly = false // TODO -> hints
   @Input() property!: PropertyDescriptor
   @Input() hints : EditorHints<T> = {}
-  @Input() group!: any//PropertyEditorDirective
-  @Input() editor!: any//PropertyEditorDirective
-  @Input() v!: any//PropertyEditorDirective
+  @Input() group!: PropertyGroupComponent
+  @Input() editor!: any // TODO
+  @Input() v!: any//TODO
 
   // instance data
 
   action: any
 
+  baseType = "string";
+  in: Conversion | undefined = undefined;
+  out: Conversion | undefined = undefined;
+
   // getter & setter
 
   get value() : any {
-    return this.element.get(this.property.name)
+    let v = this.element.get(this.property.name)
+    if (this.in )
+      v = this.in(v)
+
+    return v
   }
 
   set value(value: any) {
+    if (this.out )
+      value = this.out(value)
+
     this.element.set(this.property.name, value)
   }
 
@@ -56,7 +102,6 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   }
 
   // private
-
 
   canUndo() : boolean {
     return this.action !== undefined
@@ -86,6 +131,11 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   }
 
  onChange(event: any) {
+  // possible coerce
+
+    if ( this.out )
+      event = this.out(event)
+
     const properties = () : any => {
       const result : any = {}
 
@@ -102,15 +152,6 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       this.action.context.properties[this.property.name] = event
     }
     else {
-      /*const context = {
-        element: this.shape,
-        moddleElement: this.element,
-        properties: properties()
-      }
-      commands.execute('element.updateModdleProperties', context)
-
-      this.action =  (<any>commands)["_stack"].find((action: any) => action.context === context)
-*/
       this.action = this.actionHistory.updateProperties({
         element: this.shape,
         moddleElement: this.element,
@@ -124,29 +165,21 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
     this.editor.changedValue(event)
   }
-/*
-  protected findActionX() {
-    const commands =  this.getCommandStack()
-
-    const stack : any[] =  (<any>commands)["_stack"]
-    const index =  (<any>commands)["_stackIdx"]
-
-    for (let i = 0; i <= index; i++) {
-      const action = stack[i]
-
-      if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === this.element && action.context.properties[this.property.name])
-        return action
-    }
-
-    return undefined
-  }*/
-
 
   showError(error: ValidationError, select: boolean) {}
 
   // implement onInit
 
   ngOnInit() {
+    // determine in/out coercions
+
+    const value = this.value
+
+    if ( typeof value !== this.baseType) {
+      this.in = AbstractPropertyEditor.getConversion(typeof value, this.baseType)
+      this.out = AbstractPropertyEditor.getConversion(this.baseType, typeof value)
+    }
+
     // find action
 
     this.checkState()

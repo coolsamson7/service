@@ -47,7 +47,7 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
   typeChange(event: any) {
     this.typedProperty = this.createProperty("value", this.element["type"])
 
-    this.convertType()
+    //this.convertType()
   }
 
   override onChange(event: any) {

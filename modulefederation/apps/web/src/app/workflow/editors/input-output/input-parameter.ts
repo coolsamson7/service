@@ -59,32 +59,10 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
    typeChange(event: any) {
     this.typedProperty = this.createProperty(this.get("type"))
-
-    this.convertType()
   }
 
   override onChange(event: any) {
     console.log(event)
-  }
-
-  convertType() {
-    let targetType = this.get<string>("type")
-    if ( this.element["source"] == "process" || this.element["source"] == "expression")
-      targetType = "String"
-
-    let value  = this.element["value"]
-
-    if ( targetType == "Boolean")
-      value = value == "true"
-    else if ( ["Integer", "Short", "Long"].includes(targetType)) {
-      value = parseInt(value)
-    }
-    else if ( ["Double"].includes(targetType))
-      value = parseFloat(value)
-    else
-      value = value.toString()
-
-    this.set("value", value)
   }
 
   createProperty(type: string) : Moddle.PropertyDescriptor {

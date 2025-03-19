@@ -18,4 +18,11 @@ import { ModelValidationDirective } from '../../validation';
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
 })
 export class ShortPropertyEditor extends AbstractPropertyEditor<number> {
+   // constructor
+
+   constructor() {
+    super()
+    
+    this.baseType = "number"
+  }
 }

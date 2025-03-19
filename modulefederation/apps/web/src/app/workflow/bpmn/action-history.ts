@@ -44,14 +44,22 @@ export class ActionHistory {
     updateProperties(action: UpdateProperties) : CommandStackAction {
         this.commandStack.execute('element.updateModdleProperties', action)
 
-        return this.stack.find((action: CommandStackAction) => action.context === action)!
+        let i = this.index
+        while ( i >= 0) {
+            if ( this.stack[i].context.moddleElement === action.moddleElement)
+                return this.stack[i]
+
+            i--
+        }
+       
+        throw Error("should not happen")
     }
 
     findAction(element: Element, property: string) : CommandStackAction | undefined {
-        for (let i = 0; i <= this.index; i++) {
+        for (let i = this.index; i >= 0; i--) {
             const action = this.stack[i]
 
-            if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === element && action.context.properties[property])
+            if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === element && Object.hasOwn(action.context.properties, property))
                 return action
         }
 
