@@ -27,8 +27,8 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
   properties: Moddle.PropertyDescriptor[] = []
   types = DataTypes.types
 
-  typedProperty!: Moddle.PropertyDescriptor 
-  typesProperty!: Moddle.PropertyDescriptor 
+  typedProperty!: Moddle.PropertyDescriptor
+  typesProperty!: Moddle.PropertyDescriptor
 
   typeHints: EditorHints<string> = {
     oneOf: DataTypes.types
@@ -42,7 +42,7 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
     extensionEditor.computeLabel = (element: Element) => element.get("name") || "<name>"
   }
 
-  // 
+  //
 
   typeChange(event: any) {
     this.typedProperty = this.createProperty("value", this.element["type"])
@@ -65,7 +65,9 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
     else if ( ["Double"].includes(this.element["type"]))
       value = parseFloat(value)
 
-    this.element["value"] = value // TODO: undo
+    if ( this.element["value"] !== value) {
+      this.element["value"] = value // TODO: undo
+    }
   }
 
   createProperty(name: string, type: string) : Moddle.PropertyDescriptor {
@@ -79,7 +81,7 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
       }
     }
   }
-  
+
 
   // override OnInit
 

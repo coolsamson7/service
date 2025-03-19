@@ -20,7 +20,7 @@
      <!-- select -->
 
     <ng-container *ngIf="inputType === 'select'">
-      <mat-select class="dense-5" #input required [value]="value" (selectionChange)="onChange($event.value)">
+      <mat-select class="dense-5" #input required  [disabled]="readOnly" [value]="value" (selectionChange)="onChange($event.value)">
         <mat-option *ngFor="let value of hints.oneOf" [value]="value">{{value}}</mat-option>
       </mat-select>
     </ng-container>

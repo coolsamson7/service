@@ -62,7 +62,15 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   }
 
   checkState() {
+    const oldAction =  this.action
     this.action = this.findAction()
+
+    if ( oldAction !== this.action) {
+      if ( oldAction )
+        console.log("remove action for " + this.property.name)
+      else
+        console.log("add action for " + this.property.name)
+    }
   }
 
  undo() : void {
@@ -103,6 +111,8 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       commands.execute('element.updateModdleProperties', context)
 
       this.action =  (<any>commands)["_stack"].find((action: any) => action.context === context)
+
+      console.log("new action for " + this.property.name)
     }
 
     // inform listeners
@@ -116,10 +126,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     const stack : any[] =  (<any>commands)["_stack"]
     const index =  (<any>commands)["_stackIdx"]
 
-    for (let i = 0; i < index; i++) {
+    for (let i = 0; i <= index; i++) {
       const action = stack[i]
 
-      if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === this.element)
+      if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === this.element && action.context.properties[this.property.name])
         return action
     }
 
@@ -129,19 +139,17 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   showError(error: ValidationError, select: boolean) {}
 
-  // implement OnInit
-
   // implement onInit
 
   ngOnInit() {
     // find action
 
-    this.action = this.findAction()
+    this.checkState()
   }
 
    // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.action = this.findAction()
+    this.checkState()
   }
 }

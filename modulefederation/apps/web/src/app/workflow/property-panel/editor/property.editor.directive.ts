@@ -94,6 +94,17 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
     this.updateComponent((this.instance = this.component.instance))
 
+    // inform label
+    
+    if ( this.label) {
+      console.log(this.property?.name + ".editor=" + this.instance.constructor.name)
+      this.label!.editor = this.instance
+    }
+    else {
+      console.log("?")
+    }
+
+
     this.component.changeDetectorRef.markForCheck
   }
 
@@ -129,12 +140,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     this.setupValue()
     this.createComponent()
 
-    if ( this.label)
-      this.label!.editor = this.instance
-    else {
-      console.log("?")
-    }
-
+  
     this.group.editors.push(this)
   }
 
