@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel/editor';
-import { Component, OnInit } from "@angular/core";
+import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
+import { Component } from "@angular/core";
 import { ArraySuggestionProvider, FeatureRegistry, MessageBus, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";

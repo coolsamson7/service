@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component } from '@angular/core';
 
-import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, RegisterPropertyEditor, PropertyPanelModule } from '../../property-panel';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { Element } from "moddle"
   templateUrl: './input-output.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule]
+  imports: [FormsModule, CommonModule, PropertyPanelModule]
 })
 export class InputOutputEditor extends AbstractExtensionEditor {
   // instance data

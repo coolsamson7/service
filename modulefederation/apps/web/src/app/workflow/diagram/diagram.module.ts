@@ -1,6 +1,5 @@
 
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { ModdleExtensions } from 'bpmn-js/lib/BaseViewer';
 import { DiagramComponent } from './diagram.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,8 +9,6 @@ import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.confi
 import { LayoutModule } from '@modulefederation/components';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-
-
 
 
 @NgModule({

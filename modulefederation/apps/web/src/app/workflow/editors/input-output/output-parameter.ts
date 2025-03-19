@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 
 
-import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './output-parameter.html',
   styleUrl: './output-parameter.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, PropertyPanelModule, PropertyNameComponent]
 })
 export class OutputParameterEditor extends AbstractExtensionEditor {
   // instance data

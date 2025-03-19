@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractExtensionEditor, AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { Component, Input } from '@angular/core';
+import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';

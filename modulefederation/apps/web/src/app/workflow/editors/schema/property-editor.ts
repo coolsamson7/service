@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Element } from "moddle"
-import { AbstractExtensionEditor, EditorHints, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, EditorHints, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 import { ExtensionEditor } from '../../property-panel';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,7 +19,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './property-editor.html',
   styleUrl: './property-editor.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyEditorModule, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, PropertyNameComponent]
 })
 export class SchemaPropertyEditor extends AbstractExtensionEditor {
   // instance data

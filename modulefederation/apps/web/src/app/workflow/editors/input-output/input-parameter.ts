@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, ViewChild } from '@angular/core';
 
-import { AbstractExtensionEditor, EditorHints, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, EditorHints, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -23,7 +23,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './input-parameter.html',
   styleUrl: './input-parameter.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, PropertyPanelModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, PropertyNameComponent]
 })
 export class InputParameterEditor extends AbstractExtensionEditor {
   //

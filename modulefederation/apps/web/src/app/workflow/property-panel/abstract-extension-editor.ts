@@ -5,11 +5,9 @@ import { Component, Input, OnInit } from "@angular/core"
 import { PropertyEditor } from "./property-editor"
 //import { PropertyEditorDirective } from "./property.editor.directive"
 import  {Element, PropertyDescriptor, Moddle } from "moddle"
-import { Group } from "../property-panel.model"
-
 import { Shape } from "bpmn-js/lib/model/Types";
-import { ValidationError } from "../../validation";
-import { PropertyGroupComponent } from "../property-group";
+import { ValidationError } from "../validation";
+import { PropertyGroupComponent } from "./property-group";
 
 @Component({
   template: '<div></div>'

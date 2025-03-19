@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { AbstractExtensionEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractExtensionEditor, RegisterPropertyEditor ,PropertyPanelModule} from '../../property-panel';
 import { PropertyNameComponent } from '../../property-panel/property-name';
 
 
@@ -16,7 +16,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './execution-listener.html',
   styleUrl: './execution-listener.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, PropertyPanelModule, PropertyNameComponent]
 })
 export class ExecutionListenerEditor extends AbstractExtensionEditor {
   // instance data

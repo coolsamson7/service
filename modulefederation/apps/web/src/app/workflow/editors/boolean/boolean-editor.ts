@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @RegisterPropertyEditor("Boolean")

@@ -6,7 +6,7 @@
 
     <!-- type -->
 
-    <ng-container *ngIf="property.name === 'type'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [hints]="typeHints" [readOnly]="readOnly"></ng-container>
+    <ng-container *ngIf="property.name === 'type'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [hints]="typeHints" [readOnly]="readOnly" (valueChange)="typeChange($event)"></ng-container>
 
     <!-- source -->
 

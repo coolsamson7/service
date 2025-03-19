@@ -7,9 +7,9 @@ import { PropertyEditor } from "./property-editor";
 
 import  {Element, PropertyDescriptor  } from "moddle"
 import { Shape } from "bpmn-js/lib/model/Types";
-import CommandStack from 'diagram-js/lib/command/CommandStack';
-import { ValidationError } from "../../validation";
+import { ValidationError } from "../validation";
 import { SuggestionProvider } from "@modulefederation/portal";
+import { ActionHistory } from "../bpmn"
 
 export interface EditorHints<T> {
   suggestionProvider?: SuggestionProvider
@@ -45,6 +45,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     this.element.set(this.property.name, value)
   }
 
+  get actionHistory() : ActionHistory {
+    return this.group.panel.actionHistory
+  }
+
   // protected
 
   describe(error: any) {
@@ -53,9 +57,6 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   // private
 
-  getCommandStack() : CommandStack {
-    return this.group.panel.commandStack
-  }
 
   canUndo() : boolean {
     return this.action !== undefined
@@ -63,7 +64,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   checkState() {
     const oldAction =  this.action
-    this.action = this.findAction()
+    this.action = this.actionHistory.findAction(this.element, this.property.name)
 
     if ( oldAction !== this.action) {
       if ( oldAction )
@@ -93,8 +94,6 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       return result
     }
 
-    const commands =  this.getCommandStack()
-
     if (this.action) {
       this.editor.value = event
 
@@ -103,7 +102,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       this.action.context.properties[this.property.name] = event
     }
     else {
-      const context = {
+      /*const context = {
         element: this.shape,
         moddleElement: this.element,
         properties: properties()
@@ -111,6 +110,12 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       commands.execute('element.updateModdleProperties', context)
 
       this.action =  (<any>commands)["_stack"].find((action: any) => action.context === context)
+*/
+      this.action = this.actionHistory.updateProperties({
+        element: this.shape,
+        moddleElement: this.element,
+        properties: properties()
+      })
 
       console.log("new action for " + this.property.name)
     }
@@ -119,8 +124,8 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
     this.editor.changedValue(event)
   }
-
-  protected findAction() {
+/*
+  protected findActionX() {
     const commands =  this.getCommandStack()
 
     const stack : any[] =  (<any>commands)["_stack"]
@@ -134,7 +139,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     }
 
     return undefined
-  }
+  }*/
 
 
   showError(error: ValidationError, select: boolean) {}

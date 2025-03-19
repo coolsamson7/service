@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 //import { PropertyEditorDirective } from "./property.editor.directive"
 import  {Element, PropertyDescriptor  } from "moddle"
-import { ValidationError } from "../../validation"
+import { ValidationError } from "../validation"
 
 
 export interface PropertyEditor<T=any> {

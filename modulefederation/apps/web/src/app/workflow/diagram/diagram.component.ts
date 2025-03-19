@@ -43,6 +43,7 @@ import { AbstractPaneComponent, LayoutComponent } from '@modulefederation/compon
 import { RestoreState, State, Stateful } from '@modulefederation/common';
 import { MessageBus } from '@modulefederation/portal';
 import EventBus from 'diagram-js/lib/core/EventBus';
+import { ActionHistory } from '../bpmn/action-history';
 
 
 //
@@ -83,10 +84,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   canvas: Canvas | undefined
   elementRegistry : ElementRegistry | undefined
-  commandStack : CommandStack | undefined
   eventBus : EventBus | undefined
 
   selection: any
+
+  actionHistory!: ActionHistory
 
   // constructor
 
@@ -263,19 +265,19 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   undo() {
-    this.commandStack?.undo()
+    this.actionHistory.undo()
   }
 
   redo() {
-    this.commandStack?.redo()
+    this.actionHistory.redo()
   }
 
   clearHistory() {
-    this.commandStack?.clear()
+    this.actionHistory.clear()
   }
 
   canUndo() : boolean {
-    return this.commandStack?.canUndo() || false
+    return this.actionHistory.canUndo() || false
   }
 
    // implement OnChanges
@@ -288,7 +290,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
       this.setProcess(process).subscribe(result => {
         this.elementRegistry = this.modeler.get("elementRegistry");
-        this.commandStack = this.modeler.get("commandStack");
+        this.actionHistory = new ActionHistory(this.modeler.get("commandStack"))
         this.eventBus = this.modeler.get("eventBus");
 
         this.validateModel()

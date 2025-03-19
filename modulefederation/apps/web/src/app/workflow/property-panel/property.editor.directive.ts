@@ -4,13 +4,12 @@ import { ComponentFactory, ComponentFactoryResolver, Output, ComponentRef, Direc
 import { PropertyEditorRegistry } from "./property-editor-registry";
 import { PropertyEditor } from "./property-editor";
 import { Element, PropertyDescriptor } from "moddle";
-import { Group } from "../property-panel.model";
 import { Shape } from "bpmn-js/lib/model/Types";
-import { PropertyPanelComponent } from "../property-panel";
-import { ValidationError } from "../../validation";
+import { PropertyPanelComponent } from "./property-panel";
+import { ValidationError } from "../validation";
 import { EditorHints } from "./abstract-property-editor";
-import { PropertyGroupComponent } from "../property-group";
-import { PropertyNameComponent } from "../property-name";
+import { PropertyGroupComponent } from "./property-group";
+import { PropertyNameComponent } from "./property-name";
 
 type UserInputs = Record<string, any>;
 

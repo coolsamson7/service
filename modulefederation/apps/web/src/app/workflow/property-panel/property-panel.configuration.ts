@@ -10,5 +10,6 @@ export interface GroupConfig {
   }
 
   export interface PropertyPanelConfig {
+    editors: any[]
     groups: GroupConfig[]
   }

@@ -4,7 +4,7 @@ import { Group } from "./property-panel.model";
 
 import { Shape } from "bpmn-js/lib/model/Types";
 import { PropertyPanelComponent } from "./property-panel";
-import { PropertyEditorDirective } from "./editor";
+import { PropertyEditorDirective } from "./property.editor.directive";
 
 export type Plus = () => void
 

@@ -2,7 +2,7 @@
 import { AfterContentInit, Component, Input, OnInit } from "@angular/core"
 import  { PropertyDescriptor } from "moddle"
 import { PropertyGroupComponent } from "./property-group";
-import { PropertyEditor } from "./editor";
+import { PropertyEditor } from "./property-editor";
 import { CommonModule } from "@angular/common";
 
 

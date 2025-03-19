@@ -6,11 +6,12 @@ import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
 import { PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
 import { Shape } from "bpmn-js/lib/model/Types";
-import { PropertyEditorDirective } from "./editor";
 import { MessageBus } from "@modulefederation/portal";
 import { ValidationError } from "../validation";
 import { PropertyGroupComponent } from "./property-group";
-import CommandStack from 'diagram-js/lib/command/CommandStack';
+import { ActionHistory } from "../bpmn"
+import { PropertyEditorDirective } from "./property.editor.directive";
+
 
 @Component( {
   selector: 'property-panel',
@@ -25,7 +26,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   // instance data
 
-  @Input() element : Element| undefined; 
+  @Input() element : Element| undefined;
 
   model!: Moddle;
 
@@ -39,7 +40,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
   editors: PropertyEditorDirective[] = []
 
 
-  commandStack! : CommandStack
+  actionHistory!: ActionHistory
 
   // constructor
 
@@ -174,7 +175,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
   // implement OnInit
 
   ngOnInit(): void {
-    this.commandStack = this.modeler.get("commandStack");
+    this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
 
     this.checkModel()
   }
@@ -190,6 +191,6 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
   // implement OnDestroy
 
   ngOnDestroy(): void {
-      
+
   }
 }

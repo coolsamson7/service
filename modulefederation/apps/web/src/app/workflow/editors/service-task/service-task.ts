@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 
 import { Element } from 'moddle';
-import { AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
+import { AbstractPropertyEditor, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
 import { FormsModule } from '@angular/forms';
@@ -20,7 +20,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './service-task.html',
   styleUrl: './service-task.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, PropertyPanelModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective, PropertyNameComponent]
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor {
   // instance data
