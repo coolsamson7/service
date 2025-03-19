@@ -1,6 +1,7 @@
 <div class="schema">
     <div class="name">
-        <div [property-editor]="element" [shape]="shape" [group]="group" [property]="nameProperty"></div>
+        <property-name #label [property]="nameProperty!" [group]="group"></property-name>
+        <ng-container [property-editor]="element" [label]="label" [shape]="shape" [group]="group" [property]="nameProperty" [inputs]="{ value: element['name'] }"></ng-container>
         <svg-icon (click)="add()" name="plus" class="add"></svg-icon>
     </div>
 
@@ -10,13 +11,12 @@
                 <svg-icon (click)="toggle(i)" [name]="open[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
                 <div *ngIf="true" class="line"></div>
             </div>
-        
+
             <div *ngIf="!open[i]">{{name(property)}}</div>
-            <div *ngIf="open[i]" [property-editor]="property" [shape]="shape" [group]="group" ></div>
-                
+            <ng-container *ngIf="open[i]" [property-editor]="property" [shape]="shape" [group]="group" ></ng-container>
+
             <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
             <svg-icon (click)="delete(property)" name="delete" class="delete"></svg-icon>
-        </div> 
+        </div>
     </div>
   </div>
-  

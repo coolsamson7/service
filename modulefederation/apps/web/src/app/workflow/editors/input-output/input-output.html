@@ -14,7 +14,7 @@
       </div>
 
       <div *ngIf="!openInputs[i]" class="name">{{parameterName(input)}}</div>
-      <div *ngIf="openInputs[i]"[property-editor]="input" [group]="group" [shape]="shape" class="input"></div>
+      <ng-container *ngIf="openInputs[i]" [property-editor]="input" [group]="group" [shape]="shape" class="input"></ng-container>
       <svg-icon name="delete" class="delete" (click)="deleteInput(i)"></svg-icon>
     </div>
   </div>
@@ -32,7 +32,7 @@
       </div>
 
       <div *ngIf="!openOutputs[i]" class="name">{{parameterName(output)}}</div>
-      <div *ngIf="openOutputs[i]" [property-editor]="output" [group]="group" [shape]="shape"  class="output"></div>
+      <ng-container *ngIf="openOutputs[i]" [property-editor]="output" [group]="group" [shape]="shape"  class="output"></ng-container>
       <svg-icon name="delete" class="delete" (click)="deleteOutput(i)"></svg-icon>
     </div>
   </div>

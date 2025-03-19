@@ -15,4 +15,5 @@ export interface PropertyEditor<T=any> {
   isDirty() : boolean 
   undo() : void
   showError(error: ValidationError, select: boolean) : void
+  checkState() : void
 }

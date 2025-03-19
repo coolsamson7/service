@@ -19,7 +19,7 @@ import { ModelValidationDirective } from "../../validation";
   standalone: true,
   imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective]
  })
- export class FormPropertyEditor extends AbstractPropertyEditor implements OnInit {
+ export class FormPropertyEditor extends AbstractPropertyEditor {
   // instance data
 
   type = "feature"
@@ -79,7 +79,9 @@ import { ModelValidationDirective } from "../../validation";
 
   // implement onInit
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit()
+
       let value = this.element.get(this.property.name)
       if (!value)
         value = ""

@@ -37,6 +37,8 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
 
   // abstract
 
+  checkState() {}
+
   isDirty() : boolean  {
     return false
   }

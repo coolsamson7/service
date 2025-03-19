@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-extra-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { Element, Moddle } from "moddle"
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
@@ -17,7 +17,7 @@ import CommandStack from 'diagram-js/lib/command/CommandStack';
   templateUrl: "./property-panel.html",
   styleUrl: "./property-panel.scss"
 })
-export class PropertyPanelComponent implements OnInit, OnChanges {
+export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
   // input
 
   @Input() modeler!: BpmnJS
@@ -52,6 +52,16 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
         this.highlightErrors([message.arguments as ValidationError], true)
       }
     })
+
+    messageBus.listenFor("diagram").subscribe(message => {
+      if ( message.message == "saved")
+        this.clearHistory()
+    })
+  }
+
+  clearHistory() {
+    for ( const editor of this.editors)
+      editor.instance.checkState()
   }
 
   addGroup(group: PropertyGroupComponent) {
@@ -175,5 +185,11 @@ export class PropertyPanelComponent implements OnInit, OnChanges {
     if (changes["shape"]) {//} && !changes["element"].firstChange) {
       this.setElement(changes["shape"].currentValue as Shape)
     }
+  }
+
+  // implement OnDestroy
+
+  ngOnDestroy(): void {
+      
   }
 }

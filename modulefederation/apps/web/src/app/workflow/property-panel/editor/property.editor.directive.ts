@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ComponentFactory, ComponentFactoryResolver, ComponentRef, Directive, Injector, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewContainerRef } from "@angular/core";
+import { ComponentFactory, ComponentFactoryResolver, Output, ComponentRef, Directive, EventEmitter, Injector, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewContainerRef } from "@angular/core";
 import { PropertyEditorRegistry } from "./property-editor-registry";
 import { PropertyEditor } from "./property-editor";
 import { Element, PropertyDescriptor } from "moddle";
@@ -10,6 +10,7 @@ import { PropertyPanelComponent } from "../property-panel";
 import { ValidationError } from "../../validation";
 import { EditorHints } from "./abstract-property-editor";
 import { PropertyGroupComponent } from "../property-group";
+import { PropertyNameComponent } from "../property-name";
 
 type UserInputs = Record<string, any>;
 
@@ -18,7 +19,7 @@ type UserInputs = Record<string, any>;
   //standalone: true
 })
 export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
-  // input
+  // input & output
 
   @Input('property-editor') element!: Element 
   @Input() shape!: Shape
@@ -28,6 +29,10 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   @Input() group!: PropertyGroupComponent
   @Input() inputs?: UserInputs = {};
   @Input() hints: EditorHints<any> = {}
+
+  @Input() label!: PropertyNameComponent
+
+  @Output() valueChange = new EventEmitter<any>()
 
   // instance data
 
@@ -81,12 +86,19 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     }
     else type =  this.registry.get(this.element.$type)
 
+    if (!type) 
+      throw Error("unknown component for type " + this.property?.type ||this.element.$type)
+
     this.componentFactory = this.resolver.resolveComponentFactory<PropertyEditor>(type)
     this.component = this.container.createComponent(this.componentFactory, 0, this.injector)
 
     this.updateComponent((this.instance = this.component.instance))
 
     this.component.changeDetectorRef.markForCheck
+  }
+
+  changedValue(value: any) {
+    this.valueChange.emit(value)
   }
 
   private updateComponent(instance: PropertyEditor<any>) {
@@ -117,12 +129,19 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     this.setupValue()
     this.createComponent()
 
+    if ( this.label)
+      this.label!.editor = this.instance
+    else {
+      console.log("?")
+    }
+
     this.group.editors.push(this)
   }
 
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
     if (changes["property"] && !changes["property"].firstChange) {
       this.deleteComponent()
       this.createComponent()
@@ -147,8 +166,13 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
  
      // inform about changes
  
-     if ((this.component?.instance as OnChanges).ngOnChanges)
-       this.component.instance.ngOnChanges(componentChanges);
+    
+     if ( componentChanges["value"] && !componentChanges["value"].isFirstChange())
+      if (this.component?.instance.ngOnChanges)
+        this.component.instance.ngOnChanges(componentChanges);
+        else {
+          console.log("no ngOnChanges for " + this.element.$type + " with instance " + this.instance)
+        }
   }
 
   // implement OnDestroy

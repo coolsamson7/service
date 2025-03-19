@@ -1,8 +1,7 @@
 <div class="listener">
   <ng-container  *ngFor="let property of properties">
-    <div class="property">{{property.name}}</div>
+    <property-name #label [property]="property" [group]="group"></property-name>
 
-    <div [property-editor]="element" [group]="group" [property]="property"></div>
-
+    <ng-container [property-editor]="element" [label]="label" [group]="group" [property]="property"></ng-container>
   </ng-container>
 </div>

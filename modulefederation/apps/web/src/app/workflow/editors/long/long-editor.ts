@@ -18,7 +18,4 @@ import { ModelValidationDirective } from '../../validation';
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
 })
 export class LongPropertyEditor extends AbstractPropertyEditor<number> {
-  describe(error: any) {
-    return error["model"]
-  } 
 }

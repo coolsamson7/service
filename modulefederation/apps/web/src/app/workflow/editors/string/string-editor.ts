@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ModelValidationDirective, ValidationError } from '../../validation';
 import { NgModelSuggestionsDirective } from '@modulefederation/portal';
 import { MatSelectModule } from '@angular/material/select';
-import CommandStack from 'diagram-js/lib/command/CommandStack';
+
 
 
 @RegisterPropertyEditor("String")
@@ -21,7 +21,7 @@ import CommandStack from 'diagram-js/lib/command/CommandStack';
   standalone: true,
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, NgModelSuggestionsDirective, MatSelectModule]
 })
-export class StringPropertyEditor extends AbstractPropertyEditor<string> implements OnInit, OnChanges {
+export class StringPropertyEditor extends AbstractPropertyEditor<string> {
   // instance data
 
   @ViewChild("model") model! : NgModel;
@@ -29,19 +29,6 @@ export class StringPropertyEditor extends AbstractPropertyEditor<string> impleme
 
   inputType : "input" | "suggestionInput" | "select" = "input"
 
-  action: any
-
-  // public
-
-  describe(error: any) {
-    return error["model"]
-  } 
-
-  // private
-
-  getCommandStack() : CommandStack {
-    return this.group.panel.commandStack
-  }
 
   // override AbstractPropertyEditor
 
@@ -54,78 +41,10 @@ export class StringPropertyEditor extends AbstractPropertyEditor<string> impleme
     }
   }
 
-  canUndo() : boolean {
-    return this.action !== undefined
-  }
-
-  override undo() : void {
-    if ( this.action) {
-
-      this.action = undefined
-    }
-  }
-
-  override isDirty() : boolean  {
-    console.log(this.property.name + ".dirty = " + this.canUndo())
-    return this.canUndo()
-  }
-
-  override onChange(event: any) {
-    const properties = () : any => {
-      const result : any = {}
-
-      result[this.property.name] = event
-
-      return result
-    }
-
-    const commands =  this.getCommandStack()
-
-    if (this.action) {
-      this.editor.value = event
-
-      // reuse existing action and simply update the new value
-
-
-      this.action.context.properties[this.property.name] = event
-    }
-    else {
-      const context = {
-        element: this.shape,
-        moddleElement: this.element,
-        properties: properties()
-      }
-      commands.execute('element.updateModdleProperties', context)
-      
-      this.action =  (<any>commands)["_stack"].find((action: any) => action.context === context)
-
-      if ( this.action )
-        console.log(this.property.name + " has an action")
-    } 
-  }
-
-  private findAction() {
-    const commands =  this.getCommandStack()
-
-    const stack : any[] =  (<any>commands)["_stack"]
-    const index =  (<any>commands)["_stackIdx"]
-
-    for (let i = 0; i < index; i++) {
-      const action = stack[i]
-
-      if ( action.command === "element.updateModdleProperties" && action.context.moddleElement === this.element)
-        return action
-    }
-
-    return undefined
-  }
-
   // implement onInit
 
-  ngOnInit() {
-    // find action
-
-    this.action = this.findAction()
+  override ngOnInit() {
+    super.ngOnInit()
 
      // determine input type
 
@@ -134,12 +53,5 @@ export class StringPropertyEditor extends AbstractPropertyEditor<string> impleme
       this.inputType = "suggestionInput"
     else if (this.hints.oneOf)
       this.inputType = "select"
-  }
-
-  // implement OnChanges
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
-    this.action = this.findAction()
   }
 }

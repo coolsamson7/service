@@ -15,7 +15,4 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   imports: [FormsModule, CommonModule, MatCheckboxModule]
 })
 export class BooleanPropertyEditor extends AbstractPropertyEditor {
-  describe(error: any) {
-    return error["model"]
-  } 
 }

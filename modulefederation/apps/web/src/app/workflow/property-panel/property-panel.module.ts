@@ -17,14 +17,15 @@ import { IntegerPropertyEditor } from '../editors/integer/integer-editor';
 import { LongPropertyEditor } from '../editors/long/long-editor';
 import { DoublePropertyEditor } from '../editors/double/double-editor';
 import { StringPropertyEditor } from '../editors/string/string-editor';
-import { SchemaPropertyEditor, SchemaEditor } from '../editors/schema/schema-editor';
+import { SchemaEditor } from '../editors/schema/schema-editor';
 import { FormPropertyEditor } from '../editors/form/form-editor';
 import { ServiceTaskEditor } from '../editors/service-task/service-task';
-import { TypePropertyEditor } from '../editors/type/type-editor';
 import { PropertyNameComponent } from './property-name';
+import { InputParameterEditor } from '../editors/input-output/input-parameter';
+import { OutputParameterEditor } from '../editors/input-output/output-parameter';
+import { SchemaPropertyEditor } from '../editors/schema/property-editor';
 
 const EDITORS = [
-  TypePropertyEditor,
   StringPropertyEditor,
 
   ShortPropertyEditor,
@@ -37,6 +38,8 @@ const EDITORS = [
   FormPropertyEditor,
   IdPropertyEditor,
   InputOutputEditor,
+  InputParameterEditor,
+  OutputParameterEditor,
   ExecutionListenerEditor,
   SchemaEditor,
   SchemaPropertyEditor,
@@ -55,6 +58,7 @@ const EDITORS = [
     // editors
 
     PropertyEditorModule,
+    PropertyNameComponent,
 
     // stuff
 
@@ -62,7 +66,6 @@ const EDITORS = [
   ],
   declarations: [
       PropertyGroupComponent,
-      PropertyNameComponent,
       PropertyPanelComponent,
       ExtensionEditor,
   ],

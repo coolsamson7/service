@@ -1,48 +1,7 @@
 <div class="implementation">
-  <mat-form-field>
-    <mat-label>{{property.name}}</mat-label>
+  <mat-form-field class="dense-5">
+    <input type="text" [check]="element" [shape]="shape" [property]="property.name" (ngModelChange)="onChange($event)" [ngModel]="value" matInput name="implementation" [suggestionProvider]="suggestionProvider"  #service="ngModel"/>
 
-    <!-- feature TODO -> property -->
-
-    <input type="text" [check]="element" [shape]="shape" [property]="property.name" (ngModelChange)="onChange($event)" [(ngModel)]="value" matInput name="implementation" [suggestionProvider]="suggestionProvider"  #service="ngModel"/>
-   
     <mat-error *ngIf="service.errors?.['model']">{{service.errors?.['model']}}</mat-error>
   </mat-form-field>
 </div>
-
-<!--div class="inputoutput">
-  <div class="inputs">
-    <div class="header">
-      <div class="label">Input</div>
-    </div>
-
-    <div *ngFor="let input of inputOutputElement['inputParameters']; index as i" class="input">
-      <div class="left">
-        <svg-icon (click)="toggleInput(i)" [name]="openInputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
-        <div class="line"></div>
-      </div>
-
-        <div *ngIf="!openInputs[i]">{{input.name}}</div>
-
-        <div *ngIf="openInputs[i]"[property-editor]="input" class="input" [readOnly]="true"></div>
-
-    </div>
-  </div>
-
-  <div class="outputs">
-    <div class="header">
-      <div class="label">Output</div>
-
-    </div>
-
-    <div *ngFor="let output of inputOutputElement['outputParameters']; index as i" class="output">
-      <div class="left">
-        <svg-icon  (click)="toggleOutput(i)" [name]="openOutputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
-        <div class="line"></div>
-      </div>
-
-        <div *ngIf="!openOutputs[i]">{{output.name}}</div>
-        <div *ngIf="openOutputs[i]" [property-editor]="output" class="output"></div>
-    </div>
-  </div>
-</div-->

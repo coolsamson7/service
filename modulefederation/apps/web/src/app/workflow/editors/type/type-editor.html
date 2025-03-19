@@ -1,8 +1,0 @@
-<mat-form-field>
-    <mat-label>{{property.name}}</mat-label>
-    <!--input matInput type="text" [(ngModel)]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)"/-->
-
-    <mat-select [(value)]="value" [disabled]="readOnly">
-        <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
-    </mat-select>
-</mat-form-field>

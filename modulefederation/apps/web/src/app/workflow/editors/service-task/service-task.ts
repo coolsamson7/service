@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit} from '@angular/core';
+import { Component } from '@angular/core';
 
-
+import { Element } from 'moddle';
 import { AbstractPropertyEditor, PropertyEditorModule, RegisterPropertyEditor } from '../../property-panel/editor';
 
 import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
 import { ServiceTaskDescriptor, TaskDescriptorInventoryService } from '../../service/task-service-descriptor';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Element } from 'moddle';
 import { ModelValidationDirective } from '../../validation';
+import { PropertyNameComponent } from '../../property-panel/property-name';
 
 
 @RegisterPropertyEditor("bpmn:implementation")
@@ -20,14 +20,10 @@ import { ModelValidationDirective } from '../../validation';
   templateUrl: './service-task.html',
   styleUrl: './service-task.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, PropertyEditorModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective, PropertyNameComponent]
 })
-export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit {
+export class ServiceTaskEditor extends AbstractPropertyEditor {
   // instance data
-
-  properties: Moddle.PropertyDescriptor[] = []
-  openInputs: boolean[] = []
-  openOutputs: boolean[] = []
 
   descriptors : ServiceTaskDescriptor[] = []
   selectedService!: ServiceTaskDescriptor | undefined
@@ -45,11 +41,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   private rememberDescriptors(descriptors: ServiceTaskDescriptor[]) {
     this.descriptors = descriptors
-   this.suggestionProvider = new ArraySuggestionProvider(descriptors.map(descriptor => descriptor.name))
-  }
-
-  private create(type: string) : Element {
-    return this.element['$model'].create(type)
+    this.suggestionProvider = new ArraySuggestionProvider(descriptors.map(descriptor => descriptor.name))
   }
 
   private setService(descriptor : ServiceTaskDescriptor | undefined) {
@@ -97,15 +89,14 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   // callbacks
 
-  toggleInput(i : number) {
-    this.openInputs[i] = ! this.openInputs[i]
+  private create(type: string) : Element {
+    return this.element['$model'].create(type)
   }
 
-  toggleOutput(i : number) {
-    this.openOutputs[i] = ! this.openOutputs[i]
-  }
 
   override onChange(serviceName: any) {
+    super.onChange(serviceName)
+    
     const service = this.descriptors.find(descriptor => descriptor.name == serviceName);
     
     this.setService(service)
@@ -113,43 +104,45 @@ export class ServiceTaskEditor extends AbstractPropertyEditor implements OnInit 
 
   // override OnInit
 
- ngOnInit() : void {
-      // take care of exension elements
+ override ngOnInit() : void {
+    super.ngOnInit()
 
-      const extensionElement = this.element["extensionElements"] || (<any>this.element)['$model'].create('bpmn:ExtensionElements');
+     // take care of exension elements
 
-      if ( extensionElement.$parent == undefined) {
-        (this.element)["extensionElements"] = extensionElement
+     const extensionElement = this.element["extensionElements"] || (<any>this.element)['$model'].create('bpmn:ExtensionElements');
 
-        extensionElement.$parent = this.element
+     if ( extensionElement.$parent == undefined) {
+       (this.element)["extensionElements"] = extensionElement
 
-        extensionElement.values = []
-      }
+       extensionElement.$parent = this.element
 
-      if ( !extensionElement.values )
-        extensionElement.values = []
+       extensionElement.values = []
+     }
 
-      // input & putput
+     if ( !extensionElement.values )
+       extensionElement.values = []
 
-      const inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput")) || (<any>this.element)['$model'].create("camunda:InputOutput");
+     // input & putput
 
-      if ( inputOutputElement.$parent == undefined) {
-        inputOutputElement.$parent = extensionElement
+     const inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput")) || (<any>this.element)['$model'].create("camunda:InputOutput");
 
-        extensionElement.values.push(inputOutputElement)
-      }
+     if ( inputOutputElement.$parent == undefined) {
+       inputOutputElement.$parent = extensionElement
 
-      this.inputOutputElement = inputOutputElement
+       extensionElement.values.push(inputOutputElement)
+     }
 
-      // create inputs
+     this.inputOutputElement = inputOutputElement
 
-      if (!inputOutputElement['inputParameters'])
-        inputOutputElement['inputParameters'] = []
+     // create inputs
 
-      // create outputs
+     if (!inputOutputElement['inputParameters'])
+       inputOutputElement['inputParameters'] = []
 
-      if (!inputOutputElement['outputParameters'])
-        inputOutputElement['outputParameters'] = []
+     // create outputs
+
+     if (!inputOutputElement['outputParameters'])
+       inputOutputElement['outputParameters'] = []
 
       // lets check the current service
 

@@ -8,6 +8,10 @@
   font-family: "Roboto", sans-serif;
   fill: white;
 
+  display: grid;
+  grid-template-columns:min-content auto;
+   align-items: baseline;
+
   .property {
     cursor: default;
   }
