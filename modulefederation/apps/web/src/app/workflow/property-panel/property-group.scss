@@ -5,6 +5,12 @@
 
   margin: 0px 2px 0px 2px;
 
+  &.open {
+    .header .right .mat-icon.pi-low {
+      transform: rotate(0deg);
+    }
+  }
+
   .header {
     display: flex;
     font-size: 12px;
@@ -19,6 +25,17 @@
       align-items: center;
 
       margin-top: 4px;
+
+      .mat-icon.pi-low {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+        margin-right: 7px;
+        cursor: pointer;
+        transform-origin: 6px 8px;
+        transform: rotate(90deg);
+        transition: transform 0.2s ease-in-out;
+      }
 
       .badge {
         cursor: default;

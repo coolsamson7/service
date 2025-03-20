@@ -27,9 +27,9 @@ import type { ImportDoneEvent, ImportXMLResult, SaveXMLResult } from 'bpmn-js/li
 
 import BpmnJS from 'bpmn-js/lib/Modeler';
 
-import { from, Observable, tap } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { Shape } from 'bpmn-js/lib/model/Types';
-import CommandStack from 'diagram-js/lib/command/CommandStack';
+
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"

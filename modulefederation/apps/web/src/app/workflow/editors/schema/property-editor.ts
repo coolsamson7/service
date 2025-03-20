@@ -17,7 +17,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
 @Component({
   selector: "property-editor",
   templateUrl: './property-editor.html',
-  styleUrl: './property-editor.scss',
+  styleUrl: './property-editor.scss', 
   standalone: true,
   imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, PropertyNameComponent]
 })

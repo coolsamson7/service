@@ -57,6 +57,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     parameter.$parent = this.element
     parameter.type = "String"
     parameter.source = "value"
+    parameter.value = ""
 
     this.actionHistory.updateProperties({
       element: this.shape,

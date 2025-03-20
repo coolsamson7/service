@@ -1,7 +1,6 @@
 
-import { AfterContentInit, Component, Input, OnInit } from "@angular/core"
-import  { PropertyDescriptor } from "moddle"
-import { PropertyGroupComponent } from "./property-group";
+import { Component, Input } from "@angular/core"
+import { PropertyDescriptor } from "moddle"
 import { PropertyEditor } from "./property-editor";
 import { CommonModule } from "@angular/common";
 
@@ -13,12 +12,10 @@ import { CommonModule } from "@angular/common";
   standalone: true,
   imports: [CommonModule]
 })
-export class PropertyNameComponent implements AfterContentInit {
-
+export class PropertyNameComponent {
   // input
 
   @Input() property! : PropertyDescriptor;
-  @Input() group! : PropertyGroupComponent
 
   // instance data
 
@@ -33,16 +30,5 @@ export class PropertyNameComponent implements AfterContentInit {
   undo() {
     if ( this.isDirty())
         this.editor.undo()
-  }
-
-  // implement OnInit
-
-  ngAfterContentInit() {
-    if ( !this.editor)
-        console.log("no editor for " + this.property!.name)
-    /*this.editor = this.group.editors.find((editor) => editor.property == this.property)?.instance as PropertyEditor
-
-    if ( !this.editor)
-    console.log(this.property.name)*/
   }
 }

@@ -1,40 +1,44 @@
-<form #form="ngForm" class="form">
-    <mat-form-field>
-      <mat-label *ngIf="type === 'feature'">Feature</mat-label>
-      <mat-label *ngIf="type === 'form'">Form</mat-label>
+
+  <mat-form-field>
+    <input #input  matInput  #model="ngModel"
+      type="text" id="form"  name="form"
+      [ngModel]="name"  (ngModelChange)="onChange($event)"
+     
+      [placeholder]="type === 'feature' ? 'Feature' : 'Form'"
+
+      [suggestionProvider]="suggestionProvider"
+
+
+      [member]="suggestionProvider.suggestions"/>
+    <mat-error *showErrors></mat-error>
+
+    <!-- [check]="element" [shape]="shape" [property]="property.name" -->
+
+    <!-- menu -->
     
-      <input #model="ngModel" #input
-        type="text" id="form"  name="form"
-        (ngModelChange)="onChange($event)"
-        [(ngModel)]="name"
-        matInput
+    <span [matMenuTriggerFor]="menu" class="change-type-menu" matSuffix>
+      <mat-icon>{{icons[type]}}</mat-icon>
+    </span>  
 
-        [suggestionProvider]="type === 'form' ? formSuggestionProvider : featureSuggestionProvider"
-
-        [check]="element" [shape]="shape" [property]="property.name"/>
-
-      <mat-error *showErrors=/>
-
-      <!-- menu -->
-      
-      <span [matMenuTriggerFor]="menu" class="change-type-menu" matSuffix>
-        <mat-icon>{{icons[type]}}</mat-icon>
-      </span>  
-    </mat-form-field>
-  
-    <button *ngIf="type === 'form' && formNames.includes(name) " mat-icon-button (click)="editForm()"> 
-      <mat-icon *ngIf="formNames.includes(name)">edit</mat-icon>
-    </button>
-
-    <button *ngIf="type === 'form' && !formNames.includes(name)" mat-icon-button (click)="addForm()"> 
-      <mat-icon *ngIf="!formNames.includes(name)" >add_box</mat-icon>
+    <button matSuffix *ngIf="type === 'form' && formNames.includes(name) " mat-icon-button (click)="editForm()" matSuffix> 
+      <mat-icon>edit</mat-icon>
     </button>
   
-    <!-- the combo thing -->
+    <button matSuffix *ngIf="type === 'form' && !formNames.includes(name)" mat-icon-button (click)="addForm()" matSuffix> 
+      <mat-icon>add_box</mat-icon>
+    </button>
+
+    <!-- error -->
+
   
-    <mat-menu #menu="matMenu" class="change-type-menu-panel">
-      <div (click)="changeType('form')" mat-menu-item> <mat-icon>{{icons["form"]}}</mat-icon></div>
-      <div (click)="changeType('feature')" mat-menu-item> <mat-icon>{{icons["feature"]}}</mat-icon></div>
-    </mat-menu>
-  </form>
+  </mat-form-field>
+
+ 
+
+  <!-- the combo thing -->
+
+  <mat-menu #menu="matMenu" class="change-type-menu-panel">
+    <div (click)="changeType('form')" mat-menu-item> <mat-icon>{{icons["form"]}}</mat-icon></div>
+    <div (click)="changeType('feature')" mat-menu-item> <mat-icon>{{icons["feature"]}}</mat-icon></div>
+  </mat-menu>
   

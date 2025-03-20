@@ -11,7 +11,6 @@ import { ServiceTaskDescriptor, TaskDescriptorInventoryService } from '../../ser
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective, ValidationError } from '../../validation';
-import { PropertyNameComponent } from '../../property-panel/property-name';
 
 
 @RegisterPropertyEditor("bpmn:implementation")
@@ -20,7 +19,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './service-task.html',
   styleUrl: './service-task.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyPanelModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, PropertyPanelModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective]
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor {
   // instance data

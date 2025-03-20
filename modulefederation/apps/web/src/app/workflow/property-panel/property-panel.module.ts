@@ -9,6 +9,7 @@ import { PropertyPanelConfig, PropertyPanelConfigurationToken } from './property
 import { PropertyNameComponent } from './property-name';
 import { PropertyEditorDirective } from './property.editor.directive';
 import { ReplaySubject } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -16,6 +17,10 @@ import { ReplaySubject } from 'rxjs';
 
     CommonModule,
     FormsModule,
+
+    // material
+
+    MatIconModule,
 
     // editors
 

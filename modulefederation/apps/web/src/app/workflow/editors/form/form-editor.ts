@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { FormsModule, NgModel } from "@angular/forms";
+import { AbstractControl, FormsModule, NG_VALIDATORS, NgModel, ValidationErrors, Validator, ValidatorFn } from "@angular/forms";
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
-import { Component, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, Directive, Input, SimpleChanges, ViewChild } from "@angular/core";
 import { ArraySuggestionProvider, FeatureRegistry, MessageBus, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
@@ -12,13 +12,46 @@ import { ModelValidationDirective, ValidationError } from "../../validation";
 import { ValidationModule } from "@modulefederation/common";
 
 
+
+export function memberOfValidator(elements: string[]): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+    const value = control.value;
+    if (!value)
+      return null;
+
+    const result = elements.includes(value)
+
+    return !result ? {model: "unknown form"}: null;
+    }
+}
+
+
+@Directive({
+  selector: "[member]",
+  providers: [{
+    useExisting: MemberDirective,
+    provide: NG_VALIDATORS,
+    multi: true
+  }],
+  standalone: true
+})
+export class MemberDirective implements Validator {
+  @Input("member") elements! : string[]
+
+  // implement Validator
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return memberOfValidator(this.elements)(control);
+  }
+}
+
  @RegisterPropertyEditor("camunda:formKey")
  @Component({
   selector: "form-editor",
   styleUrl: "./form-editor.scss",
   templateUrl: "./form-editor.html",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective, ValidationModule]
+  imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, NgModelSuggestionsDirective, ModelValidationDirective, ValidationModule, MemberDirective]
  })
  export class FormPropertyEditor extends AbstractPropertyEditor {
     // instance data
@@ -31,8 +64,10 @@ import { ValidationModule } from "@modulefederation/common";
   type = "feature"
   name = ""
   formNames: string[] = []
-  featureSuggestionProvider : SuggestionProvider
-  formSuggestionProvider : SuggestionProvider
+  featureSuggestionProvider : ArraySuggestionProvider
+  formSuggestionProvider : ArraySuggestionProvider
+
+  suggestionProvider! : ArraySuggestionProvider
   icons : {[type: string] : string } = {
     form: "link",
     feature: "create"
@@ -58,6 +93,11 @@ import { ValidationModule } from "@modulefederation/common";
 
   changeType(type: string) {
     this.type = type
+
+    if ( this.type == "feature")
+      this.suggestionProvider == this.featureSuggestionProvider
+    else
+      this.suggestionProvider = this.formSuggestionProvider
 
     super.onChange( this.type + ":" + this.name)
   }
@@ -97,6 +137,11 @@ import { ValidationModule } from "@modulefederation/common";
       this.type = "feature"
       this.name = value
     }
+
+    if ( this.type == "feature")
+      this.suggestionProvider == this.featureSuggestionProvider
+    else
+      this.suggestionProvider = this.formSuggestionProvider
   }
 
   // override
@@ -107,18 +152,17 @@ import { ValidationModule } from "@modulefederation/common";
     super.onChange( this.type + ":" + this.name)
   }
 
-    // override AbstractPropertyEditor
-    
-      override showError(error: ValidationError, select: boolean) {
-        super.showError(error, select)
-    
-        this.model.control.markAsTouched()
-        if ( select ) {
-            this.input.nativeElement.focus()
-        }
-      }
-    
+  // override AbstractPropertyEditor
+  
+  override showError(error: ValidationError, select: boolean) {
+    super.showError(error, select)
 
+    this.model.control.markAsTouched()
+    if ( select ) {
+        this.input.nativeElement.focus()
+    }
+  }
+  
   // implement onInit
 
   override ngOnInit(): void {

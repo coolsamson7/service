@@ -1,6 +1,6 @@
 <div class="schema">
     <div class="name">
-        <property-name #label [property]="nameProperty!" [group]="group"></property-name>
+        <property-name #label [property]="nameProperty!"></property-name>
         <ng-container [property-editor]="element" [label]="label" [shape]="shape" [group]="group" [property]="nameProperty" [inputs]="{ value: element['name'] }"></ng-container>
         <svg-icon (click)="add()" name="plus" class="add"></svg-icon>
     </div>

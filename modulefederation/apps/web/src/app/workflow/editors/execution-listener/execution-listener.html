@@ -1,6 +1,6 @@
 <div class="listener">
   <ng-container  *ngFor="let property of properties">
-    <property-name #label [property]="property" [group]="group"></property-name>
+    <property-name #label [property]="property"></property-name>
 
     <ng-container [property-editor]="element" [label]="label" [group]="group" [property]="property" [shape]="shape" [inputs]="{ value: element[property.name] }"></ng-container>
   </ng-container>
