@@ -95,11 +95,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     return this.group.panel.actionHistory
   }
 
-  // protected
 
-  describe(error: any) {
-    return error["model"]
-  }
 
   // private
 

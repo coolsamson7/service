@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ModelValidationDirective, ValidationError } from '../../validation';
 import { NgModelSuggestionsDirective } from '@modulefederation/portal';
 import { MatSelectModule } from '@angular/material/select';
+import { ValidationModule } from '@modulefederation/common';
 
 
 
@@ -19,7 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './string-editor.html',
   styleUrl: "./string-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, NgModelSuggestionsDirective, MatSelectModule]
+  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, NgModelSuggestionsDirective, MatSelectModule, ValidationModule]
 })
 export class StringPropertyEditor extends AbstractPropertyEditor<string> {
   // instance data

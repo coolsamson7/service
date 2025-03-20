@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective } from '../../validation';
+import { ValidationModule } from '@modulefederation/common';
 
 @RegisterPropertyEditor("Long")
 @Component({
@@ -15,7 +16,7 @@ import { ModelValidationDirective } from '../../validation';
   templateUrl: './long-editor.html',
   //styleUrl: "./string-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective]
+  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, ValidationModule]
 })
 export class LongPropertyEditor extends AbstractPropertyEditor<number> {
    // constructor

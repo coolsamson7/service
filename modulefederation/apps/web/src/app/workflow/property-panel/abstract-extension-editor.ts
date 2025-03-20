@@ -8,6 +8,7 @@ import  {Element, PropertyDescriptor, Moddle } from "moddle"
 import { Shape } from "bpmn-js/lib/model/Types";
 import { ValidationError } from "../validation";
 import { PropertyGroupComponent } from "./property-group";
+import { ActionHistory } from "../bpmn";
 
 @Component({
   template: '<div></div>'
@@ -23,6 +24,10 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
 
   model!: Moddle
 
+  get actionHistory() : ActionHistory {
+    return this.group.panel.actionHistory
+  }
+
   // public
 
   get<T>(property: string) : T {
@@ -32,6 +37,8 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
   set<T>(property: string, value: T) : void {
      this.element[property] = value
   }
+
+  
 
   // abstract
 

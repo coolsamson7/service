@@ -1,27 +1,17 @@
 <mat-form-field class="dense-5">
     <!-- input with suggestion provider -->
 
-    <ng-container *ngIf="inputType === 'suggestionInput'">
-      <input #input matInput  #model="ngModel" type="text" [suggestionProvider]="hints.suggestionProvider!" [ngModel]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
-      <mat-error *ngIf="model.invalid && model.touched">
-        {{describe(model.errors)}}
-      </mat-error>
-    </ng-container>
+    <input *ngIf="inputType === 'suggestionInput'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput  #model="ngModel" type="text" [suggestionProvider]="hints.suggestionProvider!" [ngModel]="value" [disabled]="readOnly" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
 
      <!-- plain input  -->
 
-    <ng-container *ngIf="inputType === 'input'">
-      <input #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="readOnly" [check]="element" [shape]="shape" [property]="property.name" />
-      <mat-error *ngIf="model.invalid && model.touched">
-        {{describe(model.errors)}}
-      </mat-error>
-    </ng-container>
+    <input  *ngIf="inputType === 'input'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="readOnly" [check]="element" [shape]="shape" [property]="property.name" />
 
      <!-- select -->
 
-    <ng-container *ngIf="inputType === 'select'">
-      <mat-select class="dense-5" #input required  [disabled]="readOnly" [value]="value" (selectionChange)="onChange($event.value)">
-        <mat-option *ngFor="let value of hints.oneOf" [value]="value">{{value}}</mat-option>
-      </mat-select>
-    </ng-container>
+    <mat-select  *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="readOnly" [value]="value" (selectionChange)="onChange($event.value)">
+      <mat-option *ngFor="let value of hints.oneOf" [value]="value">{{value}}</mat-option>
+    </mat-select>
+
+    <mat-error *showErrors/>
 </mat-form-field>

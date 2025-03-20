@@ -4,7 +4,7 @@ import { ModelValidation } from './validation';
 export const RegisterValidation = (type: string): ClassDecorator => {
     return (validation: any) => {
       import('./validation.module').then((m) => {
-        m.ValidationModule.injector.subscribe((injector) => {
+        m.ModelValidationModule.injector.subscribe((injector) => {
           const modelValidation = injector.get(ModelValidation);
           const validator : AbstractModelValidator = injector.get(validation)
 

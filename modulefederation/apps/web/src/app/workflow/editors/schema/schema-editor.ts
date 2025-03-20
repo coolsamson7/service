@@ -45,6 +45,13 @@ export class SchemaEditor extends AbstractExtensionEditor {
 
       newProperty.$parent =  this.element
 
+      this.actionHistory.updateProperties({
+        element: this.shape,
+        moddleElement: this.element as any as Element,
+        properties: {
+          properties: [...this.properties, newProperty]
+        }
+      })
 
       this.element["properties"].push(newProperty)
       this.open.push(false)

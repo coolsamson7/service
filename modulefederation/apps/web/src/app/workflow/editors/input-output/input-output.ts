@@ -58,7 +58,15 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     parameter.type = "String"
     parameter.source = "value"
 
-    this.element['inputParameters'].push(parameter)
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.element as any as Element,
+      properties: {
+        inputParameters: [...this.element['inputParameters'], parameter]
+      }
+    })
+
+    //this.element['inputParameters'].push(parameter)
 
     return parameter
   }
@@ -69,7 +77,16 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     parameter.$parent = this.element
     parameter.type = "String"
 
-    this.element['outputParameters'].push(parameter)
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.element as any as Element,
+      properties: {
+        inputParameters: [...this.element['outputParameters'], parameter]
+      }
+    })
+
+
+    //this.element['outputParameters'].push(parameter)
 
     return parameter
   }
