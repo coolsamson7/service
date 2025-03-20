@@ -162,7 +162,9 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     this.editor.changedValue(event)
   }
 
-  showError(error: ValidationError, select: boolean) {}
+  showError(error: ValidationError, select: boolean) {
+    this.editor.group.open = true
+  }
 
   // implement onInit
 

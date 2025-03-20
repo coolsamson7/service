@@ -34,7 +34,7 @@ export class StringPropertyEditor extends AbstractPropertyEditor<string> {
   // override AbstractPropertyEditor
 
   override showError(error: ValidationError, select: boolean) {
-    this.editor.group.open = true
+    super.showError(error, select)
 
     this.model.control.markAsTouched()
     if ( select ) {

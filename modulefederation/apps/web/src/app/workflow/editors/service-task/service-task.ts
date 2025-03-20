@@ -1,16 +1,16 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { Element } from 'moddle';
 import { AbstractPropertyEditor, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ServiceTaskDescriptor, TaskDescriptorInventoryService } from '../../service/task-service-descriptor';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ModelValidationDirective } from '../../validation';
+import { ModelValidationDirective, ValidationError } from '../../validation';
 import { PropertyNameComponent } from '../../property-panel/property-name';
 
 
@@ -24,6 +24,9 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor {
   // instance data
+
+  @ViewChild("model") model! : NgModel;
+  @ViewChild("input") input! : any;
 
   descriptors : ServiceTaskDescriptor[] = []
   selectedService!: ServiceTaskDescriptor | undefined
@@ -101,6 +104,18 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
     
     this.setService(service)
   }
+
+   // override AbstractPropertyEditor
+  
+    override showError(error: ValidationError, select: boolean) {
+      super.showError(error, select)
+  
+      this.model.control.markAsTouched()
+      if ( select ) {
+          this.input.nativeElement.focus()
+      }
+    }
+  
 
   // override OnInit
 

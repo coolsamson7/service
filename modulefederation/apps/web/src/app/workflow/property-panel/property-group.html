@@ -17,15 +17,13 @@
     </div>
   </div>
 
-  <div *ngIf="open && group.extension" class="extension">
-    <extension-editor  *ngIf="group.extension" [element]="element!" [shape]="shape!" [extension]="group.extension" [config]="group"></extension-editor>
-  </div>
-  <div *ngIf="open && !group.extension" class="body">
-    <form>
-      <ng-container *ngFor="let property of group.properties">
-        <property-name #label [property]="property"  [group]="this"/>
-        <ng-container [property-editor]="element!" [group]="this" [label]="label" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
-      </ng-container>
-    </form>
-  </div>
+ 
+  <extension-editor  *ngIf="open && group.extension" [element]="element!" [shape]="shape!" [extension]="group.extension" [config]="group"></extension-editor>
+  
+  <form *ngIf="open && !group.extension" class="body">
+    <ng-container *ngFor="let property of group.properties">
+      <property-name #label [property]="property"  [group]="this"/>
+      <ng-container [property-editor]="element!" [group]="this" [label]="label" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
+    </ng-container>
+  </form>
 </div>

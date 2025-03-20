@@ -2,42 +2,18 @@
     <mat-form-field>
       <mat-label *ngIf="type === 'feature'">Feature</mat-label>
       <mat-label *ngIf="type === 'form'">Form</mat-label>
-  
-      <!-- feature -->
-  
-      <ng-container *ngIf="type === 'feature'">
-        <input #feature="ngModel"  type="text" (ngModelChange)="onChange($event)" [(ngModel)]="name" matInput name="feature"
-        [suggestionProvider]="featureSuggestionProvider"
-  
-        [check]="element" [shape]="shape" [property]="property.name"
-        />
-  
-        <mat-error *ngIf="feature.invalid && feature.touched">
-          {{feature.errors!["model"]}}
-        </mat-error>
-      </ng-container>
     
-  
-      <!-- form -->
-  
-      <ng-container  *ngIf="type === 'form'">
-        <input #f="ngModel"
-          type="text"
-          (ngModelChange)="onChange($event)"
-          [(ngModel)]="name"
-          matInput
+      <input #model="ngModel" #input
+        type="text" id="form"  name="form"
+        (ngModelChange)="onChange($event)"
+        [(ngModel)]="name"
+        matInput
 
-          [suggestionProvider]="formSuggestionProvider"
+        [suggestionProvider]="type === 'form' ? formSuggestionProvider : featureSuggestionProvider"
 
-          [check]="element" [shape]="shape" [property]="property.name"
+        [check]="element" [shape]="shape" [property]="property.name"/>
 
-          name="form"
-        />
-
-        <mat-error *ngIf="f.invalid && f.touched">
-          {{f.errors!["model"]}}
-        </mat-error>
-      </ng-container>
+      <mat-error *showErrors=/>
 
       <!-- menu -->
       
