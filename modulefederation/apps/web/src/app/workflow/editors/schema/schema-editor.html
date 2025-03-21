@@ -5,7 +5,9 @@
         <svg-icon (click)="add()" name="plus" class="add"></svg-icon>
     </div>
 
-    <div>
+    <property-list [properties]="properties" [shape]="shape" [group]="group" ></property-list>
+
+    <!--div>
         <div *ngFor="let property of element['properties']; index as i" class="property">
             <div class="left">
                 <svg-icon (click)="toggle(i)" [name]="open[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
@@ -15,8 +17,7 @@
             <div *ngIf="!open[i]">{{name(property)}}</div>
             <ng-container *ngIf="open[i]" [property-editor]="property" [shape]="shape" [group]="group" ></ng-container>
 
-            <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
             <svg-icon (click)="delete(property)" name="delete" class="delete"></svg-icon>
         </div>
-    </div>
+    </div-->
   </div>

@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { SvgIconComponent } from '../../svg.icon';
 import { PropertyNameComponent } from '../../property-panel/property-name';
+import { PropertyListComponent } from './property-list';
 
 
 
@@ -20,12 +21,12 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './schema-editor.html',
   styleUrl: './schema-editor.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, SvgIconComponent, PropertyNameComponent]
+  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, SvgIconComponent, PropertyNameComponent, PropertyListComponent]
 })
-export class SchemaEditor extends AbstractExtensionEditor {
+export class SchemaEditorComponent extends AbstractExtensionEditor {
   // instance data
 
-  open : boolean[] = []
+  open = new Map<Element,boolean> ()
   nameProperty: Moddle.PropertyDescriptor | undefined
 
   get properties(): Element[] {
@@ -38,6 +39,10 @@ export class SchemaEditor extends AbstractExtensionEditor {
     super()
 
     extensionEditor.computeLabel = (element: Element) => element["name"] || "<name>"
+  }
+
+  isOpen(property: Element) {
+    return this.open.get(property)
   }
 
   add() {
@@ -53,30 +58,27 @@ export class SchemaEditor extends AbstractExtensionEditor {
         }
       })
 
-      this.open.push(false)
+      this.open.set(newProperty, false)
   }
 
-  name(property: Element) {
-    if ( property["name"] && property["name"].trim().length > 0)
-      return property["name"] + " : " +  property["type"]
-    else
-      return "<name>" + " : " + property["type"]
+  delete(property: Element) {
+    const index = this.properties.indexOf(property)
+
+    const properties = [...this.properties]
+    properties.splice(index,1)
+
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.element as any as Element,
+      properties: {
+        properties: properties
+      }
+    })
   }
 
-  delete(property: Element) { // TODO
-    /*const values : any[] = this.extensionElement.values
-    const index = values.indexOf(extension)
-
-    values.splice(index, 1);
-
-    this.extensions = this.getExtensionElements(this.extension)
-*/
+  toggle(property: Element) {
+    this.open.set(property, !this.isOpen(property))
   }
-
-  toggle(extension: number) {
-    this.open[extension] = !this.open[extension]
-  }
-
 
   // override OnInit
 
@@ -85,6 +87,9 @@ export class SchemaEditor extends AbstractExtensionEditor {
 
       if ( !this.element["properties"] )
         this.element["properties"] = []
+
+      for ( const property of this.properties)
+        this.open.set(property, false)
 
       this.nameProperty = this.element.$descriptor.properties.find((prop) => ["name"].includes(prop.name))
   }
