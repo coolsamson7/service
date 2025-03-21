@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, ViewChild } from '@angular/core';
 
-import { AbstractExtensionEditor, EditorHints, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
+import { AbstractExtensionEditor, EditorSettings, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
 export class InputParameterEditor extends AbstractExtensionEditor {
   //
 
-  @ViewChild('form') form!: NgForm; 
+  @ViewChild('form') form!: NgForm;
 
   // instance data
 
@@ -45,13 +45,14 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
   readOnly = false
 
-  valueHints: EditorHints<string> = {}
+  valueHints: EditorSettings<string> = {}
 
-  typeHints: EditorHints<string> = {
-    oneOf: DataTypes.types
+  typeHints: EditorSettings<string> = {
+    oneOf: DataTypes.types,
+    readOnly: this.readOnly
   }
 
-  sourceHints: EditorHints<string> = {
+  sourceHints: EditorSettings<string> = {
     oneOf: ["value", "process", "output", "expression"]
   }
 
@@ -176,7 +177,5 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "source", "value"].includes(prop.name))
 
       this.changeSource(this.element["source"])
-
-      this.typedProperty = this.createProperty(this.element["type"])
   }
 }

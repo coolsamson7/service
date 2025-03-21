@@ -277,7 +277,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   canUndo() : boolean {
-    return this.actionHistory.canUndo() || false
+    return this.actionHistory?.canUndo() || false
   }
 
    // implement OnChanges

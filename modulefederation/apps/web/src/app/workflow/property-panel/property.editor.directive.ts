@@ -7,7 +7,7 @@ import { Element, PropertyDescriptor } from "moddle";
 import { Shape } from "bpmn-js/lib/model/Types";
 import { PropertyPanelComponent } from "./property-panel";
 import { ValidationError } from "../validation";
-import { EditorHints } from "./abstract-property-editor";
+import { EditorSettings } from "./abstract-property-editor";
 import { PropertyGroupComponent } from "./property-group";
 import { PropertyNameComponent } from "./property-name";
 
@@ -20,14 +20,14 @@ type UserInputs = Record<string, any>;
 export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   // input & output
 
-  @Input('property-editor') element!: Element 
+  @Input('property-editor') element!: Element
   @Input() shape!: Shape
   @Input() extension!: string
-  @Input() readOnly = false 
+  @Input() readOnly = false
   @Input() property?: PropertyDescriptor | undefined
   @Input() group!: PropertyGroupComponent
   @Input() inputs?: UserInputs = {};
-  @Input() hints: EditorHints<any> = {}
+  @Input() settings: EditorSettings<any> = {}
 
   @Input() label!: PropertyNameComponent
 
@@ -75,7 +75,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
   private createComponent() {
     // create
-    
+
     let type = undefined
 
     if ( this.property) {
@@ -85,7 +85,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     }
     else type =  this.registry.get(this.element.$type)
 
-    if (!type) 
+    if (!type)
       throw Error("unknown component for type " + this.property?.type ||this.element.$type)
 
     this.componentFactory = this.resolver.resolveComponentFactory<PropertyEditor>(type)
@@ -94,7 +94,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     this.updateComponent((this.instance = this.component.instance))
 
     // inform label
-    
+
     if ( this.label) {
       console.log(this.property?.name + ".editor=" + this.instance.constructor.name)
       this.label!.editor = this.instance
@@ -118,7 +118,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
       extension: this.extension,
       property: this.property,
       readOnly: this.readOnly,
-      hints: this.hints,
+      settings: this.settings,
       editor: this,
       group: this.group,
       v: this.property ? this.element.get(this.property!.name) : undefined
@@ -139,7 +139,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     this.setupValue()
     this.createComponent()
 
-  
+
     this.group.editors.push(this)
   }
 
@@ -157,21 +157,21 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
      let componentChanges: Record<string, SimpleChange>;
      if (!this.initialized) {
        componentChanges = this.makeComponentChanges(changes['inputs'], true);
- 
+
        this.initialized = true;
      }
- 
+
      componentChanges ??= this.makeComponentChanges(changes['inputs'], false);
- 
+
      // copy inputs
- 
+
      //if (changes['inputs'] && this.componentFactory) {
      //  this.bindInputs(this.inputs ?? {}, this.component.instance);
      //}
- 
+
      // inform about changes
- 
-    
+
+
      if ( componentChanges["value"] && !componentChanges["value"].isFirstChange())
       if (this.component?.instance.ngOnChanges)
         this.component.instance.ngOnChanges(componentChanges);

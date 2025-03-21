@@ -6,6 +6,6 @@
 
         <ng-container *ngIf="property.name === 'value'" [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="typedProperty" [inputs]="{ value: element[property.name] }"></ng-container>
 
-        <ng-container *ngIf="property.name === 'type'" [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="property" [inputs]="{ value: element[property.name] }" [hints]="typeHints" (valueChange)="typeChange($event)"></ng-container>
+        <ng-container *ngIf="property.name === 'type'" [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="property" [inputs]="{ value: element[property.name] }" [settings]="typeHints" (valueChange)="typeChange($event)"></ng-container>
     </ng-container>
   </div>

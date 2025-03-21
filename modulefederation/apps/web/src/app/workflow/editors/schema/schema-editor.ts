@@ -53,7 +53,6 @@ export class SchemaEditor extends AbstractExtensionEditor {
         }
       })
 
-      this.element["properties"].push(newProperty)
       this.open.push(false)
   }
 

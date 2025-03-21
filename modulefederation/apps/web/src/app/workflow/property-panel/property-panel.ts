@@ -11,6 +11,7 @@ import { ValidationError } from "../validation";
 import { PropertyGroupComponent } from "./property-group";
 import { ActionHistory } from "../bpmn"
 import { PropertyEditorDirective } from "./property.editor.directive";
+import { EventBus } from "bpmn-js/lib/BaseViewer";
 
 
 @Component( {
@@ -41,16 +42,17 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
 
 
   actionHistory!: ActionHistory
+  eventBus!: EventBus<any>
 
   // constructor
 
   constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig, private messageBus: MessageBus) {
-    messageBus.listenFor("model-validation").subscribe(message => {
+    messageBus.listenFor<ValidationError[]>("model-validation").subscribe(message => {
       if ( message.message == "error") {
-        this.highlightErrors(message.arguments as ValidationError[], false)
+        this.highlightErrors(message.arguments!, false)
       }
       else if (message.message == "select-error") {
-        this.highlightErrors([message.arguments as ValidationError], true)
+        this.highlightErrors(message.arguments!, true)
       }
     })
 
@@ -176,6 +178,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
+    this.eventBus = this.modeler.get('eventBus');
 
     this.checkModel()
   }

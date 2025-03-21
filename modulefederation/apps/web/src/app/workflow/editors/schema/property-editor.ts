@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Element } from "moddle"
-import { AbstractExtensionEditor, EditorHints, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
+import { AbstractExtensionEditor, EditorSettings, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 import { ExtensionEditor } from '../../property-panel';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +30,7 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
   typedProperty!: Moddle.PropertyDescriptor
   typesProperty!: Moddle.PropertyDescriptor
 
-  typeHints: EditorHints<string> = {
+  typeHints: EditorSettings<string> = {
     oneOf: DataTypes.types
   }
 

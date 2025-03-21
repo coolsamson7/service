@@ -50,9 +50,9 @@ export class StringPropertyEditor extends AbstractPropertyEditor<string> {
      // determine input type
 
     this.inputType = "input"
-    if ( this.hints.suggestionProvider)
+    if ( this.settings.suggestionProvider)
       this.inputType = "suggestionInput"
-    else if (this.hints.oneOf)
+    else if (this.settings.oneOf)
       this.inputType = "select"
   }
 }

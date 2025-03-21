@@ -19,7 +19,6 @@ export class ExtensionEditor implements OnInit {
   @Input() shape!: Shape
   @Input() extension!: string
   @Input() config!: Group
-  //@Input() group!: PropertyGroupComponent
 
   extensionElement! : ExtensionElements
 

@@ -19,7 +19,6 @@ import { Element } from "moddle"
 export class InputOutputEditor extends AbstractExtensionEditor {
   // instance data
 
-  properties: Moddle.PropertyDescriptor[] = []
   openInputs: boolean[] = []
   openOutputs: boolean[] = []
 
@@ -106,8 +105,5 @@ export class InputOutputEditor extends AbstractExtensionEditor {
         this.element['outputParameters'] = []
 
       this.openOutputs = this.element['inputParameters'].map((param: any) => false)
-
-      this.properties = this.element.$descriptor.properties.filter((prop) => prop.name == "event" || prop.name == "class" ||prop.name == "expression" ) // TODO
-
   }
 }

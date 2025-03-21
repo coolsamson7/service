@@ -4,15 +4,15 @@
       type="text" id="form"  name="form"
       [ngModel]="name"  (ngModelChange)="onChange($event)"
      
-      [placeholder]="type === 'feature' ? 'Feature' : 'Form'"
+      [placeholder]="type === 'feature' ? 'Feature' : 'Form'">
 
-      [suggestionProvider]="suggestionProvider"
-
-
-      [member]="suggestionProvider.suggestions"/>
+     
     <mat-error *showErrors></mat-error>
 
-    <!-- [check]="element" [shape]="shape" [property]="property.name" -->
+    <!-- [check]="element" [shape]="shape" [property]="property.name"  [suggestionProvider]="suggestionProvider"
+
+
+      [member]="suggestionProvider.suggestions"/>-->
 
     <!-- menu -->
     

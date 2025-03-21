@@ -4,6 +4,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { PropertyEditor } from "./property-editor";
 //import { PropertyEditorDirective } from "./property.editor.directive";
+import { EventBus } from "bpmn-js/lib/BaseViewer";
 
 import  {Element, PropertyDescriptor  } from "moddle"
 import { Shape } from "bpmn-js/lib/model/Types";
@@ -12,8 +13,9 @@ import { SuggestionProvider } from "@modulefederation/portal";
 import { ActionHistory } from "../bpmn"
 import { PropertyGroupComponent } from "./property-group";
 
-export interface EditorHints<T> {
+export interface EditorSettings<T> {
   suggestionProvider?: SuggestionProvider
+  readOnly?: boolean 
   oneOf?: T[]
 }
 
@@ -59,12 +61,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   @Input() shape!: Shape
   @Input() element!: Element
-  @Input() readOnly = false // TODO -> hints
   @Input() property!: PropertyDescriptor
-  @Input() hints : EditorHints<T> = {}
+  @Input() settings : EditorSettings<T> = {}
   @Input() group!: PropertyGroupComponent
   @Input() editor!: any // TODO
-  @Input() v!: any//TODO
 
   // instance data
 
@@ -75,6 +75,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   out: Conversion | undefined = undefined;
 
   // getter & setter
+
+  get eventBus() : EventBus<any> {
+    return this.group.panel.eventBus
+  }
 
   get value() : any {
     let v = this.element.get(this.property.name)
@@ -94,8 +98,6 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   get actionHistory() : ActionHistory {
     return this.group.panel.actionHistory
   }
-
-
 
   // private
 
@@ -146,6 +148,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       // reuse existing action and simply update the new value
 
       this.action.context.properties[this.property.name] = event
+
+       // still trigger bus
+
+       this.eventBus.fire('commandStack.changed', {trigger: "execute", type: "commandStack.changed"});
     }
     else {
       this.action = this.actionHistory.updateProperties({

@@ -67,7 +67,7 @@ export class MemberDirective implements Validator {
   featureSuggestionProvider : ArraySuggestionProvider
   formSuggestionProvider : ArraySuggestionProvider
 
-  suggestionProvider! : ArraySuggestionProvider
+  suggestionProvider! : ArraySuggestionProvider 
   icons : {[type: string] : string } = {
     form: "link",
     feature: "create"

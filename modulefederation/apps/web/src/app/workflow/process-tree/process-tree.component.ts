@@ -42,6 +42,7 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
     treeControl = new NestedTreeControl<Node>(node => node.children);
     dataSource = new MatTreeNestedDataSource<Node>();
 
+    vetoSelection = false
     selection?: Node
 
     // private
@@ -85,9 +86,15 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
     }
 
     select(node: Node) {
-        this.selection = node
+        if ( this.selection !== node) {
+            this.onSelectionChange.emit(node)
 
-        this.onSelectionChange.emit(node)
+            //if (!this.vetoSelection) {
+                this.selection = node
+            //}
+
+            this.vetoSelection = false
+        }
     }
 
     addProcess(process: Process) : Node {
