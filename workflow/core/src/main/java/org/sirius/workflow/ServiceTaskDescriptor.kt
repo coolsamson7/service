@@ -25,7 +25,13 @@ class InputInitializer(val field: Field, val name: String) : Initializer {
 
     override fun initialize(serviceTask: AbstractServiceTask) {
         try {
-            field.set(serviceTask, serviceTask.getVariable<Any>(name))
+            val value =  serviceTask.getVariable<Any>(name)
+
+            if (!field.type.isAssignableFrom(value::class.java)) {
+                //
+            }
+
+            field.set(serviceTask, value)
         }
         catch(e: Error) {
             print("### tried to set a field of type " + field.type.name + " to a " +  serviceTask.getVariable<Any>(name).javaClass.name)

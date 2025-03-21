@@ -99,6 +99,13 @@ class SchemaParseListener : AbstractBpmnParseListener() {
                         builder.clear().append("\${execution.getVariable(\"${variable}\")}")
                     }
 
+                    else if (source == "value") {
+                        val variable = builder.toString()
+                        val type = input.attribute("type")
+
+                        builder.clear().append("\${types.convert2(\"$variable\", \"$type\")}")
+                    }
+
                     // output
 
                     else if (source == "output") {

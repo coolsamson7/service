@@ -39,7 +39,23 @@ class ServiceTaskRestService {
     // private
 
     private fun mapType(clazz: Class<*>) : String {
-        return clazz.simpleName
+
+        val typeName = when ( clazz) {
+            String::class -> "String"
+            Boolean::class -> "Boolean"
+            Boolean::class.java -> "Boolean"
+            Short::class -> "Short"
+            Short::class.java -> "Short"
+            Int::class -> "Integer"
+            Int::class.java -> "Integer"
+            Long::class -> "Long"
+            Long::class.java -> "Long"
+            Double::class -> "Double"
+            Double::class.java -> "Double"
+            else -> clazz.simpleName
+        }
+
+        return typeName
     }
 
     private fun mapParameter(parameter: ParameterDescriptor) : ServiceTaskParameterDescriptorDTO {

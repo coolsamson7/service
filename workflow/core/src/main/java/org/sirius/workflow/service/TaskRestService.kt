@@ -113,7 +113,7 @@ class TaskRestService {
         val taskSchema = this.metadataService.taskInputSchema(processDefinition, taskName)
 
         for (property in taskSchema.properties)
-            property.value = this.taskService.getVariableLocal(task, property.name)
+            property.value = this.taskService.getVariable(task, property.name)
 
         // done
 
