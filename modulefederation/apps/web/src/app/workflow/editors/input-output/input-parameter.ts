@@ -53,7 +53,8 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
 
   sourceHints: EditorSettings<string> = {
-    oneOf: ["value", "process", "output", "expression"]
+    oneOf: ["value", "process", "output", "expression"],
+    readOnly: this.readOnly
   }
 
    suggestionProvider : SuggestionProvider | undefined = undefined

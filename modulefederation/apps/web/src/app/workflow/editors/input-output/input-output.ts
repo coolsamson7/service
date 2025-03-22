@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { Element } from "moddle"
+import { ParameterListComponent } from './parameter-list';
 
 @RegisterPropertyEditor("camunda:InputOutput")
 @Component({
@@ -14,79 +15,104 @@ import { Element } from "moddle"
   templateUrl: './input-output.html',
   styleUrl: './input-output.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, PropertyPanelModule]
+  imports: [FormsModule, CommonModule, PropertyPanelModule, ParameterListComponent]
 })
 export class InputOutputEditor extends AbstractExtensionEditor {
   // instance data
 
-  openInputs: boolean[] = []
-  openOutputs: boolean[] = []
+  open = new Map<Element,boolean> ()
+
+  // getters
+
+  get inputParameters(): Element[] {
+    return this.element["inputParameters"];
+  }
+
+ get outputParameters(): Element[] {
+    return this.element["outputParameters"];
+  }
 
   // private
 
-  private create(type: string) {
-    return this.element['$model'].create(type)
+  private create(type: string, properties: any) {
+    const element = this.element['$model'].create(type)
+
+    for ( const propertyName in properties)
+       element[propertyName] = properties[propertyName]
+
+    element.$parent = this.element
+
+    return element
   }
 
   // callbacks
 
-  parameterName(element: Element) {
-    return (element["name"] || "<name>") + " : " +  (element["type"] || "<type>" )
+  isOpen(property: Element) {
+    return this.open.get(property)
   }
 
-  deleteInput(i: number) {
-    this.element['inputParameters'].splice(i, 1)
+  toggle(parameter: Element) {
+    this.open.set(parameter, !this.isOpen(parameter))
   }
 
-  deleteOutput(i: number) {
-    this.element['outputParameters'].splice(i, 1)
-  }
+  delete(parameter: Element) {
+    let properties: any
 
-  toggleInput(i : number) {
-    this.openInputs[i] = ! this.openInputs[i]
-  }
+    let parameters;
+    let index = this.inputParameters.indexOf(parameter)
+    if ( index >= 0) {
+      parameters =  [...this.inputParameters]
+      properties = {
+        inputParameters: parameters
+      }
+    }
+    else {
+      index = this.outputParameters.indexOf(parameter)
+      parameters = [...this.outputParameters]
+      properties = {
+             outputParameters: parameters
+      }
+    }
 
-  toggleOutput(i : number) {
-    this.openOutputs[i] = ! this.openOutputs[i]
+    parameters.splice(index,1)
+
+    this.actionHistory.updateProperties({
+      element: this.shape,
+      moddleElement: this.element as any as Element,
+      properties: properties
+    })
   }
 
   addInput() : Element {
-    const parameter = this.create("schema:inputParameter")
-
-    parameter.$parent = this.element
-    parameter.type = "String"
-    parameter.source = "value"
-    parameter.value = ""
+    const parameter = this.create("schema:inputParameter", {
+       type:"String",
+       source: "value",
+       value: ""
+      })
 
     this.actionHistory.updateProperties({
       element: this.shape,
       moddleElement: this.element as any as Element,
       properties: {
-        inputParameters: [...this.element['inputParameters'], parameter]
+        inputParameters: [...this.inputParameters, parameter]
       }
     })
-
-    //this.element['inputParameters'].push(parameter)
 
     return parameter
   }
 
   addOutput() : Element {
-    const parameter =  this.create("schema:outputParameter")
-
-    parameter.$parent = this.element
-    parameter.type = "String"
+    const parameter =  this.create("schema:outputParameter", {
+      type: "String"
+      })
 
     this.actionHistory.updateProperties({
       element: this.shape,
       moddleElement: this.element as any as Element,
       properties: {
-        inputParameters: [...this.element['outputParameters'], parameter]
+        inputParameters: [...this.outputParameters, parameter]
       }
     })
-
-
-    //this.element['outputParameters'].push(parameter)
 
     return parameter
   }
@@ -96,14 +122,13 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      if (!this.element['inputParameters'])
+      if (!this.inputParameters)
         this.element['inputParameters'] = []
 
-      this.openInputs = this.element['inputParameters'].map((param: any) => false)
-
-      if (!this.element['outputParameters'])
+      if (!this.outputParameters)
         this.element['outputParameters'] = []
 
-      this.openOutputs = this.element['inputParameters'].map((param: any) => false)
+      this.inputParameters.forEach(parameter => this.open.set(parameter, false))
+      this.outputParameters.forEach(parameter => this.open.set(parameter, false))
   }
 }

@@ -1,5 +1,6 @@
 
 <div class="inputoutput">
+  <!-- inputs -->
 
   <div class="inputs">
     <div class="header">
@@ -7,33 +8,17 @@
       <svg-icon (click)="addInput()" name="plus" class="plus"/>
     </div>
 
-    <div *ngFor="let input of element['inputParameters']; index as i" class="input">
-      <div class="left">
-        <svg-icon (click)="toggleInput(i)" [name]="openInputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
-        <div class="line"></div>
-      </div>
-
-      <div *ngIf="!openInputs[i]" class="name">{{parameterName(input)}}</div>
-      <ng-container *ngIf="openInputs[i]" [property-editor]="input" [group]="group" [shape]="shape" class="input"></ng-container>
-      <svg-icon name="delete" class="delete" (click)="deleteInput(i)"></svg-icon>
-    </div>
+    <parameter-list [parameters]="inputParameters" [shape]="shape" [group]="group" ></parameter-list>
   </div>
 
+   <!-- outputs -->
+    
   <div class="outputs">
     <div class="header">
       <div class="label">Output</div>
       <svg-icon (click)="addOutput()" name="plus" class="plus"/>
     </div>
 
-    <div *ngFor="let output of element['outputParameters']; index as i" class="output">
-      <div class="left">
-        <svg-icon  (click)="toggleOutput(i)" [name]="openOutputs[i] ? 'arrow-down' : 'arrow-right'"></svg-icon>
-        <div class="line"></div>
-      </div>
-
-      <div *ngIf="!openOutputs[i]" class="name">{{parameterName(output)}}</div>
-      <ng-container *ngIf="openOutputs[i]" [property-editor]="output" [group]="group" [shape]="shape"  class="output"></ng-container>
-      <svg-icon name="delete" class="delete" (click)="deleteOutput(i)"></svg-icon>
-    </div>
+    <parameter-list [parameters]="outputParameters" [shape]="shape" [group]="group" ></parameter-list>
   </div>
 </div>

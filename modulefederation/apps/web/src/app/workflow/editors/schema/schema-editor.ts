@@ -65,7 +65,7 @@ export class SchemaEditorComponent extends AbstractExtensionEditor {
     const index = this.properties.indexOf(property)
 
     const properties = [...this.properties]
-    properties.splice(index,1)
+    properties.splice(index, 1)
 
     this.actionHistory.updateProperties({
       element: this.shape,

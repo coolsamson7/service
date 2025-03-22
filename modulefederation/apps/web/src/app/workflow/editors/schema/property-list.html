@@ -1,6 +1,6 @@
 
 <div>
-    <div *ngFor="let property of properties; index as i" class="property">
+    <div *ngFor="let property of properties" class="property">
         <div class="left">
             <svg-icon (click)="schema.toggle(property)" [name]="schema.isOpen(property) ? 'arrow-down' : 'arrow-right'"></svg-icon>
             <div *ngIf="true" class="line"></div>

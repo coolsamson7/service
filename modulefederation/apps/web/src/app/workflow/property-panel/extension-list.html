@@ -1,0 +1,13 @@
+
+<div class="extensions">
+  <div *ngFor="let extension of extensions" class="extension">
+    <div class="left">
+      <svg-icon *ngIf="config.multiple" (click)="extensionEditor.toggle(extension)" [name]="extensionEditor.isOpen(extension) ? 'arrow-down' : 'arrow-right'"></svg-icon>
+      <div *ngIf="config.multiple" class="line"></div>
+    </div>
+
+    <div *ngIf="config.multiple && !extensionEditor.isOpen(extension)">{{extensionEditor.computeLabel(extension)}}</div>
+    <div *ngIf="extensionEditor.isOpen(extension) || !config.multiple" [property-editor]="extension" [group]="group" [shape]="shape"></div>
+    <svg-icon *ngIf="config.multiple" (click)="extensionEditor.delete(extension)" name="delete" class="delete"></svg-icon>
+  </div>
+</div>

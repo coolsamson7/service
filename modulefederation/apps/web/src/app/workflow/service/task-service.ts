@@ -1,7 +1,8 @@
 import { Injectable, Injector } from "@angular/core";
 import { Observable } from 'rxjs';
 import { AbstractHTTPService, Service } from "@modulefederation/portal";
-import { SchemaDescriptor} from "./administration-service"
+import { SchemaDescriptor } from "./process-definition-service";
+
 export interface Task {
   id: string,
   processId: string,

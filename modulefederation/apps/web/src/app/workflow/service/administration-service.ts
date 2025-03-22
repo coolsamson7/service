@@ -21,7 +21,7 @@ export interface ProcessDefinitionXML {
   xml: string
  }
 
- export interface PropertyDescriptor {
+ /*export interface PropertyDescriptor {
   name: string,
   type: string,
   value: any
@@ -30,7 +30,7 @@ export interface ProcessDefinitionXML {
  export interface SchemaDescriptor {
   properties: PropertyDescriptor[]
  }
-
+*/
 
  @Injectable({providedIn: 'root'})
  @Service({domain: "workflow", prefix: "/bpmn/administration"})
@@ -55,7 +55,7 @@ export interface ProcessDefinitionXML {
       return this.post<ProcessDescriptor>(`/update-process-definition/${resource}`, { xml: xml })
     }
 
-    //
+    /*
 
     processSchema(process: String) : Observable<SchemaDescriptor> {
         return this.get<SchemaDescriptor>(`/process-schema/${process}`)
@@ -63,6 +63,6 @@ export interface ProcessDefinitionXML {
 
     taskSchema(process: String, task: String) : Observable<SchemaDescriptor> {
       return this.get<SchemaDescriptor>(`/task-schema/${process}/${task}`)
-    }
+    }*/
  } 
 

@@ -1,0 +1,11 @@
+
+<div *ngFor="let parameter of parameters" class="parameter">
+  <div class="left">
+    <svg-icon  (click)="parameterEditor.toggle(parameter)" [name]="parameterEditor.isOpen(parameter) ? 'arrow-down' : 'arrow-right'"></svg-icon>
+    <div class="line"></div>
+  </div>
+
+  <div *ngIf="!parameterEditor.isOpen(parameter)" class="name">{{name(parameter)}}</div>
+  <ng-container *ngIf="parameterEditor.isOpen(parameter)" [property-editor]="parameter" [group]="group" [shape]="shape" class="parameter"></ng-container>
+  <svg-icon name="delete" class="delete" (click)="parameterEditor.delete(parameter)"></svg-icon>
+</div>
