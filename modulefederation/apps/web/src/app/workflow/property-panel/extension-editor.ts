@@ -8,11 +8,11 @@ import { Shape } from "bpmn-js/lib/model/Types";
 import { ActionHistory } from "../bpmn"
 
 @Component({
-  selector: 'extension-editor', 
+  selector: 'extension-editor',
   templateUrl: './extension-editor.html',
   styleUrl: "./extension-editor.scss"
 })
-export class ExtensionEditor implements OnInit {  
+export class ExtensionEditor implements OnInit {
   // input
 
   @Input() element!: Element
@@ -22,7 +22,7 @@ export class ExtensionEditor implements OnInit {
 
   extensionElement! : ExtensionElements
 
-  open : boolean[] = []
+  open = new Map<Element,boolean> ()
 
   get actionHistory() : ActionHistory {
     return this.group.panel.actionHistory
@@ -42,8 +42,12 @@ export class ExtensionEditor implements OnInit {
 
   // callbacks
 
-  toggle(extension: number) {
-    this.open[extension] = !this.open[extension]
+  isOpen(extension: Element) {
+    return this.open.get(extension)
+  }
+
+  toggle(extension: Element) {
+    this.open.set(extension, !this.isOpen(extension))
   }
 
   delete(extension: Element) {
@@ -73,7 +77,7 @@ export class ExtensionEditor implements OnInit {
     return newExtension as any as Element
   }
 
-  add() { 
+  add() {
     const newExtension = this.create(this.extension)
 
     this.actionHistory.updateProperties({
@@ -84,16 +88,9 @@ export class ExtensionEditor implements OnInit {
       }
     })
 
-    this.open.push(false)
+     this.open.set(newExtension, false)
 
     this.group.children++
-  }
-
-  protected getExtensionElements(type: string) : Element[] {
-    if ( this.element["extensionElements"]?.values)
-      return this.element["extensionElements"].values.filter((extensionElement: any) => extensionElement.$instanceOf(type));
-    else
-      return []
   }
 
   // implement OnInit
@@ -112,10 +109,11 @@ export class ExtensionEditor implements OnInit {
     if (!this.extensionElement.values)
       this.extensionElement.values = []
 
-    this.open = this.extensions.map((ext) => true)
+    for ( const extension of this.extensions)
+          this.open.set(extension, false)
 
     // avoid angular digest error
-    
+
     setTimeout(() => { this.group.children = this.extensions.length}, 0)
   }
 }

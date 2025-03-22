@@ -10,6 +10,7 @@ import { PropertyNameComponent } from './property-name';
 import { PropertyEditorDirective } from './property.editor.directive';
 import { ReplaySubject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { ExtensionList } from './extension-list';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { MatIconModule } from '@angular/material/icon';
       PropertyGroupComponent,
       PropertyPanelComponent,
       ExtensionEditor,
+      ExtensionList,
       PropertyEditorDirective
   ],
   exports: [
