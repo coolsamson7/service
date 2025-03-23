@@ -42,32 +42,12 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
     extensionEditor.computeLabel = (element: Element) => element.get("name") || "<name>"
   }
 
-  //
-
   typeChange(event: any) {
-    this.typedProperty = this.createProperty("value", this.element["type"])
-
-    //this.convertType()
+    this.typedProperty = this.createProperty("value", this.element["type"] || "String")
   }
 
   override onChange(event: any) {
     console.log(event)
-  }
-
-  convertType() {
-    let value  = this.element["value"]
-
-    if ( this.element["type"] == "Boolean")
-      value = value == "true"
-    else if ( ["Integer", "Short", "Long"].includes(this.element["type"])) {
-      value = parseInt(value)
-    }
-    else if ( ["Double"].includes(this.element["type"]))
-      value = parseFloat(value)
-
-    if ( this.element["value"] !== value) {
-      this.element["value"] = value // TODO: undo
-    }
   }
 
   createProperty(name: string, type: string) : Moddle.PropertyDescriptor {
@@ -90,12 +70,6 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
 
       this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "value"].includes(prop.name))
 
-      const valueProperty =  this.properties[2]
-
-      // convert the string value to the correct typescritp type
-
-      this.convertType()
-
-      this.typedProperty = this.createProperty("value", this.element["type"] || "String")
+      this.typeChange("")
   }
 }

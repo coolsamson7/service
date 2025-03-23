@@ -128,7 +128,10 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       if (!this.outputParameters)
         this.element['outputParameters'] = []
 
-      this.inputParameters.forEach(parameter => this.open.set(parameter, false))
-      this.outputParameters.forEach(parameter => this.open.set(parameter, false))
+      this.inputParameters.forEach(parameter => {
+        this.open.set(parameter, false)
+        })
+      this.outputParameters.forEach(parameter => {this.open.set(parameter, false)
+      })
   }
 }

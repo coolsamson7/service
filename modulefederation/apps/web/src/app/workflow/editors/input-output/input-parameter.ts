@@ -45,38 +45,43 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
   readOnly = false
 
-  valueHints: EditorSettings<string> = {}
+  valueSettings: EditorSettings<string> = {}
 
-  typeHints: EditorSettings<string> = {
-    oneOf: DataTypes.types,
-    readOnly: this.readOnly
+  typeSettings: EditorSettings<string> = {
+    oneOf: DataTypes.types
   }
 
-  sourceHints: EditorSettings<string> = {
+  sourceSettings: EditorSettings<string> = {
     oneOf: ["value", "process", "output", "expression"],
-    readOnly: this.readOnly
   }
 
-   suggestionProvider : SuggestionProvider | undefined = undefined
+  suggestionProvider : SuggestionProvider | undefined = undefined
 
-   typeChange(event: any) {
-    this.typedProperty = this.createProperty(this.get("type"))
+  typeChange(event: any) {
+    this.setType()
   }
 
   override onChange(event: any) {
     console.log(event)
   }
 
-  createProperty(type: string) : Moddle.PropertyDescriptor {
+  createProperty(property: string, type: string) : Moddle.PropertyDescriptor {
     return {
-      name: "value",
+      name: property,
       type: type,
       ns: {
-        localName: "value",
-        name: "schema:value",
-        prefix: "value"
+        localName: property,
+        name: property,
+        prefix: property
       }
     }
+  }
+
+  setType() {
+    if ( this.element["source"] == "value")
+      this.typedProperty = this.createProperty("value", this.element["type"] || "String")
+    else
+      this.typedProperty = this.createProperty("value", "String")
   }
 
   changeSource(source: any) {
@@ -84,10 +89,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
     this.setSuggestionProvider()
 
-    if ( source == "value")
-      this.typedProperty = this.createProperty(this.element["type"])
-    else
-      this.typedProperty = this.createProperty("String")
+    this.setType()
   }
 
   findProcess(element: Element) : Element {
@@ -110,7 +112,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   }
 
   setSuggestionProvider() {
-    this.valueHints.suggestionProvider = undefined
+    this.valueSettings.suggestionProvider = undefined
     this.suggestionProvider  = undefined
 
     if ( this.element["source"] == "process") {
@@ -133,7 +135,7 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       this.suggestionProvider = new ArraySuggestionProvider(suggestions)
     }
 
-   this.valueHints.suggestionProvider = this.suggestionProvider
+   this.valueSettings.suggestionProvider = this.suggestionProvider
   }
 
   backward(elements: Element[], handler : (element: Element) => void) {
@@ -168,12 +170,18 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     }
   }
 
+  setReadOnly(readOnly: boolean) {
+    this.readOnly = readOnly
+    this.typeSettings.readOnly = readOnly
+    this.sourceSettings.readOnly = readOnly
+  }
+
   // override OnInit
 
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.readOnly = this.shape["bpmnElement"].$type == "bpmn:ServiceTask"
+      this.setReadOnly(this.shape["bpmnElement"].$type == "bpmn:ServiceTask")
 
       this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "source", "value"].includes(prop.name))
 

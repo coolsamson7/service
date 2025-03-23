@@ -23,7 +23,6 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   @Input('property-editor') element!: Element
   @Input() shape!: Shape
   @Input() extension!: string
-  @Input() readOnly = false
   @Input() property?: PropertyDescriptor | undefined
   @Input() group!: PropertyGroupComponent
   @Input() inputs?: UserInputs = {};
@@ -88,6 +87,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     if (!type)
       throw Error("unknown component for type " + this.property?.type ||this.element.$type)
 
+
     this.componentFactory = this.resolver.resolveComponentFactory<PropertyEditor>(type)
     this.component = this.container.createComponent(this.componentFactory, 0, this.injector)
 
@@ -117,28 +117,16 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
       shape: this.shape,
       extension: this.extension,
       property: this.property,
-      readOnly: this.readOnly,
       settings: this.settings,
       editor: this,
-      group: this.group,
-      v: this.property ? this.element.get(this.property!.name) : undefined
+      group: this.group
     })
-  }
-
-  private setupValue() {
-    Object.defineProperty(this, 'value', {
-      get: () => this.element.get(this.property!.name),
-      set: (value) => this.element.set(this.property!.name, value),
-      configurable: true
-    });
   }
 
   // implement OnInit
 
   ngOnInit(): void {
-    this.setupValue()
     this.createComponent()
-
 
     this.group.editors.push(this)
   }

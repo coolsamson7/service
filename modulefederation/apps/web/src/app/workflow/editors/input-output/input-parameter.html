@@ -6,14 +6,14 @@
 
     <!-- type -->
 
-    <ng-container *ngIf="property.name === 'type'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="typeHints" (valueChange)="typeChange($event)"></ng-container>
+    <ng-container *ngIf="property.name === 'type'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="typeSettings" (valueChange)="typeChange($event)"></ng-container>
 
     <!-- source -->
 
-    <ng-container *ngIf="property.name === 'source'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="sourceHints" (valueChange)="changeSource($event)"></ng-container>
+    <ng-container *ngIf="property.name === 'source'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="sourceSettings" (valueChange)="changeSource($event)"></ng-container>
 
     <!-- value -->
 
-    <ng-container *ngIf="property.name === 'value'" [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="typedProperty" [settings]="valueHints"></ng-container>
+    <ng-container *ngIf="property.name === 'value'" [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="typedProperty" [settings]="valueSettings"></ng-container>
   </ng-container>
 </form>

@@ -22,29 +22,37 @@ import { ModelValidationDirective, ValidationError } from '../../validation';
   imports: [FormsModule, CommonModule, PropertyPanelModule, MatFormFieldModule, MatInputModule, NgModelSuggestionsDirective, ModelValidationDirective]
 })
 export class ServiceTaskEditor extends AbstractPropertyEditor {
+  // static data
+
+  static descriptors : ServiceTaskDescriptor[] | undefined = undefined
+  static suggestionProvider : ArraySuggestionProvider = new ArraySuggestionProvider([])
+
+
   // instance data
 
   @ViewChild("model") model! : NgModel;
   @ViewChild("input") input! : any;
 
-  descriptors : ServiceTaskDescriptor[] = []
+ 
   selectedService!: ServiceTaskDescriptor | undefined
-  suggestionProvider : ArraySuggestionProvider = new ArraySuggestionProvider([])
-
+  suggestionProvider = ServiceTaskEditor.suggestionProvider
   inputOutputElement!: Element
 
   // constructor
 
-  constructor(private taskDescriptorService: TaskDescriptorInventoryService) {
+  constructor(taskDescriptorService: TaskDescriptorInventoryService) {
     super()
+
+    if (!ServiceTaskEditor.descriptors) {
+      taskDescriptorService.getTasks().subscribe(descriptors => {
+        ServiceTaskEditor.descriptors = descriptors
+        ServiceTaskEditor.suggestionProvider = new ArraySuggestionProvider(descriptors.map(descriptor => descriptor.name))
+    })
+  }
   }
 
   // private
 
-  private rememberDescriptors(descriptors: ServiceTaskDescriptor[]) {
-    this.descriptors = descriptors
-    this.suggestionProvider = new ArraySuggestionProvider(descriptors.map(descriptor => descriptor.name))
-  }
 
   private setService(descriptor : ServiceTaskDescriptor | undefined) {
     if ( descriptor !== this.selectedService) {
@@ -89,6 +97,10 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
     }
   }
 
+  private findService(serviceName: string) {
+    return (ServiceTaskEditor.descriptors || []).find(descriptor => descriptor.name == serviceName)
+  }
+
   // callbacks
 
   private create(type: string) : Element {
@@ -98,23 +110,21 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
   override onChange(serviceName: any) {
     super.onChange(serviceName)
-    
-    const service = this.descriptors.find(descriptor => descriptor.name == serviceName);
-    
-    this.setService(service)
+
+    this.setService(this.findService(serviceName))
   }
 
    // override AbstractPropertyEditor
-  
+
     override showError(error: ValidationError, select: boolean) {
       super.showError(error, select)
-  
+
       this.model.control.markAsTouched()
       if ( select ) {
           this.input.nativeElement.focus()
       }
     }
-  
+
 
   // override OnInit
 
@@ -160,16 +170,10 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
       // lets check the current service
 
-      this.taskDescriptorService.getTasks().subscribe(descriptors => {
-         this.rememberDescriptors(descriptors)
+      const expression = this.element["expression"] || "${.execute(execution)}"
 
-         // what is the current service
+      const service = expression.substring(2, expression.indexOf("."))
 
-         const expression = this.element["expression"] || "${.execute(execution)}"
-
-         const service = expression.substring(2, expression.indexOf("."))
-
-         this.setService(descriptors.find(descriptor => descriptor.name == service))
-      })
+      this.selectedService = this.findService(service)
   }
 }

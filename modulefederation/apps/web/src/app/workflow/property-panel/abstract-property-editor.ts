@@ -12,10 +12,11 @@ import { ValidationError } from "../validation";
 import { SuggestionProvider } from "@modulefederation/portal";
 import { ActionHistory } from "../bpmn"
 import { PropertyGroupComponent } from "./property-group";
+import { PropertyEditorDirective } from "./property.editor.directive";
 
 export interface EditorSettings<T> {
   suggestionProvider?: SuggestionProvider
-  readOnly?: boolean 
+  readOnly?: boolean
   oneOf?: T[]
 }
 
@@ -64,12 +65,11 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   @Input() property!: PropertyDescriptor
   @Input() settings : EditorSettings<T> = {}
   @Input() group!: PropertyGroupComponent
-  @Input() editor!: any // TODO
+  @Input() editor!: PropertyEditorDirective
 
   // instance data
 
   action: any
-
   baseType = "string";
   in: Conversion | undefined = undefined;
   out: Conversion | undefined = undefined;
@@ -128,30 +128,31 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     return this.canUndo()
   }
 
- onChange(event: any) {
-  // possible coerce
+ onChange(value: any) {
+    // possible coerce
 
-    if ( this.out )
-      event = this.out(event)
+    if ( this.out ) {
+      value = this.out(value)
+    }
 
     const properties = () : any => {
       const result : any = {}
 
-      result[this.property.name] = event
+      result[this.property.name] = value
 
       return result
     }
 
     if (this.action) {
-      this.editor.value = event
+      this.element.set(this.property.name, value)
 
       // reuse existing action and simply update the new value
 
-      this.action.context.properties[this.property.name] = event
+      this.action.context.properties[this.property.name] = value
 
-       // still trigger bus
+      // still trigger bus
 
-       this.eventBus.fire('commandStack.changed', {trigger: "execute", type: "commandStack.changed"});
+      this.eventBus.fire('commandStack.changed', {trigger: "execute", type: "commandStack.changed"});
     }
     else {
       this.action = this.actionHistory.updateProperties({
@@ -159,13 +160,11 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
         moddleElement: this.element,
         properties: properties()
       })
-
-      console.log("new action for " + this.property.name)
     }
 
     // inform listeners
 
-    this.editor.changedValue(event)
+    this.editor.changedValue(value)
   }
 
   showError(error: ValidationError, select: boolean) {

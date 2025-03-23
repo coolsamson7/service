@@ -35,7 +35,7 @@ export class ParameterListComponent {
 
   name(property: Element) {
     if ( property["name"] && property["name"].trim().length > 0)
-      return property["name"] + " : " +  property["type"]
+      return property["name"] + " : " +  property["type"] + " = " + property["value"]
     else
       return "<name>" + " : " + property["type"]
   }
