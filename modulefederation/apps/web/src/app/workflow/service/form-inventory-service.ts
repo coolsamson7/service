@@ -45,7 +45,7 @@ export class FormInventoryService extends AbstractHTTPService {
 	}
 
 
-	public find4Process(id: string, deployment: number, name: string) : Observable<Form> {
-		return this.get<Form>(`find-4-process/${id}/${deployment}/${name}`)
+	public find4Process(id: string, name: string) : Observable<Form> {
+		return this.get<Form>(`find-4-process/${id}/${name}`)
 	}
 }

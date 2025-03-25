@@ -32,22 +32,12 @@ export class TaskFormComponent implements OnInit {
 
   // private
 
-  // <process-id>:<revision>:<process-definition-id>
-
   parse(task: Task) : any {
-    let colon = task.form.indexOf(":")
+    const colon = task.form.indexOf(":")
     const form = task.form.substring(colon + 1)
 
-    colon = task.processId.indexOf(":")
-    const nextColon = task.processId.indexOf(":", colon + 1)
-
-    const revision = parseInt(task.processId.substring(colon + 1, nextColon))
-
-   const id =  task.processId.substring(nextColon + 1)
-
     return {
-        id: task.processId, // ?
-        revision: revision,
+        id: task.processDefinitionId,
         form: form
     }
   }
@@ -57,14 +47,16 @@ export class TaskFormComponent implements OnInit {
   ngOnInit(): void {
     const result = this.parse(this.task)
 
-    this.formService.find4Process(result.id, result.revision, result.form).subscribe(form => {
+    this.formService.find4Process(result.id, result.form).subscribe(form => {
         this.taskService.taskVariables(this.task).subscribe(variables => {
             this.form = JSON.parse(form.xml)
 
             const model : any = {
                 task: this.task,
+                process: {},
                 input: {},
-                process: {}
+                output: {},
+               
             }
 
             // input
@@ -72,10 +64,21 @@ export class TaskFormComponent implements OnInit {
             for ( const prop of variables.input.properties)
                 model.input[prop.name] = prop.value
 
+            // output
+
+            for ( const prop of variables.output.properties)
+              model.output[prop.name] = prop.value
+
             // process
 
             for ( const prop of variables.process.properties)
                 model.process[prop.name] = prop.value
+
+            // link everything to the task as well
+
+            this.task.process = model.process
+            this.task.input = model.input
+            this.task.output = model.output
 
 
             // done

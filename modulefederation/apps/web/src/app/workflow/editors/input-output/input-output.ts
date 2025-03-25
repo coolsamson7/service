@@ -104,6 +104,20 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     return parameter
   }
 
+  inputName(parameter: Element) : string {
+    if ( parameter["name"] && parameter["name"].trim().length > 0)
+      return parameter["name"] + " : " +  parameter["type"] + " = " + parameter["value"]
+    else
+      return "<name>" + " : " + parameter["type"]
+  }
+
+  outputName(parameter: Element) : string {
+    if ( parameter["name"] && parameter["name"].trim().length > 0)
+      return parameter["name"] + " : " +  parameter["type"]
+    else
+      return "<name>" + " : " + parameter["type"]
+  }
+
   // override OnInit
 
   override ngOnInit() : void {

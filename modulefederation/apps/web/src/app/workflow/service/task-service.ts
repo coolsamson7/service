@@ -5,12 +5,19 @@ import { SchemaDescriptor } from "./process-definition-service";
 
 export interface Task {
   id: string,
+  processDefinitionId: string,
   processId: string,
   name: string,
   description: string, 
   owner : string,
   assignee: string,
-  form: string
+  form: string,
+
+  // set for the form
+
+  process?: any,
+  input?: any
+  output?: any
 }
 
 export interface TaskFilter {
@@ -23,7 +30,8 @@ export interface TaskFilter {
 
 export interface Variables {
   process: SchemaDescriptor,
-  input: SchemaDescriptor
+  input: SchemaDescriptor,
+  output: SchemaDescriptor
 }
 
 @Injectable({providedIn: 'root'})
@@ -45,11 +53,11 @@ export class TaskService extends AbstractHTTPService {
     return this.get<Task[]>(`/claim/${id}/${user}`)
   }
 
-  completeTask(id: string) : Observable<Task[]> {
-    return this.get<Task[]>(`/complete/${id}`)
+  completeTask(processDefinition: string, processId: string, id: string, name: string, output: any) : Observable<Task[]> {
+    return this.post<Task[]>(`/complete/${processDefinition}/${processId}/${id}/${name}`, output)
   }
 
   taskVariables(task: Task) : Observable<Variables> {
-    return this.get<Variables>(`/task-variables/${task.processId}/${task.id}/${task.name}`)
+    return this.get<Variables>(`/task-variables/${task.processDefinitionId}/${task.id}/${task.name}`)
   }
 }

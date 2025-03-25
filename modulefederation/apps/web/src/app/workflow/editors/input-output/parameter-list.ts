@@ -26,17 +26,10 @@ export class ParameterListComponent {
   @Input() shape!: Shape
   @Input() group!: PropertyGroupComponent
 
+  @Input() name! : (parameter: Element) => string
+
   // constructor
 
   constructor(public parameterEditor: InputOutputEditor) {
-  }
-
-  // public
-
-  name(property: Element) {
-    if ( property["name"] && property["name"].trim().length > 0)
-      return property["name"] + " : " +  property["type"] + " = " + property["value"]
-    else
-      return "<name>" + " : " + property["type"]
   }
 }
