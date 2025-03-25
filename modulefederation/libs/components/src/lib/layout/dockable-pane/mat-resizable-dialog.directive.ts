@@ -1,6 +1,6 @@
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Subscription } from 'rxjs';
-import { AfterViewInit, Directive, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { MatDialogContainer } from '@angular/material/dialog';
 import { DockablePaneComponent } from './dockable-pane.component';
 
@@ -18,7 +18,7 @@ type Direction = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
   // input
 
-  @Input('matResizableDialog') pane!: DockablePaneComponent 
+  @Output() resized = new EventEmitter<DOMRect>()
   
   // instance data
 
@@ -42,105 +42,18 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
     !container && console.error(`MatResizableDialogDirective should be used only inside of the MatDialogContainer`);
   }
 
-  // implement AfterViewInit
+  // private
 
-  ngAfterViewInit(): void {
-    this.element = this.container['_elementRef'].nativeElement;
-    this.element.addEventListener('mousedown', (e) => this.onMousedown(e));
-
-    Object.assign(this.element.style, {
-      position: 'absolute',
-      maxWidth: 'none',
-      maxHeight: 'none',
-      minHeight: '100px',
-      overflow: 'hidden'
-    });
-
-    this.directions.forEach((d) => this.createHandle(`resize-handle-${d}`));
-
-    const computedStyle = window.getComputedStyle(this.element);
-    this.minWidth = parseFloat(computedStyle.minWidth);
-    this.maxWidth = parseFloat(computedStyle.maxWidth);
-    this.minHeight = parseFloat(computedStyle.minHeight);
-    this.maxHeight = parseFloat(computedStyle.maxHeight);
-  }
-
-  onMousedown(event: MouseEvent | TouchEvent): void {
-    if (!isLeftButton(event)) {
-      return;
-    }
-
-    const className = (event.target as HTMLElement).classList.toString();
-
-    if (!className.includes('resize-handle')) {
-      return;
-    }
-
-    // @ts-ignore
-    const direction = className.match(/resize-handle-(.*)/)[1] as Direction;
-    const evt = getEvent(event);
-    const width = this.element.clientWidth;
-    const height = this.element.clientHeight;
-    const left = this.element.offsetLeft;
-    const top = this.element.offsetTop;
-    const screenX = evt.screenX;
-    const screenY = evt.screenY;
-
-    const isTouchEvent = event.type.startsWith('touch');
-    const moveEvent = isTouchEvent ? 'touchmove' : 'mousemove';
-    const upEvent = isTouchEvent ? 'touchend' : 'mouseup';
-
-    this.initResize(event, direction);
-
-    const mouseup = fromEvent(document, upEvent);
-    // @ts-ignore
-    this.subscription = mouseup.subscribe((e: MouseEvent | TouchEvent) => this.onMouseup(e));
-
-    // @ts-ignore
-    const mouseMoveSub = fromEvent(document, moveEvent)
-      .pipe(takeUntil(mouseup))
-      // @ts-ignore
-      .subscribe((e: MouseEvent | TouchEvent) => this.move(e, width, height, top, left, screenX, screenY));
-
-    this.subscription.add(mouseMoveSub);
-  }
-
-  move(
-    event: MouseEvent | TouchEvent,
-    width: number,
-    height: number,
-    top: number,
-    left: number,
-    screenX: number,
-    screenY: number
-  ): void {
-    const evt = getEvent(event);
-    const movementX = evt.screenX - screenX;
-    const movementY = evt.screenY - screenY;
-    const movingWest = ['sw', 'w', 'nw'].includes(this.resizingDirection!);
-    const movingNorth = ['nw', 'n', 'ne'].includes(this.resizingDirection!);
-
-    this.newWidth = width - (movingWest ? movementX : -movementX);
-    this.newHeight = height - (movingNorth ? movementY : -movementY);
-    this.newLeft = left + movementX;
-    this.newTop = top + movementY;
-
-    this.resizeWidth(evt);
-    this.resizeHeight(evt);
-  }
-
-  onMouseup(event: MouseEvent | TouchEvent): void {
-    this.endResize(event);
-    this.destroySubscription();
-  }
 
   initResize(event: MouseEvent | TouchEvent, direction: Direction) {
     this.resizingDirection = direction;
     this.element.classList.add('resizing');
+
     this.newWidth = this.element.clientWidth;
     this.newHeight = this.element.clientHeight;
     this.newLeft = this.element.offsetLeft;
     this.newTop = this.element.offsetTop;
+
     event.stopPropagation();
   }
 
@@ -148,7 +61,7 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
     this.resizingDirection = null;
     this.element.classList.remove('resizing');
 
-    this.pane.resized()
+    this.resized.emit(this.element.getBoundingClientRect())
   }
 
   resizeWidth(event: MouseEvent | Touch): void {
@@ -187,13 +100,6 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
     }
   }
 
-  // implement OnDestroy
-
-  ngOnDestroy(): void {
-    this.destroySubscription();
-    this.element.removeEventListener('mousedown', (e) => this.onMousedown(e));
-  }
-
   private destroySubscription(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -205,6 +111,98 @@ export class MatResizableDialogDirective implements OnDestroy, AfterViewInit {
     const node = document.createElement('span');
     node.className = className;
     this.element.appendChild(node);
+  }
+
+  // callbacks
+
+  onMouseDown(event: MouseEvent | TouchEvent): void {
+    if (!isLeftButton(event)) {
+      return;
+    }
+
+    const className = (event.target as HTMLElement).classList.toString();
+
+    const isTouchEvent = event.type.startsWith('touch');
+    const upEvent = isTouchEvent ? 'touchend' : 'mouseup';
+
+    const mouseup = fromEvent(document, upEvent);
+     // @ts-ignore
+    this.subscription = mouseup.subscribe((e: MouseEvent | TouchEvent) => this.onMouseUp(e));
+
+    if (className.includes('resize-handle')) {
+      // @ts-ignore
+      const direction = className.match(/resize-handle-(.*)/)[1] as Direction;
+      const evt = getEvent(event);
+
+      const width = this.element.clientWidth;
+      const height = this.element.clientHeight;
+      const left = this.element.offsetLeft;
+      const top = this.element.offsetTop;
+
+      this.initResize(event, direction);
+  
+      // move
+
+      // @ts-ignore
+      const mouseMoveSub = fromEvent(document, isTouchEvent ? 'touchmove' : 'mousemove')
+        .pipe(takeUntil(mouseup))
+        // @ts-ignore
+        .subscribe((e: MouseEvent | TouchEvent) => this.onMouseMove(e, width, height, top, left, evt.screenX, evt.screenY));
+
+      this.subscription.add(mouseMoveSub);
+    }
+  }
+
+  onMouseMove(event: MouseEvent | TouchEvent,width: number, height: number, top: number, left: number, screenX: number, screenY: number): void {
+    const evt = getEvent(event);
+
+    const movementX = evt.screenX - screenX;
+    const movementY = evt.screenY - screenY;
+    const movingWest = ['sw', 'w', 'nw'].includes(this.resizingDirection!);
+    const movingNorth = ['nw', 'n', 'ne'].includes(this.resizingDirection!);
+
+    this.newWidth = width - (movingWest ? movementX : -movementX);
+    this.newHeight = height - (movingNorth ? movementY : -movementY);
+    this.newLeft = left + movementX;
+    this.newTop = top + movementY;
+
+    this.resizeWidth(evt);
+    this.resizeHeight(evt);
+  }
+
+  onMouseUp(event: MouseEvent | TouchEvent): void {
+    this.endResize(event);
+    this.destroySubscription();
+  }
+
+  // implement AfterViewInit
+
+  ngAfterViewInit(): void {
+    this.element = this.container['_elementRef'].nativeElement;
+    this.element.addEventListener('mousedown', (e) => this.onMouseDown(e));
+
+    Object.assign(this.element.style, {
+      position: 'absolute',
+      maxWidth: 'none',
+      maxHeight: 'none',
+      minHeight: '100px',
+      overflow: 'hidden'
+    });
+
+    this.directions.forEach((d) => this.createHandle(`resize-handle-${d}`));
+
+    const computedStyle = window.getComputedStyle(this.element);
+    this.minWidth = parseFloat(computedStyle.minWidth);
+    this.maxWidth = parseFloat(computedStyle.maxWidth);
+    this.minHeight = parseFloat(computedStyle.minHeight);
+    this.maxHeight = parseFloat(computedStyle.maxHeight);
+  }
+
+  // implement OnDestroy
+
+  ngOnDestroy(): void {
+    this.destroySubscription();
+    this.element.removeEventListener('mousedown', (e) => this.onMouseDown(e));
   }
 }
 

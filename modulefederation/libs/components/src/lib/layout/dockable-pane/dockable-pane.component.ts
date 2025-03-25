@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Tab } from '../layout';
 
@@ -22,20 +22,17 @@ export class DockablePaneComponent {
     @Inject(MAT_DIALOG_DATA) public tab: Tab,
     private dialog: MatDialogRef<DockablePaneComponent>,
     private dialogService: MatDialog,
-    private elementRef: ElementRef
+    public elementRef: ElementRef
   ) {
   }
 
   // callbacks
 
-  resized() {
-    (<any> this.tab)["floatingSize"] = this.elementRef.nativeElement.getBoundingClientRect()
+  onResized(size: DOMRect) {
+    (<any> this.tab)["floatSize"] = size
   }
 
   close(collapse: boolean) {
-    this.resized()
-  
-  
     this.dialog.close({andCollapse: collapse})
   }
 

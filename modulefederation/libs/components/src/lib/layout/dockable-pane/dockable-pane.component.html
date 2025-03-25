@@ -1,4 +1,4 @@
-<section class="pane-container" [matResizableDialog]="this">
+<section class="pane-container" matResizableDialog (resized)="onResized($event)">
   <!-- header -->
 
   <section cdkDrag cdkDragHandle cdkDragRootElement=".cdk-overlay-pane" class="header">

@@ -11,9 +11,23 @@ import { MatResizableDialogDirective } from './mat-resizable-dialog.directive';
 import { IconComponent } from '../../ui/icon.component';
 
 @NgModule({
-  imports: [CommonModule, MatIconModule, MatButtonModule, DragDropModule, ScrollingModule, IconComponent],
-  declarations: [DockablePaneComponent, MatResizableDialogDirective],
-  exports: [DockablePaneComponent, MatResizableDialogDirective, MatDialogModule]
+  imports: [
+    CommonModule, 
+    MatIconModule, 
+    MatButtonModule, 
+    DragDropModule, 
+    ScrollingModule, 
+    IconComponent
+  ],
+  declarations: [
+    DockablePaneComponent, 
+    MatResizableDialogDirective
+  ],
+  exports: [
+    DockablePaneComponent, 
+    MatResizableDialogDirective, 
+    MatDialogModule
+  ]
 })
 export class DockablePaneModule {
 }
