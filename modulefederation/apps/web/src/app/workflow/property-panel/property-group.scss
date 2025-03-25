@@ -36,21 +36,6 @@
         transform: rotate(90deg);
         transition: transform 0.2s ease-in-out;
       }
-
-      .badge {
-        cursor: default;
-
-        height: 22px;
-        color: var(--list-badge-color);
-        border-radius: 11px;
-        font-size: 12px;
-        line-height: 22px;
-        text-align: center;
-        user-select: none;
-        padding: 0 5px;
-        margin: 5px;
-        background-color: lightblue;
-      }
     }
 
 

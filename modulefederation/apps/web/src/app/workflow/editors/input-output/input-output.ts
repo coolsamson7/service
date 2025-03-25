@@ -32,19 +32,6 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     return this.element["outputParameters"];
   }
 
-  // private
-
-  private create(type: string, properties: any) {
-    const element = this.element['$model'].create(type)
-
-    for ( const propertyName in properties)
-       element[propertyName] = properties[propertyName]
-
-    element.$parent = this.element
-
-    return element
-  }
-
   // callbacks
 
   isOpen(property: Element) {
@@ -131,7 +118,8 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       this.inputParameters.forEach(parameter => {
         this.open.set(parameter, false)
         })
-      this.outputParameters.forEach(parameter => {this.open.set(parameter, false)
+      this.outputParameters.forEach(parameter => {
+        this.open.set(parameter, false)
       })
   }
 }

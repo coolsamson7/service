@@ -11,6 +11,7 @@ import { PropertyEditorDirective } from './property.editor.directive';
 import { ReplaySubject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { ExtensionList } from './extension-list';
+import { BadgeComponent } from './badge.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { ExtensionList } from './extension-list';
     SvgIconComponent,
   ],
   declarations: [
+      BadgeComponent,
       PropertyGroupComponent,
       PropertyPanelComponent,
       ExtensionEditor,
@@ -39,6 +41,7 @@ import { ExtensionList } from './extension-list';
       PropertyEditorDirective
   ],
   exports: [
+    BadgeComponent,
     PropertyPanelComponent,
     PropertyEditorDirective,
 

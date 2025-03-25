@@ -10,8 +10,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   selector: 'svg-icon',
   template: `<div class="icon-wrap"><span [innerHTML]="svgIcon" class="icon"></span></div>`,
   styleUrl: './svg-icon.scss',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
+  standalone: true
 })
 export class SvgIconComponent implements OnChanges {
   // static

@@ -173,7 +173,6 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   setReadOnly(readOnly: boolean) {
     this.readOnly = readOnly
     this.typeSettings.readOnly = readOnly
-    this.sourceSettings.readOnly = readOnly
   }
 
   // override OnInit

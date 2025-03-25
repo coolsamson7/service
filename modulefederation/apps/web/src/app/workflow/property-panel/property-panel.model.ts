@@ -8,6 +8,7 @@ import { PropertyDescriptor } from "moddle"
     element?: string,
     extension?: string,
     multiple?: boolean,
+    hideLabel?: boolean,
     properties: PropertyDescriptor[]
   }
 

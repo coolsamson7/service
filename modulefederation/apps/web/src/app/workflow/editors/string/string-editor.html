@@ -9,7 +9,7 @@
 
      <!-- select -->
 
-    <mat-select  *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="settings.readOnly" [value]="value" (selectionChange)="onChange($event.value)">
+    <mat-select  *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="settings.readOnly === true" [value]="value" (selectionChange)="onChange($event.value)">
       <mat-option *ngFor="let value of settings.oneOf" [value]="value">{{value}}</mat-option>
     </mat-select>
 

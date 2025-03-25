@@ -14,13 +14,17 @@ import { ActionHistory } from "../bpmn"
 import { PropertyGroupComponent } from "./property-group";
 import { PropertyEditorDirective } from "./property.editor.directive";
 
+export type Conversion = (i: any) => any
+
 export interface EditorSettings<T> {
   suggestionProvider?: SuggestionProvider
   readOnly?: boolean
+  in?: Conversion,
+  out?: Conversion,
   oneOf?: T[]
 }
 
-export type Conversion = (i: any) => any
+
 
 @Component({
   template: '<div></div>'
@@ -97,6 +101,19 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   get actionHistory() : ActionHistory {
     return this.group.panel.actionHistory
+  }
+
+  get<T>(property: string) {
+    return this.element[property] as T
+  }
+
+ create(type: string, properties: any) : Element {
+    const element = this.element['$model'].create(type)
+
+    for ( const property in properties)
+      element[property] = properties[property]
+
+    return element
   }
 
   // private
@@ -178,7 +195,11 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
     const value = this.value
 
+    this.in = this.settings.in
+    this.out = this.settings.out
+
     if ( typeof value !== this.baseType) {
+      // TODO: in already set?
       this.in = AbstractPropertyEditor.getConversion(typeof value, this.baseType)
       this.out = AbstractPropertyEditor.getConversion(this.baseType, typeof value)
     }

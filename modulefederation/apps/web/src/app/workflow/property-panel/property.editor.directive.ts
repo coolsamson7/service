@@ -96,7 +96,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
     // inform label
 
     if ( this.label) {
-      console.log(this.property?.name + ".editor=" + this.instance.constructor.name)
+      //console.log(this.property?.name + ".editor=" + this.instance.constructor.name)
       this.label!.editor = this.instance
     }
     else {
@@ -134,7 +134,7 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
+    //console.log(changes)
     if (changes["property"] && !changes["property"].firstChange) {
       this.deleteComponent()
       this.createComponent()

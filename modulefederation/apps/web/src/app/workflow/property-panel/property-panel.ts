@@ -109,7 +109,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
         for ( const allowedIn of extension.meta!["allowedIn"]) {
             if ( element.$instanceOf(allowedIn)) {
               result.push(extension);
-              console.log("### allowed extension: " + extension.name)
+              //console.log("### allowed extension: " + extension.name)
             }
         }
       }
@@ -127,9 +127,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
 
     let element : Element | undefined = undefined
     if ( shape)
-      element = shape["bpmnElement"] || shape["businessObject"] ||  //  shape["bpmnObject"] // ??
-
-    console.log(shape)
+      element = shape["bpmnElement"] || shape["businessObject"]  //  shape["bpmnObject"] // ??
 
     this.element = element
 
@@ -163,6 +161,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
           if ( !target )
             this.currentConfig.groups.push(target = {
               name: group.name,
+              hideLabel: group.hideLabel,
               element: element.$type,
               properties: []
           })

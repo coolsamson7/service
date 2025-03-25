@@ -5,7 +5,7 @@
     <!-- number children -->
 
     <div class="right">
-      <div class="badge" *ngIf="children > 0">{{children}}</div>
+      <badge *ngIf="children > 0" [number]="children"></badge>
 
       <!-- plus -->
 
@@ -22,8 +22,14 @@
   
   <form *ngIf="open && !group.extension" class="body">
     <ng-container *ngFor="let property of group.properties">
-      <property-name #label [property]="property"/>
-      <ng-container [property-editor]="element!" [group]="this" [label]="label" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
+      <ng-container *ngIf="group.hideLabel !== true">
+        <property-name  #label [property]="property"/>
+        <ng-container [property-editor]="element!" [group]="this" [label]="label" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
+  
+      </ng-container>
+
+      <ng-container *ngIf="group.hideLabel === true" [property-editor]="element!" [group]="this" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
+
     </ng-container>
   </form>
 </div>

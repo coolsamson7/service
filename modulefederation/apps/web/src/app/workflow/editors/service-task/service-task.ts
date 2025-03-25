@@ -69,14 +69,13 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
         // input
 
         for ( const input of descriptor.input) {
-          const inputParameter =  this.create("schema:inputParameter");
-
-          inputParameter["name"]   = input.name;
-          inputParameter["source"]  ="value";
-          inputParameter["type"]   = input.type;
-          inputParameter["value"]   = "";
-
-          inputParameter.$parent = this.inputOutputElement;
+          const inputParameter =  this.create("schema:inputParameter", {
+            $parent: this.inputOutputElement,
+            name: input.name,
+            source: "value",
+            type: input.type,
+            value: ""
+          });
 
           (<any>this.inputOutputElement)["inputParameters"].push(inputParameter);
         }
@@ -84,12 +83,11 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
         // output
 
         for ( const input of descriptor.output) {
-          const outputParameter =  this.create("schema:outputParameter");
-
-          outputParameter["name"] = input.name;
-          outputParameter["type"] = input.type;
-
-          outputParameter.$parent = this.inputOutputElement;
+          const outputParameter =  this.create("schema:outputParameter", {
+            $parent: this.inputOutputElement,
+            name: input.name,
+            type: input.type
+          });
 
           (<any>this.inputOutputElement)["outputParameters"].push(outputParameter);
         }
@@ -103,28 +101,22 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
   // callbacks
 
-  private create(type: string) : Element {
-    return this.element['$model'].create(type)
-  }
-
-
   override onChange(serviceName: any) {
     super.onChange(serviceName)
 
     this.setService(this.findService(serviceName))
   }
 
-   // override AbstractPropertyEditor
+  // override AbstractPropertyEditor
 
-    override showError(error: ValidationError, select: boolean) {
-      super.showError(error, select)
+  override showError(error: ValidationError, select: boolean) {
+    super.showError(error, select)
 
-      this.model.control.markAsTouched()
-      if ( select ) {
-          this.input.nativeElement.focus()
-      }
+    this.model.control.markAsTouched()
+    if ( select ) {
+        this.input.nativeElement.focus()
     }
-
+  }
 
   // override OnInit
 
@@ -133,7 +125,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
      // take care of exension elements
 
-     const extensionElement = this.element["extensionElements"] || (<any>this.element)['$model'].create('bpmn:ExtensionElements');
+     const extensionElement = this.element["extensionElements"] || this.create('bpmn:ExtensionElements', {});
 
      if ( extensionElement.$parent == undefined) {
        (this.element)["extensionElements"] = extensionElement

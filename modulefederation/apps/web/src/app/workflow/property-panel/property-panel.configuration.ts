@@ -4,6 +4,7 @@ export const PropertyPanelConfigurationToken = Symbol('PropertyPanelConfiguratio
 export interface GroupConfig {
     name: string,
     element?: string,
+    hideLabel?: boolean,
     extension?: string,
     multiple?: boolean,
     properties: string[]
