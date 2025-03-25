@@ -5,6 +5,7 @@ import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener
 import org.camunda.bpm.engine.impl.persistence.entity.ProcessDefinitionEntity
 import org.camunda.bpm.engine.impl.pvm.process.ActivityImpl
 import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl
+import org.camunda.bpm.engine.impl.pvm.process.TransitionImpl
 import org.camunda.bpm.engine.impl.util.xml.Attribute
 import org.camunda.bpm.engine.impl.util.xml.Element
 import org.camunda.spin.plugin.variable.SpinValues
@@ -113,6 +114,9 @@ class SchemaParseListener : AbstractBpmnParseListener() {
 
                         val expression = StringBuilder()
 
+                        builder.clear().append("\${output.$variable}") // :-)
+
+                        /*
                         expression
                             .append("\${")
                             .append("S(output)")
@@ -148,7 +152,7 @@ class SchemaParseListener : AbstractBpmnParseListener() {
                             addPending(variable, builder)
                         }
 
-                        builder.clear().append(expression.toString())
+                        builder.clear().append(expression.toString())*/
                     }
                     else println("### unknown input parameter type for " + builder)
                 } // for
@@ -157,6 +161,30 @@ class SchemaParseListener : AbstractBpmnParseListener() {
     }
 
     // override AbstractBpmnParseListener
+
+    override fun parseSequenceFlow(sequenceFlowElement: Element, scopeElement: ScopeImpl, transition: TransitionImpl) {
+        val conditions = sequenceFlowElement.elements("conditionExpression")
+
+        // remove empty conditions
+
+        conditions.removeIf {element -> element.text.isEmpty() }
+
+
+        // add ${}
+
+        for ( condition in conditions) {
+            var text = getText(condition).toString()
+
+            if (!text.startsWith("\${"))
+                text = "\${" + text
+
+            if  (!text.endsWith("}"))
+                text = text + "}"
+
+            if ( text !== getText(condition).toString())
+                getText(condition).clear().append(text)
+        }
+    }
 
     override fun parseUserTask(userTaskElement: Element, scope: ScopeImpl, activity: ActivityImpl) {
         this.rememberOutputs(userTaskElement)

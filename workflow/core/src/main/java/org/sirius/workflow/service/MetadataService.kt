@@ -80,7 +80,6 @@ class MetadataService {
 
         val schemas = modelInstance.getModelElementsByType(SchemaElement::class.java)
 
-
         if ( schemas.isEmpty())
             return SchemaDescriptor(emptyList())
         else
