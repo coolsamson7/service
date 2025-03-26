@@ -2,7 +2,6 @@
 import { TraceLevel, Tracer } from "@modulefederation/common";
 import { CommandConfig } from "./command-config";
 import { CommandInterceptor } from "./command-interceptor";
-import { CommandManager } from "./command-manager";
 import { ExecutionContext } from "./execution-context";
 import { CommandAdministration } from "./with-commands.mixin";
 

@@ -28,6 +28,7 @@ export class CommandButtonComponent implements OnInit, CommandListener {
     // input
 
     @Input() command!:  string | CommandDescriptor
+    @Input() label = false
 
     tooltip = ""
     descriptor!: CommandDescriptor

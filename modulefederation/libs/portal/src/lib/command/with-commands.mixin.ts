@@ -75,6 +75,8 @@ export function WithCommands<T extends Constructor<AbstractFeature>>(base: T, co
             this.collectCommands(inject(CommandFactory))
         }
 
+        updateCommandState() {}
+
         // implement OnLocaleChange
 
         onLocaleChange(locale: Intl.Locale): Observable<any> {

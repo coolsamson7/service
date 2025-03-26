@@ -1,0 +1,11 @@
+<div>
+  <button matTooltip="tooltip" [matMenuTriggerFor]="menu" mat-button>
+      <mat-icon>{{commands[0].icon}}</mat-icon>
+      <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  
+  <mat-menu #menu="matMenu">
+    <!-- TODO command-button *ngFor="let command of commands"  [command]="command"/-->
+    <button *ngFor="let command of commands"  (click)="command.run()" [disabled]="!command.enabled" mat-menu-item>{{command.label}}</button>
+  </mat-menu>
+</div>

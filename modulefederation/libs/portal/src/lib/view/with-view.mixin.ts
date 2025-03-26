@@ -1,8 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 
-import { ViewChild, Component } from "@angular/core";
+import { ViewChild, Component, AfterViewInit } from "@angular/core";
 import { AbstractFeature } from "../feature";
-import { registerMixins } from "@modulefederation/common";
+import { hasMixin, registerMixins } from "@modulefederation/common";
 import { ViewComponent } from "./view.component";
 import { CommandConfig, CommandManager, ExecutionContext, LockCommandGroupInterceptor, LockCommandInterceptor } from "../command";
 import { CommandInterceptor } from "../command/command-interceptor";
@@ -10,7 +10,7 @@ import { CommandInterceptor } from "../command/command-interceptor";
 type Constructor<T = any> =  new (...args: any[]) => T;
 
 /**
- * an interceptor that will turn on the busy cursor of the associated view after 100ms of comamnd execution.
+ * an interceptor that will turn on the busy cursor of the associated view after 100ms of command execution.
  */
 export class BusyCursorInterceptor implements CommandInterceptor {
     // constructor
@@ -81,7 +81,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
         selector: 'with-view-component',
         template: ""
     })
-    class WithViewClass extends base implements WithView {
+    class WithViewClass extends base implements WithView, AfterViewInit {
         // instance data
 
         @ViewChild(ViewComponent) view! : ViewComponent
@@ -92,6 +92,17 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
         private busyCursorInterceptor?: BusyCursorInterceptor
 
        // private
+
+       private findView() {
+          if (!this.view) {
+            for ( let parent = this.parent; parent != undefined && this.view === undefined; parent = parent!.parent ) 
+              if ( hasMixin(parent, WithView))
+                this.view = (<WithViewClass><unknown>parent).view
+          
+              if ( !this.view)
+                console.log("missing <view> for " + this) // throw new Error("someone needs to declare a <view>!")
+          }
+        }
 
        private getLockViewInterceptor() {
         if (!this.lockViewInterceptor)
@@ -142,6 +153,14 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
 
        showMessage(message: string) : void {
         this.view.showMessage(message)
+       }
+
+       // implement AfterViewInit
+
+       override ngAfterViewInit() {
+        super.ngAfterViewInit()
+
+          this.findView()
        }
     }//, WithView)
 

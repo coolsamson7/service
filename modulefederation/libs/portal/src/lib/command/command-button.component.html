@@ -1,4 +1,4 @@
-<button [matTooltip]="tooltip" (click)="click()" [disabled]="!descriptor.enabled" mat-button class="button" #button>
+<button [matTooltip]="tooltip" (click)="click()" [disabled]="!descriptor.enabled" mat-icon-button class="button" #button>
     <icon [name]="descriptor.icon!"></icon>
-    <div class="label">{{descriptor.label}}</div>
+    <div *ngIf="label" class="label">{{descriptor.label}}</div>
 </button>
