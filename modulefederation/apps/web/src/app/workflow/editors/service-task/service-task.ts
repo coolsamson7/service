@@ -33,7 +33,6 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
   @ViewChild("model") model! : NgModel;
   @ViewChild("input") input! : any;
 
- 
   selectedService!: ServiceTaskDescriptor | undefined
   suggestionProvider = ServiceTaskEditor.suggestionProvider
   inputOutputElement!: Element
@@ -123,29 +122,61 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
  override ngOnInit() : void {
     super.ngOnInit()
 
-     // take care of exension elements
+    // lets see if we need to add parent elements
 
-     const extensionElement = this.element["extensionElements"] || this.create('bpmn:ExtensionElements', {});
+    const builder = this.actionHistory.commandBuilder()
 
-     if ( extensionElement.$parent == undefined) {
-       (this.element)["extensionElements"] = extensionElement
+    // take care of extension elements
 
-       extensionElement.$parent = this.element
+    let extensionElement = this.element["extensionElements"]
 
+    if (!extensionElement) {
+      this.set("extensionElements", extensionElement = this.create('bpmn:ExtensionElements', {
+        $parent: this.element,
+        values: []
+        }));
+
+      builder
+        .updateProperties({
+          element: this.shape,
+          moddleElement: this.element,
+          properties: {
+            extensionElements: extensionElement
+          },
+          oldProperties: {
+            extensionElement: undefined
+          },
+          //reverted: () => {
+          //  this.setup()
+          //}
+        });
+    }
+   else if ( !extensionElement.values )
        extensionElement.values = []
-     }
 
-     if ( !extensionElement.values )
-       extensionElement.values = []
+     // input & output
 
-     // input & putput
+     let inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput"))
 
-     const inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput")) || (<any>this.element)['$model'].create("camunda:InputOutput");
+     if ( !inputOutputElement) {
+      inputOutputElement = this.create("camunda:InputOutput", {$parent: extensionElement});
 
-     if ( inputOutputElement.$parent == undefined) {
-       inputOutputElement.$parent = extensionElement
+      builder
+        .updateProperties({
+          element: this.shape,
+          moddleElement: extensionElement,
+          properties: {
+            values: [...extensionElement.values, inputOutputElement]
+          },
+          oldProperties: {
+            extensionElement: [...extensionElement.values]
+          },
+          //reverted: () => {
+          //  this.setup()
+          //}
+        });
 
-       extensionElement.values.push(inputOutputElement)
+        extensionElement.values.push(inputOutputElement)
      }
 
      this.inputOutputElement = inputOutputElement

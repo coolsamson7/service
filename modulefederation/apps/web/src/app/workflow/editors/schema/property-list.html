@@ -1,15 +1,14 @@
 
-<div>
-    <div *ngFor="let property of properties" class="property">
-        <div class="left">
-            <svg-icon (click)="schema.toggle(property)" [name]="schema.isOpen(property) ? 'arrow-down' : 'arrow-right'"></svg-icon>
-            <div *ngIf="true" class="line"></div>
-        </div>
-
-        <div *ngIf="!schema.isOpen(property)">{{name(property)}}</div>
-        <ng-container *ngIf="schema.isOpen(property)" [property-editor]="property" [shape]="shape" [group]="group" ></ng-container>
-
-        <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
-        <svg-icon (click)="schema.delete(property)" name="delete" class="delete"></svg-icon>
+<div *ngFor="let property of properties" class="property">
+    <div class="left">
+        <svg-icon (click)="schema.toggle(property)" [name]="schema.isOpen(property) ? 'arrow-down' : 'arrow-right'"></svg-icon>
+        <div *ngIf="true" class="line"></div>
     </div>
+
+    <div *ngIf="!schema.isOpen(property)">{{name(property)}}</div>
+    <ng-container *ngIf="schema.isOpen(property)" [property-editor]="property" [shape]="shape" [group]="group" ></ng-container>
+
+    <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->
+    <svg-icon (click)="schema.delete(property)" name="delete" class="delete"></svg-icon>
 </div>
+

@@ -9,6 +9,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { Process } from "../service/process-inventory-service";
 import { Form } from "../service/form-inventory-service";
 import { MatMenuModule } from "@angular/material/menu";
+import { SvgIconComponent } from "../svg.icon";
 
 export interface Node {
     type: "process" | "form"
@@ -28,7 +29,15 @@ export interface MenuRequest {
     templateUrl: './process-tree.component.html',
     styleUrls: ['./process-tree.component.scss'],
     standalone: true,
-  imports: [CommonModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatMenuModule],
+    imports: [
+        CommonModule, 
+        MatTreeModule,
+        MatButtonModule, 
+        MatIconModule, 
+        MatFormFieldModule,
+        MatMenuModule,
+        SvgIconComponent
+    ],
 })
 export class ProcessTreeComponent implements OnInit, OnChanges {
     // input
@@ -85,7 +94,7 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
         })
     }
 
-    select(node: Node) {
+    select(node: Node | undefined) {
         if ( this.selection !== node) {
             this.onSelectionChange.emit(node)
 
@@ -95,6 +104,43 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
 
             this.vetoSelection = false
         }
+    }
+
+    indexOf(node: Node) {
+        if ( node.parent)
+            return node.parent!.children!.indexOf(node)
+        else
+            return this.dataSource.data.indexOf(node)
+    }
+
+    // return the node which should be selected
+
+    deletedNode(node: Node) : Node | undefined {
+        let nextNode : Node | undefined = undefined
+        const index = this.indexOf(node)
+
+        if ( node.parent) {
+            const children  = node.parent!.children!
+
+            children.splice(index, 1)
+            nextNode = children.length > 0 ? children[Math.min(children.length - 1, index)] : node.parent
+        }
+        else {
+            const children  =  this.dataSource.data
+            children.splice(index, 1)
+            nextNode = children.length > 0 ? children[Math.min(children.length - 1, index)] : undefined
+        }
+
+        this.refreshData()
+
+        if ( nextNode )
+            this.treeControl.expansionModel.select(nextNode)
+        else
+            this.treeControl.expansionModel.select()
+
+        this.select(nextNode)
+
+        return nextNode
     }
 
     addProcess(process: Process) : Node {
@@ -123,7 +169,6 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
 
         this.select(node!)
     }
-
 
     addForm(form: Form, processNode: Node, select = true) : Node {
         const node : Node =  {

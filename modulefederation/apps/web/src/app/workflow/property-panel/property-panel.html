@@ -4,7 +4,7 @@
       <svg-icon name="element"></svg-icon>
     </div>
     <div *ngIf="element" class="labels">
-      <div class="type">{{element!.$type}}</div>
+      <div class="type">{{typeName(element!)}}</div>
       <div class="name">{{element!['name']}}</div>
     </div>
   </div>
@@ -12,4 +12,4 @@
     <property-group *ngFor="let group of currentConfig.groups" [group]="group" [shape]="shape" [element]="element"></property-group>
   </ng-container>
 </div>
-  
+

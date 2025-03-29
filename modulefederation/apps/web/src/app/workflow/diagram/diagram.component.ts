@@ -17,9 +17,6 @@ import {
   Inject
 } from '@angular/core';
 
-
-import { HttpClient } from '@angular/common/http';
-
 import type Canvas from 'diagram-js/lib/core/Canvas';
 import type Overlays from 'diagram-js/lib/features/overlays/Overlays';
 import type { ImportDoneEvent, ImportXMLResult, SaveXMLResult } from 'bpmn-js/lib/BaseViewer';
@@ -33,7 +30,6 @@ import { Shape } from 'bpmn-js/lib/model/Types';
 
 import { BaseElement } from 'bpmn-moddle'
 import  { Element  } from "moddle"
-import { AdministrationService } from '../service/administration-service';
 import { DiagramConfiguration, DiagramConfigurationToken } from './diagram.configuration';
 import ElementRegistry from 'diagram-js/lib/core/ElementRegistry';
 import { ModelValidation, ValidationError } from '../validation';
@@ -92,7 +88,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   // constructor
 
-  constructor(private messageBus: MessageBus, private modelValidation: ModelValidation, private http: HttpClient, private administrationService: AdministrationService, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
+  constructor(private messageBus: MessageBus, private modelValidation: ModelValidation, @Inject(DiagramConfigurationToken) configuration: DiagramConfiguration) {
     this.modeler = new BpmnJS({
       moddleExtensions: configuration.extensions
     });

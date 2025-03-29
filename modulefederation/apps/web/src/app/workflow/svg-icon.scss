@@ -1,12 +1,16 @@
+:host {
+  display: flex;
+}
+
 .icon-wrap {
   /* don't take the whole line */
   display: inline;
   /* transition the background change */
   transition: background-color 0.25s;
-  /* height of the icon */
+  /* height of the icon 
   height: 16px;
-  /* width of the icon */
-  width: 16px;
+  /* width of the icon
+  width: 16px;*/
   /* space between the icon and the background edge */
   padding: 1px;
   /* make it rounded */
@@ -24,7 +28,7 @@
 
 /* styles for the icon wrap when hovered */
 
-.icon-wrap:hover {
+.icon-wrap:hover  {
   /* add a background on hover */
   background-color: rgba(0, 0, 0, .15);
   /* pointer cursor on hover */

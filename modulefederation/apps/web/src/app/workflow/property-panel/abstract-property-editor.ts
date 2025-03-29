@@ -3,7 +3,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { PropertyEditor } from "./property-editor";
-//import { PropertyEditorDirective } from "./property.editor.directive";
 import { EventBus } from "bpmn-js/lib/BaseViewer";
 
 import  {Element, PropertyDescriptor  } from "moddle"
@@ -23,7 +22,6 @@ export interface EditorSettings<T> {
   out?: Conversion,
   oneOf?: T[]
 }
-
 
 
 @Component({
@@ -107,6 +105,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     return this.element[property] as T
   }
 
+  set<T>(property: string, value: T) {
+     this.element[property] = value
+  }
+
  create(type: string, properties: any) : Element {
     const element = this.element['$model'].create(type)
 
@@ -159,6 +161,12 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
       return result
     }
+
+    // TEST
+    const object = [this.property.name].reduce((result : any , property: string) => {
+      result[property] = value
+      return result
+    }, {})
 
     if (this.action) {
       this.element.set(this.property.name, value)

@@ -1,0 +1,9 @@
+<div class="properties">
+  <ng-container  *ngFor="let property of properties">
+    <property-name #label [property]="property"></property-name>
+
+    <ng-container *ngIf="property.name === 'body'" [property-editor]="element['conditionExpression']" [label]="label" [group]="group" [shape]="shape" [property]="property" [inputs]="{ value: element['conditionExpression'] }" [settings]="settings"></ng-container>
+
+    <!--ng-container *ngIf="property.name === 'type'" [property-editor]="condition" [label]="label" [group]="group" [shape]="shape" [property]="property" [inputs]="{ value: condition[property.name] }"></ng-container-->
+  </ng-container>
+</div>

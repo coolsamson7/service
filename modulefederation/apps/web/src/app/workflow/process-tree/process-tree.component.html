@@ -1,9 +1,9 @@
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="namespace-tree">
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="namespace-tree dense-5">
     <!-- This is the tree node template for leaf nodes -->
     <!-- There is inline padding applied to this node using styles.
       This padding value depends on the mat-icon-button width. -->
 
-    <mat-tree-node [ngClass]="{ 'background-highlight': selection === node }" (click)="select(node)" class="node" *matTreeNodeDef="let node" matTreeNodeToggle>
+    <mat-tree-node [ngClass]="{ 'background-highlight': selection === node }" (click)="select(node)" class="node dense-5" *matTreeNodeDef="let node" matTreeNodeToggle>
       <button mat-icon-button matTreeNodeToggle class="invisible">
         <mat-icon class="mat-icon-rtl-mirror">expand_more</mat-icon>
       </button>
@@ -17,13 +17,19 @@
 
         <!-- menu -->
 
-        <button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu" mat-icon-button>
+        <span class="actions">
+            <svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon>
+            <svg-icon name="delete" class="menu" (click)="triggeredMenu(node, 'delete-process')"></svg-icon>
+        </span>
+       
+
+        <!--button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu" mat-icon-button>
             <mat-icon class="add" matSuffix>more_vert</mat-icon>
 
-            <mat-menu #processMenu="matMenu">
-                <button mat-menu-item  (click)="triggeredMenu(node, 'add-form')">Add Form</button>
+            <mat-menu #processMenu="matMenu" class="dense-5">
+                <button mat-menu-item  (click)="triggeredMenu(node, 'add-form')" class="dense-5">Add Form</button>
             </mat-menu>
-        </button>
+        </button-->
        </ng-container>
 
         <!-- form -->
@@ -32,18 +38,23 @@
             <mat-icon class="icon mat-icon-rtl-mirror">noappsde</mat-icon>
     
             <span class="name">{{node.name}}</span>
+
+            <span class="actions">
+                <svg-icon name="delete" class="delete" (click)="triggeredMenu(node, 'delete-form')"></svg-icon>
+            </span>
         </ng-container>
     </mat-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
     <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-        <div class="mat-tree-node node" [ngClass]="{ 'background-highlight': selection === node }" (click)="select(node)">
+        <div class="mat-tree-node node dense-5 " [ngClass]="{ 'background-highlight': selection === node }" (click)="select(node)">
             <button mat-icon-button matTreeNodeToggle
                     [attr.aria-label]="'Toggle ' + node.name">
                 <mat-icon class="mat-icon-rtl-mirror">
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
             </button>
+
             <!-- process -->
 
             <ng-container *ngIf="node.type === 'process'">
@@ -53,19 +64,25 @@
 
                 <!-- menu -->
 
-                <button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu" mat-icon-button>
+                <span class="actions">
+                    <svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon>
+                    <svg-icon name="delete" class="menu" (click)="triggeredMenu(node, 'delete-process')"></svg-icon>
+                </span>
+       
+
+                <!--button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu dense-5" mat-icon-button>
                     <mat-icon class="add" matSuffix>more_vert</mat-icon>
         
-                    <mat-menu #processMenu="matMenu">
+                    <mat-menu #processMenu="matMenu" class="dense-5">
                         <button mat-menu-item  (click)="triggeredMenu(node, 'add-form')">Add Form</button>
                     </mat-menu>
-                </button>
+                </button-->
             </ng-container>
 
             <!-- form -->
 
             <ng-container *ngIf="node.type === 'form'">
-                <mat-icon class="icon mat-icon-rtl-mirror">apps</mat-icon>
+                <mat-icon class="icon mat-icon-rtl-mirror dense-5">apps</mat-icon>
           
                 <span class="name">{{node.name}}</span>
             </ng-container>

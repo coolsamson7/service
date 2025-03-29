@@ -32,6 +32,14 @@ export class ExtensionEditor implements OnInit {
     return this.element["extensionElements"].values.filter((extensionElement: any) => extensionElement.$instanceOf(this.extension));
   }
 
+  get<T>(property: string) : T {
+    return this.element[property] as T
+  }
+
+  set<T>(property: string, value: T) : void {
+     this.element[property] = value
+  }
+
   computeLabel = (element: Element) => {return element.$type}
 
   // constructor
@@ -69,16 +77,17 @@ export class ExtensionEditor implements OnInit {
 
   // private
 
-  create(extension: string) : Element {
-    const newExtension : BaseElement = (<any>this.element)['$model'].create(extension)
+  create(type: string, properties: any) : Element {
+    const element = this.element['$model'].create(type)
 
-    newExtension.$parent = this.extensionElement
+    for ( const property in properties)
+      element[property] = properties[property]
 
-    return newExtension as any as Element
+    return element
   }
 
   add() {
-    const newExtension = this.create(this.extension)
+    const newExtension = this.create(this.extension, {$parent: this.element})
 
     this.actionHistory.updateProperties({
       element: this.shape,
@@ -96,17 +105,27 @@ export class ExtensionEditor implements OnInit {
   // implement OnInit
 
   ngOnInit(): void {
-    const extensionElement = this.element["extensionElements"] || (<any>this.element)['$model'].create('bpmn:ExtensionElements');
+    let extensionElement = this.element["extensionElements"]
 
-    if ( extensionElement.$parent == undefined) {
-      (this.element)["extensionElements"] = extensionElement
+     if ( !extensionElement) {
+       this.set("extensionElements", extensionElement = this.create('bpmn:ExtensionElements', {
+         $parent: this.element,
+         values: []
+         } ));
 
-      extensionElement.$parent = this.element
-    }
-
-    this.extensionElement = extensionElement
-
-    if (!this.extensionElement.values)
+         (<any>extensionElement)["$builder"] = this.actionHistory.commandBuilder()
+             .updateProperties({
+               element: this.shape,
+               moddleElement: this.element,
+               properties: {
+                 extensionElements: extensionElement
+               },
+               oldProperties: {
+                 extensionElements: undefined
+               }
+             });
+       }
+    else if (!this.extensionElement.values)
       this.extensionElement.values = []
 
     for ( const extension of this.extensions)

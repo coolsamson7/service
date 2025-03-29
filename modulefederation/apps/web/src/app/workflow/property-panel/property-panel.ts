@@ -6,7 +6,7 @@ import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
 import { PropertyPanelConfig, PropertyPanelConfigurationToken } from "./property-panel.configuration";
 import { Shape } from "bpmn-js/lib/model/Types";
-import { MessageBus } from "@modulefederation/portal";
+import { MessageBus, WithLifecycle } from "@modulefederation/portal";
 import { ValidationError } from "../validation";
 import { PropertyGroupComponent } from "./property-group";
 import { ActionHistory } from "../bpmn"
@@ -19,7 +19,7 @@ import { EventBus } from "bpmn-js/lib/BaseViewer";
   templateUrl: "./property-panel.html",
   styleUrl: "./property-panel.scss"
 })
-export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
+export class PropertyPanelComponent extends WithLifecycle {
   // input
 
   @Input() modeler!: BpmnJS
@@ -47,19 +47,35 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
   // constructor
 
   constructor(@Inject(PropertyPanelConfigurationToken) private configuration: PropertyPanelConfig, private messageBus: MessageBus) {
-    messageBus.listenFor<ValidationError[]>("model-validation").subscribe(message => {
+    super()
+
+    const subscription = messageBus.listenFor<ValidationError>("model-validation").subscribe(message => {
       if ( message.message == "error") {
-        this.highlightErrors(message.arguments!, false)
+        this.highlightErrors([message.arguments!!], false)
       }
       else if (message.message == "select-error") {
-        this.highlightErrors(message.arguments!, true)
+        this.highlightErrors([message.arguments!], true)
       }
     })
 
-    messageBus.listenFor("diagram").subscribe(message => {
+    this.onDestroy(() => subscription.unsubscribe())
+
+    const subscription1 = messageBus.listenFor("diagram").subscribe(message => {
       if ( message.message == "saved")
         this.clearHistory()
     })
+
+    this.onDestroy(() => subscription1.unsubscribe())
+  }
+
+  typeName(element: Element) : string {
+    let name = element.$type
+    const colon = name.indexOf(":")
+    name = name.substring(colon + 1)
+
+    return name
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, function(str){ return str.toUpperCase(); })
   }
 
   clearHistory() {
@@ -103,7 +119,6 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
     const result : Moddle.TypeDefinition[] = []
 
     //  check all tyopes with meta
-
 
     for ( const extension of this.extensions) {
         for ( const allowedIn of extension.meta!["allowedIn"]) {
@@ -175,7 +190,7 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   // implement OnInit
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
     this.eventBus = this.modeler.get('eventBus');
 
@@ -188,11 +203,5 @@ export class PropertyPanelComponent implements OnInit, OnChanges, OnDestroy {
     if (changes["shape"]) {//} && !changes["element"].firstChange) {
       this.setElement(changes["shape"].currentValue as Shape)
     }
-  }
-
-  // implement OnDestroy
-
-  ngOnDestroy(): void {
-
   }
 }
