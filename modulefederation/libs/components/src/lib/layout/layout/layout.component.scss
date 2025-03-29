@@ -17,15 +17,3 @@
 ::ng-deep .g3-dialog.g3-dockable-pane {
   @include panes.pane;
 }
-
-:host ::ng-deep {
-  .top,
-  .bottom {
-    max-height: 360px;
-  }
-
-  .left,
-  .right {
-    max-width: 480px;
-  }
-}

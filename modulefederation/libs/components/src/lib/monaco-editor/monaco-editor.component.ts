@@ -193,6 +193,8 @@ export class MonacoEditorComponent extends AbstractMonacoEditor implements Contr
         //this.editor?.setValue(this.value)
 
         this.modelInstance?.setValue(this.value)
+
+        this.editor?.getAction('editor.action.formatDocument').run()
     }
 
 

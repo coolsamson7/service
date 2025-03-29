@@ -1,4 +1,8 @@
+@use './panes' as panes;
 @import './mat-resizable-dialog.directive';
+
+
+ @include panes.pane;
 
 :host {
   display: block;
