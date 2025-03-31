@@ -96,13 +96,17 @@ export class MemberDirective implements Validator {
 
     if ( this.type == "feature")
       this.suggestionProvider == this.featureSuggestionProvider
-    else
+    else {
+      this.name = this.element["name"]
       this.suggestionProvider = this.formSuggestionProvider
+    }
 
     super.onChange( this.type + ":" + this.name)
   }
 
   addForm() {
+    super.onChange( this.type + ":" + this.name)
+    
     this.messageBus.broadcast({
       topic: "workflow",
       message: "add-form",
@@ -140,8 +144,11 @@ export class MemberDirective implements Validator {
 
     if ( this.type == "feature")
       this.suggestionProvider == this.featureSuggestionProvider
-    else
+    else {
+      this.name = this.element["name"]
+
       this.suggestionProvider = this.formSuggestionProvider
+    }
   }
 
   // override

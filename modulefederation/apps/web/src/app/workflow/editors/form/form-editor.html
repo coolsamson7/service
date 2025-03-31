@@ -3,7 +3,7 @@
     <input #input  matInput  #model="ngModel"
       type="text" id="form"  name="form"
       [ngModel]="name"  (ngModelChange)="onChange($event)"
-
+      [disabled]="type === 'form'"
       [placeholder]="type === 'feature' ? 'Feature' : 'Form'">
 
 
@@ -30,15 +30,13 @@
 
     <!-- error -->
 
-
   </mat-form-field>
 
-
-
-  <!-- the combo thing -->
+  <!-- the form vs feature menu -->
 
   <mat-menu #menu="matMenu" class="change-type-menu-panel">
-    <div (click)="changeType('form')" mat-menu-item> <mat-icon>{{icons["form"]}}</mat-icon></div>
-    <div (click)="changeType('feature')" mat-menu-item> <mat-icon>{{icons["feature"]}}</mat-icon></div>
+    <div *ngFor="let type of ['form', 'feature']" (click)="changeType(type)" mat-menu-item>
+      <mat-icon>{{icons[type]}}</mat-icon>
+    </div>
   </mat-menu>
 

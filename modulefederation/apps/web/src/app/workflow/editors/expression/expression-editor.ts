@@ -70,20 +70,17 @@ export class ExpressionEditor extends AbstractPropertyEditor implements OnChange
   // override OnInit
 
   override ngOnInit() : void {
-      /*this.settings = {
-        in: (value : string) => {
-          if ( value.startsWith("${")) {
-            return value.substring(2, value.length - 1)
-          }
-          else return value
-        },
-        out: (value : string) => {
+      this.settings = {
+        in: (value: string) => {
           if ( value.startsWith("${"))
-            return value
+            return value.substring(2, value.length - 1)
           else
-             return `\${${value}`
+            return value
+        },
+        out: (value: string) => {
+          return `\${${value}}`
         }
-      }*/
+      }
 
       super.ngOnInit()
 

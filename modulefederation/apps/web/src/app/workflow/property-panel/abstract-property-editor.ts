@@ -65,7 +65,8 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   @Input() shape!: Shape
   @Input() element!: Element
   @Input() property!: PropertyDescriptor
-  @Input() settings : EditorSettings<T> = {}
+  @Input() settings : EditorSettings<T> = {
+  }
   @Input() group!: PropertyGroupComponent
   @Input() editor!: PropertyEditorDirective
 

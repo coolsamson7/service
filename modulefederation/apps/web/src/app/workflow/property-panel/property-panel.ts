@@ -118,7 +118,7 @@ export class PropertyPanelComponent extends WithLifecycle {
   private computeAllowedExtensions(element: Element) : Moddle.TypeDefinition[] {
     const result : Moddle.TypeDefinition[] = []
 
-    //  check all tyopes with meta
+    //  check all types with meta
 
     for ( const extension of this.extensions) {
         for ( const allowedIn of extension.meta!["allowedIn"]) {
@@ -156,6 +156,8 @@ export class PropertyPanelComponent extends WithLifecycle {
       // collect groups
 
       for (const group of this.configuration.groups) {
+        // extensions
+
         if (group.extension) {
           const extension = this.allowedExtensions.find((extension) => extension.name == group.extension)
           if (extension) {
@@ -171,7 +173,8 @@ export class PropertyPanelComponent extends WithLifecycle {
             })
           }
         }
-        else if ( group.element && element.$instanceOf(group.element)) {
+        // element
+        else if ( group.element && element.$instanceOf(group.element) && (group.applies ? group.applies(element) : true)) {
           let target = this.currentConfig.groups.find((g) => g.name == group.name)
           if ( !target )
             this.currentConfig.groups.push(target = {
