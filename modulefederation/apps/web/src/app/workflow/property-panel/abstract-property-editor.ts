@@ -206,8 +206,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     this.in = this.settings.in
     this.out = this.settings.out
 
-    if ( typeof value !== this.baseType) {
-      // TODO: in already set?
+    if ( typeof value !== this.baseType && this.in == undefined && this.out == undefined) {
       this.in = AbstractPropertyEditor.getConversion(typeof value, this.baseType)
       this.out = AbstractPropertyEditor.getConversion(this.baseType, typeof value)
     }

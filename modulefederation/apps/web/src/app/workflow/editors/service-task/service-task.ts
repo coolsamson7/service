@@ -11,6 +11,7 @@ import { ServiceTaskDescriptor, TaskDescriptorInventoryService } from '../../ser
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective, ValidationError } from '../../validation';
+import { CommandBuilder } from '../../bpmn';
 
 
 @RegisterPropertyEditor("bpmn:implementation")
@@ -35,7 +36,6 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
   selectedService!: ServiceTaskDescriptor | undefined
   suggestionProvider = ServiceTaskEditor.suggestionProvider
-  inputOutputElement!: Element
 
   // constructor
 
@@ -52,46 +52,153 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
   // private
 
+  private getInputOutputElement(builder: CommandBuilder) : Element {
+    // take care of extension elements
+
+    let extensionElement = this.get<Element>("extensionElements")
+
+    if (!extensionElement) {
+      extensionElement = this.create('bpmn:ExtensionElements', {
+        $parent: this.element,
+        values: []
+        });
+
+      builder
+        .updateProperties({
+          element: this.shape,
+          moddleElement: this.element,
+          properties: {
+            extensionElements: extensionElement
+          }
+        });
+    }
+    else if ( !extensionElement["values"] )
+        extensionElement["values"] = []
+
+      // input & output
+
+      let inputOutputElement = extensionElement['values'].find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput"))
+
+      if ( !inputOutputElement) {
+      inputOutputElement = this.create("camunda:InputOutput", {$parent: extensionElement});
+
+      builder
+        .updateProperties({
+          element: this.shape,
+          moddleElement: extensionElement,
+          properties: {
+            values: [...extensionElement['values'], inputOutputElement]
+          },
+        });
+
+        extensionElement['values'].push(inputOutputElement)
+      }
+
+      // create inputs
+
+      if (!inputOutputElement['inputParameters'])
+        inputOutputElement['inputParameters'] = []
+
+      // create outputs
+
+      if (!inputOutputElement['outputParameters'])
+        inputOutputElement['outputParameters'] = []
+
+      return inputOutputElement
+  }
+
+  private defaultParameter(type: string) {
+    switch ( type ) {
+      case "Boolean":
+        return "false"
+
+      case "String":
+        return ""
+        
+      case "Short":
+      case "Integer":
+      case "Long":
+      case "Double":
+        return "0"
+    }
+
+    return ""
+  }
 
   private setService(descriptor : ServiceTaskDescriptor | undefined) {
     if ( descriptor !== this.selectedService) {
+      const builder = this.actionHistory.commandBuilder()
+
+      const previousService = this.selectedService
+
       this.selectedService = descriptor;
 
-      (<any>this.inputOutputElement)["inputParameters"] = [];
-      (<any>this.inputOutputElement)["outputParameters"] = [];
+      const inputOutputElement = this.getInputOutputElement(builder)
 
       if ( descriptor ) {
         // expression
 
-        this.element["expression"] = `\${${descriptor.name}.execute(execution)}`;
+        builder.updateProperties({
+          element: this.shape,
+          moddleElement: this.element,
+          properties: {
+            expression: `\${${descriptor.name}.execute(execution)}`
+          },
+          reverted: () => {this.selectedService = previousService;}
+        })
 
         // input
 
-        for ( const input of descriptor.input) {
-          const inputParameter =  this.create("schema:inputParameter", {
-            $parent: this.inputOutputElement,
-            name: input.name,
-            source: "value",
-            type: input.type,
-            value: ""
-          });
-
-          (<any>this.inputOutputElement)["inputParameters"].push(inputParameter);
-        }
+        const inputParameters = descriptor.input.map(input => this.create("schema:inputParameter", {
+          $parent: inputOutputElement,
+          name: input.name,
+          source: "value",
+          type: input.type,
+          value: this.defaultParameter(input.type)
+        }))
 
         // output
 
-        for ( const input of descriptor.output) {
-          const outputParameter =  this.create("schema:outputParameter", {
-            $parent: this.inputOutputElement,
-            name: input.name,
-            type: input.type
-          });
+        const outputParameters = descriptor.input.map(input => this.create("schema:outputParameter", {
+          $parent: inputOutputElement,
+          name: input.name,
+          source: "value",
+          type: input.type,
+        }))
 
-          (<any>this.inputOutputElement)["outputParameters"].push(outputParameter);
-        }
+        // add 2 builder
+
+        builder.updateProperties({
+          element: this.shape,
+          moddleElement: inputOutputElement,
+          properties: {
+            inputParameters: [ ...inputParameters],
+            outputParameters: [...outputParameters]
+          }
+        })
+      } // if
+      else {
+        builder.updateProperties({
+          element: this.shape,
+          moddleElement: this.element,
+          properties: {
+            expression: `` // ?
+          },
+          reverted: () => {this.selectedService = previousService;}
+        })
+
+        builder.updateProperties({
+          element: this.shape,
+          moddleElement: inputOutputElement,
+          properties: {
+            inputParameters: [],
+            outputParameters: []
+          }
+        })
       }
-    }
+
+      builder.execute()
+    } // if
   }
 
   private findService(serviceName: string) {
@@ -122,81 +229,12 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
  override ngOnInit() : void {
     super.ngOnInit()
 
-    // lets see if we need to add parent elements
+    // lets check the current service
 
-    const builder = this.actionHistory.commandBuilder()
+    const expression = this.element["expression"] || "${.execute(execution)}"
 
-    // take care of extension elements
+    const service = expression.substring(2, expression.indexOf("."))
 
-    let extensionElement = this.element["extensionElements"]
-
-    if (!extensionElement) {
-      this.set("extensionElements", extensionElement = this.create('bpmn:ExtensionElements', {
-        $parent: this.element,
-        values: []
-        }));
-
-      builder
-        .updateProperties({
-          element: this.shape,
-          moddleElement: this.element,
-          properties: {
-            extensionElements: extensionElement
-          },
-          oldProperties: {
-            extensionElement: undefined
-          },
-          //reverted: () => {
-          //  this.setup()
-          //}
-        });
-    }
-   else if ( !extensionElement.values )
-       extensionElement.values = []
-
-     // input & output
-
-     let inputOutputElement = extensionElement.values.find((extensionElement: any) => extensionElement.$instanceOf("camunda:InputOutput"))
-
-     if ( !inputOutputElement) {
-      inputOutputElement = this.create("camunda:InputOutput", {$parent: extensionElement});
-
-      builder
-        .updateProperties({
-          element: this.shape,
-          moddleElement: extensionElement,
-          properties: {
-            values: [...extensionElement.values, inputOutputElement]
-          },
-          oldProperties: {
-            extensionElement: [...extensionElement.values]
-          },
-          //reverted: () => {
-          //  this.setup()
-          //}
-        });
-
-        extensionElement.values.push(inputOutputElement)
-     }
-
-     this.inputOutputElement = inputOutputElement
-
-     // create inputs
-
-     if (!inputOutputElement['inputParameters'])
-       inputOutputElement['inputParameters'] = []
-
-     // create outputs
-
-     if (!inputOutputElement['outputParameters'])
-       inputOutputElement['outputParameters'] = []
-
-      // lets check the current service
-
-      const expression = this.element["expression"] || "${.execute(execution)}"
-
-      const service = expression.substring(2, expression.indexOf("."))
-
-      this.selectedService = this.findService(service)
+    this.selectedService = this.findService(service)
   }
 }

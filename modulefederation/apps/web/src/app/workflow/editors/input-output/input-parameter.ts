@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, ViewChild } from '@angular/core';
 
-import { AbstractExtensionEditor, EditorSettings, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
+import { AbstractExtensionEditor, AbstractPropertyEditor, EditorSettings, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -77,9 +77,30 @@ export class InputParameterEditor extends AbstractExtensionEditor {
     }
   }
 
+  baseType(type: string) {
+    switch ( type ) {
+      case "Boolean":
+        return "boolean"
+
+      case "String":
+      case "Short":
+      case "Integer":
+      case "Long":
+      case "Double":
+        return "number"
+    }
+
+    return "string"
+  }
+
   setType() {
-    if ( this.element["source"] == "value")
-      this.typedProperty = this.createProperty("value", this.element["type"] || "String")
+    if ( this.element["source"] == "value") {
+      const type =  this.element["type"] || "String"
+      this.typedProperty = this.createProperty("value",type)
+
+      this.valueSettings.in = AbstractPropertyEditor.getConversion("string", this.baseType(type))
+      this.valueSettings.out = AbstractPropertyEditor.getConversion(this.baseType(type), "string")
+    }
     else
       this.typedProperty = this.createProperty("value", "String")
   }
