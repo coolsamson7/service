@@ -32,8 +32,8 @@ export class FormInventoryService extends AbstractHTTPService {
 		return this.post<Form>(`create`, form)
 	}
 
-	public deleteForm(id : number) : Observable<void> {
-		return this.get<void>(`delete/${id}`)
+	public deleteForm(id : string, deployment: number, name: string) : Observable<void> {
+		return this.get<void>(`delete/${id}/${deployment}/${name}`)
 	}
 
 	public update(form : Form) : Observable<Form> {

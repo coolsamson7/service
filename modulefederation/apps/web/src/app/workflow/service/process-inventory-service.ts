@@ -34,8 +34,8 @@ export class ProcessInventoryService extends AbstractHTTPService {
 		return this.post<Process>(`create/${name}`, xml)
 	}
 
-	public deleteProcess(id : string) : Observable<void> {
-		return this.get<void>(`delete/${id}`)
+	public deleteProcess(id : string, deployment: number) : Observable<void> {
+		return this.get<void>(`delete/${id}/${deployment}`)
 	}
 
 	public publish(id : string, deployment : number, bpmn : string) : Observable<Process> {

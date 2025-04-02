@@ -191,19 +191,22 @@ export class PropertyPanelComponent extends WithLifecycle {
     } // if
   }
 
-  // implement OnInit
-
-  override ngOnInit(): void {
-    this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
-    this.eventBus = this.modeler.get('eventBus');
-
-    this.checkModel()
-  }
-
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["shape"]) {//} && !changes["element"].firstChange) {
+    // modeler
+
+    if (changes["modeler"] && this.modeler) {
+      this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
+      this.eventBus = this.modeler.get('eventBus');
+  
+      this.checkModel()
+    }
+
+
+    // shape
+
+    if (changes["shape"] && !changes["shape"].firstChange) {
       this.setElement(changes["shape"].currentValue as Shape)
     }
   }

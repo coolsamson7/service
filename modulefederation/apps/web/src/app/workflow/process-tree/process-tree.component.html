@@ -12,16 +12,16 @@
 
       <ng-container *ngIf="node.type === 'process'">
         <mat-icon class="icon mat-icon-rtl-mirror">apps</mat-icon>
-  
+
         <span class="name">{{node.name}}</span>
 
         <!-- menu -->
 
         <span class="actions">
-            <svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon>
+            <!--svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon-->
             <svg-icon name="delete" class="menu" (click)="triggeredMenu(node, 'delete-process')"></svg-icon>
         </span>
-       
+
 
         <!--button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu" mat-icon-button>
             <mat-icon class="add" matSuffix>more_vert</mat-icon>
@@ -36,7 +36,7 @@
 
         <ng-container *ngIf="node.type === 'form'">
             <mat-icon class="icon mat-icon-rtl-mirror">noappsde</mat-icon>
-    
+
             <span class="name">{{node.name}}</span>
 
             <span class="actions">
@@ -59,20 +59,20 @@
 
             <ng-container *ngIf="node.type === 'process'">
                 <mat-icon class="icon mat-icon-rtl-mirror">apps</mat-icon>
-          
+
                 <span class="name">{{node.name}}</span>
 
                 <!-- menu -->
 
                 <span class="actions">
-                    <svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon>
+                    <!--svg-icon name="plus" class="plus" (click)="triggeredMenu(node, 'add-form')"></svg-icon-->
                     <svg-icon name="delete" class="menu" (click)="triggeredMenu(node, 'delete-process')"></svg-icon>
                 </span>
-       
+
 
                 <!--button aria-label="Add" [matMenuTriggerFor]="processMenu" class="menu dense-5" mat-icon-button>
                     <mat-icon class="add" matSuffix>more_vert</mat-icon>
-        
+
                     <mat-menu #processMenu="matMenu" class="dense-5">
                         <button mat-menu-item  (click)="triggeredMenu(node, 'add-form')">Add Form</button>
                     </mat-menu>
@@ -83,7 +83,7 @@
 
             <ng-container *ngIf="node.type === 'form'">
                 <mat-icon class="icon mat-icon-rtl-mirror dense-5">apps</mat-icon>
-          
+
                 <span class="name">{{node.name}}</span>
             </ng-container>
         </div>
