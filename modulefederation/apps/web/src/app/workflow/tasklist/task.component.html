@@ -1,4 +1,12 @@
-<div>
+<div class="task">
+  <!-- header -->
+
+  <div class="header">
+    {{task.name}} {{task.id}}
+  </div>
+
+  <!-- the content -->
+
   <task-form *ngIf="task.form.startsWith('form')" [task]="task"></task-form>
   <feature-outlet  *ngIf="task.form.startsWith('feature')" [feature]="task.form" [input]="{task: task}"></feature-outlet>
 </div>

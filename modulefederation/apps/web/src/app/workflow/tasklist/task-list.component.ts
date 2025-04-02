@@ -7,8 +7,6 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  OnDestroy,
-  OnInit,
   Output,
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
@@ -18,6 +16,17 @@ import { Task } from "../service/task-service";
 import { TasklistDelta, TasklistManager } from './tasklist-manager';
 import { MessageBus, WithLifecycle } from '@modulefederation/portal';
 
+export class SelectionEvent{
+  // constructor
+  
+  constructor(private list: TasklistComponent, public selection: Task, private oldSelection: Task | undefined) {}
+
+  // public
+
+  veto() {
+    this.list.selection = this.oldSelection
+  }
+}
 
 @Component({
   selector: 'task-list',
@@ -33,11 +42,12 @@ import { MessageBus, WithLifecycle } from '@modulefederation/portal';
 export class TasklistComponent extends WithLifecycle {
   // input & output
 
-  @Output() task = new EventEmitter<Task>();
+  @Output() task = new EventEmitter<SelectionEvent>();
 
   // instance data
 
   tasks : Task[] = []
+  selection: Task | undefined = undefined
 
   // constructor
 
@@ -56,10 +66,11 @@ export class TasklistComponent extends WithLifecycle {
 
   // callbacks
 
-
   select(task: Task) {
-      this.task.emit(task)
-   }
+    this.task.emit(new SelectionEvent(this, task, this.selection))
+
+    this.selection = task
+  }
 
   updateList(delta: TasklistDelta) {
       // delete
