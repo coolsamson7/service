@@ -1,6 +1,8 @@
+import { Injectable } from "@angular/core";
 import { TraceLevel, Tracer } from "@modulefederation/common";
 import { RxStomp, RxStompState } from "@stomp/rx-stomp";
 import { BehaviorSubject, map, Observable, Subject } from "rxjs";
+import { HandlerMethod } from "./websocket-handler";
 
 export interface Request {
     id?: string, // correlation id
@@ -22,7 +24,7 @@ interface Pending<T> {
     reject: (reason?: any) => void
 }
 
-
+@Injectable({providedIn: 'root'})
 export class WebsocketManager {
     // instance data
 
@@ -32,6 +34,8 @@ export class WebsocketManager {
     open$ = new BehaviorSubject<boolean>(false);
 
     next = 0 // correlation id
+
+    callbacks : { [id: string]: HandlerMethod } = {};
 
     // constructor
 
@@ -47,6 +51,10 @@ export class WebsocketManager {
 
     active() : boolean {
         return this.stomp.active
+    }
+
+    registerCallback(name: string, callback: HandlerMethod) {
+        this.callbacks[name] = callback
     }
 
     // private
@@ -122,7 +130,6 @@ export class WebsocketManager {
         })
     }
 
-
     private handleResult(result: Result) {
         if ( Tracer.ENABLED)
             Tracer.Trace("websocket", TraceLevel.FULL, "handle result {0}", result.response)
@@ -148,10 +155,10 @@ export class WebsocketManager {
         if ( Tracer.ENABLED)
             Tracer.Trace("websocket", TraceLevel.FULL, "handle request {0}", request.request)
 
-        console.log(request.request)
+        this.callbacks[request.request].apply(request.args)
     }
 
-    protected execute<T>(request: Request, expectedValue: boolean, timeout: number) : Promise<T> | undefined {
+    public execute<T>(request: Request, expectedValue: boolean, timeout: number) : Promise<T> | undefined {
         if ( Tracer.ENABLED)
             Tracer.Trace("websocket", TraceLevel.FULL, "execute {0}", request.request)
 

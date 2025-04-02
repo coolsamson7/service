@@ -24,6 +24,18 @@ export interface MenuRequest {
     action: string
 }
 
+export class TreeSelectionEvent{
+  // constructor
+  
+  constructor(private tree: ProcessTreeComponent, public selection: Node | undefined, private oldSelection: Node | undefined) {}
+
+  // public
+
+  veto() {
+    this.tree.selection = this.oldSelection
+  }
+}
+
 @Component({
     selector: 'process-tree',
     templateUrl: './process-tree.component.html',
@@ -43,7 +55,7 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
     // input
 
     @Input() processes : Process[] = []
-    @Output() onSelectionChange = new EventEmitter<Node>();
+    @Output() onSelectionChange = new EventEmitter<TreeSelectionEvent>();
     @Output() onMenu = new EventEmitter<MenuRequest>();
 
     // instance data
@@ -51,7 +63,6 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
     treeControl = new NestedTreeControl<Node>(node => node.children);
     dataSource = new MatTreeNestedDataSource<Node>();
 
-    vetoSelection = false
     selection?: Node
 
     // private
@@ -96,13 +107,9 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
 
     select(node: Node | undefined) {
         if ( this.selection !== node) {
-            this.onSelectionChange.emit(node)
-
-            //if (!this.vetoSelection) {
-                this.selection = node
-            //}
-
-            this.vetoSelection = false
+            this.onSelectionChange.emit(new TreeSelectionEvent(this, node, this.selection))
+                
+            this.selection = node
         }
     }
 

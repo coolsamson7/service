@@ -56,12 +56,14 @@ export class TasklistComponent extends WithLifecycle {
     
     // call via websocket
 
-   this.onDestroy(() => messageBus.listenFor<TasklistDelta>("tasklist").subscribe(
+    const subscription = messageBus.listenFor<TasklistDelta>("tasklist").subscribe(
       message => {
         if (message.message == "update") {
           this.updateList(message.arguments!)
         }
-      }).unsubscribe())
+      })
+
+   this.onDestroy(() => subscription.unsubscribe())
   }
 
   // callbacks
@@ -89,7 +91,7 @@ export class TasklistComponent extends WithLifecycle {
   override ngOnInit(): void {
     super.ngOnInit()
 
-    this.tasklistManager.register()?.then(result => {
+    this.tasklistManager.register("demo")?.then(result => { // TODO
         this.tasks = result
     })
   }
@@ -101,7 +103,7 @@ export class TasklistComponent extends WithLifecycle {
     
     // probaly somewhere else...
 
-     this.tasklistManager.unregister()?.then(result => {
+     this.tasklistManager.unregister("demo")?.then(result => {
         console.log(result)
     })
   }
