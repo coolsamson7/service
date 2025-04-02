@@ -12,4 +12,6 @@ camunda:
 logging:
   level:
     org:
-      camunda: TRACE
+      camunda: INFO
+      springframework:
+        messaging: DEBUG

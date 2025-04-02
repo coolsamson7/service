@@ -3,7 +3,7 @@ package org.sirius.workflow.application
 import org.sirius.workflow.*
 
 
-@ServiceTask(name="dummy", description = "bla")
+@ServiceTask(name="t1", description = "bla")
 class DummyTask : AbstractServiceTask() {
     // instance data
 
@@ -18,7 +18,7 @@ class DummyTask : AbstractServiceTask() {
     // override
 
     override fun run() {
-        println("## ${descriptor.name}(i1: ${i1}, i2: ${i2})")
+        println("## ${descriptor.name}(i1: ${i1}, i2: ${i2}, i3: ${i3})")
 
         o1 = i1 + "x"
         o2 = i2//java.lang.Boolean.valueOf(i2.booleanValue())

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ernst="http://camunda.org/bpmn/examples" id="_DdZocL47EeOQo_IRkjDF6w" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="5.32.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="process" name="process" isExecutable="true">
+      <bpmn2:extensionElements>
+          <ernst:schema name="">
+              <ernst:property name="string" type="String" value="Andi" />
+              <ernst:property name="integer" type="Integer" value="59" />
+              <ernst:property name="boolean" type="Boolean" value="false" />
+          </ernst:schema>
+      </bpmn2:extensionElements>
+
+      <bpmn2:startEvent id="start" name="start">
+          <bpmn2:outgoing>f1</bpmn2:outgoing>
+      </bpmn2:startEvent>
+
+      <bpmn2:sequenceFlow id="f1" sourceRef="start" targetRef="t1" />
+
+      <bpmn2:serviceTask id="t1" name="t1" camunda:expression="${dummy.execute(execution)}">
+          <bpmn2:extensionElements>
+              <camunda:inputOutput>
+                  <ernst:inputParameter name="i1" type="String" source="process">string</ernst:inputParameter>
+                  <ernst:inputParameter name="i2" type="Boolean" source="process">boolean</ernst:inputParameter>
+                  <ernst:inputParameter name="i3" type="Integer" source="process">integer</ernst:inputParameter>
+
+                  <ernst:outputParameter name="o1" type="String"/>
+                  <ernst:outputParameter name="o2" type="Boolean"/>
+                  <ernst:outputParameter name="o3" type="Integer"/>
+              </camunda:inputOutput>
+          </bpmn2:extensionElements>
+
+          <bpmn2:incoming>f1</bpmn2:incoming>
+          <bpmn2:outgoing>f2</bpmn2:outgoing>
+      </bpmn2:serviceTask>
+
+      <bpmn2:sequenceFlow id="f2" sourceRef="t1" targetRef="t2" />
+
+      <bpmn2:serviceTask id="t2" name="t2" camunda:expression="${dummy.execute(execution)}">
+          <bpmn2:extensionElements>
+              <camunda:inputOutput>
+                  <ernst:inputParameter name="i1" type="String" source="output">t1.o1</ernst:inputParameter>
+                  <ernst:inputParameter name="i2" type="Boolean" source="output">t1.o2</ernst:inputParameter>
+                  <ernst:inputParameter name="i3" type="Integer" source="output">t1.o3</ernst:inputParameter>
+
+                  <ernst:outputParameter name="o1" type="String"/>
+                  <ernst:outputParameter name="o2" type="Boolean"/>
+                  <ernst:outputParameter name="o3" type="Integer"/>
+              </camunda:inputOutput>
+          </bpmn2:extensionElements>
+
+          <bpmn2:incoming>f2</bpmn2:incoming>
+          <bpmn2:outgoing>f3</bpmn2:outgoing>
+      </bpmn2:serviceTask>
+
+      <bpmn2:sequenceFlow id="f3" sourceRef="t2" targetRef="end" />
+
+      <bpmn2:endEvent id="end" name="end">
+          <bpmn2:incoming>f3</bpmn2:incoming>
+      </bpmn2:endEvent>
+  </bpmn2:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_3" bpmnElement="start">
+        <dc:Bounds x="170" y="104" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="140" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0a5y3eo" bpmnElement="t2">
+        <dc:Bounds x="510" y="82" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0d29bmg" bpmnElement="t1">
+        <dc:Bounds x="300" y="82" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_3" bpmnElement="end">
+        <dc:Bounds x="692" y="104" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="701" y="147" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0gmf205_di" bpmnElement="f1">
+        <di:waypoint x="206" y="122" />
+        <di:waypoint x="300" y="122" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01d6joa_di" bpmnElement="f2">
+        <di:waypoint x="400" y="122" />
+        <di:waypoint x="510" y="122" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13x1g17_di" bpmnElement="f3">
+        <di:waypoint x="610" y="122" />
+        <di:waypoint x="692" y="122" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

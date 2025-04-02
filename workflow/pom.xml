@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>1.8</java.version>
+
 
         <additionalJOption>-Xdoclint:none</additionalJOption>
 
@@ -26,13 +26,28 @@
         <junit-platform.version>1.9.3</junit-platform.version>
 
         <project.scm.id>github</project.scm.id>
-        <kotlin.version>1.9.20-Beta2</kotlin.version>
 
+        <java.version>11</java.version>
+        <kotlin.version>2.0</kotlin.version>
+
+        <!-- test -->
+
+        <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
+        <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
+        <!--kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget-->
+
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <!-- -->
         <camunda.spring-boot.version>7.16.0</camunda.spring-boot.version>
         <spring-boot.version>2.5.4</spring-boot.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.9.20-Beta2</kotlin.version>
+        <!--maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target-->
+        <!--maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target-->
+
+        <kotlin.version>1.9.25</kotlin.version>
         <hibernate.version>5.4.32.Final</hibernate.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
@@ -73,11 +88,11 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -107,7 +122,7 @@
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <artifactId>kotlin-stdlib-jdk7</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
 
@@ -177,7 +192,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>11</jvmTarget>
                     <args>
                         <arg>-Xjsr305=strict</arg>
                     </args>
@@ -204,6 +219,7 @@
 
     <modules>
         <module>core</module>
+        <module>model</module>
         <module>application</module>
     </modules>
 </project>

@@ -167,7 +167,7 @@ class SchemaParseListener : AbstractBpmnParseListener() {
 
         // remove empty conditions
 
-        conditions.removeIf {element -> element.text.isEmpty() }
+        //conditions.removeIf {element -> element.text.isEmpty() }
 
 
         // add ${}
@@ -175,11 +175,16 @@ class SchemaParseListener : AbstractBpmnParseListener() {
         for ( condition in conditions) {
             var text = getText(condition).toString()
 
-            if (!text.startsWith("\${"))
-                text = "\${" + text
+            if ( text.isEmpty())
+                text = "\${true}"
 
-            if  (!text.endsWith("}"))
-                text = text + "}"
+            else {
+                if (!text.startsWith("\${"))
+                    text = "\${" + text
+
+                if (!text.endsWith("}"))
+                    text = text + "}"
+            }
 
             if ( text !== getText(condition).toString())
                 getText(condition).clear().append(text)

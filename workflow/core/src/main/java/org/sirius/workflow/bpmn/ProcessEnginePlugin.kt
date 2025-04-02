@@ -50,6 +50,7 @@ class CustomElementsProcessEnginePlugin : ProcessEnginePlugin {
         // register parse listener
 
        processEngineConfiguration.customPreBPMNParseListeners.add(SchemaParseListener())
+       processEngineConfiguration.customPreBPMNParseListeners.add(UserTaskParseListener())
     }
 
     override fun postInit(processEngineConfiguration: ProcessEngineConfigurationImpl) {

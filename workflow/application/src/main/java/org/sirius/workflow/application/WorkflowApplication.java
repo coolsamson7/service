@@ -7,11 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Component;
+
 
 @SpringBootApplication
 @EnableProcessApplication
+@EnableAspectJAutoProxy
 @ComponentScan("org.sirius")
+
+@EnableAsync
+@Component
 public class WorkflowApplication {
 
   @Autowired
@@ -24,6 +32,6 @@ public class WorkflowApplication {
   @EventListener
   private void processPostDeploy(PostDeployEvent event) {
 
-    runtimeService.startProcessInstanceByKey("process");
+    //runtimeService.startProcessInstanceByKey("process");
   }
 }

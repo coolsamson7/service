@@ -1,16 +1,28 @@
 package org.sirius.workflow.service
 
 import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.TaskService
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity
 import org.camunda.bpm.engine.task.Task
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
+import org.camunda.spin.json.SpinJsonNode
 import org.sirius.workflow.bpmn.SchemaElement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.util.HashMap
 import kotlin.system.exitProcess
 
-data class TaskDTO(val id: String, val processId: String, val name: String, val description: String, val owner : String?, val assignee: String?, val form: String?)
+data class TaskDTO(
+    val id: String,
+    val processDefinitionId: String,
+    val processId: String,
+    val name: String,
+    val description: String,
+    val owner : String?,
+    val assignee: String?,
+    val form: String?
+)
 
 data class TaskQuery(
     val user: String? = null,
@@ -20,7 +32,7 @@ data class TaskQuery(
     val assignee: String? = null
 )
 
-data class Variables(val process: SchemaDescriptor, val input: SchemaDescriptor)
+data class Variables(val process: SchemaDescriptor, val input: SchemaDescriptor, val output: SchemaDescriptor)
 
 @CrossOrigin(
     origins = [ "http://localhost:8080", "http://localhost:4200"],
@@ -38,6 +50,8 @@ class TaskRestService {
 
     @Autowired
     private lateinit var taskService: TaskService
+    @Autowired
+    private lateinit var runtimeService: RuntimeService
     @Autowired
     private lateinit var repositoryService: RepositoryService
     @Autowired
@@ -80,6 +94,7 @@ class TaskRestService {
         return query .list().map { task -> TaskDTO(
             task.id,
             task.processDefinitionId,
+            task.processInstanceId,
             task.name,
             if ( task.description == null) "" else  task.description , // TODO
             task.owner,
@@ -88,8 +103,57 @@ class TaskRestService {
         ) }
     }
 
-    @GetMapping("complete/{id}")
-    fun completeTask(@PathVariable id: String) {
+    // TODO: refactor
+
+    fun collectOutput(definition: String, process: String, taskId: String, taskName: String, outputValues : Map<String,Any> ) {
+        // read instance
+
+        val instance = this.repositoryService.getBpmnModelInstance(definition)
+
+        val descriptor = this.metadataService.taskOutputSchema(definition, taskName)
+
+        // retrieve variable
+
+        val output = this.runtimeService.getVariable(process, "output") as SpinJsonNode
+
+        var node = output
+
+        if ( !node.hasProp(taskName))
+            node.prop(taskName, HashMap())
+
+        node = node.prop(taskName)
+
+        // set values
+
+        for ( descriptor in descriptor.properties) {
+            val name = descriptor.name
+            val value = outputValues.get(name)
+
+            when (descriptor.type) {
+                "String" -> node.prop(name, value as String)
+                "Boolean" -> node.prop(name, value as Boolean)
+                "Short" -> node.prop(name, value as Number)
+                "Long" -> node.prop(name, value as Number)
+                "Int" -> node.prop(name, value as Number)
+                "Double" -> node.prop(name, (value as Double).toFloat())
+
+                else -> {
+                    throw RuntimeException("bad type")
+                }
+            }
+        }
+
+        // write
+
+        this.runtimeService.setVariable(process, "output", output)
+    }
+
+    @PostMapping("complete/{definition}/{process}/{id}/{name}")
+    fun completeTask(@PathVariable definition: String, @PathVariable process: String, @PathVariable id: String, @PathVariable name: String, @RequestBody output : Map<String,Any>) {
+        // TODO: was mache ich mit den output parametern?
+
+        this.collectOutput(definition, process, id, name, output)
+
         taskService.complete(id)
     }
 
@@ -108,15 +172,19 @@ class TaskRestService {
         for (property in processSchema.properties)
             property.value = this.taskService.getVariable(task, property.name)
 
-        // task
+        // input
 
-        val taskSchema = this.metadataService.taskInputSchema(processDefinition, taskName)
+        val inputSchema = this.metadataService.taskInputSchema(processDefinition, taskName)
 
-        for (property in taskSchema.properties)
+        for (property in inputSchema.properties)
             property.value = this.taskService.getVariable(task, property.name)
+
+        // output
+
+        val outputSchema = this.metadataService.taskOutputSchema(processDefinition, taskName)
 
         // done
 
-        return Variables(processSchema, taskSchema)
+        return Variables(processSchema, inputSchema, outputSchema)
     }
 }
