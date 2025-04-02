@@ -6,14 +6,17 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   OnDestroy,
   OnInit,
+  Output,
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { TaskService } from '../service';
 
 import { Task } from "../service/task-service";
 import { TasklistDelta, TasklistManager } from './tasklist-manager';
+import { MessageBus, WithLifecycle } from '@modulefederation/portal';
 
 
 @Component({
@@ -27,66 +30,64 @@ import { TasklistDelta, TasklistManager } from './tasklist-manager';
     MatListModule
   ]
 })
-export class TasklistComponent implements OnInit, OnDestroy {
+export class TasklistComponent extends WithLifecycle {
   // input & output
 
-  //@Input() process?: string;
+  @Output() task = new EventEmitter<Task>();
 
   // instance data
 
   tasks : Task[] = []
-  selectedTask?: Task
 
   // constructor
 
-  constructor(private tasklistManager: TasklistManager, private taskService: TaskService) {
+  constructor(private tasklistManager: TasklistManager, private taskService: TaskService,  messageBus: MessageBus) {
+    super()
+    
     // call via websocket
 
-   
+   this.onDestroy(() => messageBus.listenFor<TasklistDelta>("tasklist").subscribe(
+      message => {
+        if (message.message == "update") {
+          this.updateList(message.arguments!)
+        }
+      }).unsubscribe())
   }
 
   // callbacks
 
-  reload() {
-    this.tasklistManager.register(this)?.then(result => {
-        this.tasks = result
-    })
-  }
 
-  claimTask(task: Task) {
-      this.taskService.getTasks({
-        //unassigned: true, // ??
-        assignee: "demo"
-      }).subscribe()
-
-
-
-    this.selectedTask = task
+  select(task: Task) {
+      this.task.emit(task)
    }
 
-    updateList(delta: TasklistDelta) {
-        // delete
+  updateList(delta: TasklistDelta) {
+      // delete
 
-       for ( let task of delta.deleted)
-            this.tasks.splice(this.tasks.indexOf(task), 1)
+      for ( let task of delta.deleted)
+          this.tasks.splice(this.tasks.indexOf(task), 1)
 
-        // add
-        
-        for ( let task of delta.added)
-            this.tasks.push(task)
-    }    
+      // add
+      
+      for ( let task of delta.added)
+          this.tasks.push(task)
+  }    
 
-  // implement OnInit
+  //   override WithLifecycle
 
-  ngOnInit(): void {
-    this.tasklistManager.register(this)?.then(result => {
+  override ngOnInit(): void {
+    super.ngOnInit()
+
+    this.tasklistManager.register()?.then(result => {
         this.tasks = result
     })
   }
 
-  // implement OnDestroy
+  //   override WithLifecycle
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy()
+    
     // probaly somewhere else...
 
      this.tasklistManager.unregister()?.then(result => {

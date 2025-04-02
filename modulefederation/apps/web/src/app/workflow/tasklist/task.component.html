@@ -1,0 +1,4 @@
+<div>
+  <task-form *ngIf="task.form.startsWith('form')" [task]="task"></task-form>
+  <feature-outlet  *ngIf="task.form.startsWith('feature')" [feature]="task.form" [input]="{task: task}"></feature-outlet>
+</div>

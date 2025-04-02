@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { TraceLevel, Tracer } from "@modulefederation/common";
-import { SessionManager } from "@modulefederation/portal";
+import { MessageBus, SessionManager } from "@modulefederation/portal";
 import { RxStomp } from "@stomp/rx-stomp";
 
 import { Task } from "../service/task-service";
@@ -15,13 +15,9 @@ export interface TasklistDelta {
 
 @Injectable({providedIn: 'root'})
 export class TasklistManager extends WebsocketManager {
-    // instance data
-
-   private  tasklistComponent!: TasklistComponent // TODO
-
     // constructor
 
-    constructor(stomp: RxStomp, private sessionManager: SessionManager) {
+    constructor(stomp: RxStomp, private sessionManager: SessionManager, private messageBus : MessageBus) {
         super(stomp)
     }
 
@@ -39,14 +35,11 @@ export class TasklistManager extends WebsocketManager {
             default:
                 console.log("unknown request " + request.request)
         }
-
     }
 
     // public
 
-    register(tasklist: TasklistComponent) : Promise<Task[]> | undefined {
-        this.tasklistComponent = tasklist // TODO bs, der...
-
+    register() : Promise<Task[]> | undefined {
        return super.execute({
             request: "register",
             args: ["demo"]//this.sessionManager.getUser().name ]
@@ -67,6 +60,11 @@ export class TasklistManager extends WebsocketManager {
      }
 
      tasklist(delta: TasklistDelta) {
-        this.tasklistComponent.updateList(delta)
+        this.messageBus.broadcast({
+            topic: "tasklist",
+            message: "update",
+            arguments: delta
+
+        })
      }
 }
