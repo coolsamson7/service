@@ -3,10 +3,11 @@ import { TraceLevel, Tracer } from "@modulefederation/common";
 import { RxStomp, RxStompState } from "@stomp/rx-stomp";
 import { BehaviorSubject, map, Observable, Subject } from "rxjs";
 import { HandlerMethod } from "./websocket-handler";
+import { v4 as uuidv4 } from 'uuid'
 
 export interface Request {
     id?: string, // correlation id
-
+    session?: string, // session id
     request: string,
     args: any[]
 }
@@ -36,6 +37,8 @@ export class WebsocketManager {
     next = 0 // correlation id
 
     callbacks : { [id: string]: HandlerMethod } = {};
+
+    session = uuidv4()
 
     // constructor
 
@@ -83,20 +86,20 @@ export class WebsocketManager {
             } // switch
         })
 
-        this.call$ = stomp.watch('/notifier/call')
+        this.call$ = stomp.watch('/session/call' + this.session) // NEW /user/queue/call'
             .pipe(
                 map(message => JSON.parse(message.body)),
                 //share({resetOnRefCountZero: true})
             )
 
-        this.result$ = stomp.watch('/notifier/result')
+        this.result$ = stomp.watch('/session/result'  + this.session)// NEW /user/queue/call'
             .pipe(
                 map(message => JSON.parse(message.body)),
                 //share({resetOnRefCountZero: true})
             )
 
-        this.call$.subscribe((request: Request) => this.handleRequest(request))
-        this.result$.subscribe((result: Result) => this.handleResult(result))
+        this.call$.subscribe(request => this.handleRequest(request))
+        this.result$.subscribe(result => this.handleResult(result))
     }
 
     private nextId() : string {
@@ -162,6 +165,7 @@ export class WebsocketManager {
         if ( Tracer.ENABLED)
             Tracer.Trace("websocket", TraceLevel.FULL, "execute {0}", request.request)
 
+        request.session = this.session // NEW
         if ( !this.stomp.active)
             console.log("?")
 

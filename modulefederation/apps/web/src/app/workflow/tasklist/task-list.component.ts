@@ -14,7 +14,7 @@ import { TaskService } from '../service';
 
 import { Task } from "../service/task-service";
 import { TasklistDelta, TasklistManager } from './tasklist-manager';
-import { MessageBus, WithLifecycle } from '@modulefederation/portal';
+import { MessageBus, SessionManager, WithLifecycle } from '@modulefederation/portal';
 
 export class SelectionEvent{
   // constructor
@@ -51,7 +51,7 @@ export class TasklistComponent extends WithLifecycle {
 
   // constructor
 
-  constructor(private tasklistManager: TasklistManager, private taskService: TaskService,  messageBus: MessageBus) {
+  constructor(private tasklistManager: TasklistManager, private taskService: TaskService,  private sessionManager: SessionManager, messageBus: MessageBus) {
     super()
     
     // call via websocket
@@ -91,7 +91,9 @@ export class TasklistComponent extends WithLifecycle {
   override ngOnInit(): void {
     super.ngOnInit()
 
-    this.tasklistManager.register("demo")?.then(result => { // TODO
+    let user = this.sessionManager.hasSession() ? this.sessionManager.getUser().preferred_username : "coolsamson"
+
+    this.tasklistManager.register(user)?.then(result => { // TODO
         this.tasks = result
     })
   }
@@ -103,7 +105,9 @@ export class TasklistComponent extends WithLifecycle {
     
     // probaly somewhere else...
 
-     this.tasklistManager.unregister("demo")?.then(result => {
+    let user = this.sessionManager.hasSession() ? this.sessionManager.getUser().preferred_username : "coolsamson"
+
+     this.tasklistManager.unregister(user)?.then(result => {
         console.log(result)
     })
   }

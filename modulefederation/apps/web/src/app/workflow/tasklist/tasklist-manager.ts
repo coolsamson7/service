@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MessageBus, SessionManager } from "@modulefederation/portal";
+import { MessageBus } from "@modulefederation/portal";
 
 import { Task } from "../service/task-service";
 import { Call, Callback, Handler } from "./websocket.decorator";
@@ -15,7 +15,7 @@ export interface TasklistDelta {
 export class TasklistManager {
     // constructor
 
-    constructor(private sessionManager: SessionManager, private messageBus: MessageBus) {
+    constructor(private messageBus: MessageBus) {
     }
 
     // calls
