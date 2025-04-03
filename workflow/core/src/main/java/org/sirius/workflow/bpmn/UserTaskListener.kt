@@ -6,18 +6,18 @@ package org.sirius.workflow.bpmn
  */
 
 import org.camunda.bpm.engine.delegate.DelegateTask
-import org.camunda.bpm.engine.delegate.TaskListener
 import org.sirius.workflow.tasklist.TasklistHandler
 
 class UserTaskListener : org.camunda.bpm.engine.delegate.TaskListener {
+    // override TaskListener
 
     override fun notify(delegateTask: DelegateTask) {
         TasklistHandler.INSTANCE.notify(delegateTask)
     }
 
-    companion object {
-        //var assigneeList: MutableList<String?> = ArrayList<String?>()
+    // companion
 
+    companion object {
         val instance = UserTaskListener()
     }
 }
