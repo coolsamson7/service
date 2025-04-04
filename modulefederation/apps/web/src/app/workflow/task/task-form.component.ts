@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from "@angular/core"
+import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core"
 
 import { FormInventoryService, Task, TaskService } from "../service"
-import { FormConfig, FormRendererModule } from "@modulefederation/form/renderer";
+import { FormConfig, FormRendererComponent, FormRendererModule } from "@modulefederation/form/renderer";
 import { CommonModule } from "@angular/common";
 import { WorkflowFunctions } from "../functions/workflow-functions";
 
@@ -16,18 +16,31 @@ const a = WorkflowFunctions
   standalone: true,
   imports: [CommonModule, FormRendererModule]
 })
-export class TaskFormComponent implements OnInit {
+export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
   // input
 
   @Input() task!: Task;
 
+  // instance data
+
+  @ViewChild(FormRendererComponent) renderer! : FormRendererComponent
+
   form!: FormConfig
-  model: any = {}
+  model: any = {
+    process: {},
+    input: {},
+    output: {},
+  }
 
   // constructor
 
   constructor(private formService: FormInventoryService, private taskService: TaskService) {
+  }
 
+  // callbacks
+
+  onStatusChange(event: any) {
+    console.log("status change", event)
   }
 
   // private
@@ -45,47 +58,63 @@ export class TaskFormComponent implements OnInit {
   // implement OnInit
 
   ngOnInit(): void {
+    this.model.task = this.task
+  }
+
+   // implement AfterViewInit
+
+   ngAfterViewInit(): void {
+     this.model.validate = this.renderer.validate
+  }
+
+  // implement OnChanges
+
+  ngOnChanges(changes: SimpleChanges): void {
     const result = this.parse(this.task)
 
     this.formService.find4Process(result.id, result.form).subscribe(form => {
         this.taskService.taskVariables(this.task).subscribe(variables => {
             this.form = JSON.parse(form.xml)
 
-            const model : any = {
-                task: this.task,
-                process: {},
-                input: {},
-                output: {},
-               
-            }
-
             // input
 
             for ( const prop of variables.input.properties)
-                model.input[prop.name] = prop.value
+                this.model.input[prop.name] = prop.value
 
             // output
 
             for ( const prop of variables.output.properties)
-              model.output[prop.name] = prop.value
+              this.model.output[prop.name] = prop.value
 
             // process
 
             for ( const prop of variables.process.properties)
-                model.process[prop.name] = prop.value
+              this.model.process[prop.name] = prop.value
 
             // link everything to the task as well
 
-            this.task.process = model.process
-            this.task.input = model.input
-            this.task.output = model.output
+            this.task.process = this.model.process
+            this.task.input = this.model.input
+            this.task.output = this.model.output
+            this.task.validate = () : boolean => {
+                if ( this.renderer.validate()) {
+                  console.log(this.model)
+                  // check output
 
+                  for ( const o in this.model.output ) {
+                      if ( this.model.output[o] == null ) {
+                        console.log("output " + o + " is null")
+                          return false
+                      }
+                  }
 
-            // done
-
-            this.model = model
+                  return true
+                }
+                else {
+                  return false
+                }
+            }
         })
-
     })
   }
 }

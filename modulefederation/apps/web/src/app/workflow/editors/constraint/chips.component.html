@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="input-container">
+    <ul class="chip-bar" (click)="onChipBarClick()">
+      <li *ngFor="let item of items; let i = index" class="chip">
+        <span class="chip-label">{{ item.name }}</span>
+
+        <ng-container *ngFor="let arg of item.arguments">
+          <input *ngIf="arg.type === 'string'" [(ngModel)]="arg.value" [style.width.ch]="3" type="text" (ngModelChange)="triggerChange()"/>
+          <input *ngIf="arg.type === 'number'"  [(ngModel)]="arg.value" [style.width.ch]="3" type="number" (ngModelChange)="triggerChange()"/>
+        </ng-container>
+
+
+        <mat-icon class="md-18" *ngIf="removable" (click)="removeItem(i)">
+          cancel
+        </mat-icon>
+      </li>
+
+      <li class="input-field">
+        <input
+          #inputField
+          class="input"
+          id=""
+          type="text"
+          name=""
+          autocomplete="off"
+          [suggestionProvider]="suggestionProvider"
+          [placeholder]="placeholder"
+          (keydown)="onKeyDown($event, inputField.value)"
+        >
+      </li>
+    </ul>
+  </div>
+</div>

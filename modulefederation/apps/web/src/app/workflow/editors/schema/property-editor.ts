@@ -17,7 +17,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
 @Component({
   selector: "property-editor",
   templateUrl: './property-editor.html',
-  styleUrl: './property-editor.scss', 
+  styleUrl: './property-editor.scss',
   standalone: true,
   imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, PropertyNameComponent]
 })
@@ -25,6 +25,12 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
   // instance data
 
   properties: Moddle.PropertyDescriptor[] = []
+
+  name!: Moddle.PropertyDescriptor
+  type!: Moddle.PropertyDescriptor
+  constraint!: Moddle.PropertyDescriptor
+  value!: Moddle.PropertyDescriptor
+
   types = DataTypes.types
 
   typedProperty!: Moddle.PropertyDescriptor
@@ -68,7 +74,12 @@ export class SchemaPropertyEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "value"].includes(prop.name))
+      this.name =  this.element.$descriptor.properties.find((prop) => prop.name === "name")!
+      this.type =  this.element.$descriptor.properties.find((prop) => prop.name === "type")!
+      this.constraint =  this.element.$descriptor.properties.find((prop) => prop.name === "constraint")!
+      this.value =  this.element.$descriptor.properties.find((prop) => prop.name === "value")!
+
+      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "constraint", "value"].includes(prop.name))
 
       this.typeChange("")
   }
