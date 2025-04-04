@@ -48,6 +48,11 @@
           "type": "String"
         },
         {
+          "name": "constraint",
+          "isAttr": true,
+          "type": "Constraint"
+        },
+        {
           "name": "value",
           "isAttr": true,
           "type": "String"
