@@ -12,19 +12,18 @@ class SchemaElementImpl(instanceContext: ModelTypeInstanceContext?) : ModelEleme
     SchemaElement {
 
     override val name: String
-        get() = nameAttribute!!.getValue(this)
+        get() = nameAttribute.getValue(this) ?: ""
 
     override val properties: Collection<SchemaPropertyElement>
-        get() = propertiesAttribute!!.get(this)
-
+        get() = propertiesAttribute.get(this)
 
     // companion
 
     companion object {
         const val ELEMENT: String = "schema"
 
-        protected var nameAttribute: Attribute<String>? = null
-        protected var propertiesAttribute: ChildElementCollection<SchemaPropertyElement>? = null
+        protected lateinit var nameAttribute: Attribute<String>
+        protected lateinit var propertiesAttribute: ChildElementCollection<SchemaPropertyElement>
 
         fun registerType(modelBuilder: ModelBuilder) {
             // declare a new element type

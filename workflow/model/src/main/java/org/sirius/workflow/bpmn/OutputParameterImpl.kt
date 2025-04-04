@@ -19,25 +19,25 @@ class OutputParameterImpl(instanceContext: ModelTypeInstanceContext?) : CamundaO
     //  7  get() = nameAttribute!!.getValue(this)
 
     override fun getCamundaName(): String {
-        return nameAttribute!!.getValue(this)
+        return nameAttribute.getValue(this)?: ""
     }
 
     override fun setCamundaName(camundaName: String?) {
-        nameAttribute!!.setValue(this, camundaName)
+        nameAttribute.setValue(this, camundaName)
     }
 
     override val type: String
-        get() = typeAttribute!!.getValue(this)
+        get() = typeAttribute.getValue(this)?: ""
 
     override val constraint: String
-        get() = constraintAttribute!!.getValue(this)
+        get() = constraintAttribute.getValue(this)?: ""
 
     companion object {
         const val ELEMENT: String = "outputParameter"
 
-        protected var nameAttribute: Attribute<String>? = null
-        protected var typeAttribute: Attribute<String>? = null
-        protected var constraintAttribute: Attribute<String>? = null
+        protected lateinit var nameAttribute: Attribute<String>
+        protected lateinit var typeAttribute: Attribute<String>
+        protected lateinit var constraintAttribute: Attribute<String>
 
         fun registerType(modelBuilder: ModelBuilder) {
             val typeBuilder = modelBuilder.defineType(OutputParameter::class.java, ELEMENT)
