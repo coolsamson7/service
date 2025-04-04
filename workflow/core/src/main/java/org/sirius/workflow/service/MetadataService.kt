@@ -16,20 +16,9 @@ import org.sirius.workflow.bpmn.SchemaElement
 import org.springframework.stereotype.Component
 import javax.inject.Inject
 
-data class PropertyDescriptor(val name: String, val type: String, var value: Any?)
+data class PropertyDescriptor(val name: String, val type: String, val constraint: String, var value: Any?)
 
 data class SchemaDescriptor(val properties: List<PropertyDescriptor>)
-
-
-/*
-schema: {
-    input: {
-    properties: [{name: "a", type: "string length 10", value: }]
-    },
-    process: {
-        properties: [{name: "a", type: "string length 10", value: }]
-    }
-*/
 
 @Component
 class MetadataService {
@@ -67,6 +56,7 @@ class MetadataService {
                 PropertyDescriptor(
                     inputParameter.camundaName,
                     inputParameter.type,
+                    inputParameter.constraint,
                     null
                 )
             })
@@ -89,7 +79,11 @@ class MetadataService {
             val inputOutput = inputOutputs.first()
 
             return SchemaDescriptor(inputOutput.getChildElementsByType(OutputParameter::class.java).map {
-                outputParameter -> PropertyDescriptor(outputParameter.camundaName, outputParameter.type, null)
+                outputParameter -> PropertyDescriptor(
+                outputParameter.camundaName,
+                outputParameter.type,
+                outputParameter.constraint,
+                null)
             })
         }
         else {
@@ -108,7 +102,8 @@ class MetadataService {
             return SchemaDescriptor(
             schemas.first().properties.map { property -> PropertyDescriptor(
                 property.name,
-                property.type, // TODO: + constraint
+                property.type,
+                property.constraint,
                 null
             )
             }

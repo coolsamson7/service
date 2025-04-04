@@ -33,6 +33,11 @@ class UserTaskParseListener : AbstractBpmnParseListener() {
             userTaskActivityBehavior
                 .getTaskDefinition()
                 .addTaskListener(TaskListener.EVENTNAME_DELETE, UserTaskListener.instance)
+
+            userTaskActivityBehavior
+                .getTaskDefinition()
+                .addTaskListener(TaskListener.EVENTNAME_COMPLETE, UserTaskListener.instance)
+
         }
     }
 }
