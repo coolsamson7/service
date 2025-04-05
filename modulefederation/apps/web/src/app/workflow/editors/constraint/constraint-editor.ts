@@ -1,17 +1,62 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ModelValidationDirective } from '../../validation';
-import { ValidationModule } from '@modulefederation/common';
+import { TypeParser, ValidationModule } from '@modulefederation/common';
 
 import { ValidationError } from "../../validation";
 import { ChipsComponent } from './chips.component';
+
+
+interface Keyword {
+    argument?: "string" | "number" | "re"
+}
+
+type SupportedKeywords = { [type: string]: Keyword }
+
+type TypeMap = { [type: string]: SupportedKeywords }
+
+// mapping of types to supported constraints
+
+export const typeMap: TypeMap = {
+  // number
+
+  number: {
+     required: {},
+      min: { argument: "number" },
+      max: { argument: "number" },
+      lessThan: { argument: "number" },
+      lessThanEquals: { argument: "number" },
+      greaterThan: { argument: "number" },
+      greaterThanEquals: { argument: "number" },
+  },
+
+  // string
+
+  string: {
+    required: {},
+    min: { argument: "number" },
+    max: { argument: "number" },
+    length: { argument: "number" },
+    nonEmpty: {}
+  },
+
+  // boolean
+
+  boolean: {
+    required: {},
+    isTrue: { },
+    isFalse: { }
+  },
+
+  // date
+}
+
 
 @RegisterPropertyEditor("schema:Constraint")
 @Component({
@@ -32,32 +77,38 @@ import { ChipsComponent } from './chips.component';
 
     // more
 
-    //ModelValidationDirective,
-
     ValidationModule,
 
     ChipsComponent
     ]
 })
-export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> {
+export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> implements OnChanges{
+  // input
+
+  @Input() type!: string;
+
   // instance data
 
   @ViewChild("model") model! : NgModel;
   @ViewChild("input") input! : any;
+  @ViewChild("chips") chips! : ChipsComponent;
 
-   get type() :string {
+   get constraintType() :string {
     switch (this.element["type"]) {
       case "Integer":
       case "Short":
       case "Long":
       case "Double":
         return "number"
-        break
+        
       case "String":
         return "string";
-        break
-       default:
-          return "string"
+       
+      case "Boolean":
+        return "boolean"
+
+      default:
+        return "string"
       }
     }
 
@@ -69,11 +120,44 @@ export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> {
     this.baseType = "string"
   }
 
+  // implement OnChanges
+
+  override ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes)
+
+    if ( changes["type"] ) {
+      this.type = changes["type"]!.currentValue;
+
+      // check if the constraints are still valid!
+
+
+      let update = false
+      let i = 0
+      for ( const item of [...this.chips.items]) {
+        if (!typeMap[this.constraintType][item.name]) {
+
+          this.chips.items.splice(i, 1) 
+          update = true
+        }
+
+       i++
+      } // for
+
+      if ( update ) {
+        const newConstraints = this.chips.format()
+
+        this.onChange(newConstraints)
+      }
+    }
+  }
+
+  // implement OnInit
+
   override ngOnInit() {
     super.ngOnInit()
 
     if ( !this.get("constraint"))
-      this.set("constraint", "min 1")
+      this.set("constraint", "")
   }
 
    // override AbstractPropertyEditor

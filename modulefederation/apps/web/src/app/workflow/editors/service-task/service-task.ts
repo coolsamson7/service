@@ -65,7 +65,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
       builder
         .updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: this.element,
           properties: {
             extensionElements: extensionElement
@@ -84,7 +84,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
 
       builder
         .updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: extensionElement,
           properties: {
             values: [...extensionElement['values'], inputOutputElement]
@@ -139,7 +139,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
         // expression
 
         builder.updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: this.element,
           properties: {
             expression: `\${${descriptor.name}.execute(execution)}`
@@ -169,7 +169,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
         // add 2 builder
 
         builder.updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: inputOutputElement,
           properties: {
             inputParameters: [ ...inputParameters],
@@ -179,7 +179,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
       } // if
       else {
         builder.updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: this.element,
           properties: {
             expression: `` // ?
@@ -188,7 +188,7 @@ export class ServiceTaskEditor extends AbstractPropertyEditor {
         })
 
         builder.updateProperties({
-          element: this.shape,
+          element: this.context.shape,
           moddleElement: inputOutputElement,
           properties: {
             inputParameters: [],

@@ -2,20 +2,25 @@
     <!-- name -->
 
     <property-name #label [property]="name"></property-name>
-    <ng-container [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="name" [inputs]="{ value: element['name'] }"></ng-container>
+    <ng-container [property-editor]="element" [label]="label" [context]="context" [property]="name" [inputs]="inputs('name')"></ng-container>
 
     <!-- type -->
 
     <property-name #label [property]="type"></property-name>
-    <ng-container [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="type" [inputs]="{ value: element['type'] }" [settings]="typeHints" (valueChange)="typeChange($event)"></ng-container>
+    
+    <div class="type-constraint">
+        <!-- type -->
 
-    <!-- constraint -->
+        <ng-container [property-editor]="element" [label]="label" [context]="context" [property]="type" [inputs]="inputs('type')" [settings]="typeHints" (valueChange)="typeChange($event)"></ng-container>
 
-    <property-name #label [property]="constraint"></property-name>
-    <ng-container [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="constraint" [inputs]="{ value: element['constraint'] }"></ng-container>
+        <!-- constraint -->
+
+        <!--property-name #label [property]="constraint"></property-name-->
+        <ng-container [property-editor]="element" [label]="label" [context]="context" [property]="constraint" [inputs]="inputs('constraint', 'type')"></ng-container>
+    </div>
 
     <!-- value -->
 
     <property-name #label [property]="value"></property-name>
-    <ng-container [property-editor]="element" [label]="label" [group]="group" [shape]="shape" [property]="typedProperty" [inputs]="{ value: element['value'] }"></ng-container>
+    <ng-container [property-editor]="element" [label]="label" [context]="context" [property]="typedProperty" [inputs]="inputs('value')"></ng-container>
 </div>

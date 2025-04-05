@@ -13,6 +13,7 @@ import {
 import { MatIconModule } from "@angular/material/icon";
 import { StringBuilder, TypeParser } from "@modulefederation/common";
 import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
+import { typeMap } from "./constraint-editor";
   
 
 interface ChipArgument {
@@ -25,39 +26,6 @@ interface Chip {
    name: string,
    arguments: ChipArgument[]
 }
-
-interface Keyword {
-    argument?: "string" | "number" | "re"
-}
-
-type SupportedKeywords = { [type: string]: Keyword }
-
-type TypeMap = { [type: string]: SupportedKeywords }
-
-const typeMap: TypeMap = {
-  // number
-
-  number: {
-      min: { argument: "number" },
-      max: { argument: "number" }
-  },
-
-  // string
-
-  string: {
-    length: { argument: "string" }
-},
-
-  // boolean
-
-  boolean: {
-    isTrue: { },
-    isFalse: { }
-},
-
-  // date
-}
-
 
 @Component({
     selector: "chips",
@@ -181,12 +149,17 @@ const typeMap: TypeMap = {
       }
     }
 
-    private format() : string {
+   format() : string {
       const builder = new StringBuilder()
 
+      let first = true
       if ( this.items.length > 0) {
         for ( const item of this.items) {
-          builder.append(" ")
+          if (!first)
+            builder.append(" ")
+          else
+            first = false
+
           builder.append(item.name)
 
           if ( item.arguments.length > 0) {
@@ -246,7 +219,7 @@ const typeMap: TypeMap = {
     // implement ControlValueAccessor
   
     writeValue(value: string): void {
-      if ( value ) {
+      if ( typeof value === "string" ) {
         this.value = value
 
         this.setup(value)

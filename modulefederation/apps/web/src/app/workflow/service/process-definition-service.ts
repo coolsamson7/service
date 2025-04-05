@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
  export interface PropertyDescriptor {
   name: string,
   type: string,
+  constraint: string,
   value?: any
  }
 

@@ -32,7 +32,13 @@ export class InputParameterEditor extends AbstractExtensionEditor {
 
   // instance data
 
-  properties: Moddle.PropertyDescriptor[] = []
+  name!: Moddle.PropertyDescriptor
+  type!: Moddle.PropertyDescriptor
+  constraint!: Moddle.PropertyDescriptor
+  source!: Moddle.PropertyDescriptor
+  value!: Moddle.PropertyDescriptor
+
+
   typedProperty!:  Moddle.PropertyDescriptor
 
   inputType = ""
@@ -201,9 +207,14 @@ export class InputParameterEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.setReadOnly(this.shape["bpmnElement"].$type == "bpmn:ServiceTask")
+      this.setReadOnly(this.context.shape["bpmnElement"].$type == "bpmn:ServiceTask")
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type", "source", "value"].includes(prop.name))
+      this.name = this.prop("name")
+      this.type = this.prop("type")
+      this.constraint = this.prop("constraint")
+      this.source = this.prop("source")
+      this.value = this.prop("value")    
+
 
       this.changeSource(this.element["source"])
   }

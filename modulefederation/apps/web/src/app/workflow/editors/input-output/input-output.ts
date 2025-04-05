@@ -64,7 +64,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
     parameters.splice(index,1)
 
     this.actionHistory.updateProperties({
-      element: this.shape,
+      element: this.context.shape,
       moddleElement: this.element as any as Element,
       properties: properties
     })
@@ -78,7 +78,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       })
 
     this.actionHistory.updateProperties({
-      element: this.shape,
+      element: this.context.shape,
       moddleElement: this.element as any as Element,
       properties: {
         inputParameters: [...this.inputParameters, parameter]
@@ -94,7 +94,7 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       })
 
     this.actionHistory.updateProperties({
-      element: this.shape,
+      element: this.context.shape,
       moddleElement: this.element as any as Element,
       properties: {
         inputParameters: [...this.outputParameters, parameter]

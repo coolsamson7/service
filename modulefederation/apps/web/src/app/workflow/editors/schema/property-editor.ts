@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/use-lifecycle-interface */
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Element } from "moddle"
@@ -19,7 +19,23 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   templateUrl: './property-editor.html',
   styleUrl: './property-editor.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, PropertyNameComponent]
+  imports: [
+    // angular
+
+    FormsModule,
+    CommonModule, 
+     
+     // material
+     
+     MatFormFieldModule, 
+     MatSelectModule, 
+    
+     // own stuff
+     
+     PropertyPanelModule, 
+     PropertyNameComponent
+    ],
+  encapsulation: ViewEncapsulation.None
 })
 export class SchemaPropertyEditor extends AbstractExtensionEditor {
   // instance data

@@ -17,18 +17,18 @@
     </div>
   </div>
 
- 
-  <extension-editor  *ngIf="open && group.extension" [element]="element!" [shape]="shape!" [extension]="group.extension" [config]="group"></extension-editor>
-  
+
+  <extension-editor  *ngIf="open && group.extension" [element]="element!" [context]="context" [shape]="shape!" [extension]="group.extension" [config]="group"></extension-editor>
+
   <form *ngIf="open && !group.extension" class="body">
     <ng-container *ngFor="let property of group.properties">
       <ng-container *ngIf="group.hideLabel !== true">
         <property-name  #label [property]="property"/>
-        <ng-container [property-editor]="element!" [group]="this" [label]="label" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
-  
+        <ng-container [property-editor]="element!" [context]="context"  [label]="label" [property]="property" [inputs]="inputs(property.name)"></ng-container>
+
       </ng-container>
 
-      <ng-container *ngIf="group.hideLabel === true" [property-editor]="element!" [group]="this" [shape]="shape!" [property]="property" [inputs]="{ value: valueOf(element!, property) }"></ng-container>
+      <ng-container *ngIf="group.hideLabel === true" [property-editor]="element!"  [context]="context" [property]="property" [inputs]="inputs(property.name)"></ng-container>
 
     </ng-container>
   </form>

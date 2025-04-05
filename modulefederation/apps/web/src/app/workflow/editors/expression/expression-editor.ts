@@ -39,7 +39,7 @@ export class ExpressionEditor extends AbstractPropertyEditor implements OnChange
       this.set("conditionExpression", condition = this.create("bpmn:Expression", {$parent: this.element}))
       const builder = this.actionHistory.commandBuilder()
             .updateProperties({
-              element: this.shape,
+              element: this.context.shape,
               moddleElement: this.element,
               properties: {
                 conditionExpression: condition

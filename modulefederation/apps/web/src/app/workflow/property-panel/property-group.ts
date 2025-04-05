@@ -1,10 +1,10 @@
-import { Component, Input } from "@angular/core"
+import { Component, Input, OnInit } from "@angular/core"
 import {Element, PropertyDescriptor } from "moddle"
 import { Group } from "./property-panel.model";
 
 import { Shape } from "bpmn-js/lib/model/Types";
 import { PropertyPanelComponent } from "./property-panel";
-import { PropertyEditorDirective } from "./property.editor.directive";
+import { Context, PropertyEditorDirective } from "./property.editor.directive";
 
 export type Plus = () => void
 
@@ -13,7 +13,7 @@ export type Plus = () => void
   templateUrl: "./property-group.html",
   styleUrl: "./property-group.scss"
 })
-export class PropertyGroupComponent {
+export class PropertyGroupComponent implements OnInit {
   // input
 
   @Input() shape : Shape | undefined;
@@ -22,6 +22,8 @@ export class PropertyGroupComponent {
 
   // instance data
 
+  context!: Context
+  
    editors: PropertyEditorDirective[] = []
 
   // constructor
@@ -39,11 +41,21 @@ export class PropertyGroupComponent {
 
   // public
 
-  valueOf(element: Element, property: PropertyDescriptor) {
-    return element.get(property.name)
+  inputs(property: string) : any {
+    return { value: this.element!.get(property) }
   }
+
 
   toggle() {
     this.open = !this.open
+  }
+
+  // implement OnInit
+
+  ngOnInit(): void {
+    this.context = {
+      shape: this.shape!,
+      group: this
+    }
   }
 }

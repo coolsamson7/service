@@ -3,12 +3,13 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Input, OnInit } from "@angular/core"
 import { PropertyEditor } from "./property-editor"
-import { PropertyEditorDirective } from "./property.editor.directive"
+import { Context, PropertyEditorDirective } from "./property.editor.directive"
 import  {Element, PropertyDescriptor, Moddle } from "moddle"
 import { Shape } from "bpmn-js/lib/model/Types";
 import { ValidationError } from "../validation";
 import { PropertyGroupComponent } from "./property-group";
 import { ActionHistory } from "../bpmn";
+import { constant } from "lodash";
 
 @Component({
   template: '<div></div>'
@@ -16,19 +17,22 @@ import { ActionHistory } from "../bpmn";
 export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit { 
   // input
 
-  @Input() shape!: Shape
+  @Input() context!: Context
   @Input() element!: Element
   @Input() property!: PropertyDescriptor // TODO unused
-  @Input() group!: PropertyGroupComponent
   @Input() editor!: PropertyEditorDirective
 
   model!: Moddle
 
   get actionHistory() : ActionHistory {
-    return this.group.panel.actionHistory
+    return this.context.group.panel.actionHistory
   }
 
   // public
+
+  prop(name: string) : PropertyDescriptor {
+    return this.element.$descriptor.properties.find(prop => prop.name == name)!
+  }
 
   get<T>(property: string) : T {
     return this.element[property] as T
@@ -36,6 +40,17 @@ export abstract class AbstractExtensionEditor implements PropertyEditor, OnInit 
 
   set<T>(property: string, value: T) : void {
      this.element[property] = value
+  }
+
+  inputs(property: string, ...properties: string[]) : any {
+    const result : any = { 
+      value: this.get(property) 
+    }
+
+    for ( const prop of properties)
+      result[prop] = this.get(prop)
+   
+    return result
   }
 
  create(type: string, properties: any) {

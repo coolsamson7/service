@@ -6,6 +6,6 @@
   </div>
 
   <div *ngIf="!parameterEditor.isOpen(parameter)" class="name">{{name(parameter)}}</div>
-  <ng-container *ngIf="parameterEditor.isOpen(parameter)" [property-editor]="parameter" [group]="group" [shape]="shape" class="parameter"></ng-container>
+  <ng-container *ngIf="parameterEditor.isOpen(parameter)" [property-editor]="parameter" [context]="context" class="parameter"></ng-container>
   <svg-icon name="delete" class="delete" (click)="parameterEditor.delete(parameter)"></svg-icon>
 </div>

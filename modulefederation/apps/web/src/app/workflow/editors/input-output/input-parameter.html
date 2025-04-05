@@ -1,19 +1,25 @@
 <form #form="ngForm" class="input">
-  <ng-container  *ngFor="let property of properties">
-    <property-name #label [property]="property" ></property-name>
+  
+  <!-- name -->
 
-    <ng-container *ngIf="property.name === 'name'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape" [property]="property" [settings]="{readOnly: readOnly}"></ng-container>
+  <property-name #nameLabel [property]="name" ></property-name>
+  <ng-container [property-editor]="element" [label]="nameLabel" [context]="context" [property]="name" [settings]="{readOnly: readOnly}"></ng-container>
 
     <!-- type -->
 
-    <ng-container *ngIf="property.name === 'type'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="typeSettings" (valueChange)="typeChange($event)"></ng-container>
-
+    <property-name #typeLabel [property]="type" ></property-name>
+    <div class="type">
+      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="type" [settings]="typeSettings" (valueChange)="typeChange($event)"></ng-container>
+      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="constraint" [settings]="typeSettings"></ng-container>
+    </div>
+   
     <!-- source -->
 
-    <ng-container *ngIf="property.name === 'source'"  [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [settings]="sourceSettings" (valueChange)="changeSource($event)"></ng-container>
+    <property-name #sourceLabel [property]="source" ></property-name>
+    <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" (valueChange)="changeSource($event)"></ng-container>
 
-    <!-- value -->
+    <!-- value --> 
 
-    <ng-container *ngIf="property.name === 'value'" [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="typedProperty" [settings]="valueSettings"></ng-container>
-  </ng-container>
+    <property-name #valueLabel [property]="value" ></property-name>
+    <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="typedProperty" [settings]="valueSettings"></ng-container>
 </form>

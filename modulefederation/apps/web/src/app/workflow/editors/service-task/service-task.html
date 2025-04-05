@@ -1,6 +1,6 @@
 <div class="implementation">
   <mat-form-field class="dense-5">
-    <input type="text" #input [check]="element" [shape]="shape" [property]="property.name" (ngModelChange)="onChange($event)" [ngModel]="value" matInput name="implementation" [suggestionProvider]="suggestionProvider"  #model="ngModel"/>
+    <input type="text" #input [check]="element" [context]="context" [property]="property.name" (ngModelChange)="onChange($event)" [ngModel]="value" matInput name="implementation" [suggestionProvider]="suggestionProvider"  #model="ngModel"/>
     <mat-error *showErrors/>
   </mat-form-field>
 </div>

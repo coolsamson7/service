@@ -20,7 +20,9 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
 export class OutputParameterEditor extends AbstractExtensionEditor {
   // instance data
 
-  properties: Moddle.PropertyDescriptor[] = []
+  name!: Moddle.PropertyDescriptor
+  type!: Moddle.PropertyDescriptor
+  constraint!: Moddle.PropertyDescriptor
 
   readOnly = false
 
@@ -29,9 +31,10 @@ export class OutputParameterEditor extends AbstractExtensionEditor {
   override ngOnInit() : void {
       super.ngOnInit()
 
-      this.readOnly = this.shape["bpmnElement"].$type == "bpmn:ServiceTask"
+      this.readOnly = this.context.shape["bpmnElement"].$type == "bpmn:ServiceTask"
 
-      this.properties = this.element.$descriptor.properties.filter((prop) => ["name", "type"].includes(prop.name))
-
+      this.name = this.prop("name")
+      this.type =  this.prop("type")
+      this.constraint = this.prop("constraint")
   }
 }

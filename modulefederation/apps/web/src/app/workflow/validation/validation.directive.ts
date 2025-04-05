@@ -5,6 +5,7 @@ import { ModelValidation } from "./validation";
 import { Element } from "moddle"
 import { Shape } from "bpmn-js/lib/model/Types";
 import { Process } from "bpmn-moddle";
+import { Context } from "../property-panel/property.editor.directive";
 
 
 export function createModelValidator(modelValidation: ModelValidation, shape: Shape, element: Element, property: string): ValidatorFn {
@@ -32,7 +33,7 @@ export function createModelValidator(modelValidation: ModelValidation, shape: Sh
 })
 export class ModelValidationDirective implements Validator {
   @Input("check") element!: Element
-  @Input() shape!: Shape
+  @Input() context!: Context
   @Input("property") property!: string
 
   // constructor
@@ -49,6 +50,6 @@ export class ModelValidationDirective implements Validator {
       setTimeout(() => control.updateValueAndValidity(), 0)
       return null
     }
-    else return createModelValidator(this.modelValidation, this.shape, this.element, this.property)(control);
+    else return createModelValidator(this.modelValidation, this.context.shape, this.element, this.property)(control);
   }
 }

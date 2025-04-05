@@ -13,6 +13,11 @@ import { PropertyNameComponent } from "./property-name";
 
 type UserInputs = Record<string, any>;
 
+export interface Context {
+  shape: Shape
+  group: PropertyGroupComponent
+}
+
 @Directive({
   selector: "[property-editor]",
   //standalone: true
@@ -21,14 +26,14 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   // input & output
 
   @Input('property-editor') element!: Element
-  @Input() shape!: Shape
   @Input() extension!: string
   @Input() property?: PropertyDescriptor | undefined
-  @Input() group!: PropertyGroupComponent
-  @Input() inputs?: UserInputs = {};
+  @Input() inputs: UserInputs = {};
   @Input() settings: EditorSettings<any> = {}
 
   @Input() label!: PropertyNameComponent
+
+  @Input() context!: Context
 
   @Output() valueChange = new EventEmitter<any>()
 
@@ -52,20 +57,32 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
 
   // private
 
-  private makeComponentChanges(inputsChange: SimpleChange, firstChange: boolean): Record<string, SimpleChange> {
-    const prevInputs = inputsChange?.previousValue ?? {};
-    const currentInputs = inputsChange?.currentValue ?? {};
+ private bindInputs(userInputs: UserInputs, componentInstance: any) {
+     Object.keys(userInputs).forEach(input => {
+       if ( input !== 'value')
+         componentInstance[input] = this.inputs[input]
+     });
+   }
 
-    return Object.keys(currentInputs).reduce((acc, inputName) => {
-      const currentInputValue = currentInputs[inputName];
-      const prevInputValue = prevInputs[inputName];
+   private makeInputChanges(inputsChange: SimpleChange): Record<string, SimpleChange>  | undefined {
+    let hasChanges = false
+    const prevInputs = inputsChange.previousValue ?? {}
+    const currentInputs = inputsChange.currentValue ?? {}
 
-      if (currentInputValue !== prevInputValue)
-        acc[inputName] = new SimpleChange(firstChange ? undefined : prevInputValue, currentInputValue, firstChange);
+    const changes = Object.keys(currentInputs).reduce((changes, inputName) => {
+       const currentInputValue = currentInputs[inputName];
+       const prevInputValue = prevInputs[inputName];
 
-      return acc;
+       if (currentInputValue !== prevInputValue) {
+         changes[inputName] = new SimpleChange(inputsChange.firstChange ? undefined : prevInputValue, currentInputValue, inputsChange.firstChange);
+         hasChanges = true
+       }
+
+       return changes;
     }, {} as Record<string, SimpleChange>);
-  }
+
+    return hasChanges ? changes : undefined;
+   }
 
   private deleteComponent() {
     this.component?.destroy()
@@ -114,12 +131,14 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   private updateComponent(instance: PropertyEditor<any>) {
     Object.assign(instance, {
       element: this.element,
-      shape: this.shape,
+      //shape: this.shape,
+
+      context: this.context,
+
       extension: this.extension,
       property: this.property,
       settings: this.settings,
-      editor: this,
-      group: this.group
+      editor: this
     })
   }
 
@@ -128,44 +147,45 @@ export class PropertyEditorDirective implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.createComponent()
 
-    this.group.editors.push(this)
+    this.context.group.editors.push(this)
   }
 
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log(changes)
+    // property change
+
     if (changes["property"] && !changes["property"].firstChange) {
       this.deleteComponent()
       this.createComponent()
     }
 
-     // compute changes
+    if ( this.component ) {
+      // update component
 
-     let componentChanges: Record<string, SimpleChange>;
-     if (!this.initialized) {
-       componentChanges = this.makeComponentChanges(changes['inputs'], true);
+      this.updateComponent(this.instance)
 
-       this.initialized = true;
-     }
+      // try to figure out, if any of the specified input values have changed
+      // and tarbnslate it into a set of changes
+      // that can be passed to ngOnChanges
 
-     componentChanges ??= this.makeComponentChanges(changes['inputs'], false);
+      const inputChanges = changes['inputs']
 
-     // copy inputs
+      if (inputChanges) {
+        const delta  = this.makeInputChanges(inputChanges)
 
-     //if (changes['inputs'] && this.componentFactory) {
-     //  this.bindInputs(this.inputs ?? {}, this.component.instance);
-     //}
+        if (delta) {
+          // copy inputs
 
-     // inform about changes
+          this.bindInputs(delta, this.component.instance)
 
+          // inform about changes
 
-     if ( componentChanges["value"] && !componentChanges["value"].isFirstChange())
-      if (this.component?.instance.ngOnChanges)
-        this.component.instance.ngOnChanges(componentChanges);
-        else {
-          console.log("no ngOnChanges for " + this.element.$type + " with instance " + this.instance)
-        }
+          if ((this.component.instance as OnChanges).ngOnChanges)
+            this.component.instance.ngOnChanges(delta);
+        } // if
+      }
+    }
   }
 
   // implement OnDestroy

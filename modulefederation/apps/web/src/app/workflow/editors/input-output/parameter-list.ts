@@ -8,9 +8,8 @@ import { Element } from "moddle"
 import { PropertyPanelModule } from '../../property-panel';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SvgIconComponent } from '../../svg.icon';
-import { PropertyGroupComponent } from '../../property-panel/property-group';
-import { Shape } from "bpmn-js/lib/model/Types";
 import { InputOutputEditor } from './input-output';
+import { Context } from '../../property-panel/property.editor.directive';
 
 @Component({
   selector: "parameter-list",
@@ -23,8 +22,7 @@ export class ParameterListComponent {
   // input
 
   @Input() parameters! : Element[]
-  @Input() shape!: Shape
-  @Input() group!: PropertyGroupComponent
+  @Input() context!: Context
 
   @Input() name! : (parameter: Element) => string
 

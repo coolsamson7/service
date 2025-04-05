@@ -1,7 +1,15 @@
 <div class="output">
-  <ng-container  *ngFor="let property of properties">
-    <property-name #label [property]="property" ></property-name>
+  <!-- name -->
 
-    <ng-container [property-editor]="element" [label]="label" [group]="group"  [shape]="shape"  [property]="property" [shape]="shape" [settings]="{readOnly: readOnly}"></ng-container>
-  </ng-container>
+  <property-name #nameLabel [property]="name" ></property-name>
+  <ng-container [property-editor]="element" [label]="nameLabel" [context]="context"  [property]="name" [settings]="{readOnly: readOnly}"></ng-container>
+
+  <!-- type & constraint-->
+
+  <property-name #typeLabel [property]="type" ></property-name>
+  <div class="type">
+    <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="type" [settings]="{readOnly: readOnly}"></ng-container>
+    <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="constraint" [settings]="{readOnly: readOnly}"></ng-container>
+  </div>
+ 
 </div>

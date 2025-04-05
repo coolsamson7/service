@@ -1,5 +1,14 @@
 .properties {
     display: grid;
-     align-items: baseline;
+    align-items: baseline;
     grid-template-columns: min-content auto;
+
+    .type-constraint {
+        display: flex;
+        align-items: baseline;
+
+        .mat-mdc-form-field-infix {
+            width: 80px;
+          }
+    }
 }

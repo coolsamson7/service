@@ -10,8 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { SvgIconComponent } from '../../svg.icon';
 import { SchemaEditorComponent } from './schema-editor';
-import { PropertyGroupComponent } from '../../property-panel/property-group';
-import { Shape } from "bpmn-js/lib/model/Types";
+import { Context } from '../../property-panel/property.editor.directive';
 
 @Component({
   selector: "property-list",
@@ -24,9 +23,8 @@ export class PropertyListComponent {
   // input
 
   @Input() properties! : Element[]   
-  @Input() shape!: Shape
-  @Input() group!: PropertyGroupComponent
-  
+  @Input() context!: Context
+
   // constructor
 
   constructor(public schema: SchemaEditorComponent) {

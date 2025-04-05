@@ -2,10 +2,10 @@
 import { Component, OnInit, Input } from "@angular/core"
 import { Element } from "moddle"
 import { PropertyGroupComponent } from "./property-group"
-import { BaseElement, ExtensionElements } from "bpmn-moddle"
 import { Group } from "./property-panel.model"
 import { Shape } from "bpmn-js/lib/model/Types";
-import { ActionHistory, CommandBuilder } from "../bpmn"
+import { ActionHistory } from "../bpmn"
+import { Context } from "./property.editor.directive"
 
 @Component({
   selector: 'extension-editor',
@@ -15,6 +15,7 @@ import { ActionHistory, CommandBuilder } from "../bpmn"
 export class ExtensionEditor implements OnInit {
   // input
 
+  @Input() context!: Context
   @Input() element!: Element
   @Input() shape!: Shape
   @Input() extension!: string

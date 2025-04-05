@@ -8,7 +8,7 @@
       <svg-icon (click)="addInput()" name="plus" class="plus"/>
     </div>
 
-    <parameter-list [parameters]="inputParameters" [shape]="shape" [group]="group" [name]="inputName"></parameter-list>
+    <parameter-list [parameters]="inputParameters" [context]="context" [name]="inputName"></parameter-list>
   </div>
 
    <!-- outputs -->
@@ -19,6 +19,6 @@
       <svg-icon (click)="addOutput()" name="plus" class="plus"/>
     </div>
 
-    <parameter-list [parameters]="outputParameters" [shape]="shape" [group]="group" [name]="outputName"></parameter-list>
+    <parameter-list [parameters]="outputParameters" [context]="context" [name]="outputName"></parameter-list>
   </div>
 </div>

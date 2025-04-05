@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/use-lifecycle-interface */
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Element } from "moddle"
@@ -21,7 +21,25 @@ import { PropertyListComponent } from './property-list';
   templateUrl: './schema-editor.html',
   styleUrl: './schema-editor.scss',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatFormFieldModule, MatSelectModule, PropertyPanelModule, SvgIconComponent, PropertyNameComponent, PropertyListComponent]
+  imports: [
+    // angular
+
+    FormsModule, 
+    CommonModule,
+
+    // material
+    
+    MatFormFieldModule, 
+    MatSelectModule, 
+    PropertyPanelModule, 
+
+    // own stuff
+
+    SvgIconComponent, 
+    PropertyNameComponent, 
+    PropertyListComponent
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class SchemaEditorComponent extends AbstractExtensionEditor {
   // instance data
@@ -51,7 +69,7 @@ export class SchemaEditorComponent extends AbstractExtensionEditor {
       newProperty.$parent =  this.element
 
       this.actionHistory.updateProperties({
-        element: this.shape,
+        element: this.context.shape,
         moddleElement: this.element as any as Element,
         properties: {
           properties: [...this.properties, newProperty]
@@ -68,7 +86,7 @@ export class SchemaEditorComponent extends AbstractExtensionEditor {
     properties.splice(index, 1)
 
     this.actionHistory.updateProperties({
-      element: this.shape,
+      element: this.context.shape,
       moddleElement: this.element as any as Element,
       properties: {
         properties: properties

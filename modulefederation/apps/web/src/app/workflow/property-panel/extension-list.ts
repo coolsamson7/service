@@ -5,6 +5,7 @@ import { PropertyGroupComponent } from "./property-group"
 import { Shape } from "bpmn-js/lib/model/Types";
 import { ExtensionEditor } from "./extension-editor"
 import { Group } from "./property-panel.model";
+import { Context } from "./property.editor.directive";
 
 @Component({
   selector: 'extension-list',
@@ -15,8 +16,9 @@ export class ExtensionList {
   // input
 
   @Input() extensions! : Element[]
-  @Input() shape!: Shape
-  @Input() group!: PropertyGroupComponent
+  @Input() context!: Context
+  //@Input() shape!: Shape
+  //@Input() group!: PropertyGroupComponent
   @Input() config!: Group
 
   // constructor

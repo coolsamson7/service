@@ -11,7 +11,7 @@ import { ValidationError } from "../validation";
 import { SuggestionProvider } from "@modulefederation/portal";
 import { ActionHistory } from "../bpmn"
 import { PropertyGroupComponent } from "./property-group";
-import { PropertyEditorDirective } from "./property.editor.directive";
+import { Context, PropertyEditorDirective } from "./property.editor.directive";
 
 export type Conversion = (i: any) => any
 
@@ -62,12 +62,14 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   // input
 
-  @Input() shape!: Shape
+  @Input() context!: Context
+
+  //@Input() shape!: Shape
   @Input() element!: Element
   @Input() property!: PropertyDescriptor
   @Input() settings : EditorSettings<T> = {
   }
-  @Input() group!: PropertyGroupComponent
+  //@Input() group!: PropertyGroupComponent
   @Input() editor!: PropertyEditorDirective
 
   // instance data
@@ -80,7 +82,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   // getter & setter
 
   get eventBus() : EventBus<any> {
-    return this.group.panel.eventBus
+    return this.context.group.panel.eventBus
   }
 
   get value() : any {
@@ -99,7 +101,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   }
 
   get actionHistory() : ActionHistory {
-    return this.group.panel.actionHistory
+    return this.context.group.panel.actionHistory
   }
 
   get<T>(property: string) {
@@ -117,6 +119,12 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       element[property] = properties[property]
 
     return element
+  }
+
+  inputs(property: string) : any {
+    return {
+       value: this.get(property) 
+    }
   }
 
   // private
@@ -182,7 +190,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     }
     else {
       this.action = this.actionHistory.updateProperties({
-        element: this.shape,
+        element: this.context.shape,
         moddleElement: this.element,
         properties: properties()
       })
@@ -194,7 +202,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   }
 
   showError(error: ValidationError, select: boolean) {
-    this.editor.group.open = true
+    this.editor.context.group.open = true
   }
 
   // implement onInit

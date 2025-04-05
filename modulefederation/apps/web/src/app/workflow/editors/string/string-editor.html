@@ -1,11 +1,11 @@
 <mat-form-field class="dense-5">
     <!-- input with suggestion provider -->
 
-    <input  *ngIf="inputType === 'suggestionInput'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput  #model="ngModel" type="text" [suggestionProvider]="settings.suggestionProvider!" [ngModel]="value" [disabled]="settings.readOnly === true" (ngModelChange)="onChange($event)" [check]="element" [shape]="shape" [property]="property.name"/>
+    <input  *ngIf="inputType === 'suggestionInput'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput  #model="ngModel" type="text" [suggestionProvider]="settings.suggestionProvider!" [ngModel]="value" [disabled]="settings.readOnly === true" (ngModelChange)="onChange($event)" [check]="element" [context]="context" [property]="property.name"/>
 
     <!-- plain input  -->
 
-    <input  *ngIf="inputType === 'input'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="settings.readOnly === true" [check]="element" [shape]="shape" [property]="property.name" />
+    <input *ngIf="inputType === 'input'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="settings.readOnly === true" [check]="element" [context]="context" [property]="property.name" />
 
     <!-- select -->
 

@@ -6,5 +6,10 @@
 .output {
   display: grid;
   grid-template-columns: min-content auto;
-   align-items: baseline;
+  align-items: baseline;
+
+  .type {
+    display: flex;
+    align-items: baseline;
+  }
 }
