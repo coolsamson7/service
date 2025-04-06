@@ -7,55 +7,10 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TypeParser, ValidationModule } from '@modulefederation/common';
+import { Type, TypeParser, ValidationModule } from '@modulefederation/common';
 
 import { ValidationError } from "../../validation";
 import { ChipsComponent } from './chips.component';
-
-
-interface Keyword {
-    argument?: "string" | "number" | "re"
-}
-
-type SupportedKeywords = { [type: string]: Keyword }
-
-type TypeMap = { [type: string]: SupportedKeywords }
-
-// mapping of types to supported constraints
-
-export const typeMap: TypeMap = {
-  // number
-
-  number: {
-     required: {},
-      min: { argument: "number" },
-      max: { argument: "number" },
-      lessThan: { argument: "number" },
-      lessThanEquals: { argument: "number" },
-      greaterThan: { argument: "number" },
-      greaterThanEquals: { argument: "number" },
-  },
-
-  // string
-
-  string: {
-    required: {},
-    min: { argument: "number" },
-    max: { argument: "number" },
-    length: { argument: "number" },
-    nonEmpty: {}
-  },
-
-  // boolean
-
-  boolean: {
-    required: {},
-    isTrue: { },
-    isFalse: { }
-  },
-
-  // date
-}
 
 
 @RegisterPropertyEditor("schema:Constraint")
@@ -100,10 +55,10 @@ export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> imp
       case "Long":
       case "Double":
         return "number"
-        
+
       case "String":
         return "string";
-       
+
       case "Boolean":
         return "boolean"
 
@@ -130,13 +85,11 @@ export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> imp
 
       // check if the constraints are still valid!
 
-
       let update = false
       let i = 0
       for ( const item of [...this.chips.items]) {
-        if (!typeMap[this.constraintType][item.name]) {
-
-          this.chips.items.splice(i, 1) 
+        if (!TypeParser.supportsConstraint(this.constraintType, item.name)) {
+          this.chips.items.splice(i, 1)
           update = true
         }
 

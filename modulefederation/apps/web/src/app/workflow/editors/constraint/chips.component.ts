@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     forwardRef,
@@ -11,9 +10,8 @@ import {
   } from "@angular/core";
   import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
-import { StringBuilder, TypeParser } from "@modulefederation/common";
+import { StringBuilder, Type, TypeParser } from "@modulefederation/common";
 import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
-import { typeMap } from "./constraint-editor";
   
 
 interface ChipArgument {
@@ -110,20 +108,16 @@ interface Chip {
         case 188: {
           if (value && value.trim() !== ""  && this.possibleConstraints.includes(value.trim()))  {
             const constraint = value.trim()
-            const constraintInfo = typeMap[this.type][constraint]
-
-            const args = value.split(" ")
+            
             const newChip : Chip = {
               name: constraint,
-              arguments: []
+              arguments: TypeParser.constraintArguments(this.type, constraint).map(argument => { return {
+                name: argument,
+                type: argument,
+                value: argument === "string" ? "" : 0
+              }})
+              
             }
-
-            if ( constraintInfo.argument) {
-              newChip.arguments.push({
-                  type: constraintInfo.argument,
-                  value: constraintInfo.argument === "string" ? "" : 0
-                })
-            } // if
 
             this.possibleConstraints.splice(this.possibleConstraints.indexOf(constraint), 1)
         
@@ -175,7 +169,7 @@ interface Chip {
     }
 
     private setup(value: string) {
-      this.possibleConstraints = typeMap[this.type] ? Object.keys(typeMap[this.type]) : []
+      this.possibleConstraints = TypeParser.supportedConstraints(this.type)
 
       this.suggestionProvider = new ArraySuggestionProvider(this.possibleConstraints)
 
