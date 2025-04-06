@@ -43,9 +43,9 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   static {
     // target string
 
-    AbstractPropertyEditor.registerConversion("boolean", "string", (value: any) => value.toString())
-    AbstractPropertyEditor.registerConversion("number", "string", (value: any) => value.toString())
-    AbstractPropertyEditor.registerConversion("string", "string", (value: any) => value)
+    AbstractPropertyEditor.registerConversion("boolean", "string", (value: any) => value ? value.toString() : "")
+    AbstractPropertyEditor.registerConversion("number", "string", (value: any) => value ? value.toString() : "")
+    AbstractPropertyEditor.registerConversion("string", "string", (value: any) => value || "")
 
     // target boolean
 
@@ -123,7 +123,7 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
 
   inputs(property: string) : any {
     return {
-       value: this.get(property) 
+       value: this.get(property)
     }
   }
 

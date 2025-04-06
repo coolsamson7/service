@@ -3,23 +3,23 @@
   <!-- name -->
 
   <property-name #nameLabel [property]="name" ></property-name>
-  <ng-container [property-editor]="element" [label]="nameLabel" [context]="context" [property]="name" [settings]="{readOnly: readOnly}"></ng-container>
+  <ng-container [property-editor]="element" [label]="nameLabel" [context]="context" [property]="name" [inputs]="inputs('name')" [settings]="{readOnly: readOnly}"></ng-container>
 
     <!-- type -->
 
     <property-name #typeLabel [property]="type" ></property-name>
     <div class="type">
-      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="type" [settings]="typeSettings" (valueChange)="typeChange($event)"></ng-container>
-      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="constraint" [settings]="typeSettings"></ng-container>
+      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="type" [settings]="typeSettings" [inputs]="inputs('type')" (valueChange)="typeChange($event)"></ng-container>
+      <ng-container [property-editor]="element" [label]="typeLabel" [context]="context"  [property]="constraint" [inputs]="inputs('constraint', 'type')" [settings]="typeSettings"></ng-container>
     </div>
    
     <!-- source -->
 
     <property-name #sourceLabel [property]="source" ></property-name>
-    <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" (valueChange)="changeSource($event)"></ng-container>
+    <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" [inputs]="inputs('source')" (valueChange)="changeSource($event)"></ng-container>
 
     <!-- value --> 
 
     <property-name #valueLabel [property]="value" ></property-name>
-    <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="typedProperty" [settings]="valueSettings"></ng-container>
+    <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="typedProperty" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container>
 </form>

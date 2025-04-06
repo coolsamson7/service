@@ -212,7 +212,8 @@ interface Chip {
 
     ngOnChanges(changes: SimpleChanges): void {
       if ( changes["type"] && !changes["type"].isFirstChange()) {
-        this.setup(this.value)
+        if ( changes["type"].currentValue !== this.type)
+          this.setup(this.value)
       }
     }
 
