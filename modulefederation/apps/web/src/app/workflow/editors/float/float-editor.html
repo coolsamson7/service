@@ -1,0 +1,4 @@
+<mat-form-field class="dense-5">
+    <input matInput #input #model="ngModel" [id]="property.name" type="number" [ngModel]="value" (ngModelChange)="onChange($event)"/>
+    <mat-error *showErrors/>
+</mat-form-field>

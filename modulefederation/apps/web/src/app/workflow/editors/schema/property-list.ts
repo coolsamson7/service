@@ -22,7 +22,7 @@ import { Context } from '../../property-panel/property.editor.directive';
 export class PropertyListComponent {
   // input
 
-  @Input() properties! : Element[]   
+  @Input() properties! : Element[]
   @Input() context!: Context
 
   // constructor

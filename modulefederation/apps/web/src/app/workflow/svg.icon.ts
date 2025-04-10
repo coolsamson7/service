@@ -3,12 +3,9 @@ import { Component, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-// transform: rotate(90deg);
-
-
 @Component({
   selector: 'svg-icon',
-  template: `<div class="icon-wrap"><span [innerHTML]="svgIcon" class="icon"></span></div>`,
+  template: `<div class="icon-wrap"><span [innerHTML]="svgIcon" class="icon" [class]="style"></span></div>`,
   styleUrl: './svg-icon.scss',
   standalone: true
 })
@@ -19,7 +16,10 @@ export class SvgIconComponent implements OnChanges {
 
   // input
 
-  @Input() name!: string;
+  @Input() name!: string
+  @Input() style = ""
+
+  // instance data
 
   public svgIcon : SafeHtml = "";
 

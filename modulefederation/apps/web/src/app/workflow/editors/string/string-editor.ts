@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgModel } from '@angular/forms';
@@ -22,7 +22,7 @@ import { ValidationModule } from '@modulefederation/common';
   standalone: true,
   imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, NgModelSuggestionsDirective, MatSelectModule, ValidationModule]
 })
-export class StringPropertyEditor extends AbstractPropertyEditor<string> {
+export class StringPropertyEditor extends AbstractPropertyEditor<string> implements OnInit {
   // instance data
 
   @ViewChild("model") model! : NgModel;

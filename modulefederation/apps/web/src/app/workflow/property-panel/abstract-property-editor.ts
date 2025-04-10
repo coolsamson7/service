@@ -6,11 +6,9 @@ import { PropertyEditor } from "./property-editor";
 import { EventBus } from "bpmn-js/lib/BaseViewer";
 
 import  {Element, PropertyDescriptor  } from "moddle"
-import { Shape } from "bpmn-js/lib/model/Types";
 import { ValidationError } from "../validation";
 import { SuggestionProvider } from "@modulefederation/portal";
 import { ActionHistory } from "../bpmn"
-import { PropertyGroupComponent } from "./property-group";
 import { Context, PropertyEditorDirective } from "./property.editor.directive";
 
 export type Conversion = (i: any) => any
@@ -63,13 +61,9 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   // input
 
   @Input() context!: Context
-
-  //@Input() shape!: Shape
   @Input() element!: Element
   @Input() property!: PropertyDescriptor
-  @Input() settings : EditorSettings<T> = {
-  }
-  //@Input() group!: PropertyGroupComponent
+  @Input() settings : EditorSettings<T> = {}
   @Input() editor!: PropertyEditorDirective
 
   // instance data
@@ -159,23 +153,8 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
  onChange(value: any) {
     // possible coerce
 
-    if ( this.out ) {
+    if ( this.out )
       value = this.out(value)
-    }
-
-    const properties = () : any => {
-      const result : any = {}
-
-      result[this.property.name] = value
-
-      return result
-    }
-
-    // TEST
-    const object = [this.property.name].reduce((result : any , property: string) => {
-      result[property] = value
-      return result
-    }, {})
 
     if (this.action) {
       this.element.set(this.property.name, value)
@@ -192,7 +171,10 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
       this.action = this.actionHistory.updateProperties({
         element: this.context.shape,
         moddleElement: this.element,
-        properties: properties()
+        properties: [this.property.name].reduce((result : any , property: string) => {
+          result[property] = value
+          return result
+        }, {})
       })
     }
 

@@ -1,0 +1,36 @@
+<button *ngIf="isRoot()" mat-button [matMenuTriggerFor]="menu">
+    {{label}}
+    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+</button>
+
+<button *ngIf="!isRoot()"  mat-menu-item [matMenuTriggerFor]="menu" (menuOpened)="open()">
+    {{label}}
+</button>
+
+<mat-menu #menu="matMenu">
+    <ng-container *ngIf="opened">
+        <!-- literal types -->
+
+        <button (click)="selectType(type)" mat-menu-item *ngFor="let type of type.literalTypes; let i = index">
+            {{type}}
+        </button>
+
+        <mat-divider></mat-divider>
+
+        <!-- schema types TODO -->
+
+        <!--ng-container *ngIf="type.schemaTypes.length > 0">
+            <button mat-menu-item (click)="selectType('ref:' + type)"  *ngFor="let type of type.schemaTypes; let i = index">
+                {{type}}
+            </button>
+
+            <mat-divider></mat-divider>
+        </ng-container-->
+
+        <!-- array -->
+
+        <button mat-menu-item>
+            <type-editor-menu [type]="type" [parent]="this" [label]="'array'"></type-editor-menu>
+        </button>
+    </ng-container>
+</mat-menu>

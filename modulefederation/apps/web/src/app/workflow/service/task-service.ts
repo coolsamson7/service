@@ -19,6 +19,7 @@ export interface Task {
   input?: any
   output?: any
   validate?: () => boolean
+  finish? : () => void
 }
 
 export interface TaskFilter {

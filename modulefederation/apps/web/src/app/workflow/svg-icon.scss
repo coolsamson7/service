@@ -1,7 +1,3 @@
-:host {
-  /*display: flex;*/
-}
-
 .icon-wrap {
   /* don't take the whole line */
   display: inline;
@@ -18,11 +14,21 @@
 
   .icon {
     cursor: pointer;
-
-    .rotate90 {
-      transform: rotate(90deg);
-    }
   }
+
+  .rotate90 {
+
+    #svg {
+      transform: rotate(90deg) !important;
+      color: blue;
+      fill: green;
+    }
+    * {
+      transform: rotate(90deg) !important;
+      color: blue;
+      fill: red;
+    }
+   }
 }
 
 

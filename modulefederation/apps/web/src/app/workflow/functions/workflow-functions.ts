@@ -3,7 +3,7 @@ import { RegisterFunction, RegisterModule } from '@modulefederation/form/rendere
 import { Task, TaskService } from '../service';
 
 /**
- * the "system.io" module covers io related fucntions.
+ * the "workflow" module covers workflow related functions. Who could have guessed...
  */
 @RegisterModule({name: 'workflow'})
 @Injectable({providedIn: 'root'})
