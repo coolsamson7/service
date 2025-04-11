@@ -59,7 +59,7 @@ export class TaskService extends AbstractHTTPService {
     return this.post<Task[]>(`/complete/${processDefinition}/${processId}/${id}/${name}`, output)
   }
 
-  taskVariables(task: Task) : Observable<Variables> {
-    return this.get<Variables>(`/task-variables/${task.processDefinitionId}/${task.id}/${task.name}`)
+  taskVariables(task: Task, processVariables: string[]) : Observable<Variables> {
+    return this.post<Variables>(`/task-variables/${task.processDefinitionId}/${task.id}/${task.name}`, processVariables)
   }
 }

@@ -1,6 +1,5 @@
 <mat-nav-list role="list" class="tasks dense-5">
-    <mat-list-item role="listitem"  *ngFor="let task of tasks" (click)="select(task)" [ngClass]="{selected: selection == task}">
+    <mat-list-item role="listitem"  *ngFor="let task of tasks" (click)="select(task)" [ngClass]="{selected: selection === task}">
       {{task.name}}
-
     </mat-list-item>
 </mat-nav-list>

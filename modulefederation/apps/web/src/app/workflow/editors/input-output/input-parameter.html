@@ -16,10 +16,8 @@
     <!-- source -->
 
     <property-name #sourceLabel [property]="source" ></property-name>
-    <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" [inputs]="inputs('source')" (valueChange)="changeSource($event)"></ng-container>
-
-    <!-- value --> 
-
-    <property-name #valueLabel [property]="value" ></property-name>
-    <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="typedProperty" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container>
-</form>
+    <div class="source">
+      <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" [inputs]="inputs('source')" (valueChange)="changeSource($event)"></ng-container>
+      <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="typedProperty" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container>
+    </div>
+   </form>

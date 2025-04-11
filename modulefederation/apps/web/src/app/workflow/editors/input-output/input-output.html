@@ -21,4 +21,15 @@
 
     <parameter-list [parameters]="outputParameters" [context]="context" [name]="outputName"></parameter-list>
   </div>
+
+  <!-- process output -->
+
+  <div class="process-outputs">
+    <div class="header">
+      <div class="label">Process Output</div>
+      <svg-icon (click)="addProcessOutput()" name="plus" class="plus"/>
+    </div>
+
+    <parameter-list [parameters]="processOutputParameters" [context]="context" [name]="outputName"></parameter-list>
+  </div>
 </div>

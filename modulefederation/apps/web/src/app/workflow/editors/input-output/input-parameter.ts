@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { AbstractExtensionEditor, AbstractPropertyEditor, EditorSettings, PropertyPanelModule, RegisterPropertyEditor } from '../../property-panel';
 
@@ -22,6 +22,7 @@ import { PropertyNameComponent } from '../../property-panel/property-name';
   selector: "input-parameter",
   templateUrl: './input-parameter.html',
   styleUrl: './input-parameter.scss',
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [FormsModule, CommonModule, PropertyPanelModule,  MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, PropertyNameComponent]
 })

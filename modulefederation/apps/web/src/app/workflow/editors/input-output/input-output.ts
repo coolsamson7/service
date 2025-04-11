@@ -25,11 +25,15 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   // getters
 
   get inputParameters(): Element[] {
-    return this.element["inputParameters"];
+    return this.element["inputParameters"] || []
   }
 
  get outputParameters(): Element[] {
-    return this.element["outputParameters"];
+    return this.element["outputParameters"]|| [].filter((parameter: { $type: string; }) => parameter.$type == "schema:outputParameter");
+  }
+
+  get processOutputParameters(): Element[] {
+    return this.element["outputParameters"]|| [].filter((parameter: { $type: string; }) => parameter.$type == "camunda:OutputParameter");
   }
 
   // callbacks
@@ -97,7 +101,23 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       element: this.context.shape,
       moddleElement: this.element as any as Element,
       properties: {
-        inputParameters: [...this.outputParameters, parameter]
+        outputParameters: [...this.outputParameters, parameter]
+      }
+    })
+
+    return parameter
+  }
+
+  addProcessOutput() : Element {
+    const parameter =  this.create("camunda:OutputParameter", {
+      type: "String"
+      })
+
+    this.actionHistory.updateProperties({
+      element: this.context.shape,
+      moddleElement: this.element as any as Element,
+      properties: {
+        outputParameters: [...this.outputParameters, parameter]
       }
     })
 

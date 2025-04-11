@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
@@ -18,7 +20,7 @@ import { MessageBus, SessionManager, WithLifecycle } from '@modulefederation/por
 
 export class SelectionEvent{
   // constructor
-  
+
   constructor(private list: TasklistComponent, public selection: Task, private oldSelection: Task | undefined) {}
 
   // public
@@ -39,7 +41,7 @@ export class SelectionEvent{
     MatListModule
   ]
 })
-export class TasklistComponent extends WithLifecycle {
+export class TasklistComponent extends WithLifecycle implements OnInit, OnDestroy {
   // input & output
 
   @Output() task = new EventEmitter<SelectionEvent>();
@@ -53,7 +55,7 @@ export class TasklistComponent extends WithLifecycle {
 
   constructor(private tasklistManager: TasklistManager, private taskService: TaskService,  private sessionManager: SessionManager, messageBus: MessageBus) {
     super()
-    
+
     // call via websocket
 
     const subscription = messageBus.listenFor<TasklistDelta>("tasklist").subscribe(
@@ -63,10 +65,21 @@ export class TasklistComponent extends WithLifecycle {
         }
       })
 
+    const taskSubscription1 = messageBus.listenFor<Task>("task").subscribe( message => {
+      if ( message.message === "completed")
+        this.taskDone(message.arguments!)
+    })
+
    this.onDestroy(() => subscription.unsubscribe())
+   this.onDestroy(() => taskSubscription1.unsubscribe())
   }
 
   // callbacks
+
+  taskDone(task: Task) {
+    this.tasks.splice(this.tasks.indexOf(task), 1)
+    this.selection = undefined
+  }
 
   select(task: Task) {
     this.task.emit(new SelectionEvent(this, task, this.selection))
@@ -81,10 +94,10 @@ export class TasklistComponent extends WithLifecycle {
           this.tasks.splice(this.tasks.indexOf(task), 1)
 
       // add
-      
+
       for ( let task of delta.added)
           this.tasks.push(task)
-  }    
+  }
 
   //   override WithLifecycle
 
@@ -102,8 +115,8 @@ export class TasklistComponent extends WithLifecycle {
 
   override ngOnDestroy(): void {
     super.ngOnDestroy()
-    
-    // probaly somewhere else...
+
+    // probably somewhere else...
 
     let user = this.sessionManager.hasSession() ? this.sessionManager.getUser().preferred_username : "coolsamson"
 

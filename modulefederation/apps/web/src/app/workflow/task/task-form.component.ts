@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core"
 
-import { FormInventoryService, Task, TaskService } from "../service"
+import { FormInventoryService, Task, TaskService, Variables } from "../service"
 import { FormConfig, FormRendererComponent, FormRendererModule, Schema, SchemaProperty } from "@modulefederation/form/renderer";
 import { CommonModule } from "@angular/common";
 import { WorkflowFunctions } from "../functions/workflow-functions";
-import { object, ObjectConstraint, Type, TypeParser, ValidationError } from "@modulefederation/common";
+import { equals, object, ObjectConstraint, Type, TypeParser, ValidationError } from "@modulefederation/common";
+import { MessageBus } from "@modulefederation/portal";
 
 const a = WorkflowFunctions
 
@@ -31,11 +32,13 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
     output: {},
   }
 
+  savedProcessVariables : any = {}
+
   schema!: ObjectConstraint
 
   // constructor
 
-  constructor(private formService: FormInventoryService, private taskService: TaskService) {
+  constructor(private formService: FormInventoryService, private taskService: TaskService, private messageBus: MessageBus) {
   }
 
   // callbacks
@@ -56,7 +59,17 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-createSchema(schemas: Schema[]): ObjectConstraint {
+  // private
+
+  private processVariables() : string[] {
+    const processSchema = this.form.schema?.find(schema => schema.name == "process")
+    if ( processSchema )
+      return  processSchema!.properties.map(property => property.name)
+    else
+      return []
+  } 
+
+  private createSchema(schemas: Schema[]): ObjectConstraint {
     const schemaMap : {[name: string]: ObjectConstraint} = {}
 
     for ( const schema of schemas) {
@@ -79,6 +92,100 @@ createSchema(schemas: Schema[]): ObjectConstraint {
     return schemaMap[""]
   }
 
+  private fillModel(model: any, variables : Variables) : any {
+    // input
+
+    for ( const prop of variables.input.properties)
+      model.input[prop.name] = prop.value
+
+    // output
+
+    for ( const prop of variables.output.properties)
+      model.output[prop.name] = prop.value
+
+    // process
+
+    for ( const prop of variables.process.properties)
+     model.process[prop.name] = prop.value
+
+    // clone
+
+    this.savedProcessVariables = {... model.process }
+  }
+
+  validate() : boolean {
+    // clear errors
+
+    this.messageBus.broadcast({
+      topic: "task-errors",
+      message: "clear-errors"
+    })
+
+    if ( this.renderer.validate()) {
+      // validate  output
+
+      try {
+        (this.schema.shape["output"] as Type<any>)!.validate(this.model.output)
+      }
+      catch(error: unknown) {
+        if (error instanceof ValidationError) {
+          for ( const violation of error.violations) {
+            this.messageBus.broadcast({
+              topic: "task-errors",
+              message: "add-error",
+              arguments: violation.path + " violation!" // TODO
+            })
+          }
+          error.violations
+        }
+        return false
+      }
+
+      return true
+    }
+    else {
+      this.messageBus.broadcast({
+        topic: "task-errors",
+        message: "add-error",
+        arguments: "check form errors"
+      })
+
+      return false
+    }
+  }
+
+  setupForm(xml: string) {
+      this.form = JSON.parse(xml)
+      this.schema = this.createSchema(this.form.schema || [])
+  }
+
+  completeTask() {
+    if ( this.validate()) {
+      // collect process delta
+
+      const delta : any = {}
+
+      for ( const prop in this.savedProcessVariables) {
+        if (!equals(this.savedProcessVariables[prop], this.model.process[prop]))
+          delta[prop] = this.model.process[prop]
+      }
+
+      // call service
+
+      // TODO: delta
+
+      this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, this.task.output).subscribe()
+      
+      // and inform parent
+
+      this.messageBus.broadcast({
+        topic: "task",
+        message: "completed",
+        arguments: this.task
+      })
+    }
+  }
+
   // implement OnInit
 
   ngOnInit(): void {
@@ -95,60 +202,27 @@ createSchema(schemas: Schema[]): ObjectConstraint {
      this.model.validate = this.renderer.validate
   }
 
-  // TODO. check output variables against schema?
-
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
     const result = this.parse(this.task)
 
     this.formService.find4Process(result.id, result.form).subscribe(form => {
-        this.taskService.taskVariables(this.task).subscribe(variables => {
-            this.form = JSON.parse(form.xml)
+        this.setupForm(form.xml)
 
-            this.schema = this.createSchema(this.form.schema || [])
+        this.taskService.taskVariables(this.task, this.processVariables()).subscribe(variables => {
+            // put input, output, process into model
+            // would be cool if that were top-level properties
 
-            // input
-
-            for ( const prop of variables.input.properties)
-                this.model.input[prop.name] = prop.value
-
-            // output
-
-            for ( const prop of variables.output.properties)
-              this.model.output[prop.name] = prop.value
-
-            // process
-
-            for ( const prop of variables.process.properties)
-              this.model.process[prop.name] = prop.value
+            this.fillModel(this.model, variables)
 
             // link everything to the task as well
 
             this.task.process = this.model.process
             this.task.input = this.model.input
             this.task.output = this.model.output
-            this.task.finish = () => {
-                this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, this.task.output).subscribe()
-            }
-            this.task.validate = () : boolean => {
-                if ( this.renderer.validate()) {
-                  console.log(this.model)
-
-                  try {
-                    (this.schema.shape["output"] as Type<any>)!.validate(this.model.output)
-                  }
-                  catch(error: unknown) {
-                    console.log(error) // TODO
-                    return false
-                  }
-                  
-                  return true
-                }
-                else {
-                  return false
-                }
-            }
+            this.task.finish = () => this.completeTask()
+            this.task.validate = () : boolean => this.validate()
         })
     })
   }

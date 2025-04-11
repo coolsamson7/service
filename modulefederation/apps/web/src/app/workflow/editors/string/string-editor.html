@@ -10,7 +10,7 @@
     <!-- select -->
 
     <mat-select *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="settings.readOnly === true" [ngModel]="value" (selectionChange)="onChange($event.value)">
-      <mat-option *ngFor="let value of settings.oneOf" [value]="value">{{value}}</mat-option>
+      <mat-option *ngFor="let value of settings.oneOf" [value]="value" style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">{{value}}</mat-option>
     </mat-select>
 
     <mat-error *showErrors/>
