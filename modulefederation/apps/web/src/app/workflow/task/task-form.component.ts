@@ -16,7 +16,7 @@ const a = WorkflowFunctions
   standalone: true,
   imports: [CommonModule, FormRendererModule]
 })
-export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
+export class TaskFormComponent implements OnInit, OnChanges {
   // input
 
   @Input() task!: Task;
@@ -26,7 +26,15 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild(FormRendererComponent) renderer! : FormRendererComponent
 
   form!: FormConfig
+
   model: any = {
+    process: {},
+    input: {},
+    output: {},
+  }
+
+  context: any = {
+    task: undefined,
     process: {},
     input: {},
     output: {},
@@ -107,6 +115,12 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
 
     for ( const prop of variables.process.properties)
      model.process[prop.name] = prop.value
+
+    // TODO
+
+    this.context.input = model.input
+    this.context.output = model.output
+    this.context.process = model.process
 
     // clone
 
@@ -191,15 +205,9 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnInit(): void {
     // expose task as a property
 
+    this.context.task = this.task // TODO
+
     this.model.task = this.task
-  }
-
-   // implement AfterViewInit
-
-   ngAfterViewInit(): void {
-     // expose validate as a property
-
-     this.model.validate = this.renderer.validate
   }
 
   // implement OnChanges
@@ -218,9 +226,6 @@ export class TaskFormComponent implements OnInit, OnChanges, AfterViewInit {
 
             // link everything to the task as well
 
-            this.task.process = this.model.process
-            this.task.input = this.model.input
-            this.task.output = this.model.output
             this.task.finish = () => this.completeTask()
             this.task.validate = () : boolean => this.validate()
         })

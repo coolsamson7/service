@@ -29,11 +29,11 @@ export class InputOutputEditor extends AbstractExtensionEditor {
   }
 
  get outputParameters(): Element[] {
-    return this.element["outputParameters"]|| [].filter((parameter: { $type: string; }) => parameter.$type == "schema:outputParameter");
+    return (this.element["outputParameters"] || []).filter((parameter: { $type: string; }) => parameter.$type == "schema:outputParameter");
   }
 
   get processOutputParameters(): Element[] {
-    return this.element["outputParameters"]|| [].filter((parameter: { $type: string; }) => parameter.$type == "camunda:OutputParameter");
+    return (this.element["outputParameters"] || []).filter((parameter: { $type: string; }) => parameter.$type == "camunda:OutputParameter");
   }
 
   // callbacks
@@ -136,6 +136,10 @@ export class InputOutputEditor extends AbstractExtensionEditor {
       return parameter["name"] + " : " +  parameter["type"]
     else
       return "<name>" + " : " + parameter["type"]
+  }
+
+  processOutputName(parameter: Element) : string {
+    return parameter["name"].trim()
   }
 
   // override OnInit

@@ -1,6 +1,7 @@
 <form-renderer *ngIf="form"
     [form]="form"
     [model]="model"
+    [context]="context"
     [edit]="false"
     (status)="onStatusChange($event)">
 </form-renderer>

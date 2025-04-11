@@ -12,6 +12,9 @@ import { PropertyGroupComponent } from "./property-group";
 import { ActionHistory } from "../bpmn"
 import { PropertyEditorDirective } from "./property.editor.directive";
 import { EventBus } from "bpmn-js/lib/BaseViewer";
+import { Process } from "../service";
+import { ObjectController } from "../../home/home-component";
+import { ProcessController } from "../../home/process-controller";
 
 
 @Component( {
@@ -19,17 +22,16 @@ import { EventBus } from "bpmn-js/lib/BaseViewer";
   templateUrl: "./property-panel.html",
   styleUrl: "./property-panel.scss"
 })
-export class PropertyPanelComponent extends WithLifecycle {
+export class PropertyPanelComponent extends WithLifecycle implements OnChanges {
   // input
 
-  @Input() modeler!: BpmnJS
-  @Input() shape : Shape | undefined;
+  @Input() controller! : ObjectController 
+  @Input() process! : Process
+  @Input() shape : Shape | undefined
+  @Input() element : Element| undefined;
 
   // instance data
 
-  @Input() element : Element| undefined;
-
-  model!: Moddle;
 
   currentConfig!: PropertyPanel
 
@@ -102,15 +104,15 @@ export class PropertyPanelComponent extends WithLifecycle {
   // private
 
   private checkModel() : void  {
-     this.model = this.modeler.get('moddle');
+     const model =  (this.controller as ProcessController).diagram.modeler.get("moddle") as Moddle// this.modeler.get('moddle');
 
      // compute valid extensions
 
-      for ( const typeName in this.model.registry.typeMap) {
-        const type =  this.model.registry.typeMap[typeName]
+      for ( const typeName in model.registry.typeMap) {
+        const type =  model.registry.typeMap[typeName]
 
         if ( type.meta  && /*type.superClass?.includes("Element") &&*/ type.meta["allowedIn"]) { // TODO
-          this.extensions.push(this.model.getTypeDescriptor(typeName))
+          this.extensions.push(model.getTypeDescriptor(typeName))
         }
       }
   }
@@ -194,19 +196,21 @@ export class PropertyPanelComponent extends WithLifecycle {
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    // modeler
+    if ( changes["controller"]) {
+      this.eventBus = (this.controller as ProcessController).diagram.eventBus!
+      this.actionHistory = new ActionHistory( (this.controller as ProcessController).diagram.modeler.get("commandStack"))
+    }
 
-    if (changes["modeler"] && this.modeler) {
-      this.actionHistory = new ActionHistory(this.modeler.get("commandStack"));
-      this.eventBus = this.modeler.get('eventBus');
-  
+    // process
+
+    if (changes["process"]) {
       this.checkModel()
     }
 
 
     // shape
 
-    if (changes["shape"] && !changes["shape"].firstChange) {
+    if (changes["shape"]) {
       this.setElement(changes["shape"].currentValue as Shape)
     }
   }
