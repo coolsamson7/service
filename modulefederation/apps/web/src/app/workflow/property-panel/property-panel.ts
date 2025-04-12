@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-extra-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
+import { AfterViewInit, Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { Element, Moddle } from "moddle"
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import { PropertyPanel } from "./property-panel.model";
@@ -22,7 +22,7 @@ import { ProcessController } from "../../home/process-controller";
   templateUrl: "./property-panel.html",
   styleUrl: "./property-panel.scss"
 })
-export class PropertyPanelComponent extends WithLifecycle implements OnChanges {
+export class PropertyPanelComponent extends WithLifecycle implements OnChanges, AfterViewInit {
   // input
 
   @Input() controller! : ObjectController 
@@ -33,7 +33,9 @@ export class PropertyPanelComponent extends WithLifecycle implements OnChanges {
   // instance data
 
 
-  currentConfig!: PropertyPanel
+  currentConfig: PropertyPanel = {
+    groups: []
+  }
 
   extensions :  Moddle.TypeDefinition[] = []
 
@@ -143,7 +145,7 @@ export class PropertyPanelComponent extends WithLifecycle implements OnChanges {
     this.allowedExtensions = []
 
     let element : Element | undefined = undefined
-    if ( shape)
+    if ( shape )
       element = shape["bpmnElement"] || shape["businessObject"]  //  shape["bpmnObject"] // ??
 
     this.element = element
@@ -193,24 +195,39 @@ export class PropertyPanelComponent extends WithLifecycle implements OnChanges {
     } // if
   }
 
+  // implement AfterViewInit
+
+  override ngAfterViewInit(): void {
+      super.ngAfterViewInit()
+
+      setTimeout(() => {
+        this.eventBus = (this.controller as ProcessController).diagram.eventBus!
+        this.actionHistory = new ActionHistory( (this.controller as ProcessController).diagram.modeler.get("commandStack"))
+
+        this.checkModel()
+
+        this.setElement(this.shape)
+      }, 0)
+  }
+
   // implement OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ( changes["controller"]) {
+    if ( changes["controller"] && !changes["controller"].isFirstChange() ) {
       this.eventBus = (this.controller as ProcessController).diagram.eventBus!
       this.actionHistory = new ActionHistory( (this.controller as ProcessController).diagram.modeler.get("commandStack"))
     }
 
     // process
 
-    if (changes["process"]) {
+    if (changes["process"] && !changes["process"].isFirstChange()) {
       this.checkModel()
     }
 
 
     // shape
 
-    if (changes["shape"]) {
+    if (changes["shape"] && !changes["shape"].isFirstChange()) {
       this.setElement(changes["shape"].currentValue as Shape)
     }
   }
