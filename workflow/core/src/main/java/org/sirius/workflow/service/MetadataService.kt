@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 data class PropertyDescriptor(val name: String, val type: String, val constraint: String, var value: Any?)
 
-data class SchemaDescriptor(val properties: List<PropertyDescriptor>)
+data class SchemaDescriptor(var properties: List<PropertyDescriptor>)
 
 @Component
 class MetadataService {

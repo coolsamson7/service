@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessageType
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Controller
@@ -71,6 +72,8 @@ class TasklistHandler {
 
     @Autowired
     private lateinit var simpMessagingTemplate: SimpMessagingTemplate
+
+    var needUpdate = false
 
     // constructor
 
@@ -149,6 +152,22 @@ class TasklistHandler {
         return TasklistDelta(added, deleted)
     }
 
+    fun triggerUpdate() {
+        needUpdate = true
+    }
+
+    // every s
+
+    @Scheduled(fixedRate = 1000)
+    fun checkUpdate() {
+        if ( needUpdate ) {
+            needUpdate = false
+
+            this.updateList()
+        }
+    }
+
+
     fun updateList() {
         for (entry in registry.entries.iterator()) {
             val userEntry = entry.value
@@ -185,7 +204,7 @@ class TasklistHandler {
     }
 
     fun notify(delegateTask: DelegateTask) {
-        this.updateList()
+        this.triggerUpdate()
     }
 
     companion object {

@@ -62,12 +62,13 @@ class SchemaParseListener : AbstractBpmnParseListener() {
 
                 val outputs = inputOutputParameter.elements("outputParameter")
 
-                for (output in outputs) {
-                    val name = output.attribute("name")
-                    val type = output.attribute("type")
+                for (output in outputs)
+                    if (!output.uri.startsWith(CAMUNDA_NS)) {
+                        val name = output.attribute("name")
+                        val type = output.attribute("type")
 
-                    rememberOutput("$taskName.$name", type)
-                } // for
+                        rememberOutput("$taskName.$name", type)
+                    } // if
             }
         }
     }

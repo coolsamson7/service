@@ -162,13 +162,14 @@ class TaskRestService {
         taskService.claim(id, user)
     }
 
-    @GetMapping("task-variables/{processDefinition}/{task}/{taskName}")
+    @PostMapping("task-variables/{processDefinition}/{task}/{taskName}")
     @ResponseBody
-    fun getTaskVariables(@PathVariable processDefinition: String, @PathVariable task: String, @PathVariable taskName: String, ) : Variables {
+    fun getTaskVariables(@PathVariable processDefinition: String, @PathVariable task: String, @PathVariable taskName: String, @RequestBody() processVariables: Array<String> ) : Variables {
         // process
 
         val processSchema = this.metadataService.processSchema(processDefinition)
 
+        processSchema.properties = processSchema.properties.filter { prop -> processVariables.contains(prop.name) }
         for (property in processSchema.properties)
             property.value = this.taskService.getVariable(task, property.name)
 

@@ -11,7 +11,11 @@ import java.util.*
 import java.util.stream.Collectors
 
 
+
+
 data class ProcessDescriptor(val deployment: String, val id: String, val name: String,  val key: String, val resourceName: String)
+
+data class PublishResult(val descriptor: ProcessDescriptor?, val errors : Array<String>)
 
 data class ProcessDefinitionXML(val xml: String)
 
@@ -77,22 +81,29 @@ class AdministrationRestService {
     }
 
     @PostMapping("update-process-definition/{process}")
-    fun updateProcessDefinition(@PathVariable process: String, @RequestBody xml: ProcessDefinitionXML) : ProcessDescriptor {
-        val deployment =  repositoryService
-            .createDeployment()
-            .addString(process, xml.xml)
-            .deployWithResult();
+    fun updateProcessDefinition(@PathVariable process: String, @RequestBody xml: ProcessDefinitionXML) : PublishResult {
+        try {
+            val deployment = repositoryService
+                .createDeployment()
+                .addString(process, xml.xml)
+                .deployWithResult();
 
-        // ??
-        val processDefinition = deployment.deployedProcessDefinitions.last()
+            // ??
+            val processDefinition = deployment.deployedProcessDefinitions.last()
 
-       return ProcessDescriptor(
-            processDefinition.deploymentId,
-            processDefinition.id,
-            if ( processDefinition.name !== null ) processDefinition.name else processDefinition.key,
-            processDefinition.key,
-            processDefinition.resourceName
-        )
+            return PublishResult(ProcessDescriptor(
+                processDefinition.deploymentId,
+                processDefinition.id,
+                if (processDefinition.name !== null) processDefinition.name else processDefinition.key,
+                processDefinition.key,
+                processDefinition.resourceName
+            ), emptyArray())
+        }
+        catch(exception: Exception) {
+            println(exception) // TODO
+
+            return PublishResult(null, arrayOf(exception.toString()))
+        }
     }
 
     @GetMapping("process-schema/{process}")
