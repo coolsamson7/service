@@ -1,3 +1,4 @@
+import { OverlayModule } from "@angular/cdk/overlay";
 import { CommonModule } from "@angular/common";
 import {
     ChangeDetectorRef,
@@ -10,9 +11,9 @@ import {
   } from "@angular/core";
   import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
-import { StringBuilder, Type, TypeParser } from "@modulefederation/common";
-import { ArraySuggestionProvider, NgModelSuggestionsDirective } from "@modulefederation/portal";
-  
+import { StringBuilder, TypeParser } from "@modulefederation/common";
+import { ObjectTreeComponent } from "@modulefederation/form/designer";
+import { ArraySuggestionProvider, NgModelSuggestionsDirective, SuggestionProvider } from "@modulefederation/portal";
 
 interface ChipArgument {
   name?: string,
@@ -39,10 +40,12 @@ interface Chip {
       // material
 
       MatIconModule,
+      OverlayModule,
 
       // portal
 
-      NgModelSuggestionsDirective
+      NgModelSuggestionsDirective,
+      ObjectTreeComponent
     ],
     providers: [{
       provide: NG_VALUE_ACCESSOR,
@@ -54,78 +57,127 @@ interface Chip {
   export class ChipsComponent implements ControlValueAccessor, OnChanges{
     // input
 
-    @Input() type!: string 
+    @Input() type!: string
     @Input() public placeholder = "Add..."
     @Input() public removable = true
 
     // instance data
-  
+
     @ViewChild("inputField") public inputField: any
-  
+
     onChange = (value: string) : void => {}
     onTouched = () : void => {}
 
+    showOverlay = false
+    tree?: ObjectTreeComponent
+
+    inputValue = ""
     value = ""
     items: Chip[] = []
     possibleConstraints: string[] = []
-    suggestionProvider!: ArraySuggestionProvider;
+    possibleConstraintsObject = {}
+    suggestionProvider!: SuggestionProvider;
 
     // constructor
-  
+
     constructor(private cd: ChangeDetectorRef) {
     }
 
     // public
-  
+
+    onCreateOverlay(tree: ObjectTreeComponent) {
+      this.tree = tree
+
+      this.suggestionProvider = this.tree.suggestionProvider
+
+      this.tree?.applyFilter(this.inputValue)
+    }
+
+    onDestroyOverlay(tree: ObjectTreeComponent) {
+      this.tree = undefined
+
+      this.suggestionProvider = new ArraySuggestionProvider([]);
+    }
+
+    asObject(constraints: string[]) {
+        return constraints.reduce((result : any, constraint) => {
+            result[constraint] = true
+
+            return result
+        }, {})
+    }
+
+    focus(focus: boolean) {
+      if ( focus )
+        this.showOverlay = focus
+      else
+        setTimeout(() =>  this.showOverlay = focus, 100) // if we click on the tree it should still be able to emit the selection
+    }
+
     public onChipBarClick(): void {
       //this.inputField.nativeElement.focus();
     }
-  
-    public removeItem(i: number): void {
-      this.possibleConstraints.push(this.items[i].name)
 
+    public removeItem(i: number): void {
       this.items.splice(i, 1);
+
+      this.updatePossibleConstraints()
 
       this.triggerChange(); // call trigger method
     }
-  
-    public removeAll(): void {
-      while (this.items.length > 0) {
-        this.possibleConstraints.push(this.items[0].name)
-        this.items.splice(0, 1);
-      }
 
+    public removeAll(): void {
+      this.items.length = 0
+
+      this.updatePossibleConstraints()
       this.triggerChange(); // call trigger method
     }
 
     triggerChange(): void {
       this.onChange(this.value = this.format())
     }
+
+    valueChange(value: string) {
+      this.inputValue = value
+
+      this.tree?.applyFilter(this.inputValue)
+    }
+
+   addChip(constraint: string) {
+      const newChip : Chip = {
+        name: constraint,
+        arguments: TypeParser.constraintArguments(this.type, constraint).map(argument => { return {
+          name: argument,
+          type: argument,
+          value: argument === "string" ? "" : 0
+        }})
   
+      }
+
+      this.items = [...this.items, newChip];
+
+      this.updatePossibleConstraints()
+
+      this.inputValue = ""
+
+      this.triggerChange(); // call trigger method
+
+      // we need a new position
+      this.showOverlay = false
+      setTimeout(() => this.showOverlay = true, 0)
+    }
+
     public onKeyDown(event: KeyboardEvent, value: string): void {
       switch (event.keyCode) {
         case 13:
         case 188: {
           if (value && value.trim() !== ""  && this.possibleConstraints.includes(value.trim()))  {
             const constraint = value.trim()
-            
-            const newChip : Chip = {
-              name: constraint,
-              arguments: TypeParser.constraintArguments(this.type, constraint).map(argument => { return {
-                name: argument,
-                type: argument,
-                value: argument === "string" ? "" : 0
-              }})
-              
-            }
 
-            this.possibleConstraints.splice(this.possibleConstraints.indexOf(constraint), 1)
-        
-            this.items = [...this.items, newChip];
-            this.triggerChange(); // call trigger method
-            
-            this.inputField.nativeElement.value = "";
+            this.addChip(constraint)
 
+            this.inputValue = ""
+  
             event.preventDefault();
           }
           break;
@@ -134,6 +186,13 @@ interface Chip {
           if (!value && this.items.length > 0) {
             this.items.pop();
             this.items = [...this.items];
+
+            this.inputValue = ""
+
+            // we need a new position
+            this.showOverlay = false
+            setTimeout(() => this.showOverlay = true, 0)
+
             this.triggerChange(); // call trigger method
           }
           break;
@@ -159,14 +218,23 @@ interface Chip {
           if ( item.arguments.length > 0) {
             for ( const arg of item.arguments) {
               builder.append(" ")
-              builder.append(arg.value)   
+              builder.append(arg.value)
             }
           } // if
         } // for
-      } // if        
+      } // if
 
       return builder.toString()
     }
+
+     private updatePossibleConstraints() {
+        this.possibleConstraints = TypeParser.supportedConstraints(this.type)
+
+        for (const item of this.items)
+          this.possibleConstraints.splice(this.possibleConstraints.indexOf(item.name), 1)
+
+        this.possibleConstraintsObject = this.asObject(this.possibleConstraints)
+      }
 
     private setup(value: string) {
       this.possibleConstraints = TypeParser.supportedConstraints(this.type)
@@ -182,37 +250,33 @@ interface Chip {
         if ( test.name !== "type") {
           const args : ChipArgument[] = []
 
-          for ( const key of Object.keys(test.params)) {
-            // remove from possible constraints
-
-            this.possibleConstraints.splice(this.possibleConstraints.indexOf(key), 1)
-
+          for ( const key of Object.keys(test.params))
             args.push({
               name: key,
               type: typeof test.params[key], // TODO
               value: test.params[key]
             })
-          } // for
-          
+
           this.items.push({
             name: test.name,
             arguments: args
           })
         }
-      } 
+      }
+
+      this.updatePossibleConstraints()
+      this.suggestionProvider = new ArraySuggestionProvider(this.possibleConstraints)
     }
 
     // implement OnChanges
 
     ngOnChanges(changes: SimpleChanges): void {
-      if ( changes["type"] && !changes["type"].isFirstChange()) {
-        if ( changes["type"].currentValue !== this.type)
+      if ( changes["type"] )
           this.setup(this.value)
-      }
     }
 
     // implement ControlValueAccessor
-  
+
     writeValue(value: string): void {
       if ( typeof value === "string" ) {
         this.value = value
@@ -222,11 +286,11 @@ interface Chip {
 
       this.cd.markForCheck()
     }
-  
+
     registerOnChange(fn: (value: string) => void): void {
       this.onChange = fn
     }
-  
+
     registerOnTouched(fn: () => void): void {
       this.onTouched = fn
     }

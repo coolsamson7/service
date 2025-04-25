@@ -5,7 +5,7 @@
         <div *ngIf="true" class="line"></div>
     </div>
 
-    <div *ngIf="!schema.isOpen(property)">{{name(property)}}</div>
+    <div *ngIf="!schema.isOpen(property)" class="name">{{name(property)}}</div>
     <ng-container *ngIf="schema.isOpen(property)" [property-editor]="property" [context]="context" ></ng-container>
 
     <!--svg-icon (click)="add()" name="plus" class="add"></svg-icon-->

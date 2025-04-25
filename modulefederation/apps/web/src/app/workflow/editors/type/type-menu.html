@@ -11,7 +11,7 @@
     <ng-container *ngIf="opened">
         <!-- literal types -->
 
-        <button (click)="selectType(type)" mat-menu-item *ngFor="let type of type.literalTypes; let i = index">
+        <button (click)="selectType(type)" mat-menu-item *ngFor="let type of type.literalTypes; let i = index" style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">
             {{type}}
         </button>
 
@@ -29,7 +29,7 @@
 
         <!-- array -->
 
-        <button mat-menu-item>
+        <button mat-menu-item style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">
             <type-editor-menu [type]="type" [parent]="this" [label]="'array'"></type-editor-menu>
         </button>
     </ng-container>

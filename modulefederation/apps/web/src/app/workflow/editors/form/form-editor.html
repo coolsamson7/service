@@ -1,5 +1,5 @@
 
-  <mat-form-field class="dense-5">
+  <mat-form-field class="dense-5 form">
     <input #input  matInput  #model="ngModel"
       type="text" id="form"  name="form"
       [ngModel]="name"  (ngModelChange)="onChange($event)"
@@ -35,7 +35,7 @@
   <!-- the form vs feature menu -->
 
   <mat-menu #menu="matMenu" class="change-type-menu-panel">
-    <div *ngFor="let type of ['form', 'feature']" (click)="changeType(type)" mat-menu-item>
+    <div *ngFor="let type of ['form', 'feature']" (click)="changeType(type)" mat-menu-item style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">
       <mat-icon>{{icons[type]}}</mat-icon>
     </div>
   </mat-menu>

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { AbstractControl, FormsModule, NG_VALIDATORS, NgModel, ValidationErrors, Validator, ValidatorFn } from "@angular/forms";
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
-import { Component, Directive, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, Directive, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from "@angular/core";
 import { ArraySuggestionProvider, FeatureRegistry, MessageBus } from "@modulefederation/portal";
 import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
@@ -53,6 +53,7 @@ export class MemberDirective implements Validator {
   styleUrl: "./form-editor.scss",
   templateUrl: "./form-editor.html",
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [FormsModule, CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatMenuModule, MatIconModule, ValidationModule]
  })
  export class FormPropertyEditor extends AbstractPropertyEditor implements OnInit, OnChanges {
@@ -121,7 +122,7 @@ export class MemberDirective implements Validator {
    */
   createSchemas() : Schema[] { 
     // TODO String vs string???
-    
+
     const schemas : Schema[] = []
 
     let inputSchema : Schema | undefined = undefined

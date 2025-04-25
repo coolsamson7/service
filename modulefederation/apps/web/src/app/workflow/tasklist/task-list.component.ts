@@ -21,7 +21,7 @@ import { MessageBus, SessionManager, WithLifecycle } from '@modulefederation/por
 export class SelectionEvent{
   // constructor
 
-  constructor(private list: TasklistComponent, public selection: Task, private oldSelection: Task | undefined) {}
+  constructor(private list: TasklistComponent, public selection: Task | undefined, private oldSelection: Task | undefined) {}
 
   // public
 
@@ -78,10 +78,11 @@ export class TasklistComponent extends WithLifecycle implements OnInit, OnDestro
 
   taskDone(task: Task) {
     this.tasks.splice(this.tasks.indexOf(task), 1)
-    this.selection = undefined
+    
+    this.select(undefined)
   }
 
-  select(task: Task) {
+  select(task: Task | undefined) {
     this.task.emit(new SelectionEvent(this, task, this.selection))
 
     this.selection = task

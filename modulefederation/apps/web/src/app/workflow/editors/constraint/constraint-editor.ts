@@ -48,28 +48,13 @@ export class ConstraintPropertyEditor extends AbstractPropertyEditor<number> imp
   @ViewChild("input") input! : any;
   @ViewChild("chips") chips! : ChipsComponent;
 
-   get constraintType() :string {
-    switch (this.element["type"]) {
-      case "Integer":
-      case "Short":
-      case "Long":
-      case "Double":
-        return "number"
-
-      case "String":
-        return "string";
-
-      case "Boolean":
-        return "boolean"
-
-      default:
-        return "string"
-      }
-    }
+  get constraintType() :string {
+    return (this.element["type"] || "string").toLowerCase()
+  }
 
    // constructor
 
-   constructor() {
+  constructor() {
     super()
 
     this.baseType = "string"

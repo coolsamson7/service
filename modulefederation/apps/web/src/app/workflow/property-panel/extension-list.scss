@@ -21,6 +21,10 @@
         align-self: center;
       }
     }
+
+    .name {
+      cursor: default;
+    }
   }
 
   .extension:hover svg-icon {

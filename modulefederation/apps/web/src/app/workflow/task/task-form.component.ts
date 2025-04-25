@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core"
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core"
 
 import { FormInventoryService, Task, TaskService, Variables } from "../service"
 import { FormConfig, FormRendererComponent, FormRendererModule, Schema, SchemaProperty } from "@modulefederation/form/renderer";
 import { CommonModule } from "@angular/common";
 import { WorkflowFunctions } from "../functions/workflow-functions";
-import { equals, object, ObjectConstraint, Type, TypeParser, ValidationError } from "@modulefederation/common";
+import { equals, object, ObjectConstraint, Type, TypeParser, ValidationError, ValidationMessageManager, ViolationContext } from "@modulefederation/common";
 import { MessageBus } from "@modulefederation/portal";
 
 const a = WorkflowFunctions
@@ -46,7 +46,7 @@ export class TaskFormComponent implements OnInit, OnChanges {
 
   // constructor
 
-  constructor(private formService: FormInventoryService, private taskService: TaskService, private messageBus: MessageBus) {
+  constructor(private formService: FormInventoryService, private taskService: TaskService, private messageBus: MessageBus, private validationMessageManager: ValidationMessageManager) {
   }
 
   // callbacks
@@ -127,6 +127,17 @@ export class TaskFormComponent implements OnInit, OnChanges {
     this.savedProcessVariables = {... model.process }
   }
 
+  /*const label = this.labelFor(control, host);
+
+  console.log(violation)
+
+  return this.manager.provide({
+    violations: violation.violations,
+    //type: violation.violations[0].type,
+    violation: violation.violations[0],
+    label: label
+  })*/
+
   validate() : boolean {
     // clear errors
 
@@ -139,18 +150,24 @@ export class TaskFormComponent implements OnInit, OnChanges {
       // validate  output
 
       try {
-        (this.schema.shape["output"] as Type<any>)!.validate(this.model.output)
+        if ( this.schema?.shape["output"])
+          (this.schema.shape["output"] as Type<any>)!.validate(this.model.output)
       }
       catch(error: unknown) {
         if (error instanceof ValidationError) {
           for ( const violation of error.violations) {
+            const context : ViolationContext = {
+              violations: error.violations,
+              violation: violation,
+              label: "LABEL" // TODO
+             }
+
             this.messageBus.broadcast({
               topic: "task-errors",
               message: "add-error",
-              arguments: violation.path + " violation!" // TODO
+              arguments:  this.validationMessageManager.provide(context)
             })
-          }
-          error.violations
+          } // for
         }
         return false
       }
@@ -188,15 +205,13 @@ export class TaskFormComponent implements OnInit, OnChanges {
 
       // TODO: delta
 
-      this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, this.task.output).subscribe()
-      
-      // and inform parent
-
-      this.messageBus.broadcast({
-        topic: "task",
-        message: "completed",
-        arguments: this.task
-      })
+      this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, this.model.output).subscribe(result => 
+        this.messageBus.broadcast({
+          topic: "task",
+          message: "completed",
+          arguments: this.task
+        })
+      )
     }
   }
 

@@ -16,17 +16,24 @@
       </li>
 
       <li class="input-field">
-        <input
-          #inputField
+        <input  #inputField
           class="input"
-          id=""
           type="text"
-          name=""
+          (focus)="focus(true)"
+          (focusout)="focus(false)"
+          cdkOverlayOrigin #trigger="cdkOverlayOrigin"
           autocomplete="off"
           [suggestionProvider]="suggestionProvider"
           [placeholder]="placeholder"
+          [ngModel]="inputValue"
+          (ngModelChange)="valueChange($event)"
           (keydown)="onKeyDown($event, inputField.value)"
         >
+        <!-- the overlay for the possible suggestions -->
+        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="showOverlay">
+          <object-tree [style]="{'font-size': '12px'}"
+                       [object]="possibleConstraintsObject" (choose)="addChip($event)" (created)="onCreateOverlay($event)"  (destroyed)="onDestroyOverlay($event)"></object-tree>
+        </ng-template>
       </li>
     </ul>
   </div>
