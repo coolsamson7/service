@@ -15,7 +15,7 @@
    
     <!-- source -->
 
-    <property-name #sourceLabel [property]="source" ></property-name>
+    <property-name #sourceLabel [property]="value" ></property-name>
     <div class="source">
       <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="source" [settings]="sourceSettings" [inputs]="inputs('source')" (valueChange)="changeSource($event)"></ng-container>
       <ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="typedProperty" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container>

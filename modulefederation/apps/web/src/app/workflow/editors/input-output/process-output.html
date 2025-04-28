@@ -1,0 +1,12 @@
+<div class="output">
+    <!-- name -->
+  
+    <property-name #nameLabel [property]="name" ></property-name>
+    <ng-container [property-editor]="element" [label]="nameLabel" [context]="context"  [property]="name" [inputs]="inputs('name')" [settings]="nameSettings"></ng-container>
+  
+    <!-- value-->
+  
+    <property-name #valueLabel [property]="value" ></property-name>
+    <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="value" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container>
+  </div>
+  

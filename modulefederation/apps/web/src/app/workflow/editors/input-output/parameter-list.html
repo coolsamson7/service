@@ -1,7 +1,7 @@
 
 <div *ngFor="let parameter of parameters" class="parameter">
   <div class="left">
-    <svg-icon  (click)="parameterEditor.toggle(parameter)" [name]="parameterEditor.isOpen(parameter) ? 'arrow-down' : 'arrow-right'"></svg-icon>
+    <svg-icon  (click)="parameterEditor.toggle(parameter)"  [style]="parameterEditor.isOpen(parameter) ? 'rotate90' : 'rotate0'" name="arrow-right"></svg-icon>
     <div class="line"></div>
   </div>
 

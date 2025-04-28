@@ -6,6 +6,7 @@
 .output {
   display: grid;
   grid-template-columns: min-content auto;
+  column-gap: 5px;
   align-items: baseline;
 
   .type {

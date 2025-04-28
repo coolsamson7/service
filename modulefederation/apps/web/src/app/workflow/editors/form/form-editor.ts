@@ -117,11 +117,10 @@ export class MemberDirective implements Validator {
     return el as Element
   }
 
-  /**
-   * 
-   */
   createSchemas() : Schema[] { 
-    // TODO String vs string???
+    const type = (name: string) : string => {
+      return name.toLowerCase()
+    }
 
     const schemas : Schema[] = []
 
@@ -144,7 +143,7 @@ export class MemberDirective implements Validator {
           properties: inputOutput["inputParameters"].map((input: any) => { 
             return {
               name: input.name,
-              type:  input.type,
+              type:  type(input.type),
               constraint: input.constraint || ""
             }
           })
@@ -158,10 +157,10 @@ export class MemberDirective implements Validator {
       if (inputOutput["outputParameters"]) {
          outputSchema = {
           name: "output",
-          properties: inputOutput["outputParameters"].map((output: any) => { 
+          properties: inputOutput["outputParameters"].filter((output: Element) => output.$type == "schema:outputParameter").map((output: any) => { 
             return {
               name: output.name,
-              type:  output.type,
+              type:  type(output.type),
               constraint: output.constraint || ""
             }
           })
@@ -185,7 +184,7 @@ export class MemberDirective implements Validator {
           properties: schema.properties.map((prop: any) => {
             return {
               name: prop.name,
-              type: prop.type,
+              type: type(prop.type),
               constraint: prop.constraint
             }
           })

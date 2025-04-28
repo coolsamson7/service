@@ -241,6 +241,10 @@ export class TaskFormComponent implements OnInit, OnChanges {
 
             // link everything to the task as well
 
+            this.task.input = this.context.input
+            this.task.output = this.context.output
+            this.task.process = this.context.process
+
             this.task.finish = () => this.completeTask()
             this.task.validate = () : boolean => this.validate()
         })

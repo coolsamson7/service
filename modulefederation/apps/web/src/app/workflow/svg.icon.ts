@@ -5,7 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'svg-icon',
-  template: `<div class="icon-wrap"><span [innerHTML]="svgIcon" class="icon" [class]="style"></span></div>`,
+  template: `<div class="icon-wrap"  [class]="style"><span [innerHTML]="svgIcon" class="icon"></span></div>`,
   styleUrl: './svg-icon.scss',
   standalone: true
 })

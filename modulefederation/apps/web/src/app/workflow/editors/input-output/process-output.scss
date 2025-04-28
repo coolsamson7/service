@@ -1,0 +1,16 @@
+:host {
+    width: 100%;
+  
+  }
+  
+  .output {
+    display: grid;
+    grid-template-columns: min-content auto;
+    align-items: baseline;
+  
+    .type {
+      display: flex;
+      align-items: baseline;
+    }
+  }
+  

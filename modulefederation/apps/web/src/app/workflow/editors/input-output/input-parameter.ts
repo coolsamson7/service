@@ -90,6 +90,8 @@ export class InputParameterEditor extends AbstractExtensionEditor {
         return "boolean"
 
       case "String":
+        return "string"
+
       case "Short":
       case "Integer":
       case "Long":
@@ -105,15 +107,21 @@ export class InputParameterEditor extends AbstractExtensionEditor {
       const type =  this.element["type"] || "String"
       this.typedProperty = this.createProperty("value",type)
 
-      this.valueSettings.in = AbstractPropertyEditor.getConversion("string", this.baseType(type))
-      this.valueSettings.out = AbstractPropertyEditor.getConversion(this.baseType(type), "string")
+      if ("string" !== this.baseType(type)) {
+        this.valueSettings.in = AbstractPropertyEditor.getConversion("string", this.baseType(type))
+        this.valueSettings.out = AbstractPropertyEditor.getConversion(this.baseType(type), "string")
+      }
+      else {
+        delete this.valueSettings.in
+        delete this.valueSettings.out
+      }
     }
     else
       this.typedProperty = this.createProperty("value", "String")
   }
 
-  changeSource(source: any) {
-    //this.element["source"] = source
+  changeSource(source: string) {
+    this.element["source"] = source
 
     this.setSuggestionProvider()
 

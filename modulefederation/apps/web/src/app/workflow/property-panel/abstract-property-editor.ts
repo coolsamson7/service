@@ -41,7 +41,9 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
   static {
     // target string
 
-    AbstractPropertyEditor.registerConversion("boolean", "string", (value: any) => value ? value.toString() : "")
+    AbstractPropertyEditor.registerConversion("undefined", "string", (value: any) => "")
+    AbstractPropertyEditor.registerConversion("null", "string", (value: any) => "")
+    AbstractPropertyEditor.registerConversion("boolean", "string", (value: any) => value ? "true" : "false")
     AbstractPropertyEditor.registerConversion("number", "string", (value: any) => value ? value.toString() : "")
     AbstractPropertyEditor.registerConversion("string", "string", (value: any) => value || "")
 

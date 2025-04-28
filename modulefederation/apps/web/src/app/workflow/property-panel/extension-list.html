@@ -2,7 +2,9 @@
 <form class="extensions">
   <div *ngFor="let extension of extensions" class="extension">
     <div class="left">
-      <svg-icon *ngIf="config.multiple" (click)="extensionEditor.toggle(extension)" [name]="extensionEditor.isOpen(extension) ? 'arrow-down' : 'arrow-right'"></svg-icon>
+      <!--svg-icon *ngIf="config.multiple" (click)="extensionEditor.toggle(extension)" [name]="extensionEditor.isOpen(extension) ? 'arrow-down' : 'arrow-right'"></svg-icon-->
+
+      <svg-icon  *ngIf="config.multiple" (click)="extensionEditor.toggle(extension)" [style]="extensionEditor.isOpen(extension) ? 'rotate90' : 'rotate0'" name="arrow-right"></svg-icon>
       <div *ngIf="config.multiple" class="line"></div>
     </div>
 

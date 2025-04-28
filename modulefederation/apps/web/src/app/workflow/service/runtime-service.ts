@@ -1,4 +1,3 @@
-import { HttpClient } from "@angular/common/http";
 import { Injectable, Injector } from "@angular/core";
 import { AbstractHTTPService, Service } from "@modulefederation/portal";
 import { Observable } from 'rxjs';
@@ -14,7 +13,7 @@ export class RuntimeService extends AbstractHTTPService {
 
     // methods
 
-    startProcess(processDefinitionKey: string) : Observable<void> {
-      return this.get<void>(`start/${processDefinitionKey}`)
+    startProcess(processDefinitionKey: string, parameter: any) : Observable<void> {
+      return this.post<void>(`start/${processDefinitionKey}`, parameter)
     }
 } 

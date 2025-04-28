@@ -34,14 +34,14 @@ export class InputParameterValidator extends AbstractModelValidator {
     const extensions = extensionElements ? extensionElements.values: []
 
     extensions.filter((extension: any) => extension["$type"] == "schema:schema").forEach((schema: any) =>
-      schema["properties"].forEach((property: any) => result.push(property))
+      schema["properties"].forEach((property: any) => result.push(property)) // TODO schema name?
      )
 
      return result
   }
 
   private isAssignableFrom(t1: string, t2: string) : boolean {
-    return t1 == t2 // for now
+    return t1 == t2 // for now TODO! coerce?
   }
 
   private findOutput(element: Element, output: string) : Element | undefined {

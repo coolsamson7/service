@@ -55,6 +55,10 @@ export class ExpressionEditor extends AbstractPropertyEditor implements OnChange
        (<any>condition)["$builder"] = builder
       }
 
+      if ( !condition['body'])
+        condition['body'] = ""
+
+
       this.properties = condition.$descriptor.properties.filter((prop: { name: string; }) => ["body"].includes(prop.name))
   }
 

@@ -127,7 +127,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   private addMarker(shape: Shape) {
     const BASIC_WARN_HTML =
-    '<div class="sgv-warn-container">' +
+    '<div class="sgv-warn-container" style="width: 30px; height: 30px;">' +
         '<img class="sgv-warn-icon" src="assets/svg/warning.svg"></img>' +
     '<div class="sgv-tooltip-content">'
 
@@ -141,7 +141,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
         });
   }
 
-  private getProcess() : RootLike | undefined {
+ getProcess() : RootLike | undefined {
     return this.canvas?.getRootElement();
 /*
     if ( root['di']?.bpmnElement)

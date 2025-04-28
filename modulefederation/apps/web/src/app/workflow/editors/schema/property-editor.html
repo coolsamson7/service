@@ -7,7 +7,7 @@
     <!-- type -->
 
     <property-name #label [property]="type"></property-name>
-    
+
     <div class="type-constraint">
         <!-- type -->
 
@@ -21,6 +21,13 @@
 
     <!-- value -->
 
-    <property-name #label [property]="value"></property-name>
-    <ng-container [property-editor]="element" [label]="label" [context]="context" [property]="typedProperty" [inputs]="inputs('value')"></ng-container>
+    <ng-container  *ngIf="!isInput">
+      <property-name #valueLabel [property]="value"></property-name>
+      <div class="value">
+        <ng-container [property-editor]="element" [label]="valueLabel" [context]="context"  [property]="source" [settings]="sourceSettings" [inputs]="inputs('source')" (valueChange)="changeSource($event)"></ng-container>
+        <!--ng-container [property-editor]="element" [label]="sourceLabel" [context]="context"  [property]="typedProperty" [inputs]="inputs('value')" [settings]="valueSettings"></ng-container-->
+        <ng-container [property-editor]="element" [label]="valueLabel" [context]="context" [property]="typedProperty"  [settings]="valueSettings" [inputs]="inputs('value')"></ng-container>
+      </div>
+    </ng-container>
+  
 </div>

@@ -15,21 +15,34 @@
   .icon {
     cursor: pointer;
   }
-
-  .rotate90 {
-
-    #svg {
-      transform: rotate(90deg) !important;
-      color: blue;
-      fill: green;
-    }
-    * {
-      transform: rotate(90deg) !important;
-      color: blue;
-      fill: red;
-    }
-   }
 }
+
+
+.icon-wrap.rotate0 {
+  transform: rotate(0deg) !important;
+  transition: transform 0.2s ease-in-out;
+}
+
+.icon-wrap.rotate45 {
+  transform: rotate(45deg) !important;
+  transition: transform 0.2s ease-in-out;
+}
+
+.icon-wrap.rotate90 {
+  transform: rotate(90deg) !important;
+  transition: transform 0.2s ease-in-out;
+}
+
+.icon-wrap.rotate135 {
+  transform: rotate(135deg) !important;
+  transition: transform 0.2s ease-in-out;
+}
+
+.icon-wrap.rotate180 {
+  transform: rotate(180deg) !important;
+  transition: transform 0.2s ease-in-out;
+}
+
 
 
 /* styles for the icon wrap when hovered */

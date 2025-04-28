@@ -13,7 +13,8 @@
 
       <!-- open / close -->
 
-      <mat-icon (click)="toggle()"  class="toggle pi-low"></mat-icon>
+      <!--mat-icon (click)="toggle()"  class="toggle pi-low"></mat-icon-->
+      <svg-icon  (click)="toggle()"  [style]="open ? 'rotate90' : 'rotate0'" name="arrow-right"></svg-icon>
     </div>
   </div>
 

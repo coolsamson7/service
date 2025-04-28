@@ -262,6 +262,13 @@ interface Chip {
             arguments: args
           })
         }
+        // special handling for "nullable"
+        else if (test["ignore"]) {
+          this.items.push({
+            name: "nullable",
+            arguments: []
+          })
+        }
       }
 
       this.updatePossibleConstraints()

@@ -3,6 +3,10 @@
     align-items: baseline;
     grid-template-columns: min-content auto;
 
+    .value {
+        display: flex;
+    }
+
     .type-constraint {
         display: flex;
         align-items: baseline;
@@ -11,4 +15,36 @@
             width: 80px;
           }
     }
+
+    .mat-mdc-select-value {
+        width: fit-content;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+    
+      .mat-mdc-form-field-infix {
+        width: fit-content;
+      }
+    
+      .mat-mdc-option {
+        font-size: 12px;
+        padding: 5px 5px 5px 10px;
+        min-height: 12px;
+      }
 }
+
+.mat-mdc-select-value {
+    width: fit-content;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .mat-mdc-form-field-infix {
+    width: fit-content;
+  }
+
+  .mat-mdc-option {
+    font-size: 12px;
+    padding: 5px 5px 5px 10px;
+    min-height: 12px;
+  }

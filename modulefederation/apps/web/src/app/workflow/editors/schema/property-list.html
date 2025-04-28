@@ -1,8 +1,9 @@
 
 <div *ngFor="let property of properties" class="property">
     <div class="left">
-        <svg-icon (click)="schema.toggle(property)" [name]="schema.isOpen(property) ? 'arrow-down' : 'arrow-right'"></svg-icon>
-        <div *ngIf="true" class="line"></div>
+      <!--svg-icon (click)="schema.toggle(property)" [name]="schema.isOpen(property) ? 'arrow-down' : 'arrow-right'"></svg-icon-->
+      <svg-icon  (click)="schema.toggle(property)" [style]="schema.isOpen(property) ? 'rotate90' : 'rotate0'" name="arrow-right"></svg-icon>
+      <div *ngIf="true" class="line"></div>
     </div>
 
     <div *ngIf="!schema.isOpen(property)" class="name">{{name(property)}}</div>

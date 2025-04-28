@@ -9,8 +9,9 @@
   fill: white;
 
   display: grid;
-  grid-template-columns:min-content auto;
-   align-items: baseline;
+  grid-template-columns: min-content auto;
+  column-gap: 5px;
+  align-items: baseline;
 
   .property {
     cursor: default;
