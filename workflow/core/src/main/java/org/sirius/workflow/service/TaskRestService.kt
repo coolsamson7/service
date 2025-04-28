@@ -24,6 +24,8 @@ data class TaskDTO(
     val form: String?
 )
 
+data class TaskOutput(val output: Map<String,Any>, val process: Map<String,Any>)
+
 data class TaskQuery(
     val user: String? = null,
     val active : Boolean? = null,
@@ -149,10 +151,10 @@ class TaskRestService {
     }
 
     @PostMapping("complete/{definition}/{process}/{id}/{name}")
-    fun completeTask(@PathVariable definition: String, @PathVariable process: String, @PathVariable id: String, @PathVariable name: String, @RequestBody output : Map<String,Any>) {
-        // TODO: was mache ich mit den output parametern?
+    fun completeTask(@PathVariable definition: String, @PathVariable process: String, @PathVariable id: String, @PathVariable name: String, @RequestBody output : TaskOutput) {
+        this.collectOutput(definition, process, id, name, output.output)
 
-        this.collectOutput(definition, process, id, name, output)
+        taskService.setVariables(id, output.process)
 
         taskService.complete(id)
     }

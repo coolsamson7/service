@@ -11,6 +11,7 @@ import org.camunda.bpm.model.xml.instance.ModelElementInstance
 interface SchemaPropertyElement : ModelElementInstance  {
     val name: String
     val type: String
+    val source: String?
     val constraint: String
     val value: String
 }

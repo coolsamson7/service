@@ -17,6 +17,9 @@ class SchemaPropertyElementImpl(instanceContext: ModelTypeInstanceContext?) : Mo
     override val type: String
         get() = typeAttribute.getValue(this) ?: ""
 
+    override val source: String
+        get() = sourceAttribute.getValue(this) ?: ""
+
     override val constraint: String
         get() = constraintAttribute.getValue(this) ?: ""
 
@@ -30,6 +33,7 @@ class SchemaPropertyElementImpl(instanceContext: ModelTypeInstanceContext?) : Mo
 
         protected lateinit var nameAttribute: Attribute<String>
         protected lateinit var typeAttribute: Attribute<String>
+        protected lateinit var sourceAttribute: Attribute<String>
         protected lateinit var valueAttribute: Attribute<String>
         protected lateinit var constraintAttribute: Attribute<String?>
 
@@ -51,6 +55,10 @@ class SchemaPropertyElementImpl(instanceContext: ModelTypeInstanceContext?) : Mo
                 .build()
 
             typeAttribute = typeBuilder.stringAttribute("type")
+                .namespace(CustomBpmn.NAMESPACE)
+                .build()
+
+            sourceAttribute = typeBuilder.stringAttribute("source")
                 .namespace(CustomBpmn.NAMESPACE)
                 .build()
 

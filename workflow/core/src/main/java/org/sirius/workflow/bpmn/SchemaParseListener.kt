@@ -8,11 +8,12 @@ import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl
 import org.camunda.bpm.engine.impl.pvm.process.TransitionImpl
 import org.camunda.bpm.engine.impl.util.xml.Attribute
 import org.camunda.bpm.engine.impl.util.xml.Element
+import org.camunda.spin.json.SpinJsonNode
 import org.camunda.spin.plugin.variable.SpinValues
 import java.lang.reflect.Field
 import java.util.*
 
-class Variable(val name: String, val type: String, val value: Any)
+class Variable(val name: String, val type: String, val source: String, val value: Any)
 
 class SchemaParseListener : AbstractBpmnParseListener() {
     // private
@@ -20,13 +21,6 @@ class SchemaParseListener : AbstractBpmnParseListener() {
     private val outputTypes = HashMap<String,String>()
 
     private val pending = HashMap<String,LinkedList<StringBuilder>>()
-
-    private fun addPending(input: String, builder: StringBuilder) {
-        if ( !this.pending.containsKey(input))
-            this.pending[input] = LinkedList<StringBuilder>()
-
-        this.pending[input]!!.add(builder)
-    }
 
     private fun rememberOutput(output: String, type: String) {
         outputTypes[output] = type
@@ -216,39 +210,81 @@ class SchemaParseListener : AbstractBpmnParseListener() {
     override fun parseProcess(processElement: Element, processDefinition: ProcessDefinitionEntity) {
         val extensions = processElement.elements("extensionElements")
 
+        val inputVariables = LinkedList<Variable>()
         val variables = LinkedList<Variable>()
         if ( extensions.size > 0) {
             val schemas = extensions[0].elements("schema")
 
             for ( schema in schemas) {
+                val name = schema.attribute("name")
+
+                val isInput = name.equals("input")
+
                 for ( property in schema.elements()) {
                     val type = property.attribute("type")
+                    val source = if (isInput) "input" else property.attribute("source")
                     val stringValue = property.attribute("value")
-                    var value : Any = stringValue
+                    var value : Any = if ( stringValue !== null ) stringValue else ""
 
-                    value = when (type) {
-                        "Short" -> java.lang.Short.valueOf(stringValue)
-                        "Integer" -> java.lang.Integer.valueOf(stringValue)
-                        "Long" -> java.lang.Long.valueOf(stringValue)
-                        "Double" -> java.lang.Double.valueOf(stringValue)
-                        "Boolean" -> java.lang.Boolean.valueOf(value == "true")
-                        else -> value
-                    }
+                    if ( source.equals("value"))
+                        value = when (type) {
+                            "Short" -> java.lang.Short.valueOf(stringValue)
+                            "Integer" -> java.lang.Integer.valueOf(stringValue)
+                            "Long" -> java.lang.Long.valueOf(stringValue)
+                            "Double" -> java.lang.Double.valueOf(stringValue)
+                            "Boolean" -> java.lang.Boolean.valueOf(value == "true")
+                            else -> value
+                        }
 
-                    variables.add(Variable(property.attribute("name"), type, value))
+                    val variable = Variable(property.attribute("name"), type, source, value)
+
+                    if ( isInput)
+                        inputVariables.add(variable)
+                    else
+                        variables.add(variable)
                 }
             }
         }
 
         val listener = ExecutionListener { execution ->
-            val value = SpinValues.jsonValue("{}").create()
+            // inputs
 
-            execution.setVariable("output", value)
+            val inputJSON = SpinValues.jsonValue(execution.getVariable("input") as String).create()
+
+            execution.setVariable("input", inputJSON)
+
+           /* for ( variable in inputVariables) {
+                val node = execution.getVariable("input") as SpinJsonNode
+
+                when (variable.type) {
+                    "String" -> node.prop(variable.name, execution.getVariable(variable.name) as String)
+                    "Boolean" -> node.prop(variable.name, execution.getVariable(variable.name) as Boolean)
+                    "Short" -> node.prop(variable.name, execution.getVariable(variable.name) as Number)
+                    "Integer" -> node.prop(variable.name, execution.getVariable(variable.name) as Number)
+                    "Long" -> node.prop(variable.name, execution.getVariable(variable.name) as Number)
+                    "Float" -> node.prop(variable.name, execution.getVariable(variable.name) as Number)
+                    "Double" -> node.prop(variable.name, execution.getVariable(variable.name) as Number)
+                    else -> { // Note the block
+                        print("unknown type")
+                    }
+                }
+            }*/
+
+            val inputs = execution.getVariable("input") as SpinJsonNode
+
+            // outputs
+
+            val outputs = SpinValues.jsonValue("{}").create()
+
+            execution.setVariable("output", outputs)
 
             // set global variables
 
             for ( variable in variables) {
-                execution.setVariable(variable.name, variable.value)
+                if ( variable.source == "input")
+                    execution.setVariable(variable.name, inputs.prop(variable.value as String).value())
+                else
+                    execution.setVariable(variable.name, variable.value)
             }
         }
 
@@ -257,6 +293,7 @@ class SchemaParseListener : AbstractBpmnParseListener() {
 
     companion object {
         const val CAMUNDA_NS = "http://camunda.org/schema/1.0/bpmn"
+
         private fun fetchField(clazz: Class<Element>, name: String) : Field {
             val field = clazz.getDeclaredField(name)
 
