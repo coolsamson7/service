@@ -8,6 +8,7 @@ export interface GroupConfig {
     element?: string,
     hideLabel?: boolean,
     applies?:(element: Element) => boolean,
+    label?:(element: Element) => string,
     extension?: string,
     multiple?: boolean,
     properties: string[]

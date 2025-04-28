@@ -151,6 +151,9 @@ export class ExtensionEditor implements OnInit {
     for ( const extension of this.extensions)
           this.open.set(extension, false)
 
+    if ( this.config.label)
+      this.computeLabel = this.config.label
+
     // avoid angular digest error
 
     setTimeout(() => { this.group.children = this.extensions.length}, 0)

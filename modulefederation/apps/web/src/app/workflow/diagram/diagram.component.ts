@@ -159,13 +159,15 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   selectError(error: ValidationError) {
-    this.select(error.shape)
+    if ( error.shape) {
+      this.select(error.shape)
 
-    this.messageBus.broadcast({
-      topic: "model-validation",
-      message: "select-error",
-      arguments: error
-    })
+      this.messageBus.broadcast({
+        topic: "model-validation",
+        message: "select-error",
+        arguments: error
+      })
+    }
   }
 
   // implement AfterContentInit
@@ -217,33 +219,26 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   type(error: ValidationError) {
-    let type = error.shape.type
+    if ( error.shape) {
+      let type = error.shape!.type
 
-    let colon = type.indexOf(":")
+      let colon = type.indexOf(":")
 
-    return type.substring(colon + 1)
+      return type.substring(colon + 1)
+    }
+    else return "process"
   }
 
-  validateModel() : boolean {
-    this.removeOverlay({
-      type: "error"
-    })
-    this.errors = []
-    if ( this.getProcess()?.businessObject)
-     this.errors = this.modelValidation.validate(this.getProcess()!.businessObject, this.elementRegistry!)
+  clearErrors() {
+    this.errors.length = 0
+  }
 
-   
-    // add markers
+  addErrors(...errors: ValidationError[]) {
+    this.errors = errors
+    this.showErrors()
+  }
 
-    let lastShape = undefined
-    for ( let error of this.errors) {
-      if ( error.shape !== lastShape) {
-        this.addMarker(error.shape)
-
-        lastShape = error.shape
-      }
-    }
-
+  showErrors() {
     if (this.errors.length > 0) {
       this.messageBus.broadcast({
         topic: "model-validation",
@@ -255,6 +250,25 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       // make sure the error tab is open
 
       this.errorPane.selectTab(this.errorPane.tabs[0]) // ther only is one pane ( TODO: id? ) 
+    }
+  }
+
+  validateModel() : boolean {
+    this.removeOverlay({ type: "error"})
+
+    this.errors = []
+    if ( this.getProcess()?.businessObject)
+      this.addErrors(...this.modelValidation.validate(this.getProcess()!.businessObject, this.elementRegistry!))
+   
+    // add markers
+
+    let lastShape = undefined
+    for ( let error of this.errors) {
+      if ( error.shape !== lastShape) {
+        this.addMarker(error.shape!)
+
+        lastShape = error.shape
+      }
     }
 
     return this. errors.length == 0

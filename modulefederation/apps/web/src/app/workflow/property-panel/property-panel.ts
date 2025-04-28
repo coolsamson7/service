@@ -171,6 +171,7 @@ export class PropertyPanelComponent extends WithLifecycle implements OnChanges, 
             if ( !target )
               this.currentConfig.groups.push(target = {
                 name: group.name,
+                label: group.label,
                 extension: group.extension,
                 multiple: group.multiple,
                 properties: properties//group.properties.map(name => descriptor.properties.find((prop) => prop.name == name)!!)
@@ -183,6 +184,7 @@ export class PropertyPanelComponent extends WithLifecycle implements OnChanges, 
           if ( !target )
             this.currentConfig.groups.push(target = {
               name: group.name,
+              label: group.label,
               hideLabel: group.hideLabel,
               element: element.$type,
               properties: []

@@ -10,7 +10,6 @@ import { ValidationModule } from "@modulefederation/common";
   ModelValidationMessageHandler
 ]
 
-console.log(ModelValidationMessageHandler)
 
 @NgModule({
     imports: [
@@ -23,14 +22,14 @@ console.log(ModelValidationMessageHandler)
   })
   export class ModelValidationModule {
     static injector = new ReplaySubject<Injector>(1);
-  
+
     static forRoot(...validators: any[]): ModuleWithProviders<ModelValidationModule> {
       return {
         ngModule: ModelValidationModule,
         providers: []
       };
     }
-  
+
     constructor(injector: Injector) {
         ModelValidationModule.injector.next(injector);
     }

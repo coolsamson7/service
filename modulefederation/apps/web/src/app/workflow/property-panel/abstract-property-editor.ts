@@ -133,12 +133,12 @@ export abstract class AbstractPropertyEditor<T=any> implements PropertyEditor<T>
     const oldAction =  this.action
     this.action = this.actionHistory.findAction(this.element, this.property.name)
 
-    if ( oldAction !== this.action) {
+    /*if ( oldAction !== this.action) {
       if ( oldAction )
         console.log("remove action for " + this.property.name)
       else
         console.log("add action for " + this.property.name)
-    }
+    }*/
   }
 
  undo() : void {

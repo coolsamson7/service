@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from "@angular/core"
 
-import { FormInventoryService, Task, TaskService, Variables } from "../service"
+import { FormInventoryService, Task, TaskOutput, TaskService, Variables } from "../service"
 import { FormConfig, FormRendererComponent, FormRendererModule, Schema, SchemaProperty } from "@modulefederation/form/renderer";
 import { CommonModule } from "@angular/common";
 import { WorkflowFunctions } from "../functions/workflow-functions";
@@ -203,9 +203,12 @@ export class TaskFormComponent implements OnInit, OnChanges {
 
       // call service
 
-      // TODO: delta
+      const output : TaskOutput = {
+        output: this.model.output,
+        process: delta
+      }
 
-      this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, this.model.output).subscribe(result => 
+      this.taskService.completeTask(this.task.processDefinitionId, this.task.processId, this.task.id, this.task.name, output).subscribe(result => 
         this.messageBus.broadcast({
           topic: "task",
           message: "completed",
@@ -220,7 +223,7 @@ export class TaskFormComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     // expose task as a property
 
-    this.context.task = this.task // TODO
+    this.context.task = this.task
 
     this.model.task = this.task
   }

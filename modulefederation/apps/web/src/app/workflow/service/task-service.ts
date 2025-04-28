@@ -36,6 +36,11 @@ export interface Variables {
   output: SchemaDescriptor
 }
 
+export interface TaskOutput {
+  process: any
+  output: any
+}
+
 @Injectable({providedIn: 'root'})
 @Service({domain: "workflow", prefix: "/bpmn/task"})
 export class TaskService extends AbstractHTTPService {
@@ -55,7 +60,7 @@ export class TaskService extends AbstractHTTPService {
     return this.get<Task[]>(`/claim/${id}/${user}`)
   }
 
-  completeTask(processDefinition: string, processId: string, id: string, name: string, output: any) : Observable<Task[]> {
+  completeTask(processDefinition: string, processId: string, id: string, name: string, output: TaskOutput) : Observable<Task[]> {
     return this.post<Task[]>(`/complete/${processDefinition}/${processId}/${id}/${name}`, output)
   }
 

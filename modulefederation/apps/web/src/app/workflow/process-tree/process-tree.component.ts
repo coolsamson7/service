@@ -26,7 +26,7 @@ export interface MenuRequest {
 
 export class TreeSelectionEvent{
   // constructor
-  
+
   constructor(private tree: ProcessTreeComponent, public selection: Node | undefined, private oldSelection: Node | undefined) {}
 
   // public
@@ -42,10 +42,10 @@ export class TreeSelectionEvent{
     styleUrls: ['./process-tree.component.scss'],
     standalone: true,
     imports: [
-        CommonModule, 
+        CommonModule,
         MatTreeModule,
-        MatButtonModule, 
-        MatIconModule, 
+        MatButtonModule,
+        MatIconModule,
         MatFormFieldModule,
         MatMenuModule,
         SvgIconComponent
@@ -78,19 +78,23 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
             return {
                 type: "form",
                 name: form.name,
-                //parent: parent,
+                parent: parent,
                 data: form,
                 children: []
             }
         }
 
         const processNode = (process: Process) :Node => {
-            return {
+            const node : Node = {
                 type: "process",
                 name: process.name,
                 data: process,
-                children: process.forms.map(form => formNode(undefined, form))
+                //children: process.forms.map(form => formNode(undefined, form))
             }
+
+          node.children = process.forms.map(form => formNode(undefined, form))
+
+          return node
         }
 
         return processes.map(process => processNode(process))
@@ -108,7 +112,7 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
     select(node: Node | undefined) {
         if ( this.selection !== node) {
             this.onSelectionChange.emit(new TreeSelectionEvent(this, node, this.selection))
-                
+
             this.selection = node
         }
     }
@@ -128,6 +132,11 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
 
         if ( node.parent) {
             const children  = node.parent!.children!
+
+            /*const form : Form = node.data
+            const process : Process = node.parent.data
+
+            process.forms.splice( process.forms.indexOf(form), 1)*/
 
             children.splice(index, 1)
             nextNode = children.length > 0 ? children[Math.min(children.length - 1, index)] : node.parent
@@ -155,7 +164,7 @@ export class ProcessTreeComponent implements OnInit, OnChanges {
             type: "process",
             name: process.name,
             data: process
-        } 
+        }
 
         //if ( after == -1)
         //    this.dataSource.data.push(node)

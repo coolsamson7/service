@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RegisterFunction, RegisterModule } from '@modulefederation/form/renderer';
-import { Task, TaskService } from '../service';
+import { Task, TaskOutput, TaskService } from '../service';
 
 /**
  * the "workflow" module covers workflow related functions. Who could have guessed...
@@ -25,7 +25,12 @@ export class WorkflowFunctions {
     ]
   })
   finishTask(task: Task): void {
-    this.taskService.completeTask(task.processDefinitionId, task.processId, task.id, task.name, task.output).subscribe()
+    const output : TaskOutput = {
+      output: task.output,
+      process: {} // TODO
+    }
+    
+    this.taskService.completeTask(task.processDefinitionId, task.processId, task.id, task.name ,output).subscribe()
   }
 
   @RegisterFunction({
