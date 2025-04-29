@@ -1,6 +1,6 @@
 import { get, set } from "../../lang";
+import { StringBuilder } from "../../util";
 import { Test } from "../test"
-//import { TypeParser } from "../type-parser";
 import { ValidationContext } from "../validation-context"
 import { ValidationError } from "../validation-error"
 
@@ -40,6 +40,7 @@ export class Type<T> {
     private static timeout = false
 
     // static methods
+
 
     static register(constraint: Type<any>) {
         set(this.cache, constraint.name!, constraint)
@@ -87,7 +88,7 @@ export class Type<T> {
 
     // instance data
 
-    protected tests: Test<T>[] = []
+    tests: Test<T>[] = []
     message?: string
 
     // protected
@@ -163,12 +164,43 @@ export class Type<T> {
         return this
     }
 
+    nullable(): Type<T> {
+        const typeTest = this.tests[0]
+
+        typeTest.ignore = true
+
+        return this
+    }
+
     params4(constraint: string): any | undefined {
         for (const test of this.tests)
             if (test.name === constraint)
                 return test.params
 
         return undefined
+    }
+
+    toString() : string {
+        const builder = new StringBuilder()
+
+        builder.append(this.baseType).append(" ")
+
+        for ( const test of this.tests) {
+            if ( test.name !== "type") {
+                builder.append(test.name)
+
+                if ( test.params ) {
+                    for ( const key of Object.keys(test.params)) {
+                        builder.append(" ")
+                        builder.append(key)
+                        builder.append("=")
+                        builder.append(test.params[key])
+                    }
+                } // if
+            }
+        }
+
+        return builder.toString()
     }
 
     // protected

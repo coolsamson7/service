@@ -13,7 +13,7 @@ export * from "./validation-message-handler.interface"
 export * from "./register-validation-message-handler.decorator"
 
 export * from "./show-errors.directive"
-
+export * from "./form-field"
 export * from "./validation.module"
 
 

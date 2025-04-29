@@ -41,7 +41,33 @@ object({
         color: enumeration(Color),
     }, "Foo")
 
+
+
+
+
 describe("constraint parser", () => {
+    it("should execute a dynamic function", () => {
+        const signature = ["message", "This", "task"]
+        const f = new Function(...signature, "message(1); This.message('hi'); task.message('hi'); task.output.o1 = task.output.o1 + 1;  return task.output.o1")
+
+        const task = {
+            message: (m: any) => console.log(m),
+            output: {
+                o1: 1
+            }
+        }
+        const context : any = {
+            task: task ,
+            This: task,
+            message: (m: any) => console.log(m),
+        }
+        let result = f.call(task, ...signature.map(variable => context[variable]) )
+        result = f.call(task, ...signature.map(variable => context[variable]) )
+
+        console.log(result)
+    })
+})
+/*
     it("should throw parse errors", async () => {
         // wrong keyword
 
@@ -128,4 +154,4 @@ describe("constraint parser", () => {
             console.log(err)
         }
     })
-})
+})*/

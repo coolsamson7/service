@@ -1,3 +1,4 @@
+import { EventListenerFocusTrapInertStrategy } from "@angular/cdk/a11y"
 import {
     boolean,
     array,
@@ -11,7 +12,11 @@ import {
     NumberType,
     BooleanConstraint,
     DateConstraint,
-    Type
+    Type,
+    double,
+    float,
+    integer,
+    long
 } from "./type"
 
 
@@ -27,94 +32,118 @@ type SupportedKeywords = { [type: string]: Keyword<any> }
 
 type TypeMap = { [type: string]: SupportedKeywords }
 
-export class TypeParser {
-    //  mapping of generated keywords to fluent methods
+ //  mapping of generated keywords to fluent methods
 
-    static readonly typeMap: TypeMap = {
-        number: {
-            format: {
-                call: (constraint: NumberType, format: string): NumberType => {
-                    return constraint
-                },
+const typeMap: TypeMap = {
+    // TODO: does that work?
+    ref: {
+
+    },
+
+    number: {
+        format: {
+            call: (constraint: NumberType, format: string): NumberType => {
+                return constraint
             },
-            nullable: { call: "optional" },
-            // "required": {},
-            minimum: { call: "min", argument: "number" },
-            maximum: { call: "max", argument: "number" },
-            min: { call: "min", argument: "number" },
-            max: { call: "max", argument: "number" },
-            "<": { call: "lessThan", argument: "number" },
-            "<=": { call: "lessThanEquals", argument: "number" },
-            ">": { call: "greaterThan", argument: "number" },
-            ">=": { call: "greaterThanEquals", argument: "number" },
+            argument: "string"
         },
-        string: {
-            nullable: { call: "optional" },
-            // "required": {},
-            format: {
-                call: (constraint: StringConstraint, format: string): StringConstraint => {
-                    if (format === "email") return constraint.email()
-                    else return constraint
-                },
-                argument: "string",
+        nullable: { call: "optional" },
+        min: { call: "min", argument: "number" },
+        max: { call: "max", argument: "number" },
+        "<": { call: "lessThan", argument: "number" },
+        "<=": { call: "lessThanEquals", argument: "number" },
+        ">": { call: "greaterThan", argument: "number" },
+        ">=": { call: "greaterThanEquals", argument: "number" },
+    },
+    string: {
+        nullable: { call: "optional" },
+        format: {
+            call: (constraint: StringConstraint, format: string): StringConstraint => {
+                if (format === "email") return constraint.email()
+                else return constraint
             },
-            nonEmpty: { call: "nonEmpty" },
-            minLength: { call: "min", argument: "number" },
-            maxLength: { call: "max", argument: "number" },
-            "min-length": { call: "min", argument: "number" },
-            "max-length": { call: "max", argument: "number" },
-            pattern: { call: "matches", argument: "re" },
+            argument: "string",
         },
-        boolean: {
-            format: {
-                call: (constraint: BooleanConstraint, format: string): BooleanConstraint => {
-                    return constraint
-                },
+        "non-empty": { call: "nonEmpty" },
+        "min-length": { call: "min", argument: "number" },
+        "max-length": { call: "max", argument: "number" },
+        pattern: { call: "matches", argument: "re" },
+    },
+    boolean: {
+        nullable: { call: "optional" },
+        "is-true": { call: "isTrue" },
+        "is-false": { call: "isFalse" },
+    },
+    date: {
+        format: {
+            call: (constraint: DateConstraint, format: string): DateConstraint => {
+                return constraint
             },
-            isTrue: { call: "isTrue" },
-            isFalse: { call: "isFalse" },
-            "is-true": { call: "isTrue" },
-            "is-false": { call: "isFalse" },
-            nullable: { call: "optional" },
-            // "required": {},
         },
-        date: {
-            format: {
-                call: (constraint: DateConstraint, format: string): DateConstraint => {
-                    return constraint
-                },
+        nullable: { call: "optional" },
+        min: { call: "min", argument: "number" },
+        max: { call: "max", argument: "number" },
+        // "required": {},}
+    },
+    array: {
+        format: {
+            call: (constraint: ArrayConstraint<any>, format: string): ArrayConstraint<any> => {
+                return constraint
             },
-            nullable: { call: "optional" },
-            min: { call: "min", argument: "number" },
-            max: { call: "max", argument: "number" },
-            minimum: { call: "min", argument: "number" },
-            maximum: { call: "max", argument: "number" },
-            // "required": {},}
         },
-        array: {
-            format: {
-                call: (constraint: ArrayConstraint<any>, format: string): ArrayConstraint<any> => {
-                    return constraint
-                },
+        nullable: { call: "optional" },
+        min: { call: "min", argument: "number" },
+        max: { call: "max", argument: "number" },
+    },
+    record: {
+        format: {
+            call: (constraint: RecordConstraint<any>, format: string): RecordConstraint<any> => {
+                return constraint
             },
-            // "required": {},}
-            nullable: { call: "optional" },
-            minItems: { call: "min", argument: "number" },
-            maxItems: { call: "max", argument: "number" },
-            "min-items": { call: "min", argument: "number" },
-            "max-items": { call: "max", argument: "number" },
-            min: { call: "min", argument: "number" },
-            max: { call: "max", argument: "number" },
         },
-        record: {
-            format: {
-                call: (constraint: RecordConstraint<any>, format: string): RecordConstraint<any> => {
-                    return constraint
-                },
-            },
-            nullable: { call: "optional" },
-            // "required": {},
-        },
+        nullable: { call: "optional" },
+        // "required": {},
+    },
+}
+
+typeMap["short"] = typeMap["number"]
+typeMap["integer"] = typeMap["number"]
+typeMap["long"] = typeMap["number"]
+typeMap["float"] = typeMap["number"]
+typeMap["double"] = typeMap["number"]
+
+export class TypeParser {
+    // static methods
+
+    private static normalizeType(type: string): string {
+        if ( type.startsWith("Array<"))
+            return "array"
+        else if ( type.startsWith("ref:"))
+            return "ref"
+        else
+            return type
+    }
+
+    public static supportsConstraint(type: string, keyword: string): boolean {
+        type = TypeParser.normalizeType(type)
+
+        if ( typeMap[type])
+            return typeMap[type][keyword] !== undefined
+        else
+            return false
+    }
+
+    public static supportedConstraints(type: string): string[] {
+        type = TypeParser.normalizeType(type)
+
+        return typeMap[type] ? Object.keys(typeMap[type]) : []
+    }
+
+    static constraintArguments(type: string, constraint: string) : string[] {
+        type = TypeParser.normalizeType(type)
+
+        const argument = typeMap[type][constraint].argument
+        return argument ? [argument] : []
     }
 
     // methods
@@ -123,7 +152,7 @@ export class TypeParser {
         // local functions
 
         const parseArgument = (type: string, input: string): any[] => {
-            if (type == "string") 
+            if (type == "string")
                 return [input]
 
             if (type == "number") {
@@ -133,10 +162,10 @@ export class TypeParser {
                     throw new Error(`expected a number`)
             }
 
-            if (type == "boolean") 
+            if (type == "boolean")
                 return [input === "true"]
 
-            if (type == "re") 
+            if (type == "re")
                 return [new RegExp(input)]
 
             throw new Error(`unsupported type ${type}`)
@@ -186,7 +215,7 @@ export class TypeParser {
             return result
         }
 
-        const supportedKeywords = TypeParser.typeMap[type]
+        const supportedKeywords = typeMap[type]
 
         // parse
 
@@ -217,7 +246,7 @@ export class TypeParser {
                         catch(e) {
                             throw new Error(`type ${type} expected an ${key} argument of type ${keyword.argument}`)
                         }
-                    } 
+                    }
                     else {
                         if (typeof keyword.call == "string") constraint = (constraint as any)[keyword.call]()
                         else constraint = keyword.call.apply(this, [constraint])
@@ -235,6 +264,16 @@ export class TypeParser {
         if (type == "string") return string()
 
         if (type == "number") return number()
+
+        if (type == "short") return number()
+
+        if (type == "integer") return integer()
+
+        if (type == "long") return long()
+
+        if (type == "float") return float()
+
+        if (type == "double") return double()
 
         if (type == "date") return date()
 

@@ -1,4 +1,4 @@
-import { boolean, date, string, number } from "./type"
+import { boolean, date, string, number, short, double, float, integer, long } from "./type"
 
 /*export class Types {
     // instance data
@@ -26,3 +26,10 @@ string("string")
 number("number")
 date("date")
 boolean("boolean")
+
+short("short")
+integer("integer")
+long("long")
+float("float")
+double("double")
+

@@ -158,11 +158,11 @@ export class NumberType extends Type<number> {
         return this
     }
 
-    // 
+    //
 
     private scaleAndPrecision(value: number) {
         const x = value.toString();
-    
+
         const scale = x.indexOf('.');
         if (scale == -1)
           return {
@@ -177,4 +177,54 @@ export class NumberType extends Type<number> {
       }
 }
 
+// more
+
+export class ShortType extends NumberType {
+    // constructor
+
+    constructor(name?: string) {
+        super(name)
+    }
+}
+
+export class IntegerType extends NumberType {
+    // constructor
+
+    constructor(name?: string) {
+        super(name)
+    }
+}
+
+export class LongType extends NumberType {
+    // constructor
+
+    constructor(name?: string) {
+        super(name)
+    }
+}
+
+export class FloatType extends NumberType {
+    // constructor
+
+    constructor(name?: string) {
+        super(name)
+    }
+}
+
+export class DoubleType extends NumberType {
+    // constructor
+
+    constructor(name?: string) {
+        super(name)
+    }
+}
+
+// functions
+
 export const number = (name?: string) => new NumberType(name)
+
+export const short = (name?: string) => new ShortType(name)
+export const integer = (name?: string) => new IntegerType(name)
+export const long = (name?: string) => new LongType(name)
+export const float = (name?: string) => new FloatType(name)
+export const double = (name?: string) => new DoubleType(name)
