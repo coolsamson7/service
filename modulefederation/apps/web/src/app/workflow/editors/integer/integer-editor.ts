@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ModelValidationDirective } from '../../validation';
-import { ValidationModule } from '@modulefederation/common';
+import { FormFieldComponent, ValidationModule } from '@modulefederation/common';
 
 import { ValidationError } from "../../validation";
 
@@ -18,7 +18,22 @@ import { ValidationError } from "../../validation";
   templateUrl: './integer-editor.html',
   //styleUrl: "./string-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, ValidationModule]
+  imports: [
+    FormsModule,
+    CommonModule,
+    
+    // mnaterial
+
+    MatInputModule, 
+    MatFormFieldModule,
+    
+    // portal
+    
+    ModelValidationDirective,
+    
+    ValidationModule,
+    FormFieldComponent
+  ]
 })
 export class IntegerPropertyEditor extends AbstractPropertyEditor<number> {
   // instance data

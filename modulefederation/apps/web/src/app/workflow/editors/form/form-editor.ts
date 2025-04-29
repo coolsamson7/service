@@ -9,7 +9,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { ValidationError } from "../../validation";
-import { object, reference, TypeParser, ValidationModule } from "@modulefederation/common";
+import { FormFieldComponent, object, reference, TypeParser, ValidationModule } from "@modulefederation/common";
 import { Schema, SchemaProperty } from "@modulefederation/form/renderer";
 import { Element } from "moddle";
 

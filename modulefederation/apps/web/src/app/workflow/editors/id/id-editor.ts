@@ -12,6 +12,7 @@ import { NG_VALIDATORS, Validator} from '@angular/forms';
 import { ModdleElement } from 'bpmn-js/lib/model/Types';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FormFieldComponent, ValidationModule } from '@modulefederation/common';
 
 export function createUniqueIdValidator(element: ModdleElement): ValidatorFn {
   let process = element
@@ -60,7 +61,7 @@ export class UniqueIdDirective implements Validator {
   templateUrl: './id-editor.html',
   styleUrl: "./id-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, UniqueIdDirective,  MatInputModule, MatFormFieldModule]
+  imports: [FormsModule, CommonModule, UniqueIdDirective,  MatInputModule, MatFormFieldModule, FormFieldComponent, ValidationModule]
 })
 export class IdPropertyEditor extends AbstractPropertyEditor {
 }

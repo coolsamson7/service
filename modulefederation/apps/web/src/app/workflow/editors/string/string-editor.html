@@ -1,17 +1,15 @@
-<mat-form-field class="dense-5">
+<form-field *ngIf="inputType === 'suggestionInput'" class="dense-5">
     <!-- input with suggestion provider -->
+    <input class="mdc-text-field__input"  [id]="property.name" [name]="property.name" #input matInput  #model="ngModel" type="text" [suggestionProvider]="settings.suggestionProvider!" [ngModel]="value" [disabled]="settings.readOnly === true" (ngModelChange)="onChange($event)" [check]="element" [context]="context" [property]="property.name"/>
+</form-field>
 
-    <input  *ngIf="inputType === 'suggestionInput'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput  #model="ngModel" type="text" [suggestionProvider]="settings.suggestionProvider!" [ngModel]="value" [disabled]="settings.readOnly === true" (ngModelChange)="onChange($event)" [check]="element" [context]="context" [property]="property.name"/>
 
-    <!-- plain input  -->
+<form-field  *ngIf="inputType === 'input'" class="dense-5">
+  <input class="mdc-text-field__input"  [id]="property.name" [name]="property.name" #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="settings.readOnly === true" [check]="element" [context]="context" [property]="property.name" />
+</form-field>
 
-    <input *ngIf="inputType === 'input'" class="form-control"  [id]="property.name" [name]="property.name" #input matInput type="text" [ngModel]="value"  #model="ngModel" (ngModelChange)="onChange($event)" [disabled]="settings.readOnly === true" [check]="element" [context]="context" [property]="property.name" />
-
-    <!-- select -->
-
-    <mat-select *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="settings.readOnly === true" [ngModel]="value" (selectionChange)="onChange($event.value)">
-      <mat-option *ngFor="let value of settings.oneOf" [value]="value" style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">{{value}}</mat-option>
-    </mat-select>
-
-    <mat-error *showErrors/>
+<mat-form-field  *ngIf="inputType === 'select'"  class="dense-5">
+  <mat-select *ngIf="inputType === 'select'" [id]="property.name"  class="dense-5" #input required  [disabled]="settings.readOnly === true" [ngModel]="value" (selectionChange)="onChange($event.value)">
+    <mat-option *ngFor="let value of settings.oneOf" [value]="value" style="padding: 5px 5px 5px 10px; min-height: unset; font-size: 12px;">{{value}}</mat-option>
+  </mat-select>
 </mat-form-field>

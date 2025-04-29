@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractPropertyEditor, RegisterPropertyEditor } from '../../property-panel';
 
 import { FormsModule, NgModel } from '@angular/forms';
@@ -10,8 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ModelValidationDirective, ValidationError } from '../../validation';
 import { NgModelSuggestionsDirective } from '@modulefederation/portal';
 import { MatSelectModule } from '@angular/material/select';
-import { ValidationModule } from '@modulefederation/common';
-
+import { FormFieldComponent, ValidationModule } from '@modulefederation/common';
 
 
 @RegisterPropertyEditor("String")
@@ -20,7 +19,27 @@ import { ValidationModule } from '@modulefederation/common';
   templateUrl: './string-editor.html',
   styleUrl: "./string-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ModelValidationDirective, NgModelSuggestionsDirective, MatSelectModule, ValidationModule]
+  imports: [
+    // angular
+
+    FormsModule, 
+    CommonModule,
+    
+    // material
+    
+    MatInputModule, 
+    MatFormFieldModule, 
+    MatSelectModule, 
+
+    // prortal
+
+    ModelValidationDirective, 
+    NgModelSuggestionsDirective, 
+
+    ValidationModule,
+    FormFieldComponent
+  ],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StringPropertyEditor extends AbstractPropertyEditor<string> implements OnInit {
   // instance data

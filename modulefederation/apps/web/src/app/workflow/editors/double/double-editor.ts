@@ -7,7 +7,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ValidationModule } from '@modulefederation/common';
+import { FormFieldComponent, ValidationModule } from '@modulefederation/common';
 import { ValidationError } from '../../validation';
 
 @RegisterPropertyEditor("Double")
@@ -16,7 +16,7 @@ import { ValidationError } from '../../validation';
   templateUrl: './double-editor.html',
   //styleUrl: "./string-editor.scss",
   standalone: true,
-  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ValidationModule]
+  imports: [FormsModule, CommonModule, MatInputModule, MatFormFieldModule, ValidationModule, FormFieldComponent]
 })
 export class DoublePropertyEditor extends AbstractPropertyEditor {
   // instance data

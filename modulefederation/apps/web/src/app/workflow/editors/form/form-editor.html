@@ -1,18 +1,17 @@
 
   <mat-form-field class="dense-5 form">
-    <input #input  matInput  #model="ngModel"
+    <input #input  class="mdc-text-field__input" matInput  #model="ngModel"
       type="text" id="form"  name="form"
       [ngModel]="name"  (ngModelChange)="onChange($event)"
       [disabled]="type === 'form'"
       [placeholder]="type === 'feature' ? 'Feature' : 'Form'">
 
-
-    <mat-error *showErrors></mat-error>
-
     <!-- [check]="element" [shape]="shape" [property]="property.name"  [suggestionProvider]="suggestionProvider"
 
 
       [member]="suggestionProvider.suggestions"/>-->
+
+      <mat-error *showErrors></mat-error>
 
     <!-- menu -->
 
