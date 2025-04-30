@@ -84,7 +84,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
     class WithViewClass extends base implements WithView, AfterViewInit {
         // instance data
 
-        @ViewChild(ViewComponent) view! : ViewComponent
+        @ViewChild(ViewComponent) view!: ViewComponent
 
         // instance data
 
@@ -100,7 +100,7 @@ export function WithView<T extends Constructor<AbstractFeature & CommandManager>
                 this.view = (<WithViewClass><unknown>parent).view
           
               if ( !this.view)
-                console.log("missing <view> for " + this) // throw new Error("someone needs to declare a <view>!")
+                console.log("missing <view> for " + this.constructor.name)
           }
         }
 

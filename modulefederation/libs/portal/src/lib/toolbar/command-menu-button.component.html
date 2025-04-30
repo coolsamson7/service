@@ -5,7 +5,6 @@
   </button>
   
   <mat-menu #menu="matMenu">
-    <!-- TODO command-button *ngFor="let command of commands"  [command]="command"/-->
     <button *ngFor="let command of commands"  (click)="command.run()" [disabled]="!command.enabled" mat-menu-item>{{command.label}}</button>
   </mat-menu>
 </div>

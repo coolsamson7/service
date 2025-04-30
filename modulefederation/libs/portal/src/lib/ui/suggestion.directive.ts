@@ -63,10 +63,14 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   // private
 
   private setActiveSuggestion(suggestion: string | null) : void {
-    this.suggestionProvider.highlightSuggestion(this.activeSuggestion = suggestion)
+    //console.log("set active suggestion "+ suggestion)
+    //console.log("value = " + this.value)
+
+    this.suggestionProvider.highlightSuggestion(this.value, this.activeSuggestion = suggestion)
   }
 
    private clearActiveSuggestion() : void {
+    //console.log("clear suggestion")
     if ( this.activeSuggestion ) {
       this.setActiveSuggestion(null);
       this.elementRef.nativeElement.value = this.value;
@@ -88,7 +92,9 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
   }
 
   private acceptSuggestionEvent( event: KeyboardEvent ) : boolean {
-    return ( event.key === "Tab" ) || ( event.key === "ArrowRight" )
+    return ( event.key === "Tab" ) ||
+    ( event.key === "ArrowRight" ) ||
+    ( event.key === "Enter" )
   }
 
   // event listener
@@ -111,13 +117,19 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
     // us from trying to suggest something while the user is hitting BACKSAPCE, which
     // creates a confusing experience.
 
-    if ( newValue.startsWith( previousValue ) ) {
+    this.onChangeCallback( this.value = newValue );
+
+    //console.log("handleInput: newVlaue=" + newValue + " selctio,-start: " + selectionStart)
+
+    if ( true /*newValue.startsWith( previousValue )*/ ) {
       // Similar to the constraint above, we only want to suggest text if the
       // user's cursor is at the end of the text value. Again, we're trying to
       // cater to a "continuation" of the previous value.
 
       if ( selectionStart === newValue.length ) {
-        this.setActiveSuggestion(this.getFirstMatchingSuggestion( newValue ))
+        const suggestion = this.getFirstMatchingSuggestion( newValue )
+
+        this.setActiveSuggestion(suggestion)
 
         if (this.activeSuggestion  !== undefined && this.activeSuggestion  !== null) {
 
@@ -142,12 +154,11 @@ export class NgModelSuggestionsDirective implements ControlValueAccessor {
 
           // TEST
 
-          this.handleInput(_event)
+          //TODO this.handleInput(_event)
         }
       }
+      //else console.log("igniore input since curesor not at end")
     }
-
-    this.onChangeCallback( this.value = newValue );
   }
 
 
@@ -243,30 +254,38 @@ export interface SuggestionProvider {
 
   selectSuggestion(suggestion: string) : void;
 
-  highlightSuggestion(suggestion: string | null) : void
+  highlightSuggestion(prefix: string, suggestion: string | null) : void
 }
 
-export class ArraySuggestionProvider implements SuggestionProvider {
+export abstract class AbstractSuggestionProvider implements SuggestionProvider {
+  provide(input: string): string[] {
+    throw new Error("Method not implemented.");
+  }
+
+  selectSuggestion(suggestion: string) : void {}
+
+  highlightSuggestion(prefix: string, suggestion: string | null) : void {}
+}
+
+export class ArraySuggestionProvider extends AbstractSuggestionProvider {
   // constructor
 
   constructor(public suggestions: string[]) {
+    super()
   }
 
   // implement SuggestionProvider
 
-  provide(input : string) : string[] {
+  override provide(input : string) : string[] {
     return this.suggestions.filter(suggestion => suggestion.startsWith(input));
   }
-
-  highlightSuggestion(suggestion: string | null) : void {}
-
-  selectSuggestion(suggestion: string) {}
 }
 
-export class ObjectSuggestionProvider implements SuggestionProvider {
+export class ObjectSuggestionProvider extends AbstractSuggestionProvider {
   // constructor
 
   constructor(private values: any) {
+    super()
   }
 
   // protected
@@ -285,7 +304,7 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
 
   // implement SuggestionProvider
 
-  provide(input : string) : string[] {
+  override provide(input : string) : string[] {
     const legs = input.split(".")
 
     let object = this.values
@@ -326,8 +345,4 @@ export class ObjectSuggestionProvider implements SuggestionProvider {
     }
     else return []
   }
-
-  highlightSuggestion(suggestion: string | null) : void {}
-
-  selectSuggestion(suggestion: string) {}
 }

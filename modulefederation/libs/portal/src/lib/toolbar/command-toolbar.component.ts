@@ -7,12 +7,89 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { CommandMenuButtonComponent } from "./command-menu-button.component";
 import { CommandButtonComponent, CommandDescriptor } from "../command";
+import { ToolbarCommandConfig } from "./with-command-toolbar.mixin";
 
-interface ToolbarElement {
-  icon: string,
-  type: "command" | "menu"
-  command?: CommandDescriptor
-  items?: CommandDescriptor[]
+// either a single command or a menu with commands 
+
+// config: icon,label
+
+abstract class ToolbarElement {
+  // instance data
+
+  type: "command" | "menu" = "command"
+  
+  abstract get icon() : string
+  abstract get label() : string
+
+  // constructor
+
+  constructor(protected toolbar: CommandToolbarComponent, public name: string, protected parent?: ToolbarElement) {}
+
+  // public
+
+  revert() {
+    const index = this.toolbar.elements.indexOf(this)
+    if ( this.parent )
+      this.toolbar.elements[index] = this.parent
+    else
+      this.toolbar.elements.splice(index, 1)
+  }
+}
+
+class ToolbarCommandMenuElement extends ToolbarElement {
+  // instance data
+
+  commands : CommandDescriptor[] = []
+
+  // override
+
+   override get icon() : string {
+    return this.config.icon || ""
+  }
+
+  override get label(): string {
+     return this.config.label || ""
+  }
+
+  // constructor
+
+  constructor(toolbar: CommandToolbarComponent, command: CommandDescriptor, private config: ToolbarCommandConfig, parent?: ToolbarCommandMenuElement) {
+    super(toolbar, command.name, parent)
+
+    if ( !config.icon) {
+      config.icon = parent ? parent.icon : command.icon 
+    }
+
+    if ( !config.label) {
+      config.label = parent ? parent.label : command.label 
+    }
+
+    this.type = "menu"
+    if ( parent )
+      this.commands.push(...parent.commands)
+
+    this.commands.push(command)
+  }
+}
+
+class ToolbarCommandElement extends ToolbarElement {
+  // override
+
+   override get icon() : string {
+    return this.command.icon || ""
+  }
+
+  override get label(): string {
+     return this.command.label || ""
+  }
+
+  // constructor
+
+  constructor(toolbar: CommandToolbarComponent, public command: CommandDescriptor, parent?: ToolbarElement) {
+    super(toolbar, command.name, parent)
+
+    this.type = "command"
+  }
 }
 
 @Component({
@@ -47,55 +124,42 @@ export class CommandToolbarComponent {
 
   elements : ToolbarElement[] = []
 
-  // public
+  // callback
 
-  deleteCommand(command: CommandDescriptor) {
-    const element = this.elements.find(element => element.icon == command.icon)
-    if ( element ) {
-      if ( element.type == "command") {
-        this.elements.splice(this.elements.indexOf(element), 1)
-
-        this.elements = [...this.elements]
-      }
-      else {
-        if ( element.items!.length > 1) {
-          const item = element.items?.find(item => item == command)
-          element.items = [...element.items!.splice(element.items!.indexOf(item!), 1)]
-        }
-        else {
-          element.type = "command"
-          element.command = command
-          delete element.items
-
-          this.elements = [...this.elements]
-        }
-        element.items!.push(command)
-      }
-    }
+  command(element: ToolbarElement) : CommandDescriptor {
+    return (element as ToolbarCommandElement).command
   }
 
-  addCommand(command: CommandDescriptor) : () => void {
-    const element = this.elements.find(element => element.icon == command.icon)
-    if ( element ) {
-      if ( element.type == "command") {
-        element.type = "menu"
-        element.items = [element.command!, command]
-        delete element.command
-      }
-      else {
-        element.items!.push(command)
-      }
+  commands(element: ToolbarElement) : CommandDescriptor[]{
+    return (element as ToolbarCommandMenuElement).commands
+  }
+
+  // public
+
+  addCommand(command: CommandDescriptor, config : ToolbarCommandConfig) : () => void {
+    const name = config.menu ? config.menu : command.name
+    const index = this.elements.findIndex(element => element.name == name)
+
+    let newElement : ToolbarElement
+
+    if ( config.menu) {
+      if ( index >= 0 ) // add to existing menu
+        this.elements[index] = (newElement = new ToolbarCommandMenuElement(this, command, config, this.elements[index] as ToolbarCommandMenuElement))
+      else
+        this.elements.push(newElement = new ToolbarCommandMenuElement(this, command, config))
     }
     else {
-      this.elements.push({
-        icon: command.icon!,
-        type: "command",
-        command: command
-      });
+      // regular button
+
+      if ( index >= 0 )
+        this.elements[index] = (newElement = new ToolbarCommandElement(this, command, this.elements[index]))
+      else
+        this.elements.push(newElement = new ToolbarCommandElement(this, command))
+
     }
 
     // return the revert operation
 
-    return  () => { this.deleteCommand(command)}
+    return () => newElement.revert()
   }
 }

@@ -1,6 +1,8 @@
 .content {
-  display: inline-flex;
   gap: 10px;
+
+  display: grid;
+  grid-template-columns: min-content auto;
 
   .warn {
     color: yellow;

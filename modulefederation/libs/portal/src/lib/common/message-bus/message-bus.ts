@@ -35,7 +35,7 @@ export class MessageBus {
    * subscribe to a specific topic
    * @param topic the topic
    */
-  listenFor<T>(topic: string): Observable<BusMessage<T>> {
+  listenFor<T = any>(topic: string): Observable<BusMessage<T>> {
     if (Tracer.ENABLED) Tracer.Trace('message-bus', TraceLevel.MEDIUM, 'subscribe to message bus');
 
     return this.stream.pipe(
