@@ -2,7 +2,7 @@
   <!-- error panel -->
 
   <bottom #errorPane initialSize="244px" [iconTabs]="true">
-    <tab title="Errors" icon="font:tb-settings">
+    <tab title="Errors" icon="material:information-outline">
       <mat-nav-list class="errors" dense>
 
         <mat-list-item *ngFor="let error of errors" (click)="selectError(error)">
